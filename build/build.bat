@@ -113,8 +113,6 @@ copy "..\src\stksocket\Release\stksocket.lib" deployment
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.lib
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.h
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.pdf
-del ..\build\deployment\stksocket.lib
-del ..\build\deployment\stksocket.h
 
 echo Building stkthread.sln...
 %DEVENV% "..\src\stkthread\stkthread.sln" /rebuild Release 
@@ -123,8 +121,6 @@ copy "..\src\stkthread\Release\stkthread.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.lib
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.h
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.pdf
-del ..\build\deployment\stkthread.lib
-del ..\build\deployment\stkthread.h
 
 echo Building stkthreadgui.sln...
 %DEVENV% "..\src\stkthreadgui\stkthreadgui.sln" /rebuild Release 
@@ -133,8 +129,6 @@ copy "..\src\stkthreadgui\Release\stkthreadgui.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.lib
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.h
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.pdf
-del ..\build\deployment\stkthreadgui.lib
-del ..\build\deployment\stkthreadgui.h
 
 echo Building stkdata.sln...
 %DEVENV% "..\src\stkdata\stkdata.sln" /rebuild Release 
@@ -143,8 +137,7 @@ copy "..\src\stkdata\Release\stkdata.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.lib
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.pdf
-del ..\build\deployment\stkdata.lib
-del ..\build\deployment\stkdata.h
+
 
 echo;
 echo Building process for YaizuComLib has ended.
