@@ -139,6 +139,31 @@ copy "..\src\stkdata\Release\stkdata.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.pdf
 
 
+rem ########## Testing libraries ##########
+echo;
+echo ==========================================
+echo Testing libraries
+echo;
+
+echo Building stksockettest.sln...
+%DEVENV% "..\test\stksockettest\stksockettest.sln" /rebuild Release 
+echo Building stkdatatest.sln...
+%DEVENV% "..\test\stkdatatest\stkdatatest.sln" /rebuild Release
+echo Building stkthreadtest.sln...
+%DEVENV% "..\test\stkthreadtest\stkthreadtest.sln" /rebuild Release
+echo Building commonfunctest.sln...
+%DEVENV% "..\test\commonfunctest\commonfunctest.sln" /rebuild Release
+
+echo ---------------------------------------
+..\test\stksockettest\release\\stksockettest.exe
+echo ---------------------------------------
+..\test\stkdatatest\release\stkdatatest.exe
+echo ---------------------------------------
+..\test\stkthreadtest\release\stkthreadtest.exe
+echo ---------------------------------------
+..\test\commonfunctest\release\commonfunctest.exe
+
+
 echo;
 echo Building process for YaizuComLib has ended.
 echo;
