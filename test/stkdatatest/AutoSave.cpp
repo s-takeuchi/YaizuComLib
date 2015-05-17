@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
-#include "..\..\src\com\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdata.h"
 
 
 int AutoSaveTest()

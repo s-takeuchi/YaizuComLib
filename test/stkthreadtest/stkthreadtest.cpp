@@ -2,7 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <Psapi.h>
-#include "..\..\src\com\stkthread\stkthread.h"
+#include "..\..\src\stkthread\stkthread.h"
 
 int ProcCount = 0;
 

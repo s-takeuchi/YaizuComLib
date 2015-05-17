@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
-#include "..\..\src\com\commonfunc\StkGeneric.h"
+#include "..\..\src\commonfunc\StkGeneric.h"
 
 int main(int argc, char *argv[])
 {

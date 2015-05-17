@@ -1,8 +1,8 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
-#include "..\..\src\com\stkthread\stkthread.h"
-#include "..\..\src\com\stkthreadgui\stkthreadgui.h"
+#include "..\..\src\stkthread\stkthread.h"
+#include "..\..\src\stkthreadgui\stkthreadgui.h"
 
 int ElemStkThreadInit(int Id)
 {

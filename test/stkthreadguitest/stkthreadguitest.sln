@@ -7,12 +7,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthreadguitest", "stkthre
 		{B9A3808F-C8FF-42C4-9F67-8C4274AEE32D} = {B9A3808F-C8FF-42C4-9F67-8C4274AEE32D}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthread", "..\..\src\com\stkthread\stkthread.vcproj", "{C85C9417-1312-4A69-B254-B4F041A9D9C1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthread", "..\..\src\stkthread\stkthread.vcproj", "{C85C9417-1312-4A69-B254-B4F041A9D9C1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthreadgui", "..\..\src\com\stkthreadgui\stkthreadgui.vcproj", "{B9A3808F-C8FF-42C4-9F67-8C4274AEE32D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C85C9417-1312-4A69-B254-B4F041A9D9C1} = {C85C9417-1312-4A69-B254-B4F041A9D9C1}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthreadgui", "..\..\src\stkthreadgui\stkthreadgui.vcproj", "{B9A3808F-C8FF-42C4-9F67-8C4274AEE32D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

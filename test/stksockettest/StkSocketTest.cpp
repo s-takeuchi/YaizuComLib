@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <shlwapi.h>
-#include "..\..\src\com\stksocket\stksocket.h"
+#include "..\..\src\stksocket\stksocket.h"
 #include "StkSocketTestMa.h"
 
 BOOL FinishFlag = FALSE;

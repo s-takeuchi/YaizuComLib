@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <tchar.h>
-#include "..\..\src\com\stksocket\stksocket.h"
+#include "..\..\src\stksocket\stksocket.h"
 #include "StkSocketTestMa.h"
 
 int StkSocketTestMa::ThreadStartCount = 0;
