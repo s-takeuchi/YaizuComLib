@@ -929,6 +929,10 @@ MessageProc::MessageProc()
 	Jpn(SFW_130_140_6, _T("Windows 8, Windows Server 2012, Windows Server 2003 R2, Windows Server 2008 R2をサポートした。"));
 	Eng(SFW_130_140_6, _T("Support enabled for Windows 8, Windows Server 2012, Windows Server 2003 R2 and Windows Server 2008 R2."));
 
+	//9125 (★)
+	Jpn(SFW_140_150_1, _T("インストールファイルをMSIファイルに統合した。"));
+	Eng(SFW_140_150_1, _T("Installation files integrated into one MSI file."));
+
 	// =====================================================================================================
 }
 
