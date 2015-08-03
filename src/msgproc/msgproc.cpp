@@ -61,9 +61,21 @@ void MessageProc::Jpn(int Id, TCHAR* Msg)
 	}
 }
 
+// This function clears all of messages without memory release of existing allocated message
+void MessageProc::AllClear()
+{
+	for (int Loop = 0; Loop < MAX_MSG_COUNT; Loop++) {
+		StkMsg[Loop][ENG] = NULL;
+		StkMsg[Loop][JPN] = NULL;
+		StkMsgSjis[Loop][ENG] = NULL;
+		StkMsgSjis[Loop][JPN] = NULL;
+	}
+}
+
 MessageProc::MessageProc()
 {
 	Mode = MessageProc::LOCALE_MODE_WIN32;
+	AllClear();
 
 	// =====================================================================================================
 	//1101 (NC2)
@@ -930,8 +942,8 @@ MessageProc::MessageProc()
 	Eng(SFW_130_140_6, _T("Support enabled for Windows 8, Windows Server 2012, Windows Server 2003 R2 and Windows Server 2008 R2."));
 
 	//9125 (★)
-	Jpn(SFW_140_150_1, _T("インストールファイルをMSIファイルに統合した。"));
-	Eng(SFW_140_150_1, _T("Installation files integrated into one MSI file."));
+	Jpn(SFW_140_150_1, _T("インストーラプログラムをひとつのMSIファイルに統合した。"));
+	Eng(SFW_140_150_1, _T("Installer program integrated into one MSI file."));
 
 	// =====================================================================================================
 }
