@@ -37,10 +37,16 @@ int MessageProc::GetLocale()
 
 void MessageProc::Eng(int Id, TCHAR* Msg)
 {
+	if (StkMsg[Id][ENG] != NULL) {
+		delete StkMsg[Id][ENG];
+	}
 	int WcBufLen = lstrlen(Msg);
 	StkMsg[Id][ENG] = new TCHAR[WcBufLen + 1];
 	lstrcpyn(StkMsg[Id][ENG], Msg, WcBufLen + 1);
 
+	if (StkMsgSjis[Id][ENG] != NULL) {
+		delete StkMsgSjis[Id][ENG];
+	}
 	int MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
 	StkMsgSjis[Id][ENG] = (BYTE*)new CHAR[MltBufLen];
 	if (WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)StkMsgSjis[Id][ENG], MltBufLen, NULL, NULL) != 0) {
@@ -50,10 +56,16 @@ void MessageProc::Eng(int Id, TCHAR* Msg)
 
 void MessageProc::Jpn(int Id, TCHAR* Msg)
 {
+	if (StkMsg[Id][JPN] != NULL) {
+		delete StkMsg[Id][JPN];
+	}
 	int WcBufLen = lstrlen(Msg);
 	StkMsg[Id][JPN] = new TCHAR[WcBufLen + 1];
 	lstrcpyn(StkMsg[Id][JPN], Msg, WcBufLen + 1);
 
+	if (StkMsgSjis[Id][JPN] != NULL) {
+		delete StkMsgSjis[Id][JPN];
+	}
 	int MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
 	StkMsgSjis[Id][JPN] = (BYTE*)new CHAR[MltBufLen];
 	if (WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)StkMsgSjis[Id][JPN], MltBufLen, NULL, NULL) != 0) {
@@ -1070,4 +1082,14 @@ int MessageProc::StkYesNo(int Id, TCHAR* Str, HWND WndHndl)
 	wsprintf(MsgBuf, _T("%s\r\n[%s]"),  GetMsg(Id), Str);
 	int Ret = MessageBox(WndHndl, MsgBuf, Buf, MB_YESNO | MB_ICONQUESTION);
 	return Ret;
+}
+
+void MessageProc::AddEng(int Id, TCHAR* Msg)
+{
+	Eng(Id, Msg);
+}
+
+void MessageProc::AddJpn(int Id, TCHAR* Msg)
+{
+	Jpn(Id, Msg);
 }
