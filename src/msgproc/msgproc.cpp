@@ -1086,10 +1086,16 @@ int MessageProc::StkYesNo(int Id, TCHAR* Str, HWND WndHndl)
 
 void MessageProc::AddEng(int Id, TCHAR* Msg)
 {
-	Eng(Id, Msg);
+	if (Instance == NULL) {
+		Instance = new MessageProc();
+	}
+	Instance->Eng(Id, Msg);
 }
 
 void MessageProc::AddJpn(int Id, TCHAR* Msg)
 {
-	Jpn(Id, Msg);
+	if (Instance == NULL) {
+		Instance = new MessageProc();
+	}
+	Instance->Jpn(Id, Msg);
 }

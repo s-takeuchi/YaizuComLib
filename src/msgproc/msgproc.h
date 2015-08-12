@@ -272,6 +272,6 @@ public:
 	static int StkYesNo(int, HWND);
 	static int StkYesNo(int, TCHAR*, HWND);
 
-	void AddEng(int, TCHAR*);
-	void AddJpn(int, TCHAR*);
+	static void AddEng(int, TCHAR*);
+	static void AddJpn(int, TCHAR*);
 };
