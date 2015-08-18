@@ -5,25 +5,11 @@
 class MessageProc
 {
 private:
-	static const int ENG = 0;
-	static const int JPN = 1;
-
-	static const int MAX_MSG_COUNT = 10000;
-
-	int Mode;
-
-	TCHAR* StkMsg[MAX_MSG_COUNT][2];
-	BYTE* StkMsgSjis[MAX_MSG_COUNT][2];
-
-	void Eng(int, TCHAR*);
-	void Jpn(int, TCHAR*);
-
-	void AllClear();
-
-	int GetLocale();
-
-	static MessageProc* Instance;
 	MessageProc();
+	virtual ~MessageProc();
+	static MessageProc* Instance;
+	class Impl;
+	Impl* pImpl;
 
 public:
 	static const int LBA_FIRSTINFO = 1101;
@@ -274,4 +260,5 @@ public:
 
 	static void AddEng(int, TCHAR*);
 	static void AddJpn(int, TCHAR*);
+
 };
