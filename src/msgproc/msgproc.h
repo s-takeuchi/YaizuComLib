@@ -209,6 +209,7 @@ public:
 	static const int CMDFRK_INFORMATION = 3240;
 	static const int CMDFRK_REFRESHTABLELIST = 3241;
 
+	/*
 	static const int SFW_100_1 = 9100;
 	static const int SFW_100_110_1 = 9101;
 	static const int SFW_100_110_2 = 9102;
@@ -235,6 +236,7 @@ public:
 	static const int SFW_130_140_5 = 9123;
 	static const int SFW_130_140_6 = 9124;
 	static const int SFW_140_150_1 = 9125;
+	*/
 
 	static const int LOCALE_MODE_WIN32 = 0;
 	static const int LOCALE_MODE_WEB = 1;

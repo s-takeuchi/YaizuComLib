@@ -875,6 +875,7 @@ MessageProc::MessageProc()
 	pImpl->Eng(CMDFRK_REFRESHTABLELIST, _T("Refresh Table List"));
 
 	// =====================================================================================================
+	/*
 	//9100 (NC2)
 	pImpl->Jpn(SFW_100_1, _T("StkFw 初期バージョンをリリースした。"));
 	pImpl->Eng(SFW_100_1, _T("StkFw initial version was released."));
@@ -979,6 +980,7 @@ MessageProc::MessageProc()
 	pImpl->Jpn(SFW_140_150_1, _T("インストーラプログラムをひとつのMSIファイルに統合した。"));
 	pImpl->Eng(SFW_140_150_1, _T("Installer program integrated into one MSI file."));
 
+	*/
 	// =====================================================================================================
 }
 
