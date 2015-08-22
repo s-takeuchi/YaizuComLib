@@ -12,12 +12,6 @@ private:
 	Impl* pImpl;
 
 public:
-	static const int LBA_FIRSTINFO = 1101;
-	static const int LBA_PROCCALLFAILED = 1102;
-	static const int LBA_ALREADYINSTALLED = 1103;
-	static const int LBA_NOTINSTALLED = 1104;
-	static const int LBA_OPECOMPLETED = 1105;
-
 	static const int VAR_SELECTEDNOTONE = 2201;
 	static const int VAR_AREYOUSUREDELETE = 2202;
 	static const int VAR_NOITEMSELECTED = 2203;

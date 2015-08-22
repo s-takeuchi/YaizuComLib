@@ -112,27 +112,6 @@ MessageProc::MessageProc()
 	pImpl->AllClear();
 
 	// =====================================================================================================
-	//1101 (NC2)
-	pImpl->Jpn(LBA_FIRSTINFO, _T("このプログラムはループバック・ネットワークアダプタをインストールまたは削除します。ネットワークの設定を変更したくない場合は Close ボタンをクリックしてください。"));
-	pImpl->Eng(LBA_FIRSTINFO, _T("This program will install (or remove) the loopback network adapter to/from your computer. If you do not want to change the network configuration, click Close."));
-
-	//1102 (NC2)
-	pImpl->Jpn(LBA_PROCCALLFAILED, _T("コマンドの実行に失敗しました。\r\nlbadpt32.exeまたはlbadpt64.exeがlbadpt.dllと同じフォルダに存在することを確認してください。"));
-	pImpl->Eng(LBA_PROCCALLFAILED, _T("Failed to execute command.\r\nCheck whether the command file [lbadpt32.exe or lbadpt64.exe] is located in the same folder as this program [lbadpt.dll]."));
-
-	//1103 (NC2)
-	pImpl->Jpn(LBA_ALREADYINSTALLED, _T("ループバックアダプタは既にインストールされています。"));
-	pImpl->Eng(LBA_ALREADYINSTALLED, _T("The loopback adapter is already installed."));
-
-	//1104 (NC2)
-	pImpl->Jpn(LBA_NOTINSTALLED, _T("ループバックアダプタはインストールされていません。"));
-	pImpl->Eng(LBA_NOTINSTALLED, _T("The loopback adapter is not installed."));
-
-	//1105 (NC2)
-	pImpl->Jpn(LBA_OPECOMPLETED, _T("操作は完了しました。"));
-	pImpl->Eng(LBA_OPECOMPLETED, _T("The operation has completed."));
-
-	// =====================================================================================================
 	//2201 (NC2)
 	pImpl->Jpn(VAR_SELECTEDNOTONE, _T("変数が指定されていないか，2つ以上の変数が指定されました。\r\n1つの変数のみ指定可能です。"));
 	pImpl->Eng(VAR_SELECTEDNOTONE, _T("No variable or more than one variable has been specified.\r\nOnly one variable may be specified."));
