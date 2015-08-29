@@ -12,31 +12,6 @@ private:
 	Impl* pImpl;
 
 public:
-	static const int STKFW_LOG_TITLE = 2400;
-	static const int STKFW_LOG_START = 2401;
-	static const int STKFW_LOG_STOP = 2402;
-	static const int STKFW_LOG_SUCCESSCSC = 2403;
-	static const int STKFW_LOG_SUCCESSCSBNLS = 2404;
-	static const int STKFW_LOG_SOCKCLOSE = 2405;
-	static const int STKFW_LOG_ACPTRECV = 2406;
-	static const int STKFW_LOG_CNCTRECV = 2407;
-	static const int STKFW_LOG_ACPTSEND = 2408;
-	static const int STKFW_LOG_CNCTSEND = 2409;
-	static const int STKFW_LOG_SENDERROR = 2410;
-	static const int STKFW_LOG_RECVERROR = 2411;
-	static const int STKFW_LOG_NAMESOLVEERR = 2412;
-	static const int STKFW_LOG_CONNERROR = 2413;
-	static const int STKFW_LOG_BINDLISTENERR = 2414;
-	static const int STKFW_LOG_CREATEACCEPTSOCK = 2415;
-	static const int STKFW_LOG_CLOSEACCEPTSOCK = 2416;
-	static const int STKFW_LOG_CLOSELISTENACCEPTSOCK = 2417;
-	static const int STKFW_LOG_BINDERR = 2418;
-	static const int STKFW_LOG_SUCCESSCSBN = 2419;
-	static const int STKFW_LOG_UDPRECV = 2420;
-	static const int STKFW_LOG_UDPSEND = 2421;
-	static const int STKFW_LOG_SUCCESSCS = 2422;
-	static const int STKFW_LOG_UDPSOCKCLOSE = 2423;
-
 	static const int UNKNOWNERROR = 2901;
 	static const int FILEACCESSERROR = 2902;
 	static const int NEEDADMINRIGHTS = 2903;
