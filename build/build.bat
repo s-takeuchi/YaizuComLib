@@ -5,6 +5,7 @@ set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\deven
 set WKHTMLTOPDF="C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
 set PDFTK="C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
 set SEVENZIP="C:\Program Files\7-Zip\7z.exe"
+set LCOUNTER="C:\Program Files (x86)\lcounter\lcounter.exe"
 
 echo;
 echo =========================================
@@ -17,11 +18,13 @@ echo (1) Microsoft Visual Studio 2008 Professional Edition
 echo (2) wkhtmltopdf 0.12.0.3
 echo (3) PDFtk Server 2.02
 echo (4) 7-Zip 9.20
+echo (5) Line Counter
 
 if not exist %DEVENV% exit
 if not exist %WKHTMLTOPDF% exit
 if not exist %PDFTK% exit
 if not exist %SEVENZIP% exit
+if not exist %LCOUNTER% exit
 
 echo;
 echo Building process for YaizuComLib has started.
@@ -164,6 +167,8 @@ echo ---------------------------------------
 ..\test\commonfunctest\release\commonfunctest.exe
 
 
+echo;
+%LCOUNTER% ..\src /subdir
 echo;
 echo Building process for YaizuComLib has ended.
 echo;
