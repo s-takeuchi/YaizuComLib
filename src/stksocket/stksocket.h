@@ -35,6 +35,7 @@
 #define STKSOCKET_LOG_UDPSEND           1018
 #define STKSOCKET_LOG_SUCCESSCS         1019 // Success Create-Socket
 #define STKSOCKET_LOG_UDPSOCKCLOSE      1020
+#define STKSOCKET_LOG_SOCKETINFO        1021 // For debugging purpose only
 
 int StkSocket_AddInfo(int, int, int, TCHAR[256], int);
 int StkSocket_DeleteInfo(int);
@@ -56,5 +57,6 @@ int StkSocket_SendUdp(int, int, BYTE*, int);
 int StkSocket_GetUdpMaxMessageSize(int);
 
 void StkSocket_TakeLastLog(int*, int*, TCHAR*, TCHAR*, int*, int*);
+void StkSocket_TakeFirstLog(int*, int*, TCHAR*, TCHAR*, int*, int*);
 int StkSocket_GetNumOfLogs();
 void StkSocket_ClearLog();

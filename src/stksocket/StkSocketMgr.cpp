@@ -57,6 +57,21 @@ void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, TCHAR* TmpLogParamStr1, TCHA
 	LeaveCriticalSection(&Cs4Log);
 }
 
+void StkSocketMgr::PutLogForSockInfo(int Id)
+{
+	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
+		if (SocketInfo[Loop].ElementId == Id) {
+			TCHAR TmpBuf[128];
+			wsprintf(TmpBuf, _T("ID=%d, SockType=%s, Status=%d"), 
+				Id,
+				(SocketInfo[Loop].SocketType == SOCKTYPE_STREAM)? _T("Stream") : _T("Dgram"),
+				SocketInfo[Loop].Status
+			);
+			PutLog(LOG_SOCKETINFO, Id, TmpBuf, NULL, 0, 0);
+		}
+	}
+}
+
 void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
 {
 	if (NumOfLogs <= 0) {
@@ -83,6 +98,43 @@ void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr
 	lstrcpy(LogParamStr2[NumOfLogs], _T(""));
 	LogParamInt1[NumOfLogs] = 0;
 	LogParamInt2[NumOfLogs] = 0;
+	LeaveCriticalSection(&Cs4Log);
+}
+
+void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
+{
+	if (NumOfLogs <= 0) {
+		*TmpLog = 0;
+		*TmpLogId = 0;
+		*TmpLogParamStr1 = NULL;
+		*TmpLogParamStr2 = NULL;
+		*TmpLogParamInt1 = 0;
+		*TmpLogParamInt2 = 0;
+		return;
+	}
+	EnterCriticalSection(&Cs4Log);
+	*TmpLog = Log[0];
+	*TmpLogId = LogId[0];
+	lstrcpyn(TmpLogParamStr1, LogParamStr1[0], 256);
+	lstrcpyn(TmpLogParamStr2, LogParamStr2[0], 256);
+	*TmpLogParamInt1 = LogParamInt1[0];
+	*TmpLogParamInt2 = LogParamInt2[0];
+
+	for (int Loop = 0; Loop < NumOfLogs; Loop++) {
+		Log[Loop] = Log[Loop + 1];
+		LogId[Loop] = LogId[Loop + 1];
+		lstrcpy(LogParamStr1[Loop], LogParamStr1[Loop + 1]);
+		lstrcpy(LogParamStr2[Loop], LogParamStr2[Loop + 1]);
+		LogParamInt1[Loop] = LogParamInt1[Loop + 1];
+		LogParamInt2[Loop] = LogParamInt2[Loop + 1];
+	}
+	Log[NumOfLogs] = 0;
+	LogId[NumOfLogs] = 0;
+	lstrcpy(LogParamStr1[NumOfLogs], _T(""));
+	lstrcpy(LogParamStr2[NumOfLogs], _T(""));
+	LogParamInt1[NumOfLogs] = 0;
+	LogParamInt2[NumOfLogs] = 0;
+	NumOfLogs--;
 	LeaveCriticalSection(&Cs4Log);
 }
 
@@ -339,6 +391,7 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, BOOL WaitForPeerClose)
 				PutLog(LOG_UDPSOCKCLOSE, LogId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
 			} else {
 				PutLog(LOG_SOCKCLOSE, LogId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+				PutLogForSockInfo(LogId);
 			}
 			break;
 		}
@@ -505,6 +558,7 @@ int StkSocketMgr::CloseSocket(int TargetId, BOOL WaitForPeerClose)
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 				if (AcceptSockFnd == FALSE) {
 					PutLog(LOG_SOCKCLOSE, TargetId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+					PutLogForSockInfo(TargetId);
 				} else {
 					PutLog(LOG_CLOSEACCLISNSOCK, TargetId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
 				}

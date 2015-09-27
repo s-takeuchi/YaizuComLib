@@ -80,6 +80,11 @@ void StkSocket_TakeLastLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, T
 	return StkSocketMgr::GetInstance()->TakeLastLog(TmpLog, TmpLogId, TmpLogParamStr1, TmpLogParamStr2, TmpLogParamInt1, TmpLogParamInt2);
 }
 
+void StkSocket_TakeFirstLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
+{
+	return StkSocketMgr::GetInstance()->TakeFirstLog(TmpLog, TmpLogId, TmpLogParamStr1, TmpLogParamStr2, TmpLogParamInt1, TmpLogParamInt2);
+}
+
 int StkSocket_GetNumOfLogs()
 {
 	return StkSocketMgr::GetInstance()->GetNumOfLogs();
