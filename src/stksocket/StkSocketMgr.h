@@ -41,7 +41,6 @@ private:
 
 	// Logging method
 	void PutLog(int, int, TCHAR*, TCHAR*, int, int);
-	void PutLogForSockInfo(int);
 
 	// Safe socket close
 	void CloseSocketWaitForPeerClose(SOCKET);
@@ -74,7 +73,6 @@ public:
 	static const int LOG_UDPSEND          = 1018;
 	static const int LOG_SUCCESSCS        = 1019; // Success Create-Socket
 	static const int LOG_UDPSOCKCLOSE     = 1020;
-	static const int LOG_SOCKETINFO       = 1021; // For debugging purpose only
 
 	// Get this instance
 	static StkSocketMgr* GetInstance();
