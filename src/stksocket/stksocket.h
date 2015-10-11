@@ -38,6 +38,7 @@
 
 int StkSocket_AddInfo(int, int, int, TCHAR[256], int);
 int StkSocket_DeleteInfo(int);
+int StkSocket_GetInfo(int, int*, int*, int*, TCHAR[256], int*, BOOL*);
 int StkSocket_CopyInfo(int, int);
 int StkSocket_GetNumOfStkInfos();
 int StkSocket_GetStatus(int);

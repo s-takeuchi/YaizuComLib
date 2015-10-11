@@ -89,6 +89,8 @@ public:
 	int CopySocketInfo(int, int);
 	// Delete socket information
 	int DeleteSocketInfo(int);
+	// Get socket information
+	int GetSocketInfo(int, int*, int*, int*, TCHAR[256], int*, BOOL*);
 
 	// Socket open/close
 	int OpenSocket(int);
