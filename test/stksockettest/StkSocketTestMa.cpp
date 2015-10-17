@@ -210,4 +210,7 @@ void StkSocketTestMa::TestMultiAccept2()
 	StkSocket_DeleteInfo(121);
 	StkSocket_DeleteInfo(122);
 	StkSocket_DeleteInfo(123);
+	StkSocket_DeleteInfo(201);
+	StkSocket_DeleteInfo(202);
+	StkSocket_DeleteInfo(203);
 }

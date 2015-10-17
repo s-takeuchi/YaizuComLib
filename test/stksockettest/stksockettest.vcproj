@@ -179,6 +179,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StkSocketTestGetSockInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkSocketTestGetSockInfo.h"
+				>
+			</File>
+			<File
 				RelativePath=".\StkSocketTestMa.cpp"
 				>
 			</File>

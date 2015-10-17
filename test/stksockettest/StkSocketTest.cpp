@@ -5,6 +5,7 @@
 #include <shlwapi.h>
 #include "..\..\src\stksocket\stksocket.h"
 #include "StkSocketTestMa.h"
+#include "StkSocketTestGetSockInfo.h"
 
 BOOL FinishFlag = FALSE;
 int FindFlagCounter = 0;
@@ -105,9 +106,36 @@ int OpenClosePort()
 
 	printf("[OpenSocket()/CloseSocket()] : Open and close using same port. Check open and close operation are successfully end...");
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	if (StkSocket_GetNumOfStkInfos() != 1) {
+		printf("NG (Number of Socket Info is invalid.)\r\n");
+		return -1;
+	}
+	{
+		int TargetId;
+		int SockType;
+		int ActionType;
+		TCHAR TargetAddr[256];
+		int TargetPort;
+		BOOL CopiedFlag;
+
+		StkSocket_GetInfo(0, &TargetId, &SockType, &ActionType, TargetAddr, &TargetPort, &CopiedFlag);
+		if (TargetId != 0 ||
+			SockType != STKSOCKET_TYPE_STREAM ||
+			ActionType != STKSOCKET_ACTIONTYPE_RECEIVER ||
+			lstrcmp(TargetAddr, _T("127.0.0.1")) != 0 ||
+			TargetPort != 2001 ||
+			CopiedFlag != FALSE) {
+			printf("NG (Acquired socket information is not matched.)\r\n");
+			return -1;
+		}
+	}
 	StkSocket_Open(0);
 	StkSocket_Close(0, TRUE);
 	StkSocket_DeleteInfo(0);
+	if (StkSocket_GetNumOfStkInfos() != 0) {
+		printf("NG (Number of Socket Info is invalid. (not zero))\r\n");
+		return -1;
+	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SOCKCLOSE) {
 		printf("NG\r\n");
@@ -693,6 +721,29 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 	StkSocket_AddInfo(30, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2003);
 	StkSocket_Open(0);
 
+	if (StkSocket_GetNumOfStkInfos() < 3) {
+		printf("[Recv/Send for UDP] : Number of socket info is invalid...NG\r\n");
+		exit(-1);
+	}
+	{
+		int TargetId;
+		int SockType;
+		int ActionType;
+		TCHAR TargetAddr[256];
+		int TargetPort;
+		BOOL CopiedFlag;
+
+		for (int Loop = 0; Loop < StkSocket_GetNumOfStkInfos(); Loop++) {
+			StkSocket_GetInfo(0, &TargetId, &SockType, &ActionType, TargetAddr, &TargetPort, &CopiedFlag);
+			if (SockType != STKSOCKET_TYPE_DGRAM ||
+				lstrcmp(TargetAddr, _T("127.0.0.1")) != 0 ||
+				CopiedFlag != FALSE) {
+				printf("[Recv/Send for UDP] : NG (Acquired socket information is invalid.)\r\n");
+				return -1;
+			}
+		}
+	}
+
 	BYTE Buffer[10000]; 
 	while (TRUE) {
 		int Ret = StkSocket_ReceiveUdp(0, 0, Buffer, 10000);
@@ -1096,6 +1147,11 @@ int main(int Argc, char* Argv[])
 	TestMultiAccept1();
 	StkSocketTestMa objStkSocketTestMa;
 	objStkSocketTestMa.TestMultiAccept2();
+
+	StkSocketTestGetSockInfo objStkSocketGetSockInfo;
+	if (objStkSocketGetSockInfo.TestAddDel() != 0) {
+		return -1;
+	}
 
 	printf("Test completed\r\n");
 
