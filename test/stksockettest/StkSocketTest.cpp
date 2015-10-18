@@ -425,6 +425,50 @@ int GenerateLogs()
 	printf("OK\r\n");
 
 
+	printf("[Logging] : Call TakeFirstLog() but empty log is returned...");
+	StkSocket_TakeFirstLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+	if (Msg != NULL) {
+		printf("NG\r\n");
+		return -1;
+	}
+	printf("OK\r\n");
+
+
+	printf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each...");
+	for (int Loop = 0; Loop < 40; Loop++) {
+		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), Loop + 2000);
+		StkSocket_Open(Loop);
+	}
+	for (int Loop = 0; Loop < 40; Loop++) {
+		StkSocket_Close(Loop, TRUE);
+		StkSocket_DeleteInfo(Loop);
+	}
+	if (StkSocket_GetNumOfLogs() != STKSOCKET_MAX_NUM_OF_LOG) {
+		printf("NG %d\r\n", StkSocket_GetNumOfLogs());
+		return -1;
+	}
+	printf("OK\r\n");
+
+
+	printf("[Logging] : Take log using TakeFirstLog method in 20 times. Check the log messages taken are STKSOCKET_LOG_SUCCESSCSBNLS...");
+	for (int Loop = 0; Loop < 20; Loop++) {
+		StkSocket_TakeFirstLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		if (Msg != STKSOCKET_LOG_SUCCESSCSBNLS) {
+			printf("NG\r\n");
+			return -1;
+		}
+	}
+	printf("OK\r\n");
+
+
+	printf("[Logging] : After taking 20 log messages, number of the left log messages is 44...");
+	if (StkSocket_GetNumOfLogs() != 44) {
+		printf("NG\r\n");
+		return -1;
+	}
+	printf("OK\r\n");
+
+
 	return 0;
 }
 

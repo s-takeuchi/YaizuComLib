@@ -113,13 +113,13 @@ void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamSt
 		LogParamInt1[Loop] = LogParamInt1[Loop + 1];
 		LogParamInt2[Loop] = LogParamInt2[Loop + 1];
 	}
+	NumOfLogs--;
 	Log[NumOfLogs] = 0;
 	LogId[NumOfLogs] = 0;
 	lstrcpy(LogParamStr1[NumOfLogs], _T(""));
 	lstrcpy(LogParamStr2[NumOfLogs], _T(""));
 	LogParamInt1[NumOfLogs] = 0;
 	LogParamInt2[NumOfLogs] = 0;
-	NumOfLogs--;
 	LeaveCriticalSection(&Cs4Log);
 }
 
