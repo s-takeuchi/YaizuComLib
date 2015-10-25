@@ -39,5 +39,7 @@ struct StkSocketInfo
 
 	// Flag which shows whether this socket is copied socket or not.
 	BOOL CopiedSocketFlag;
+	// If CopiedSocketFlag is true, Element ID of copy source is set. Otherwise -1 is set.
+	int CopySourceId;
 
 };

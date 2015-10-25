@@ -174,6 +174,7 @@ int StkSocketMgr::AddSocketInfo(int TargetId, int SockType, int ActionType, TCHA
 	SocketInfo[NumOfSocketInfo].Sock = NULL;
 	SocketInfo[NumOfSocketInfo].AcceptedSock = NULL;
 	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = FALSE;
+	SocketInfo[NumOfSocketInfo].CopySourceId = -1;
 	lstrcpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, TargetAddr);
 	NumOfSocketInfo++;
 
@@ -227,6 +228,7 @@ int StkSocketMgr::CopySocketInfo(int NewId, int ExistingId)
 	SocketInfo[NumOfSocketInfo].Sock = SocketInfo[FndIndex].Sock;
 	SocketInfo[NumOfSocketInfo].AcceptedSock = NULL;
 	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = TRUE;
+	SocketInfo[NumOfSocketInfo].CopySourceId = ExistingId;
 	lstrcpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, SocketInfo[FndIndex].HostOrIpAddr);
 	NumOfSocketInfo++;
 
@@ -267,6 +269,7 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 		SocketInfo[Loop].Sock = SocketInfo[NumOfSocketInfo - 1].Sock;
 		SocketInfo[Loop].AcceptedSock = SocketInfo[NumOfSocketInfo - 1].AcceptedSock;
 		SocketInfo[Loop].CopiedSocketFlag = SocketInfo[NumOfSocketInfo - 1].CopiedSocketFlag;
+		SocketInfo[Loop].CopySourceId = SocketInfo[NumOfSocketInfo - 1].CopySourceId;
 		lstrcpy(SocketInfo[Loop].HostOrIpAddr, SocketInfo[NumOfSocketInfo - 1].HostOrIpAddr);
 		memcpy(&SocketInfo[Loop].LastAccessedAddr, &SocketInfo[NumOfSocketInfo - 1].LastAccessedAddr, sizeof(sockaddr_in));
 	}
