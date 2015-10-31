@@ -110,13 +110,11 @@ int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, 
 ソケット情報をコピーします。<br>
 ひとつのLISTEN用ソケットをもとに，複数のACCEPT用ソケットをオープンする場合，本メソッドを用いて
 LISTEN用ソケット情報をコピーしたあと，StkSocket_AcceptでACCEPT用ソケットをオープンしてください。<br>
-コピー元のソケット情報は，STKSOCKET_TYPE_STREAMで且つSTKSOCKET_ACTIONTYPE_RECEIVER
-を指定してオープンされたものである必要があります。<br>
+コピー元のソケット情報は，STKSOCKET_TYPE_STREAMで且つSTKSOCKET_ACTIONTYPE_RECEIVERである必要があります。<br>
 以下に示す項目の何れかと合致する場合，本メソッドは-1を返します。<br>
 <ul>
 <li>NewId と関連付くソケット情報がすでに存在している場合
 <li>ExistingIdと関連付くソケット情報が存在しない場合
-<li>ExistingIdで関連付くソケットの状態がSTKSOCKET_STATUS_CLOSEの場合
 <li>ExistingIdで関連付くソケットがSTKSOCKET_TYPE_STREAMで且つSTKSOCKET_ACTIONTYPE_RECEIVERでない場合
 <li>ExistingIdで関連付くソケットがStkSocket_CopyInfoを使って生成されている場合
 <li>ソケット情報がすでに最大件数登録されている場合
@@ -167,7 +165,26 @@ int StkSocket_GetNumOfStkInfos()
 動作種別がSTKSOCKET_ACTIONTYPE_RECEIVERでないとき(STKSOCKET_ACTIONTYPE_SENDERのとき)は，何も処理をせず戻り値=0を返します。<br>
 プロトコルがTCP(STKSOCKET_TYPE_STREAM SOCK_STREAM)の場合，本APIの内部処理として，BINDおよびLISTENを実行します。
 プロトコルがUDP(STKSOCKET_TYPE_DGRAM  SOCK_DGRAM)の場合，本APIの内部処理として，BINDを実行します。<br>
-対象のソケット情報がSTKSOCKET_TYPE_STREAM且つSTKSOCKET_ACTIONTYPE_RECEIVER且つStkSocket_CopyInfoで生成されている場合，-1を返します。<br>
+対象のソケット情報がSTKSOCKET_TYPE_STREAM且つSTKSOCKET_ACTIONTYPE_RECEIVER且つStkSocket_CopyInfoで生成されている場合，ソケット情報の状態のみをSTKSOCKET_STATUS_OPENに遷移させます。<br>
+<div class="topic">
+<table class="tblstyle">
+<tr><td></td><td>AddInfoで登録したソケットを指定してオープン</td><td>CopyInfoで登録したソケットを指定してオープン</td></tr>
+<tr><td>指定したソケットの状態遷移</td>
+<td><center>STKSOCKET_STATUS_CLOSE<br>↓<br>Listenソケットをオープン<br>↓<br>STKSOCKET_STATUS_OPEN</center></td>
+<td><center>STKSOCKET_STATUS_CLOSE<br>↓<br>STKSOCKET_STATUS_OPEN</center></td>
+</tr>
+<tr><td>指定と関連するソケット(CopyInfoで登録した子ソケット)の状態遷移</td>
+<td><center>STKSOCKET_STATUS_CLOSE<br>↓<br>STKSOCKET_STATUS_OPEN</center></td>
+<td><center>-</center></td>
+</tr>
+<tr><td>指定と関連するソケット(AddInfoで登録した親ソケット)の状態遷移</td>
+<td><center>-</center></td>
+<td><center>状態遷移なし</center></td>
+</tr>
+</td></tr>
+</table>
+</div>
+<p>
 また，LISTENソケットのオプションとして下記の固定値が設定されます。<p>
 SO_REUSEADDR = yes<br>
 SO_RCVTIMEO = 10,000ms<br>
@@ -204,7 +221,25 @@ int StkSocket_Open(int TargetId)
 対象がStkSocket_AddInfoで生成したソケット情報の場合，当該ソケットと関連するStkSocket_CopyInfoで生成した
 ソケット情報についても，ACCEPT用ソケットをクローズします(StkSocket_CopyInfoで生成したソケット情報の状態はSTKSOCKET_STATUS_CLOSEに遷移します)。<br>
 対象がStkSocket_CopyInfoでコピーしたソケット情報の場合，ACCEPT用ソケットのクローズのみ行い，LISTEN用ソケットはクローズしません
-(StkSocket_CopyInfoで生成したソケット情報の状態はSTKSOCKET_STATUS_CLOSEに遷移します)。
+(StkSocket_CopyInfoで生成したソケット情報の状態はSTKSOCKET_STATUS_CLOSEに遷移します)。<br>
+<div class="topic">
+<table class="tblstyle">
+<tr><td></td><td>AddInfoで登録したソケットを指定してクローズ</td><td>CopyInfoで登録したソケットを指定してクローズ</td></tr>
+<tr><td>指定したソケットの状態遷移</td>
+<td><center>STKSOCKET_STATUS_ACCEPT<br>↓<br>Acceptソケットをクローズ<br>↓<br>STKSOCKET_STATUS_OPEN<br>↓<br>Listenソケットをクローズ<br>↓<br>STKSOCKET_STATUS_CLOSE</center></td>
+<td><center>STKSOCKET_STATUS_ACCEPT<br>↓<br>Acceptソケットをクローズ<br>↓<br>STKSOCKET_STATUS_OPEN<br>↓<br>STKSOCKET_STATUS_CLOSE</center></td>
+</tr>
+<tr><td>指定と関連するソケット(CopyInfoで登録した子ソケット)の状態遷移</td>
+<td><center>STKSOCKET_STATUS_ACCEPT<br>↓<br>Acceptソケットをクローズ<br>↓<br>STKSOCKET_STATUS_OPEN<br>↓<br>STKSOCKET_STATUS_CLOSE</center></td>
+<td><center>-</center></td>
+</tr>
+<tr><td>指定と関連するソケット(AddInfoで登録した親ソケット)の状態遷移</td>
+<td><center>-</center></td>
+<td><center>状態遷移なし</center></td>
+</tr>
+</td></tr>
+</table>
+</div>
 <p>
 <u>シグネチャ</u>
 <div class="topic">

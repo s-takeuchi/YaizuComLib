@@ -211,10 +211,6 @@ int StkSocketMgr::CopySocketInfo(int NewId, int ExistingId)
 	if (SocketInfo[FndIndex].ActionType != StkSocketMgr::ACTIONTYPE_RECEIVER) {
 		return -1;
 	}
-	// Check the original socket status is closing.
-	if (SocketInfo[FndIndex].Status == StkSocketInfo::STATUS_CLOSE) {
-		return -1;
-	}
 	// Check the original socket is copied socket.
 	if (SocketInfo[FndIndex].CopiedSocketFlag == TRUE) {
 		return -1;
@@ -223,7 +219,11 @@ int StkSocketMgr::CopySocketInfo(int NewId, int ExistingId)
 	SocketInfo[NumOfSocketInfo].SocketType = SocketInfo[FndIndex].SocketType;
 	SocketInfo[NumOfSocketInfo].ActionType = SocketInfo[FndIndex].ActionType;
 	SocketInfo[NumOfSocketInfo].ElementId = NewId;
-	SocketInfo[NumOfSocketInfo].Status = StkSocketInfo::STATUS_OPEN;
+	if (SocketInfo[FndIndex].Status == StkSocketInfo::STATUS_CLOSE) {
+		SocketInfo[NumOfSocketInfo].Status = StkSocketInfo::STATUS_CLOSE;
+	} else {
+		SocketInfo[NumOfSocketInfo].Status = StkSocketInfo::STATUS_OPEN;
+	}
 	SocketInfo[NumOfSocketInfo].Port = SocketInfo[FndIndex].Port;
 	SocketInfo[NumOfSocketInfo].Sock = SocketInfo[FndIndex].Sock;
 	SocketInfo[NumOfSocketInfo].AcceptedSock = NULL;
@@ -411,11 +411,12 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				SocketInfo[Loop].SocketType != StkSocketMgr::SOCKTYPE_DGRAM) {
 				return -1;
 			}
-			// If the SocketInfo is created by StkSocket_CopyInfo, -1 is returned.
+			// If the SocketInfo is created by StkSocket_CopyInfo, -1 only status is changed.
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM &&
 				SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER &&
 				SocketInfo[Loop].CopiedSocketFlag == TRUE) {
-					return -1;
+				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
+				return 0;
 			}
 			// Receiverの場合
 			if (SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER) {
@@ -459,6 +460,16 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				}
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 
+				// Change the status of copied socket information
+				if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
+					for (int CpyLoop = 0; CpyLoop < NumOfSocketInfo; CpyLoop++) {
+						if (SocketInfo[CpyLoop].CopiedSocketFlag == TRUE && SocketInfo[CpyLoop].CopySourceId == TargetId) {
+							SocketInfo[CpyLoop].Status = StkSocketInfo::STATUS_OPEN;
+							SocketInfo[CpyLoop].Sock = SocketInfo[Loop].Sock;
+						}
+					}
+				}
+
 				// For avoiding bind failuer "Address in use"
 				BOOL Yes = 1;
 				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&Yes, sizeof(BOOL));
@@ -499,7 +510,6 @@ int StkSocketMgr::CloseSocket(int TargetId, BOOL WaitForPeerClose)
 		}
 	}
 
-	// 最後のスレッドの終了時に全ソケットをクローズする
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		// If the type is neither TCP and UDP...
 		if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
@@ -550,7 +560,6 @@ int StkSocketMgr::CloseSocket(int TargetId, BOOL WaitForPeerClose)
 				// Closing procedure for 'copied' StkSocket.
 				SocketInfo[Loop].Sock = NULL;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
-				SocketInfo[Loop].CopiedSocketFlag = FALSE;
 			}
 			if (CondC3) {
 				// If the socket information is not copied, closesocke() is called.

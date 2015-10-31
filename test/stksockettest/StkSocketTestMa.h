@@ -16,4 +16,5 @@ private:
 
 public:
 	void TestMultiAccept2();
+	void TestMultiAccept3();
 };

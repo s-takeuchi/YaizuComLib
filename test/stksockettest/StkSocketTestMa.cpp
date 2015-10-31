@@ -214,3 +214,83 @@ void StkSocketTestMa::TestMultiAccept2()
 	StkSocket_DeleteInfo(202);
 	StkSocket_DeleteInfo(203);
 }
+
+void StkSocketTestMa::TestMultiAccept3()
+{
+	printf("[StkSocketTestMa::TestMultiAccept3] : Create/Copy socket --> Status validation [close] ... ");
+	StkSocket_AddInfo(121, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2202);
+	StkSocket_CopyInfo(122, 121);
+	StkSocket_CopyInfo(123, 121);
+	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
+		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
+		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
+			printf("NG\r\n");
+			exit(-1);
+	}
+	printf("OK\r\n");
+
+	printf("[StkSocketTestMa::TestMultiAccept3] : Check the copied sockets are also opened after source socket opened ... ");
+	StkSocket_Open(121);
+	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN ||
+		StkSocket_GetStatus(122) != STKSOCKET_STATUS_OPEN ||
+		StkSocket_GetStatus(123) != STKSOCKET_STATUS_OPEN) {
+			printf("NG\r\n");
+			exit(-1);
+	}
+	printf("OK\r\n");
+
+	printf("[StkSocketTestMa::TestMultiAccept3] : Check the copied sockets are also closed after source socket closed ... ");
+	StkSocket_Close(121, TRUE);
+	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
+		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
+		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
+			printf("NG\r\n");
+			exit(-1);
+	}
+	printf("OK\r\n");
+
+	printf("[StkSocketTestMa::TestMultiAccept3] : Check only copied socket is opened. Source socket is closed ... ");
+	StkSocket_Open(122);
+	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
+		StkSocket_GetStatus(122) != STKSOCKET_STATUS_OPEN ||
+		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
+			printf("NG\r\n");
+			exit(-1);
+	}
+	printf("OK\r\n");
+
+	printf("[StkSocketTestMa::TestMultiAccept3] : Check all copied socket is opened after source socket is opend ... ");
+	StkSocket_Open(121);
+	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN ||
+		StkSocket_GetStatus(122) != STKSOCKET_STATUS_OPEN ||
+		StkSocket_GetStatus(123) != STKSOCKET_STATUS_OPEN) {
+			printf("NG\r\n");
+			exit(-1);
+	}
+	printf("OK\r\n");
+
+	printf("[StkSocketTestMa::TestMultiAccept3] : Check only copied socket is closed ... ");
+	StkSocket_Close(122, TRUE);
+	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN ||
+		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
+		StkSocket_GetStatus(123) != STKSOCKET_STATUS_OPEN) {
+			printf("NG\r\n");
+			exit(-1);
+	}
+	printf("OK\r\n");
+
+	printf("[StkSocketTestMa::TestMultiAccept3] : Check all copied socket is closed after source socket is closed ... ");
+	StkSocket_Close(121, TRUE);
+	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
+		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
+		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
+			printf("NG\r\n");
+			exit(-1);
+	}
+	printf("OK\r\n");
+
+	StkSocket_DeleteInfo(121);
+	StkSocket_DeleteInfo(122);
+	StkSocket_DeleteInfo(123);
+
+}

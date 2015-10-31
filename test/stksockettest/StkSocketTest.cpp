@@ -1033,18 +1033,26 @@ DWORD WINAPI TestThreadForAcceptSend3(LPVOID Param)
 void TestThreadForAcceptSendRecv()
 {
 	StkSocket_AddInfo(101, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
-	if (StkSocket_CopyInfo(102, 101) == -1) {
-		printf("[Multi accepts] : Failed to CopySocketInfo execution ... OK\r\n");
+	if (StkSocket_CopyInfo(102, 101) != -1) {
+		printf("[Multi accepts] : CopySocketInfo successed ... OK\r\n");
 	} else {
-		printf("[Multi accepts] : Invalid execution of CopySocketInfo ... NG\r\n");
+		printf("[Multi accepts] : Failed to CopySocketInfo execution ... NG\r\n");
 		exit(-1);
 	}
+	if (StkSocket_GetNumOfStkInfos() == 2) {
+		printf("[Multi accepts] : The number of StkInfo is two ... OK\r\n");
+	} else {
+		printf("[Multi accepts] : The number of StkInfo is not two ... NG\r\n");
+		exit(-1);
+	}
+	StkSocket_DeleteInfo(102);
 	if (StkSocket_GetNumOfStkInfos() == 1) {
-		printf("[Multi accepts] : The number of StkInfo is one ... OK\r\n");
+		printf("[Multi accepts] : After deleting StkSock, the number of StkInfo is one ... OK\r\n");
 	} else {
-		printf("[Multi accepts] : The number of StkInfo is not one ... NG\r\n");
+		printf("[Multi accepts] : After deleting StkSock, the number of StkInfo is not two ... NG\r\n");
 		exit(-1);
 	}
+
 	StkSocket_Open(101);
 	if (StkSocket_CopyInfo(102, 101) != 0) {
 		printf("[Multi accepts] : Invalid return code detected ... NG\r\n");
@@ -1087,16 +1095,18 @@ void TestThreadForAcceptSendRecv()
 	}
 	Sleep(1000);
 
+	printf("[Multi accepts] : Try StkSocket_CopyInfo() after source socket closure with StkSocket_Close() ... ");
 	StkSocket_Close(101, TRUE);
-	if (StkSocket_CopyInfo(104, 101) == -1) {
-		printf("[Multi accepts] : Failed to CopySocketInfo execution after socket closure ... OK\r\n");
+	if (StkSocket_CopyInfo(104, 101) != -1) {
+		printf("OK\r\n");
 	} else {
-		printf("[Multi accepts] : Invalid execution of CopySocketInfo after socket closure ... NG\r\n");
+		printf("NG\r\n");
 		exit(-1);
 	}
 	StkSocket_DeleteInfo(101);
 	StkSocket_DeleteInfo(102);
 	StkSocket_DeleteInfo(103);
+	StkSocket_DeleteInfo(104);
 	StkSocket_DeleteInfo(201);
 	StkSocket_DeleteInfo(202);
 	StkSocket_DeleteInfo(203);
@@ -1211,6 +1221,7 @@ int main(int Argc, char* Argv[])
 	TestMultiAccept1();
 	StkSocketTestMa objStkSocketTestMa;
 	objStkSocketTestMa.TestMultiAccept2();
+	objStkSocketTestMa.TestMultiAccept3();
 
 	StkSocketTestGetSockInfo objStkSocketGetSockInfo;
 	if (objStkSocketGetSockInfo.TestAddDel() != 0) {
