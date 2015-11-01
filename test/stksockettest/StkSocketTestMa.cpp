@@ -136,6 +136,8 @@ void StkSocketTestMa::TestMultiAccept2()
 	StkSocket_AddInfo(203, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
 	StkSocket_Open(203);
 
+	ThreadStartCount = 0;
+	ThreadEndCount = 0;
 	DWORD TmpId;
 	CreateThread(NULL, 0, &TestThreadForAccept2Recv1, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadForAccept2Recv2, NULL, 0, &TmpId);
@@ -269,11 +271,58 @@ void StkSocketTestMa::TestMultiAccept3()
 	}
 	printf("OK\r\n");
 
+	printf("[StkSocketTestMa::TestMultiAccept3] : Run threads ... ");
+	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
+	StkSocket_Open(201);
+	StkSocket_AddInfo(202, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
+	StkSocket_Open(202);
+	StkSocket_AddInfo(203, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
+	StkSocket_Open(203);
+
+	ThreadStartCount = 0;
+	ThreadEndCount = 0;
+	DWORD TmpId;
+	CreateThread(NULL, 0, &TestThreadForAccept2Recv1, NULL, 0, &TmpId);
+	CreateThread(NULL, 0, &TestThreadForAccept2Recv2, NULL, 0, &TmpId);
+	CreateThread(NULL, 0, &TestThreadForAccept2Recv3, NULL, 0, &TmpId);
+	CreateThread(NULL, 0, &TestThreadForAccept2Send1, NULL, 0, &TmpId);
+	CreateThread(NULL, 0, &TestThreadForAccept2Send2, NULL, 0, &TmpId);
+	CreateThread(NULL, 0, &TestThreadForAccept2Send3, NULL, 0, &TmpId);
+	printf("OK\r\n");
+
+	int Loop;
+	for (Loop = 0; Loop < 30; Loop++) {
+		if (ThreadStartCount == 6 &&
+			StkSocket_GetStatus(122) == STKSOCKET_STATUS_ACCEPT &&
+			StkSocket_GetStatus(123) == STKSOCKET_STATUS_ACCEPT &&
+			StkSocket_GetStatus(121) == STKSOCKET_STATUS_ACCEPT) {
+			break;
+		}
+		Sleep(100);
+	}
+	printf("[StkSocketTestMa::TestMultiAccept3] : All threads are started [wait=%d msec] ... ", Loop * 100);
+	if (Loop == 30) {
+		printf("NG\r\n");
+		exit(-1);
+	}
+	printf("OK\r\n");
+	Sleep(500);
+
+	printf("[StkSocketTestMa::TestMultiAccept3] : All receiver status are showing STKSOCKET_STATUS_ACCEPT ... ");
+	if (StkSocket_GetStatus(122) != STKSOCKET_STATUS_ACCEPT ||
+		StkSocket_GetStatus(123) != STKSOCKET_STATUS_ACCEPT ||
+		StkSocket_GetStatus(121) != STKSOCKET_STATUS_ACCEPT) {
+		printf("NG\r\n");
+		exit(-1);
+	}
+	printf("OK\r\n");
+	Sleep(500);
+
 	printf("[StkSocketTestMa::TestMultiAccept3] : Check only copied socket is closed ... ");
 	StkSocket_Close(122, TRUE);
-	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN ||
+	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_ACCEPT ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
-		StkSocket_GetStatus(123) != STKSOCKET_STATUS_OPEN) {
+		StkSocket_GetStatus(123) != STKSOCKET_STATUS_ACCEPT) {
 			printf("NG\r\n");
 			exit(-1);
 	}
@@ -288,9 +337,25 @@ void StkSocketTestMa::TestMultiAccept3()
 			exit(-1);
 	}
 	printf("OK\r\n");
+	Sleep(1000);
+
+	for (Loop = 0; Loop < 30; Loop++) {
+		if (ThreadEndCount == 6) {
+			break;
+		}
+		Sleep(100);
+	}
+	printf("[StkSocketTestMa::TestMultiAccept3] : All threads are ended [wait=%d msec] ... ", Loop * 100);
+	if (Loop == 30) {
+		printf("NG\r\n");
+		exit(-1);
+	}
+	printf("OK\r\n");
 
 	StkSocket_DeleteInfo(121);
 	StkSocket_DeleteInfo(122);
 	StkSocket_DeleteInfo(123);
-
+	StkSocket_DeleteInfo(201);
+	StkSocket_DeleteInfo(202);
+	StkSocket_DeleteInfo(203);
 }
