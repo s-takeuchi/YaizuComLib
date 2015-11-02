@@ -14,7 +14,8 @@
 <div class="topic">
 ソケット情報を追加登録します。ソケット情報は最大でSTKSOCKET_MAX_SOCKET_NUMBERが示す個数分追加することができます。<br>
 指定したIDと関連付くソケット情報がすでに存在している場合，ソケット情報がすでに最大件数登録されている場合，
-入力パラメータが不正の場合，本APIは-1を返します。<p>
+入力パラメータが不正の場合，本APIは-1を返します。<br>
+このAPIはスレッドセーフではありません。StkSocketの他のAPIと同時に呼び出したときの動作は保証されていません。<p>
 <u>シグネチャ</u>
 <div class="topic">
 int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, TCHAR TargetAddr[256], int TargetPort)
@@ -53,7 +54,8 @@ STKSOCKET_ACTIONTYPE_SENDER：データ送信用ソケット
 
 <H2 ID="1.2">1.2 StkSocket_DeleteInfo</H2>
 <div class="topic">
-ソケット情報を削除します。<p>
+ソケット情報を削除します。<br>
+このAPIはスレッドセーフではありません。StkSocketの他のAPIと同時に呼び出したときの動作は保証されていません。<p>
 <u>シグネチャ</u>
 <div class="topic">
 int StkSocket_DeleteInfo(int TargetId)
