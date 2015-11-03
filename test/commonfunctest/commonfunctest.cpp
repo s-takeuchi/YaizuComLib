@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
 		printf("OK\n");
 	} else {
 		printf("NG\n");
+		exit(0);
 	}
 
 	StkGen->GetPropertyStr("prop02", ValueStr);
@@ -64,6 +65,7 @@ int main(int argc, char *argv[])
 		printf("OK\n");
 	} else {
 		printf("NG\n");
+		exit(0);
 	}
 
 	StkGen->GetPropertyInt("prop03", &ValueInt);
@@ -72,6 +74,7 @@ int main(int argc, char *argv[])
 		printf("OK\n");
 	} else {
 		printf("NG\n");
+		exit(0);
 	}
 
 	StkGen->GetPropertyStr("prop04", ValueStr);
@@ -80,6 +83,7 @@ int main(int argc, char *argv[])
 		printf("OK\n");
 	} else {
 		printf("NG\n");
+		exit(0);
 	}
 
 	StkGen->GetPropertyInt("prop07", &ValueInt);
@@ -88,6 +92,7 @@ int main(int argc, char *argv[])
 		printf("OK\n");
 	} else {
 		printf("NG\n");
+		exit(0);
 	}
 
 	StkGen->GetPropertyStr("myname", ValueStr);
@@ -96,6 +101,7 @@ int main(int argc, char *argv[])
 		printf("OK\n");
 	} else {
 		printf("NG\n");
+		exit(0);
 	}
 
 	Ret = StkGen->GetPropertyStr("equal1", ValueStr);
@@ -104,6 +110,7 @@ int main(int argc, char *argv[])
 		printf("OK\n");
 	} else {
 		printf("NG\n");
+		exit(0);
 	}
 
 	Ret = StkGen->GetPropertyStr("equal2", ValueStr);
@@ -112,6 +119,7 @@ int main(int argc, char *argv[])
 		printf("OK\n");
 	} else {
 		printf("NG\n");
+		exit(0);
 	}
 
 	Ret = StkGen->GetPropertyStr("equal3", ValueStr);
@@ -120,6 +128,7 @@ int main(int argc, char *argv[])
 		printf("OK\n");
 	} else {
 		printf("NG\n");
+		exit(0);
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -130,6 +139,7 @@ int main(int argc, char *argv[])
 			printf("OK\n");
 		} else {
 			printf("NG\n");
+			exit(0);
 		}
 	}
 
@@ -141,6 +151,7 @@ int main(int argc, char *argv[])
 			printf("OK\n");
 		} else {
 			printf("NG\n");
+			exit(0);
 		}
 		printf("HtmlEncode#1[%S]...", Html2);
 		TCHAR* NewHtml2 = new TCHAR[Len2 + 1];
@@ -149,6 +160,7 @@ int main(int argc, char *argv[])
 			printf("OK\n");
 		} else {
 			printf("NG\n");
+			exit(0);
 		}
 		delete NewHtml2;
 	}
@@ -163,6 +175,7 @@ int main(int argc, char *argv[])
 			printf("OK\n");
 		} else {
 			printf("NG\n");
+			exit(0);
 		}
 		delete NewHtml3;
 	}
@@ -176,6 +189,7 @@ int main(int argc, char *argv[])
 			printf("OK\n");
 		} else {
 			printf("NG\n");
+			exit(0);
 		}
 		delete NewHtml4;
 	}
@@ -189,6 +203,7 @@ int main(int argc, char *argv[])
 			printf("OK\n");
 		} else {
 			printf("NG\n");
+			exit(0);
 		}
 		delete NewHtml5;
 	}
@@ -202,6 +217,7 @@ int main(int argc, char *argv[])
 			printf("OK\n");
 		} else {
 			printf("NG\n");
+			exit(0);
 		}
 		delete NewHtml;
 	}
@@ -215,8 +231,68 @@ int main(int argc, char *argv[])
 			printf("OK\n");
 		} else {
 			printf("NG\n");
+			exit(0);
 		}
 		delete NewHtml;
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	{
+		TCHAR OrgPath[MAX_PATH] = _T("aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg\\xxx.txt");
+		TCHAR CmpPath[MAX_PATH] = _T("aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg");
+		TCHAR AcqPath[MAX_PATH];
+		wprintf(_T("GetFullPathWithoutFileName#1[%s]..."), OrgPath);
+		StkGen->GetFullPathWithoutFileName(OrgPath, AcqPath);
+		if (lstrcmp(AcqPath, CmpPath) == 0) {
+			printf("OK\n");
+		} else {
+			printf("NG\n");
+			exit(0);
+		}
+	}
+
+	{
+		TCHAR OrgPath[MAX_PATH] = _T("aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg\\");
+		TCHAR CmpPath[MAX_PATH] = _T("aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg");
+		TCHAR AcqPath[MAX_PATH];
+		wprintf(_T("GetFullPathWithoutFileName#2[%s]..."), OrgPath);
+		StkGen->GetFullPathWithoutFileName(OrgPath, AcqPath);
+		if (lstrcmp(AcqPath, CmpPath) == 0) {
+			printf("OK\n");
+		} else {
+			printf("NG\n");
+			exit(0);
+		}
+	}
+
+	{
+		TCHAR OrgPath[MAX_PATH] = _T("aaabbbcccdddeeefffggg");
+		TCHAR AcqPath[MAX_PATH];
+		wprintf(_T("GetFullPathWithoutFileName#3[%s]..."), OrgPath);
+		if (StkGen->GetFullPathWithoutFileName(OrgPath, AcqPath) == -1) {
+			printf("OK\n");
+		} else {
+			printf("NG\n");
+			exit(0);
+		}
+	}
+
+	{
+		TCHAR AcqPath[MAX_PATH];
+		wprintf(_T("GetFullPathWithoutFileName#4[NULL]..."));
+		if (StkGen->GetFullPathWithoutFileName(NULL, AcqPath) == -1) {
+			printf("OK\n");
+		} else {
+			printf("NG\n");
+			exit(0);
+		}
+		wprintf(_T("GetFullPathWithoutFileName#4[EMPTY]..."));
+		if (StkGen->GetFullPathWithoutFileName(_T(""), AcqPath) == -1) {
+			printf("OK\n");
+		} else {
+			printf("NG\n");
+			exit(0);
+		}
 	}
 
 	printf("Test completed.\n");

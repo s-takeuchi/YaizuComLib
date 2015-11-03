@@ -104,9 +104,15 @@ int StkGeneric::GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH
 // FullPath [out] : Acquired full path for the specified file.
 // Return : 0:Success, -1:Failure
 int StkGeneric::GetFullPathWithoutFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH]) {
+	if (FileName == NULL || FullPath == NULL) {
+		return -1;
+	}
+	if (lstrcmp(FileName, _T("")) == 0) {
+		return -1;
+	}
 	lstrcpy(FullPath, FileName);
 	LPTSTR Addr = NULL;
-	for (Addr = FullPath + lstrlen(FullPath); Addr >= FullPath; Addr--) {
+	for (Addr = FullPath + lstrlen(FullPath); Addr > FullPath; Addr--) {
 		if (*Addr == '\\') {
 			break;
 		}
