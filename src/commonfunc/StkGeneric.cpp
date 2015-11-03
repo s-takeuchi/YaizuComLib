@@ -78,8 +78,9 @@ int StkGeneric::GetOSVersion(TCHAR* OsVer)
 	return UNKNOWN;
 }
 
-// Get full path name from the specified file name.
-// FileName [in] : File name which you want to get the file size. Do not specify path. The file is searched from Module existing folder.
+// Get full path from the specified file name.
+// FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
+// FullPath [out] : Acquired full path for the specified file.
 // Return : 0:Success, -1:Failure
 int StkGeneric::GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH])
 {
@@ -97,6 +98,26 @@ int StkGeneric::GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH
 	lstrcpy(Addr, FileName);
 	return 0;
 }
+
+// Get full path without file name for the specified full path file name.
+// FileName [in] : Full path which contains file name.
+// FullPath [out] : Acquired full path for the specified file.
+// Return : 0:Success, -1:Failure
+int StkGeneric::GetFullPathWithoutFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH]) {
+	lstrcpy(FullPath, FileName);
+	LPTSTR Addr = NULL;
+	for (Addr = FullPath + lstrlen(FullPath); Addr >= FullPath; Addr--) {
+		if (*Addr == '\\') {
+			break;
+		}
+	}
+	if (Addr == FullPath) {
+		return -1;
+	}
+	*Addr = '\0\0';
+	return 0;
+}
+
 
 // Get file size of the specified file name
 // FileName [in] : File name which you want to get the file size. Do not specify path. The file is searched from Module existing folder.
