@@ -1,4 +1,5 @@
 #include <winsock2.h>
+#include <Ws2tcpip.h.>
 #include <windows.h>
 #include <stdio.h>
 #include "StkSocketMgr.h"
@@ -403,7 +404,9 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, BOOL WaitForPeerClose)
 // Socketのオープン
 int StkSocketMgr::OpenSocket(int TargetId)
 {
-	sockaddr_in Addr;
+	addrinfo Hints;
+	addrinfo* ResAddr = NULL;
+
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].Status == StkSocketInfo::STATUS_CLOSE && SocketInfo[Loop].ElementId == TargetId) {
 			// If the type is neither TCP and UDP...
@@ -420,26 +423,32 @@ int StkSocketMgr::OpenSocket(int TargetId)
 			}
 			// Receiverの場合
 			if (SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER) {
-				SocketInfo[Loop].Sock = socket(AF_INET, SocketInfo[Loop].SocketType, 0);
-				// ソケットのオープンに失敗したら呼び出し元に戻る
-				if (SocketInfo[Loop].Sock == INVALID_SOCKET) {
-					return -1;
-				}
-				// アドレス情報を設定
-				char Buf[256];
-				sprintf_s(Buf, "%S", SocketInfo[Loop].HostOrIpAddr);
-				hostent* HostEnt = gethostbyname(Buf);
-				if (HostEnt == 0) {
+
+				// Get address information
+				memset(&Hints, 0, sizeof(Hints));
+				Hints.ai_family = AF_UNSPEC;
+				Hints.ai_socktype = SocketInfo[Loop].SocketType;
+				Hints.ai_flags = AI_PASSIVE | AI_CANONNAME;
+				char NodeName[256];
+				char ServName[256];
+				sprintf_s(NodeName, 256, "%S", SocketInfo[Loop].HostOrIpAddr);
+				sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
+				int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
+				if (Ret != 0) {
 					PutLog(LOG_NAMESOLVEERR, TargetId, _T(""), _T(""), 0, WSAGetLastError());
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
-					closesocket(SocketInfo[Loop].Sock);
 					return -1;
 				}
-				Addr.sin_family = AF_INET;
-				Addr.sin_port = htons(SocketInfo[Loop].Port);
-				memcpy(&Addr.sin_addr, HostEnt->h_addr_list[0], HostEnt->h_length);
+
+				SocketInfo[Loop].Sock = socket(ResAddr->ai_family, ResAddr->ai_socktype, ResAddr->ai_protocol);
+				// ソケットのオープンに失敗したら呼び出し元に戻る
+				if (SocketInfo[Loop].Sock == INVALID_SOCKET) {
+					freeaddrinfo(ResAddr);
+					return -1;
+				}
+
 				// BINDに失敗したらソケットをクローズする
-				if (bind(SocketInfo[Loop].Sock, (sockaddr *)&Addr, sizeof(Addr)) == SOCKET_ERROR) {
+				if (bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen) == SOCKET_ERROR) {
 					if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
 						PutLog(LOG_BINDLISTENERR, TargetId, _T(""), _T(""), 0, WSAGetLastError());
 					} else {
@@ -447,6 +456,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 					}
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					closesocket(SocketInfo[Loop].Sock);
+					freeaddrinfo(ResAddr);
 					return -1;
 				}
 				if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
@@ -455,6 +465,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 						PutLog(LOG_BINDLISTENERR, TargetId, _T(""), _T(""), 0, WSAGetLastError());
 						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 						closesocket(SocketInfo[Loop].Sock);
+						freeaddrinfo(ResAddr);
 						return -1;
 					}
 				}
@@ -487,6 +498,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 					int MgsLen = GetUdpMaxMessageSize(TargetId);
 					PutLog(LOG_SUCCESSCSBN, TargetId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, MgsLen);
 				}
+				freeaddrinfo(ResAddr);
 				return 0;
 			}
 			// Senderの場合
