@@ -311,7 +311,9 @@ void StkSocketMgr::CloseSocketWaitForPeerClose(SOCKET Target)
 
 int StkSocketMgr::ConnectSocket(int Id)
 {
-	sockaddr_in Addr;
+	addrinfo Hints;
+	addrinfo* ResAddr = NULL;
+
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == Id && SocketInfo[Loop].Status == StkSocketInfo::STATUS_CLOSE) {
 			// If the type is not TCP...
@@ -320,9 +322,26 @@ int StkSocketMgr::ConnectSocket(int Id)
 				return -1;
 			}
 
-			SocketInfo[Loop].Sock = socket(AF_INET, SocketInfo[Loop].SocketType, 0);
+			// Get address information
+			memset(&Hints, 0, sizeof(Hints));
+			Hints.ai_family = AF_UNSPEC;
+			Hints.ai_socktype = SocketInfo[Loop].SocketType;
+			Hints.ai_flags = AI_PASSIVE | AI_CANONNAME;
+			char NodeName[256];
+			char ServName[256];
+			sprintf_s(NodeName, 256, "%S", SocketInfo[Loop].HostOrIpAddr);
+			sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
+			int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
+			if (Ret != 0) {
+				PutLog(LOG_NAMESOLVEERR, Id, _T(""), _T(""), 0, WSAGetLastError());
+				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
+				return -1;
+			}
+
+			SocketInfo[Loop].Sock = socket(ResAddr->ai_family, ResAddr->ai_socktype, ResAddr->ai_protocol);
 			// ソケットのオープンに失敗したら"Continue"
 			if (SocketInfo[Loop].Sock == INVALID_SOCKET) {
+				freeaddrinfo(ResAddr);
 				return -1;
 			}
 
@@ -341,22 +360,11 @@ int StkSocketMgr::ConnectSocket(int Id)
 			setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_SNDBUF, (const char *)&Buffr, sizeof(int));
 
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
-				char Buf[256];
-				sprintf_s(Buf, "%S", SocketInfo[Loop].HostOrIpAddr);
-				hostent* HostEnt = gethostbyname(Buf);
-				if (HostEnt == NULL) {
-					PutLog(LOG_NAMESOLVEERR, Id, _T(""), _T(""), 0, WSAGetLastError());
-					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
-					closesocket(SocketInfo[Loop].Sock);
-					return -1;
-				}
-				Addr.sin_family = HostEnt->h_addrtype;
-				Addr.sin_port = htons(SocketInfo[Loop].Port);
-				memcpy(&Addr.sin_addr, HostEnt->h_addr_list[0], HostEnt->h_length);
-				if (connect(SocketInfo[Loop].Sock, (sockaddr *)&Addr, sizeof(Addr)) == SOCKET_ERROR) {
+				if (connect(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen) == SOCKET_ERROR) {
 					PutLog(LOG_CONNERROR, Id, _T(""), _T(""), 0, WSAGetLastError());
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					closesocket(SocketInfo[Loop].Sock);
+					freeaddrinfo(ResAddr);
 					return -1;
 				}
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
@@ -371,6 +379,7 @@ int StkSocketMgr::ConnectSocket(int Id)
 			}
 		}
 	}
+	freeaddrinfo(ResAddr);
 	return 0;
 }
 
