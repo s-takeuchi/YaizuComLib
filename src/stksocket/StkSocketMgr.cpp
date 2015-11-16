@@ -437,7 +437,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				memset(&Hints, 0, sizeof(Hints));
 				Hints.ai_family = AF_UNSPEC;
 				Hints.ai_socktype = SocketInfo[Loop].SocketType;
-				Hints.ai_flags = AI_PASSIVE | AI_CANONNAME;
+				Hints.ai_flags = AI_PASSIVE;
 				char NodeName[256];
 				char ServName[256];
 				sprintf_s(NodeName, 256, "%S", SocketInfo[Loop].HostOrIpAddr);
@@ -457,7 +457,8 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				}
 
 				// BINDに失敗したらソケットをクローズする
-				if (bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen) == SOCKET_ERROR) {
+				int RetBind = bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen);
+				if (RetBind == SOCKET_ERROR) {
 					if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
 						PutLog(LOG_BINDLISTENERR, TargetId, _T(""), _T(""), 0, WSAGetLastError());
 					} else {
@@ -470,7 +471,8 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				}
 				if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
 					// LISTENに失敗したらソケットをクローズする
-					if (listen(SocketInfo[Loop].Sock, 5) == SOCKET_ERROR) {
+					int RetListen = listen(SocketInfo[Loop].Sock, 5);
+					if (RetListen == SOCKET_ERROR) {
 						PutLog(LOG_BINDLISTENERR, TargetId, _T(""), _T(""), 0, WSAGetLastError());
 						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 						closesocket(SocketInfo[Loop].Sock);
@@ -626,9 +628,7 @@ int StkSocketMgr::Accept(int Id)
 			if (!FD_ISSET(SocketInfo[Loop].Sock, &AccFds)) {
 				return -1;
 			}
-			sockaddr SockAddr;
-			int SockAddrSize = sizeof(SockAddr);
-			SocketInfo[Loop].AcceptedSock = accept(SocketInfo[Loop].Sock, &SockAddr, &SockAddrSize);
+			SocketInfo[Loop].AcceptedSock = accept(SocketInfo[Loop].Sock, NULL, NULL);
 			if (SocketInfo[Loop].AcceptedSock == INVALID_SOCKET) {
 				return -1;
 			}
