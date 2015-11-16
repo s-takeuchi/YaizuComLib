@@ -6,6 +6,7 @@
 #include "..\..\src\stksocket\stksocket.h"
 #include "StkSocketTestMa.h"
 #include "StkSocketTestGetSockInfo.h"
+#include "StkSocketIPv6.h"
 
 BOOL FinishFlag = FALSE;
 int FindFlagCounter = 0;
@@ -1227,6 +1228,9 @@ int main(int Argc, char* Argv[])
 	if (objStkSocketGetSockInfo.TestAddDel() != 0) {
 		return -1;
 	}
+
+	StkSocketIPv6 objStkSocketIPv6;
+	objStkSocketIPv6.TestIPv6();
 
 	printf("Test completed\r\n");
 
