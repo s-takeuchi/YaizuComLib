@@ -796,7 +796,7 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
 			return -2;
 		}
 
-		sockaddr_in SenderAddr;
+		sockaddr_storage SenderAddr;
 		int SenderAddrLen = sizeof(SenderAddr);
 		int Ret = recvfrom(TmpSock, (char*)Buffer, BufferSize, 0, (sockaddr*)&SenderAddr, &SenderAddrLen);
 		if (Ret == SOCKET_ERROR) {
@@ -879,6 +879,9 @@ int StkSocketMgr::Send(int Id, int LogId, BYTE* Buffer, int BufferSize)
 
 int StkSocketMgr::SendUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
 {
+	addrinfo Hints;
+	addrinfo* ResAddr = NULL;
+
 	int ErrCode = 0;
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == Id &&
@@ -888,26 +891,32 @@ int StkSocketMgr::SendUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_SENDER)) {
 
 			// Address setting...
-			sockaddr_in Addr;
+			sockaddr_storage Addr;
+			int Ret;
 			if (SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_SENDER) {
-				char Buf[256];
-				sprintf_s(Buf, "%S", SocketInfo[Loop].HostOrIpAddr);
-				hostent* HostEnt = gethostbyname(Buf);
-				if (HostEnt == NULL) {
+
+				// Get address information
+				memset(&Hints, 0, sizeof(Hints));
+				Hints.ai_family = AF_UNSPEC;
+				Hints.ai_socktype = SocketInfo[Loop].SocketType;
+				Hints.ai_flags = AI_PASSIVE;
+				char NodeName[256];
+				char ServName[256];
+				sprintf_s(NodeName, 256, "%S", SocketInfo[Loop].HostOrIpAddr);
+				sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
+				int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
+				if (Ret != 0) {
 					PutLog(LOG_NAMESOLVEERR, Id, _T(""), _T(""), 0, WSAGetLastError());
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					closesocket(SocketInfo[Loop].Sock);
 					return -1;
 				}
-				Addr.sin_family = HostEnt->h_addrtype;
-				Addr.sin_port = htons(SocketInfo[Loop].Port);
-				memcpy(&Addr.sin_addr, HostEnt->h_addr_list[0], HostEnt->h_length);
+				Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, ResAddr->ai_addr, ResAddr->ai_addrlen);
 			} else {
-				memcpy(&Addr, &SocketInfo[Loop].LastAccessedAddr, sizeof(sockaddr_in));
+				memcpy(&Addr, &SocketInfo[Loop].LastAccessedAddr, sizeof(sockaddr_storage));
+				Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, (sockaddr*)&Addr, sizeof(Addr));
 			}
 
-			// Send data on UDP
-			int Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, (sockaddr*)&Addr, sizeof(Addr));
 			if (Ret == SOCKET_ERROR) {
 				PutLog(LOG_SENDERROR, LogId, _T(""), _T(""), 0, WSAGetLastError());
 				return Ret;

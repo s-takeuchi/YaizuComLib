@@ -31,7 +31,7 @@ struct StkSocketInfo
 	// Receiverの場合待ち受け，Senderの場合接続先
 	TCHAR HostOrIpAddr[256];
 	// In case of UDP receiver, last accessed IP address is stored.
-	sockaddr_in LastAccessedAddr;
+	sockaddr_storage LastAccessedAddr;
 
 	// 通信用ポート番号
 	// Receiverの場合待ち受け，Senderの場合接続先
