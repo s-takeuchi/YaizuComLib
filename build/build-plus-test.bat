@@ -142,6 +142,31 @@ copy "..\src\stkdata\Release\stkdata.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.pdf
 
 
+rem ########## Testing libraries ##########
+echo;
+echo ==========================================
+echo Testing libraries
+echo;
+
+echo Building stksockettest.sln...
+%DEVENV% "..\test\stksockettest\stksockettest.sln" /rebuild Release 
+echo Building stkdatatest.sln...
+%DEVENV% "..\test\stkdatatest\stkdatatest.sln" /rebuild Release
+echo Building stkthreadtest.sln...
+%DEVENV% "..\test\stkthreadtest\stkthreadtest.sln" /rebuild Release
+echo Building commonfunctest.sln...
+%DEVENV% "..\test\commonfunctest\commonfunctest.sln" /rebuild Release
+
+echo ---------------------------------------
+..\test\stksockettest\release\\stksockettest.exe > stksockettest.txt
+echo ---------------------------------------
+..\test\stkdatatest\release\stkdatatest.exe > stkdatatest.txt
+echo ---------------------------------------
+..\test\stkthreadtest\release\stkthreadtest.exe > stkthreadtest.txt
+echo ---------------------------------------
+..\test\commonfunctest\release\commonfunctest.exe > commonfunctest.txt
+
+
 echo;
 %LCOUNTER% ..\src /subdir
 echo;
