@@ -7,6 +7,7 @@
 #include "StkSocketTestMa.h"
 #include "StkSocketTestGetSockInfo.h"
 #include "StkSocketIPv6.h"
+#include "StkSocketMemoryLeak.h"
 
 BOOL FinishFlag = FALSE;
 int FindFlagCounter = 0;
@@ -1232,6 +1233,10 @@ int main(int Argc, char* Argv[])
 	StkSocketIPv6 objStkSocketIPv6;
 	objStkSocketIPv6.TestIPv6();
 	objStkSocketIPv6.TestIPv6Udp();
+
+	StkSocketMemoryLeak objStkSocketMemoryLeak;
+	objStkSocketMemoryLeak.CheckLeakTcp();
+	objStkSocketMemoryLeak.CheckLeakUdp();
 
 	printf("Test completed\r\n");
 

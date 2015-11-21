@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib Debug\stksocket.lib"
+				AdditionalDependencies="Ws2_32.lib Debug\stksocket.lib Psapi.lib"
 				LinkIncremental="2"
 				UACExecutionLevel="0"
 				GenerateDebugInformation="true"
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib Release\stksocket.lib"
+				AdditionalDependencies="Ws2_32.lib Release\stksocket.lib Psapi.lib"
 				LinkIncremental="1"
 				UACExecutionLevel="0"
 				GenerateDebugInformation="true"
@@ -184,6 +184,14 @@
 			</File>
 			<File
 				RelativePath=".\StkSocketIPv6.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StkSocketMemoryLeak.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkSocketMemoryLeak.h"
 				>
 			</File>
 			<File
