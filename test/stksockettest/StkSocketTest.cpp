@@ -917,7 +917,7 @@ DWORD WINAPI TestThreadForAcceptRecv1(LPVOID Param)
 	srand(101);
 	while (TRUE) {
 		if (StkSocket_Accept(101) == 0) {
-			StkSocket_Receive(101, 101, Buf, 1000000, 100, NULL, 0, TRUE);
+			StkSocket_Receive(101, 101, Buf, 1000000, 100, NULL, 0, FALSE);
 			if (strstr((char*)Buf, "#1") != 0) S1Flag = TRUE;
 			if (strstr((char*)Buf, "#2") != 0) S2Flag = TRUE;
 			if (strstr((char*)Buf, "#3") != 0) S3Flag = TRUE;
@@ -940,7 +940,7 @@ DWORD WINAPI TestThreadForAcceptRecv2(LPVOID Param)
 	srand(102);
 	while (TRUE) {
 		if (StkSocket_Accept(102) == 0) {
-			StkSocket_Receive(102, 102, Buf, 1000000, 100, NULL, 0, TRUE);
+			StkSocket_Receive(102, 102, Buf, 1000000, 100, NULL, 0, FALSE);
 			if (strstr((char*)Buf, "#1") != 0) S1Flag = TRUE;
 			if (strstr((char*)Buf, "#2") != 0) S2Flag = TRUE;
 			if (strstr((char*)Buf, "#3") != 0) S3Flag = TRUE;
@@ -963,7 +963,7 @@ DWORD WINAPI TestThreadForAcceptRecv3(LPVOID Param)
 	srand(103);
 	while (TRUE) {
 		if (StkSocket_Accept(103) == 0) {
-			StkSocket_Receive(103, 103, Buf, 1000000, 100, NULL, 0, TRUE);
+			StkSocket_Receive(103, 103, Buf, 1000000, 100, NULL, 0, FALSE);
 			if (strstr((char*)Buf, "#1") != 0) S1Flag = TRUE;
 			if (strstr((char*)Buf, "#2") != 0) S2Flag = TRUE;
 			if (strstr((char*)Buf, "#3") != 0) S3Flag = TRUE;
@@ -1231,6 +1231,7 @@ int main(int Argc, char* Argv[])
 
 	StkSocketIPv6 objStkSocketIPv6;
 	objStkSocketIPv6.TestIPv6();
+	objStkSocketIPv6.TestIPv6Udp();
 
 	printf("Test completed\r\n");
 

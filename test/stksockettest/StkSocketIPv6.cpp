@@ -40,7 +40,9 @@ DWORD WINAPI StkSocketIPv6::TestThreadForSend(LPVOID Param)
 
 void StkSocketIPv6::TestIPv6()
 {
-	printf("[StkSocketIPv6::TestIPv6] : Run sender and receiver ... ");
+	StkSocket_ClearLog();
+
+	printf("[StkSocketIPv6] : Run sender and receiver ... ");
 	StkSocket_AddInfo(121, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("::1"), 2202);
 	StkSocket_Open(121);
 	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("::1"), 2202);
@@ -66,7 +68,7 @@ void StkSocketIPv6::TestIPv6()
 		printf("OK\r\n");
 	}
 
-	printf("[StkSocketIPv6::TestIPv6] : Wait for stopping sender and receiver ... ");
+	printf("[StkSocketIPv6] : Wait for stopping sender and receiver ... ");
 	for (Loop = 0; Loop < 30; Loop++) {
 		if (ThreadEndCount == 2 && StkSocket_GetStatus(121) == STKSOCKET_STATUS_OPEN) {
 			break;
@@ -81,4 +83,80 @@ void StkSocketIPv6::TestIPv6()
 
 	StkSocket_DeleteInfo(121);
 	StkSocket_DeleteInfo(201);
+
+	StkSocket_ClearLog();
+}
+
+DWORD WINAPI StkSocketIPv6::TestThreadForRecvUdp(LPVOID Param)
+{
+	BYTE Data[10000];
+	while (TRUE) {
+		int Len1 = StkSocket_ReceiveUdp(121, 121, Data, 10000);
+		int Len2 = StkSocket_SendUdp(121, 121, Data, 10000);
+		if (Len1 == 10000 && Len2 == 10000) {
+			ThreadEndCount++;
+			break;
+		}
+	}
+	return 0;
+}
+
+DWORD WINAPI StkSocketIPv6::TestThreadForSendUdp(LPVOID Param)
+{
+	BYTE Data[10000];
+	BYTE DataRes[10000];
+	for (int Loop = 0; Loop < 10000; Loop++) {
+		Data[Loop] = 0xcc;
+	}
+	int Len1 = StkSocket_SendUdp(201, 201, Data, 10000);
+	Sleep(100);
+	int Len2 = StkSocket_ReceiveUdp(201, 201, DataRes, 10000);
+	if (Len1 == 10000 && Len2 == 10000 && DataRes[0] == 0xcc && DataRes[100] == 0xcc && DataRes[1000] == 0xcc) {
+		ThreadEndCount++;
+	}
+	return 0;
+}
+
+void StkSocketIPv6::TestIPv6Udp()
+{
+	StkSocket_ClearLog();
+
+	printf("[StkSocketIPv6] : Send and receive data using UDP ... ");
+	StkSocket_AddInfo(121, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("::1"), 2202);
+	StkSocket_Open(121);
+	StkSocket_AddInfo(201, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_SENDER, _T("::1"), 2202);
+	StkSocket_Connect(201);
+
+	if (StkSocket_GetNumOfStkInfos() != 2 || StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN || StkSocket_GetStatus(201) != STKSOCKET_STATUS_OPEN) {
+		printf("NG\r\n");
+		exit(-1);
+	}
+
+	ThreadStartCount = 0;
+	ThreadEndCount = 0;
+	DWORD TmpId;
+	CreateThread(NULL, 0, &TestThreadForRecvUdp, NULL, 0, &TmpId);
+	Sleep(500);
+	CreateThread(NULL, 0, &TestThreadForSendUdp, NULL, 0, &TmpId);
+
+	int Loop;
+	for (Loop = 0; Loop < 30; Loop++) {
+		if (ThreadEndCount == 2) {
+			break;
+		}
+		Sleep(100);
+	}
+	if (Loop == 30) {
+		printf("NG\r\n");
+		exit(-1);
+	}
+	printf("OK\r\n");
+
+	StkSocket_Disconnect(201, 201, FALSE);
+	StkSocket_Close(121, FALSE);
+
+	StkSocket_DeleteInfo(121);
+	StkSocket_DeleteInfo(201);
+
+	StkSocket_ClearLog();
 }

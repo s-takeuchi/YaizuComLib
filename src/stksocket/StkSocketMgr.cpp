@@ -326,7 +326,7 @@ int StkSocketMgr::ConnectSocket(int Id)
 			memset(&Hints, 0, sizeof(Hints));
 			Hints.ai_family = AF_UNSPEC;
 			Hints.ai_socktype = SocketInfo[Loop].SocketType;
-			Hints.ai_flags = AI_PASSIVE | AI_CANONNAME;
+			Hints.ai_flags = AI_PASSIVE;
 			char NodeName[256];
 			char ServName[256];
 			sprintf_s(NodeName, 256, "%S", SocketInfo[Loop].HostOrIpAddr);
@@ -377,9 +377,9 @@ int StkSocketMgr::ConnectSocket(int Id)
 				PutLog(LOG_SUCCESSCS, Id, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
 				break;
 			}
+			freeaddrinfo(ResAddr);
 		}
 	}
-	freeaddrinfo(ResAddr);
 	return 0;
 }
 
@@ -904,14 +904,15 @@ int StkSocketMgr::SendUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
 				char ServName[256];
 				sprintf_s(NodeName, 256, "%S", SocketInfo[Loop].HostOrIpAddr);
 				sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
-				int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
-				if (Ret != 0) {
+				int RetMethod = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
+				if (RetMethod != 0) {
 					PutLog(LOG_NAMESOLVEERR, Id, _T(""), _T(""), 0, WSAGetLastError());
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					closesocket(SocketInfo[Loop].Sock);
 					return -1;
 				}
 				Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, ResAddr->ai_addr, ResAddr->ai_addrlen);
+				freeaddrinfo(ResAddr);
 			} else {
 				memcpy(&Addr, &SocketInfo[Loop].LastAccessedAddr, sizeof(sockaddr_storage));
 				Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, (sockaddr*)&Addr, sizeof(Addr));
