@@ -38,6 +38,7 @@ echo Deleting previous build folders...
 echo;
 
 if exist deployment rmdir /S /Q deployment
+if exist deployment del deployment
 mkdir deployment
 
 
@@ -47,35 +48,39 @@ echo ==========================================
 echo Creating PDF files
 echo;
 
-pushd ..\doc\stksocket
+xcopy /y /q /s /i "..\doc\stksocket" deployment\stksocket
+pushd deployment\stksocket
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm stksocket00.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm stksocket01.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm stksocket02.pdf
 %PDFTK% *.pdf output stksocket.pdf
+copy stksocket.pdf ..
+del *.pdf
 popd
-copy ..\doc\stksocket\stksocket.pdf deployment
-del ..\doc\stksocket\*.pdf
 
-pushd ..\doc\stkthread
+xcopy /y /q /s /i "..\doc\stkthread" deployment\stkthread
+pushd deployment\stkthread
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm stkthread00.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm stkthread01.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm stkthread02.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section03.htm stkthread03.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section05.htm stkthread05.pdf
 %PDFTK% *.pdf output stkthread.pdf
+copy stkthread.pdf ..
+del *.pdf
 popd
-copy ..\doc\stkthread\stkthread.pdf deployment
-del ..\doc\stkthread\*.pdf
 
-pushd ..\doc\stkthreadgui
+xcopy /y /q /s /i "..\doc\stkthreadgui" deployment\stkthreadgui
+pushd deployment\stkthreadgui
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm stkthreadgui00.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm stkthreadgui01.pdf
 %PDFTK% *.pdf output stkthreadgui.pdf
+copy stkthreadgui.pdf ..
+del *.pdf
 popd
-copy ..\doc\stkthreadgui\stkthreadgui.pdf deployment
-del ..\doc\stkthreadgui\*.pdf
 
-pushd ..\doc\stkdata
+xcopy /y /q /s /i "..\doc\stkdata" deployment\stkdata
+pushd deployment\stkdata
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm stkdata0000.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm stkdata0100.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm stkdata0200.pdf
@@ -98,9 +103,9 @@ pushd ..\doc\stkdata
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section05.htm stkdata0500.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section06.htm stkdata0600.pdf
 %PDFTK% *.pdf output stkdata.pdf
+copy stkdata.pdf ..
+del *.pdf
 popd
-copy ..\doc\stkdata\stkdata.pdf deployment
-del ..\doc\stkdata\*.pdf
 
 
 rem ########## Make libraries ##########
