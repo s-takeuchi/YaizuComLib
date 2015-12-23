@@ -164,6 +164,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="MsgProc"
+			>
+			<File
+				RelativePath=".\msgproc.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\msgproc.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
