@@ -5,10 +5,6 @@
 class StkGeneric  
 {
 private:
-	char PropertyName[256][256];
-	char PropertyValue[256][256];
-	int NumOfProperties;
-	
 	StkGeneric();
 
 public:
@@ -30,10 +26,6 @@ public:
 	int GetFullPathFromFileName(TCHAR*, TCHAR[MAX_PATH]);
 	int GetFullPathWithoutFileName(TCHAR*, TCHAR[MAX_PATH]);
 	int GetFileSize(TCHAR*);
-
-	int GetProperties(TCHAR*);
-	int GetPropertyInt(char*, int*);
-	int GetPropertyStr(char*, char[256]);
 
 	void GetLocalTimeStr(char[32]);
 	void GetLocalTimeWStr(TCHAR[32]);
