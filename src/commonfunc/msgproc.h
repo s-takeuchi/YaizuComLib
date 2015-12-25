@@ -7,7 +7,7 @@ class MessageProc
 private:
 	MessageProc();
 	virtual ~MessageProc();
-	static MessageProc* Instance;
+
 	class Impl;
 	Impl* pImpl;
 

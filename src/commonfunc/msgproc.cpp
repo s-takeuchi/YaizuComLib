@@ -1,7 +1,5 @@
 #include "msgproc.h"
 
-MessageProc* MessageProc::Instance = NULL;
-
 class MessageProc::Impl
 {
 public:
@@ -9,6 +7,8 @@ public:
 	static const int JPN = 1;
 
 	static const int MAX_MSG_COUNT = 10000;
+
+	static MessageProc* Instance;
 
 	int Mode;
 
@@ -22,6 +22,8 @@ public:
 
 	int GetLocale();
 };
+
+MessageProc* MessageProc::Impl::Instance = NULL;
 
 int MessageProc::Impl::GetLocale()
 {
@@ -114,69 +116,72 @@ MessageProc::MessageProc()
 
 MessageProc::~MessageProc()
 {
+	if (Impl::Instance != NULL) {
+		delete Impl::Instance;
+	}
 	delete pImpl;
 }
 
 void MessageProc::SetLocaleMode(int SpecifiedMode)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
-	Instance->pImpl->Mode = SpecifiedMode;
+	Impl::Instance->pImpl->Mode = SpecifiedMode;
 }
 
 TCHAR* MessageProc::GetMsg(int Id)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
-	return Instance->pImpl->StkMsg[Id][Instance->pImpl->GetLocale()];
+	return Impl::Instance->pImpl->StkMsg[Id][Impl::Instance->pImpl->GetLocale()];
 }
 
 TCHAR* MessageProc::GetMsgEng(int Id)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
-	return Instance->pImpl->StkMsg[Id][MessageProc::MLANG_ENGLISH];
+	return Impl::Instance->pImpl->StkMsg[Id][MessageProc::MLANG_ENGLISH];
 }
 
 TCHAR* MessageProc::GetMsgJpn(int Id)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
-	return Instance->pImpl->StkMsg[Id][MessageProc::MLANG_JAPANESE];
+	return Impl::Instance->pImpl->StkMsg[Id][MessageProc::MLANG_JAPANESE];
 }
 
 BYTE* MessageProc::GetMsgSjis(int Id)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
-	return Instance->pImpl->StkMsgSjis[Id][Instance->pImpl->GetLocale()];
+	return Impl::Instance->pImpl->StkMsgSjis[Id][Impl::Instance->pImpl->GetLocale()];
 }
 
 BYTE* MessageProc::GetMsgSjisEng(int Id)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
-	return Instance->pImpl->StkMsgSjis[Id][MessageProc::MLANG_ENGLISH];
+	return Impl::Instance->pImpl->StkMsgSjis[Id][MessageProc::MLANG_ENGLISH];
 }
 
 BYTE* MessageProc::GetMsgSjisJpn(int Id)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
-	return Instance->pImpl->StkMsgSjis[Id][MessageProc::MLANG_JAPANESE];
+	return Impl::Instance->pImpl->StkMsgSjis[Id][MessageProc::MLANG_JAPANESE];
 }
 
 void MessageProc::StkErr(int Id, HWND WndHndl)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
 	TCHAR Buf[32];
 	wsprintf(Buf, _T("Message ID : %d"), Id);
@@ -185,8 +190,8 @@ void MessageProc::StkErr(int Id, HWND WndHndl)
 
 void MessageProc::StkErr(int Id, TCHAR* Str, HWND WndHndl)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
 	TCHAR Buf[32];
 	wsprintf(Buf, _T("Message ID : %d"), Id);
@@ -197,8 +202,8 @@ void MessageProc::StkErr(int Id, TCHAR* Str, HWND WndHndl)
 
 void MessageProc::StkInf(int Id, HWND WndHndl)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
 	TCHAR Buf[32];
 	wsprintf(Buf, _T("Message ID : %d"), Id);
@@ -207,8 +212,8 @@ void MessageProc::StkInf(int Id, HWND WndHndl)
 
 void MessageProc::StkInf(int Id, TCHAR* Str, HWND WndHndl)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
 	TCHAR Buf[32];
 	wsprintf(Buf, _T("Message ID : %d"), Id);
@@ -219,8 +224,8 @@ void MessageProc::StkInf(int Id, TCHAR* Str, HWND WndHndl)
 
 int MessageProc::StkYesNo(int Id, HWND WndHndl)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
 	TCHAR Buf[32];
 	wsprintf(Buf, _T("Message ID : %d"), Id);
@@ -230,8 +235,8 @@ int MessageProc::StkYesNo(int Id, HWND WndHndl)
 
 int MessageProc::StkYesNo(int Id, TCHAR* Str, HWND WndHndl)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
 	TCHAR Buf[32];
 	wsprintf(Buf, _T("Message ID : %d"), Id);
@@ -243,16 +248,16 @@ int MessageProc::StkYesNo(int Id, TCHAR* Str, HWND WndHndl)
 
 void MessageProc::AddEng(int Id, TCHAR* Msg)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
-	Instance->pImpl->Eng(Id, Msg);
+	Impl::Instance->pImpl->Eng(Id, Msg);
 }
 
 void MessageProc::AddJpn(int Id, TCHAR* Msg)
 {
-	if (Instance == NULL) {
-		Instance = new MessageProc();
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
 	}
-	Instance->pImpl->Jpn(Id, Msg);
+	Impl::Instance->pImpl->Jpn(Id, Msg);
 }
