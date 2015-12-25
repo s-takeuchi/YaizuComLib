@@ -14,11 +14,13 @@ public:
 
 StkProperties::StkProperties()
 {
+	pImpl = new Impl;
 	pImpl->NumOfProperties = 0;
 }
 
 StkProperties::~StkProperties()
 {
+	delete pImpl;
 }
 
 // Get full path from the specified file name.

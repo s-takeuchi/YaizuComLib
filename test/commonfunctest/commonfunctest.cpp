@@ -1,17 +1,19 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
+#include "..\..\src\commonfunc\StkProperties.h"
 #include "..\..\src\commonfunc\StkGeneric.h"
 
 int main(int argc, char *argv[])
 {
+	StkProperties StkProp;
 	StkGeneric* StkGen = StkGeneric::GetInstance();
 	int Ret;
 
 	printf("Test started.\n");
 
 	printf("Program is loading property file \"propertytest1.prop\" (zero byte data) ...");
-	Ret = StkGen->GetProperties(_T("propertytest1.prop"));
+	Ret = StkProp.GetProperties(_T("propertytest1.prop"));
 	if (Ret == 0) {
 		printf("Success\n");
 	} else {
@@ -20,7 +22,7 @@ int main(int argc, char *argv[])
 	}
 
 	printf("Program is loading property file \"propertytest2.prop\"...");
-	Ret = StkGen->GetProperties(_T("propertytest2.prop"));
+	Ret = StkProp.GetProperties(_T("propertytest2.prop"));
 	if (Ret == 0) {
 		printf("Success\n");
 	} else {
@@ -29,7 +31,7 @@ int main(int argc, char *argv[])
 	}
 
 	printf("Program is loading property file \"propertytest3.prop\"...");
-	Ret = StkGen->GetProperties(_T("propertytest3.prop"));
+	Ret = StkProp.GetProperties(_T("propertytest3.prop"));
 	if (Ret == 0) {
 		printf("Success\n");
 	} else {
@@ -38,7 +40,7 @@ int main(int argc, char *argv[])
 	}
 
 	printf("Program trys to load unexisting property file \"propertytest4.prop\"...");
-	Ret = StkGen->GetProperties(_T("propertytest4.prop"));
+	Ret = StkProp.GetProperties(_T("propertytest4.prop"));
 	if (Ret == -1) {
 		printf("Success\n");
 	} else {
@@ -50,7 +52,7 @@ int main(int argc, char *argv[])
 	char ValueStr[256];
 	int ValueInt;
 
-	StkGen->GetPropertyInt("prop01", &ValueInt);
+	StkProp.GetPropertyInt("prop01", &ValueInt);
 	printf("prop01=[123]?...");
 	if (ValueInt == 123) {
 		printf("OK\n");
@@ -59,7 +61,7 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	StkGen->GetPropertyStr("prop02", ValueStr);
+	StkProp.GetPropertyStr("prop02", ValueStr);
 	printf("prop02=[abc]?...");
 	if (strcmp(ValueStr, "abc") == 0) {
 		printf("OK\n");
@@ -68,7 +70,7 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	StkGen->GetPropertyInt("prop03", &ValueInt);
+	StkProp.GetPropertyInt("prop03", &ValueInt);
 	printf("prop03=[456]?...");
 	if (ValueInt == 456) {
 		printf("OK\n");
@@ -77,7 +79,7 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	StkGen->GetPropertyStr("prop04", ValueStr);
+	StkProp.GetPropertyStr("prop04", ValueStr);
 	printf("prop04=[def]?...");
 	if (strcmp(ValueStr, "def") == 0) {
 		printf("OK\n");
@@ -86,7 +88,7 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	StkGen->GetPropertyInt("prop07", &ValueInt);
+	StkProp.GetPropertyInt("prop07", &ValueInt);
 	printf("prop07=[-123]?...");
 	if (ValueInt == -123) {
 		printf("OK\n");
@@ -95,7 +97,7 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	StkGen->GetPropertyStr("myname", ValueStr);
+	StkProp.GetPropertyStr("myname", ValueStr);
 	printf("myname=[Shinya Takeuchi]?...");
 	if (strcmp(ValueStr, "Shinya Takeuchi") == 0) {
 		printf("OK\n");
@@ -104,7 +106,7 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	Ret = StkGen->GetPropertyStr("equal1", ValueStr);
+	Ret = StkProp.GetPropertyStr("equal1", ValueStr);
 	printf("equal1=[ppp=ppp]?...");
 	if (Ret == 0 && strcmp(ValueStr, "ppp=ppp") == 0) {
 		printf("OK\n");
@@ -113,7 +115,7 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	Ret = StkGen->GetPropertyStr("equal2", ValueStr);
+	Ret = StkProp.GetPropertyStr("equal2", ValueStr);
 	printf("equal2=[ppp = ppp]?...");
 	if (Ret == 0 && strcmp(ValueStr, "ppp = ppp") == 0) {
 		printf("OK\n");
@@ -122,7 +124,7 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	Ret = StkGen->GetPropertyStr("equal3", ValueStr);
+	Ret = StkProp.GetPropertyStr("equal3", ValueStr);
 	printf("equal3=unexisting?...");
 	if (Ret == -1) {
 		printf("OK\n");
