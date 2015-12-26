@@ -176,6 +176,14 @@
 				RelativePath=".\commonfunctest.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\MsgProcTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkPropertiesTest.cpp"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

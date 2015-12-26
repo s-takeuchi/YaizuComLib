@@ -17,9 +17,6 @@ public:
 	static const int LOCALE_MODE_ENGLISH = 10;
 	static const int LOCALE_MODE_JAPANESE = 11;
 
-	static const int MLANG_ENGLISH = 0;
-	static const int MLANG_JAPANESE = 1;
-
 	static void SetLocaleMode(int);
 	static TCHAR* GetMsg(int);
 	static TCHAR* GetMsgEng(int);

@@ -6,6 +6,9 @@ public:
 	static const int ENG = 0;
 	static const int JPN = 1;
 
+	static const int MLANG_ENGLISH = 0;
+	static const int MLANG_JAPANESE = 1;
+
 	static const int MAX_MSG_COUNT = 10000;
 
 	static MessageProc* Instance;
@@ -31,9 +34,9 @@ int MessageProc::Impl::GetLocale()
 		TCHAR Buf[256];
 		GetLocaleInfo(GetUserDefaultLCID(), LOCALE_SENGLANGUAGE, Buf, 256);
 		if (lstrcmp(Buf, _T("Japanese")) == 0) { // "XXX" or "Japanese"
-			return MessageProc::MLANG_JAPANESE;
+			return MessageProc::Impl::MLANG_JAPANESE;
 		}
-		return MessageProc::MLANG_ENGLISH;
+		return MessageProc::Impl::MLANG_ENGLISH;
 	}
 	if (Mode == MessageProc::LOCALE_MODE_WEB) {
 		char* Locale;
@@ -44,18 +47,18 @@ int MessageProc::Impl::GetLocale()
 			}
 			if (strstr(Locale, (char*)"ja") == Locale) {
 				free(Locale);
-				return MessageProc::MLANG_JAPANESE;
+				return MessageProc::Impl::MLANG_JAPANESE;
 			}
 		}
-		return MessageProc::MLANG_ENGLISH;
+		return MessageProc::Impl::MLANG_ENGLISH;
 	}
 	if (Mode == MessageProc::LOCALE_MODE_ENGLISH) {
-		return MessageProc::MLANG_ENGLISH;
+		return MessageProc::Impl::MLANG_ENGLISH;
 	}
 	if (Mode == MessageProc::LOCALE_MODE_JAPANESE) {
-		return MessageProc::MLANG_JAPANESE;
+		return MessageProc::Impl::MLANG_JAPANESE;
 	}
-	return MessageProc::MLANG_ENGLISH;
+	return MessageProc::Impl::MLANG_ENGLISH;
 }
 
 void MessageProc::Impl::Eng(int Id, TCHAR* Msg)
@@ -143,7 +146,7 @@ TCHAR* MessageProc::GetMsgEng(int Id)
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
 	}
-	return Impl::Instance->pImpl->StkMsg[Id][MessageProc::MLANG_ENGLISH];
+	return Impl::Instance->pImpl->StkMsg[Id][MessageProc::Impl::MLANG_ENGLISH];
 }
 
 TCHAR* MessageProc::GetMsgJpn(int Id)
@@ -151,7 +154,7 @@ TCHAR* MessageProc::GetMsgJpn(int Id)
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
 	}
-	return Impl::Instance->pImpl->StkMsg[Id][MessageProc::MLANG_JAPANESE];
+	return Impl::Instance->pImpl->StkMsg[Id][MessageProc::Impl::MLANG_JAPANESE];
 }
 
 BYTE* MessageProc::GetMsgSjis(int Id)
@@ -167,7 +170,7 @@ BYTE* MessageProc::GetMsgSjisEng(int Id)
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
 	}
-	return Impl::Instance->pImpl->StkMsgSjis[Id][MessageProc::MLANG_ENGLISH];
+	return Impl::Instance->pImpl->StkMsgSjis[Id][MessageProc::Impl::MLANG_ENGLISH];
 }
 
 BYTE* MessageProc::GetMsgSjisJpn(int Id)
@@ -175,7 +178,7 @@ BYTE* MessageProc::GetMsgSjisJpn(int Id)
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
 	}
-	return Impl::Instance->pImpl->StkMsgSjis[Id][MessageProc::MLANG_JAPANESE];
+	return Impl::Instance->pImpl->StkMsgSjis[Id][MessageProc::Impl::MLANG_JAPANESE];
 }
 
 void MessageProc::StkErr(int Id, HWND WndHndl)
