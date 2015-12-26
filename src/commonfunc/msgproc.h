@@ -24,6 +24,10 @@ public:
 	static BYTE* GetMsgSjis(int);
 	static BYTE* GetMsgSjisEng(int);
 	static BYTE* GetMsgSjisJpn(int);
+	static BYTE* GetMsgUtf8(int);
+	static BYTE* GetMsgUtf8Eng(int);
+	static BYTE* GetMsgUtf8Jpn(int);
+
 	static void StkErr(int, HWND);
 	static void StkErr(int, TCHAR*, HWND);
 	static void StkInf(int, HWND);

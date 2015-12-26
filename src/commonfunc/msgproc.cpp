@@ -17,6 +17,7 @@ public:
 
 	TCHAR* StkMsg[MAX_MSG_COUNT][2];
 	BYTE* StkMsgSjis[MAX_MSG_COUNT][2];
+	BYTE* StkMsgUtf8[MAX_MSG_COUNT][2];
 
 	void Eng(int, TCHAR*);
 	void Jpn(int, TCHAR*);
@@ -71,13 +72,24 @@ void MessageProc::Impl::Eng(int Id, TCHAR* Msg)
 	StkMsg[Id][ENG] = new TCHAR[WcBufLen + 1];
 	lstrcpyn(StkMsg[Id][ENG], Msg, WcBufLen + 1);
 
+	int MltBufLen;
+
 	if (StkMsgSjis[Id][ENG] != NULL) {
 		delete StkMsgSjis[Id][ENG];
 	}
-	int MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
+	MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
 	StkMsgSjis[Id][ENG] = (BYTE*)new CHAR[MltBufLen];
 	if (WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)StkMsgSjis[Id][ENG], MltBufLen, NULL, NULL) != 0) {
 		StkMsgSjis[Id][ENG][MltBufLen - 1] = 0;
+	}
+
+	if (StkMsgUtf8[Id][ENG] != NULL) {
+		delete StkMsgUtf8[Id][ENG];
+	}
+	MltBufLen = WideCharToMultiByte(CP_UTF8, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
+	StkMsgUtf8[Id][ENG] = (BYTE*)new CHAR[MltBufLen];
+	if (WideCharToMultiByte(CP_UTF8, 0, Msg, -1, (LPSTR)StkMsgUtf8[Id][ENG], MltBufLen, NULL, NULL) != 0) {
+		StkMsgUtf8[Id][ENG][MltBufLen - 1] = 0;
 	}
 }
 
@@ -90,13 +102,24 @@ void MessageProc::Impl::Jpn(int Id, TCHAR* Msg)
 	StkMsg[Id][JPN] = new TCHAR[WcBufLen + 1];
 	lstrcpyn(StkMsg[Id][JPN], Msg, WcBufLen + 1);
 
+	int MltBufLen;
+
 	if (StkMsgSjis[Id][JPN] != NULL) {
 		delete StkMsgSjis[Id][JPN];
 	}
-	int MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
+	MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
 	StkMsgSjis[Id][JPN] = (BYTE*)new CHAR[MltBufLen];
 	if (WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)StkMsgSjis[Id][JPN], MltBufLen, NULL, NULL) != 0) {
 		StkMsgSjis[Id][JPN][MltBufLen - 1] = 0;
+	}
+
+	if (StkMsgUtf8[Id][JPN] != NULL) {
+		delete StkMsgUtf8[Id][JPN];
+	}
+	MltBufLen = WideCharToMultiByte(CP_UTF8, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
+	StkMsgUtf8[Id][JPN] = (BYTE*)new CHAR[MltBufLen];
+	if (WideCharToMultiByte(CP_UTF8, 0, Msg, -1, (LPSTR)StkMsgUtf8[Id][JPN], MltBufLen, NULL, NULL) != 0) {
+		StkMsgUtf8[Id][JPN][MltBufLen - 1] = 0;
 	}
 }
 
@@ -107,6 +130,8 @@ void MessageProc::Impl::InitMsg()
 		StkMsg[Loop][JPN] = NULL;
 		StkMsgSjis[Loop][ENG] = NULL;
 		StkMsgSjis[Loop][JPN] = NULL;
+		StkMsgUtf8[Loop][ENG] = NULL;
+		StkMsgUtf8[Loop][JPN] = NULL;
 	}
 }
 
@@ -126,11 +151,19 @@ void MessageProc::Impl::AllClear()
 		if (StkMsgSjis[Loop][JPN] != NULL) {
 			delete StkMsgSjis[Loop][JPN];
 		}
+		if (StkMsgUtf8[Loop][ENG] != NULL) {
+			delete StkMsgUtf8[Loop][ENG];
+		}
+		if (StkMsgUtf8[Loop][JPN] != NULL) {
+			delete StkMsgUtf8[Loop][JPN];
+		}
 
 		StkMsg[Loop][ENG] = NULL;
 		StkMsg[Loop][JPN] = NULL;
 		StkMsgSjis[Loop][ENG] = NULL;
 		StkMsgSjis[Loop][JPN] = NULL;
+		StkMsgUtf8[Loop][ENG] = NULL;
+		StkMsgUtf8[Loop][JPN] = NULL;
 	}
 }
 
@@ -141,13 +174,9 @@ MessageProc::MessageProc()
 	pImpl->InitMsg();
 }
 
-// Probably there is no change to be called from any functions.
+// Probably there is no chance to be called from any functions.
 MessageProc::~MessageProc()
 {
-	if (Impl::Instance != NULL) {
-		delete Impl::Instance;
-	}
-	delete pImpl;
 }
 
 void MessageProc::SetLocaleMode(int SpecifiedMode)
@@ -204,6 +233,30 @@ BYTE* MessageProc::GetMsgSjisJpn(int Id)
 		Impl::Instance = new MessageProc();
 	}
 	return Impl::Instance->pImpl->StkMsgSjis[Id][MessageProc::Impl::MLANG_JAPANESE];
+}
+
+BYTE* MessageProc::GetMsgUtf8(int Id)
+{
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+	return Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::Instance->pImpl->GetLocale()];
+}
+
+BYTE* MessageProc::GetMsgUtf8Eng(int Id)
+{
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+	return Impl::Instance->pImpl->StkMsgUtf8[Id][MessageProc::Impl::MLANG_ENGLISH];
+}
+
+BYTE* MessageProc::GetMsgUtf8Jpn(int Id)
+{
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+	return Impl::Instance->pImpl->StkMsgUtf8[Id][MessageProc::Impl::MLANG_JAPANESE];
 }
 
 void MessageProc::StkErr(int Id, HWND WndHndl)

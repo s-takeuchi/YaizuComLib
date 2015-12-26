@@ -39,6 +39,14 @@ void MsgProcTest()
 	}
 
 	MessageProc::SetLocaleMode(MessageProc::LOCALE_MODE_ENGLISH);
+	if (MessageProc::GetMsgSjisEng(100) == NULL || MessageProc::GetMsgSjisJpn(100) == NULL ||
+		MessageProc::GetMsgUtf8Eng(100) == NULL || MessageProc::GetMsgUtf8Jpn(100) == NULL) {
+		printf("Sjis message and Utf8 message cannot be acquired ... NG case\n");
+		exit(0);
+	} else {
+		printf("Sjis message and Utf8 message can be acquired ... OK case\n");
+	}
+
 	if (MessageProc::GetMsg(101) != NULL) {
 		printf("GetMsg does not return NULL if undefined message ID is specified ... NG case\n");
 		exit(0);
