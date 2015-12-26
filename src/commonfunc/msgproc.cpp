@@ -21,6 +21,7 @@ public:
 	void Eng(int, TCHAR*);
 	void Jpn(int, TCHAR*);
 
+	void InitMsg();
 	void AllClear();
 
 	int GetLocale();
@@ -99,10 +100,33 @@ void MessageProc::Impl::Jpn(int Id, TCHAR* Msg)
 	}
 }
 
+void MessageProc::Impl::InitMsg()
+{
+	for (int Loop = 0; Loop < Impl::MAX_MSG_COUNT; Loop++) {
+		StkMsg[Loop][ENG] = NULL;
+		StkMsg[Loop][JPN] = NULL;
+		StkMsgSjis[Loop][ENG] = NULL;
+		StkMsgSjis[Loop][JPN] = NULL;
+	}
+}
+
 // This function clears all of messages without memory release of existing allocated message
 void MessageProc::Impl::AllClear()
 {
 	for (int Loop = 0; Loop < Impl::MAX_MSG_COUNT; Loop++) {
+		if (StkMsg[Loop][ENG] != NULL) {
+			delete StkMsg[Loop][ENG];
+		}
+		if (StkMsg[Loop][JPN] != NULL) {
+			delete StkMsg[Loop][JPN];
+		}
+		if (StkMsgSjis[Loop][ENG] != NULL) {
+			delete StkMsgSjis[Loop][ENG];
+		}
+		if (StkMsgSjis[Loop][JPN] != NULL) {
+			delete StkMsgSjis[Loop][JPN];
+		}
+
 		StkMsg[Loop][ENG] = NULL;
 		StkMsg[Loop][JPN] = NULL;
 		StkMsgSjis[Loop][ENG] = NULL;
@@ -114,9 +138,10 @@ MessageProc::MessageProc()
 {
 	pImpl = new Impl;
 	pImpl->Mode = MessageProc::LOCALE_MODE_WIN32;
-	pImpl->AllClear();
+	pImpl->InitMsg();
 }
 
+// Probably there is no change to be called from any functions.
 MessageProc::~MessageProc()
 {
 	if (Impl::Instance != NULL) {
@@ -263,4 +288,12 @@ void MessageProc::AddJpn(int Id, TCHAR* Msg)
 		Impl::Instance = new MessageProc();
 	}
 	Impl::Instance->pImpl->Jpn(Id, Msg);
+}
+
+void MessageProc::ClearAllMsg()
+{
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+	Impl::Instance->pImpl->AllClear();
 }

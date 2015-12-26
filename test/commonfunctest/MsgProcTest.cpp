@@ -46,5 +46,13 @@ void MsgProcTest()
 		printf("GetMsg returns NULL if undefined message ID is specified ... OK case\n");
 	}
 
+	MessageProc::ClearAllMsg();
+	if (MessageProc::GetMsg(100) != NULL) {
+		printf("Old message can be acquired even if clear API is called ... NG case\n");
+		exit(0);
+	} else {
+		printf("After clear API is called no message can be acquired ... OK case\n");
+	}
+
 	printf("MsgProcTest completed.\n\n\n");
 }

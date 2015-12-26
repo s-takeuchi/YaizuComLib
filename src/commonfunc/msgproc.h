@@ -34,4 +34,5 @@ public:
 	static void AddEng(int, TCHAR*);
 	static void AddJpn(int, TCHAR*);
 
+	static void ClearAllMsg();
 };

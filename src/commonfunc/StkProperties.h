@@ -8,7 +8,7 @@ private:
 
 public:
 	StkProperties();
-	~StkProperties();
+	virtual ~StkProperties();
 
 	int GetProperties(TCHAR*);
 	int GetPropertyInt(char*, int*);
