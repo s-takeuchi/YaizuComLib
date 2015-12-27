@@ -1,5 +1,5 @@
 #include <tchar.h>
-#include "ColumnDefFloat.h"
+#include "stkdata.h"
 
 // Constructor
 ColumnDefFloat::ColumnDefFloat()

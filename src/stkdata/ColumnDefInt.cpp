@@ -1,5 +1,5 @@
 #include <tchar.h>
-#include "ColumnDefInt.h"
+#include "stkdata.h"
 
 // Constructor
 ColumnDefInt::ColumnDefInt()

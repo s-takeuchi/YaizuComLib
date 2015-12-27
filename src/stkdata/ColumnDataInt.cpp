@@ -1,6 +1,5 @@
 #include <windows.h>
-#include "ColumnData.h"
-#include "ColumnDataInt.h"
+#include "stkdata.h"
 
 // Constructor
 ColumnDataInt::ColumnDataInt(TCHAR* ColumnName, int Value)

@@ -1,6 +1,5 @@
 #include <windows.h>
-#include "ColumnData.h"
-#include "ColumnDataFloat.h"
+#include "stkdata.h"
 
 // Constructor
 ColumnDataFloat::ColumnDataFloat(TCHAR* ColumnName, float Value)

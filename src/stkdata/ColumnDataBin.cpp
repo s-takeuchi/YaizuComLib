@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <string.h>
-#include "ColumnData.h"
-#include "ColumnDataBin.h"
+#include "stkdata.h"
 
 // Constructor
 ColumnDataBin::ColumnDataBin(TCHAR* ColumnName, BYTE* Value, int Length)

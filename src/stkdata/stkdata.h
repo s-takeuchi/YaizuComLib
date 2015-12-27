@@ -226,10 +226,10 @@ int ZaSortRecord(TCHAR*, TCHAR*);
 
 int GetColumnCount(TCHAR*);
 int GetColumnSize(TCHAR*, TCHAR*);
-int GetColumnName(TCHAR*, TCHAR[MAX_COLUMN_NUMBER][16]);
+int GetColumnName(TCHAR*, TCHAR[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE]);
 int GetColumnType(TCHAR*, TCHAR*);
 int GetTableCount();
-int GetTableName(TCHAR [MAX_TABLE_NUMBER][16]);
+int GetTableName(TCHAR [MAX_TABLE_NUMBER][TABLE_NAME_SIZE]);
 int GetTableSize(TCHAR*);
 int GetMaxNumOfRecords(TCHAR*);
 int GetNumOfRecords(TCHAR*);
@@ -239,5 +239,3 @@ int SaveData(TCHAR*);
 int LoadData(TCHAR*);
 int AutoSave(TCHAR*, int, BOOL);
 
-void* GetStkDataAddress();
-void SetStkDataAddress(void*);

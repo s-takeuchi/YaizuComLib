@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <tchar.h>
-#include "ColumnDefStr.h"
+#include "stkdata.h"
 
 // Constructor
 ColumnDefStr::ColumnDefStr()

@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <string.h>
-#include "ColumnData.h"
-#include "ColumnDataStr.h"
+#include "stkdata.h"
 
 // Constructor
 ColumnDataStr::ColumnDataStr(TCHAR* ColumnName, char* Value)

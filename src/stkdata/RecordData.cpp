@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <tchar.h>
-#include "RecordData.h"
-#include "ColumnData.h"
+#include "stkdata.h"
 
 RecordData::RecordData()
 {

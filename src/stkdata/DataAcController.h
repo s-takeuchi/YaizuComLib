@@ -1,8 +1,7 @@
 #pragma once
 #include <windows.h>
-#include "stkdatadef.h"
-#include "TableDef.h"
-#include "RecordData.h"
+#include "stkdata.h"
+
 #define OPE_GET    1
 #define OPE_DELETE 2
 #define OPE_UPDATE 3

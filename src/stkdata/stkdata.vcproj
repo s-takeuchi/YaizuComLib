@@ -152,15 +152,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ColumnData.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ColumnDataBin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ColumnDataBin.h"
 				>
 			</File>
 			<File
@@ -168,15 +160,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ColumnDataFloat.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ColumnDataInt.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ColumnDataInt.h"
 				>
 			</File>
 			<File
@@ -184,23 +168,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ColumnDataStr.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ColumnDataWStr.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ColumnDataWStr.h"
-				>
-			</File>
-			<File
 				RelativePath=".\RecordData.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\RecordData.h"
 				>
 			</File>
 		</Filter>
@@ -212,15 +184,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ColumnDef.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ColumnDefBin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ColumnDefBin.h"
 				>
 			</File>
 			<File
@@ -228,15 +192,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ColumnDefFloat.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ColumnDefInt.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ColumnDefInt.h"
 				>
 			</File>
 			<File
@@ -244,23 +200,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ColumnDefStr.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ColumnDefWStr.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ColumnDefWStr.h"
-				>
-			</File>
-			<File
 				RelativePath=".\TableDef.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TableDef.h"
 				>
 			</File>
 		</Filter>
@@ -277,7 +221,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\stkdatadef.h"
+			RelativePath=".\stkdata.h"
 			>
 		</File>
 	</Files>

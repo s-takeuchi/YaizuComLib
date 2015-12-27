@@ -2,20 +2,8 @@
 #include <memory.h>
 #include <tchar.h>
 #include "DataAcController.h"
-#include "TableDef.h"
-#include "ColumnDef.h"
-#include "ColumnDefInt.h"
-#include "ColumnDefStr.h"
-#include "ColumnDefWStr.h"
-#include "ColumnDefBin.h"
-#include "ColumnDefFloat.h"
-#include "RecordData.h"
-#include "ColumnData.h"
-#include "ColumnDataInt.h"
-#include "ColumnDataStr.h"
-#include "ColumnDataWStr.h"
-#include "ColumnDataBin.h"
-#include "ColumnDataFloat.h"
+#include "stkdata.h"
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 

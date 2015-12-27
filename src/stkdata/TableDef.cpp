@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <tchar.h>
-#include "TableDef.h"
+#include "stkdata.h"
 
 // Constructor
 TableDef::TableDef()
