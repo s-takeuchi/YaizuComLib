@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdataapi.h"
 
 
 int Insert16383Records()
@@ -54,15 +55,10 @@ int Insert16383Records()
 		if (InsertRecord(CurRecDat) != 0) {
 			UnlockTable(_T("Person"));
 			printf("...[NG]\r\n");
-			ClearRecordData(CurRecDat);
+			delete CurRecDat;
 			return -1;
 		}
 		UnlockTable(_T("Person"));
-		delete ColDat1[0];
-		delete ColDat1[1];
-		delete ColDat1[2];
-		delete ColDat1[3];
-		delete ColDat1[4];
 		delete CurRecDat;
 	}
 	printf("...[OK]\r\n");
@@ -145,7 +141,7 @@ int Insert16383Records()
 			printf("...[NG]\r\n");
 			return -1;
 		}
-		ClearRecordData(RecDatGet);
+		delete RecDatGet;
 		printf("...[OK]\r\n");
 	}
 
@@ -175,7 +171,7 @@ int Insert16383Records()
 			printf("...[NG]\r\n");
 			return -1;
 		}
-		ClearRecordData(RecDatGet);
+		delete RecDatGet;
 		printf("...[OK]\r\n");
 	}
 
@@ -192,7 +188,7 @@ int Insert16383Records()
 			printf("...[NG]\r\n");
 			return -1;
 		}
-		ClearRecordData(RecDatGet);
+		delete RecDatGet;
 		printf("...[OK]\r\n");
 	}
 
@@ -267,7 +263,7 @@ int Insert16383Records()
 			printf("...[NG]\r\n");
 			return -1;
 		}
-		ClearRecordData(Rec);
+		delete Rec;
 		printf("...[OK]\r\n");
 	}
 

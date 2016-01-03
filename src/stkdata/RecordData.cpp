@@ -37,6 +37,20 @@ RecordData::RecordData(TCHAR TableName[TABLE_NAME_SIZE], ColumnData** ColDat, in
 
 RecordData::~RecordData()
 {
+	int Loop;
+	int ColCnt;
+	RecordData* NextRd = GetNextRecord();
+	if (NextRd != NULL) {
+		delete NextRd;
+	}
+	ColCnt = GetColumnCount();
+	for (Loop = ColCnt - 1; Loop >= 0 ; Loop--) {
+		ColumnData* ColDat = GetColumn(Loop);
+		DeleteColumn();
+		if (ColDat != NULL) {
+			delete ColDat;
+		}
+	}
 }
 
 void RecordData::AddColumn(ColumnData* ColDat)

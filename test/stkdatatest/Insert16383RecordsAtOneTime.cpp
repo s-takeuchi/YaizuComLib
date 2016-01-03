@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdataapi.h"
 
 
 int Insert16383RecordsAtOneTime()
@@ -44,12 +45,12 @@ int Insert16383RecordsAtOneTime()
 	}
 	LockTable(_T("©“®Ô"), 2);
 	if (InsertRecord(TopRecDat) != 0) {
-		ClearRecordData(TopRecDat);
+		delete TopRecDat;
 		printf("...[NG]\r\n");
 		return -1;
 	}
 	UnlockTable(_T("©“®Ô"));
-	ClearRecordData(TopRecDat);
+	delete TopRecDat;
 	printf("...[OK]\r\n");
 
 
@@ -82,7 +83,7 @@ int Insert16383RecordsAtOneTime()
 		printf("...[NG]\r\n");
 		return -1;
 	}
-	ClearRecordData(RecDatGet);
+	delete RecDatGet;
 	printf("...[OK]\r\n");
 
 
@@ -149,14 +150,14 @@ int Insert16383RecordsAtOneTime()
 		LockTable(_T("©“®Ô"), 2);
 		if (UpdateRecord(TopRecDat, CurRecDat) != 0) {
 			UnlockTable(_T("©“®Ô"));
-			ClearRecordData(TopRecDat);
-			ClearRecordData(CurRecDat);
+			delete TopRecDat;
+			delete CurRecDat;
 			printf("...[NG]\r\n");
 			return -1;
 		}
 		UnlockTable(_T("©“®Ô"));
-		ClearRecordData(TopRecDat);
-		ClearRecordData(CurRecDat);
+		delete TopRecDat;
+		delete CurRecDat;
 		printf("...[OK]\r\n");
 
 
@@ -188,10 +189,10 @@ int Insert16383RecordsAtOneTime()
 		printf("GetRecord(_T(\"©“®Ô\"))‚Å16383ŒÂ‚ÌƒŒƒR[ƒh‚ğæ“¾‚Å‚«Š‚ÂGetNumOfRecords()Œ‹‰Ê‚ª16383‚Æ‚È‚é");
 		if (Count != 16383 || GetNumOfRecords(_T("©“®Ô")) != 16383) {
 			printf("...[NG]\r\n");
-			ClearRecordData(RecDatGet);
+			delete RecDatGet;
 			return -1;
 		}
-		ClearRecordData(RecDatGet);
+		delete RecDatGet;
 		printf("...[OK]\r\n");
 	}
 
@@ -206,7 +207,7 @@ int Insert16383RecordsAtOneTime()
 			return -1;
 		}
 		UnlockTable(_T("©“®Ô"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 		if (GetNumOfRecords(_T("©“®Ô")) != 16383) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -226,7 +227,7 @@ int Insert16383RecordsAtOneTime()
 			return -1;
 		}
 		UnlockTable(_T("©“®Ô"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 		if (GetNumOfRecords(_T("©“®Ô")) != 8192) {
 			printf("...[NG]\r\n");
 			return -1;

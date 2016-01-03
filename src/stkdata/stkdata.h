@@ -6,11 +6,6 @@
 #define MAX_COLUMN_NUMBER  32
 #define MAX_RECORD         16384
 
-// Lock type
-#define LOCK_FREE       0
-#define LOCK_SHARE      1
-#define LOCK_EXCLUSIVE  2
-
 // Column Type
 #define COLUMN_TYPE_INT   0
 #define COLUMN_TYPE_STR   1
@@ -25,7 +20,7 @@
 class ColumnDef
 {
 protected:
-	TCHAR m_ColumnName[16];
+	TCHAR m_ColumnName[COLUMN_NAME_SIZE];
 	int m_ColumnType;
 public:
 	ColumnDef();
@@ -94,7 +89,7 @@ public:
 class TableDef
 {
 private:
-	TCHAR m_TableName[16];
+	TCHAR m_TableName[TABLE_NAME_SIZE];
 	ColumnDef* m_Column[MAX_COLUMN_NUMBER];
 	int m_NumberOfColumn;
 	int m_MaxRecord;
@@ -115,7 +110,7 @@ public:
 class ColumnData
 {
 protected:
-	TCHAR m_ColumnName[16];
+	TCHAR m_ColumnName[COLUMN_NAME_SIZE];
 	int m_ColumnType;
 public:
 	ColumnData();
@@ -187,55 +182,20 @@ class RecordData
 {
 private:
 	int m_CurrentColumnNum;
-	TCHAR m_TableName[16];
+	TCHAR m_TableName[TABLE_NAME_SIZE];
 	ColumnData* m_ColumnData[MAX_COLUMN_NUMBER];
 	RecordData* m_NextRecord;
 public:
 	RecordData();
-	RecordData(TCHAR TableName[16], ColumnData**, int);
+	RecordData(TCHAR TableName[TABLE_NAME_SIZE], ColumnData**, int);
 	virtual ~RecordData();
 	void AddColumn(ColumnData*);
 	void DeleteColumn();
 	ColumnData* GetColumn(int ColIndex);
 	ColumnData* GetColumn(TCHAR*);
 	int GetColumnCount();
-	void SetTableName(TCHAR TableName[16]);
+	void SetTableName(TCHAR TableName[TABLE_NAME_SIZE]);
 	TCHAR* GetTableName();
 	void SetNextRecord(RecordData*);
 	RecordData* GetNextRecord();
 };
-
-int CreateTable(TableDef*);
-int DeleteTable(TCHAR*);
-
-int LockTable(TCHAR*, int);
-int LockAllTable(int);
-int UnlockTable(TCHAR*);
-int UnlockAllTable();
-
-int InsertRecord(RecordData*);
-int DeleteRecord(TCHAR*);
-int DeleteRecord(RecordData*);
-int UpdateRecord(RecordData*, RecordData*);
-RecordData* GetRecord(TCHAR*);
-RecordData* GetRecord(RecordData*);
-void ClearRecordData(RecordData*);
-
-int AzSortRecord(TCHAR*, TCHAR*);
-int ZaSortRecord(TCHAR*, TCHAR*);
-
-int GetColumnCount(TCHAR*);
-int GetColumnSize(TCHAR*, TCHAR*);
-int GetColumnName(TCHAR*, TCHAR[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE]);
-int GetColumnType(TCHAR*, TCHAR*);
-int GetTableCount();
-int GetTableName(TCHAR [MAX_TABLE_NUMBER][TABLE_NAME_SIZE]);
-int GetTableSize(TCHAR*);
-int GetMaxNumOfRecords(TCHAR*);
-int GetNumOfRecords(TCHAR*);
-int GetTableVersion(TCHAR*);
-
-int SaveData(TCHAR*);
-int LoadData(TCHAR*);
-int AutoSave(TCHAR*, int, BOOL);
-

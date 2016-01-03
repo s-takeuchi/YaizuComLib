@@ -224,6 +224,10 @@
 			RelativePath=".\stkdata.h"
 			>
 		</File>
+		<File
+			RelativePath=".\stkdataapi.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

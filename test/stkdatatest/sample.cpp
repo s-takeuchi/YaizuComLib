@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdataapi.h"
 
 int Insert16383Records();
 int Insert16383RecordsAtOneTime();

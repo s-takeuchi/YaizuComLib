@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdataapi.h"
 
 
 int BasicBinaryTest01()
@@ -33,7 +34,7 @@ int BasicBinaryTest01()
 		LockTable(_T("Bin-Test"), 2);
 		InsertRecord(RecDat);
 		UnlockTable(_T("Bin-Test"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 		printf("...[OK]\r\n");
 	}
 
@@ -73,7 +74,7 @@ int BasicBinaryTest01()
 		LockTable(_T("Bin-Test"), 2);
 		InsertRecord(RecDat1);
 		UnlockTable(_T("Bin-Test"));
-		ClearRecordData(RecDat1);
+		delete RecDat1;
 		printf("...[OK]\r\n");
 	}
 
@@ -91,7 +92,7 @@ int BasicBinaryTest01()
 		LockTable(_T("Bin-Test"), 2);
 		InsertRecord(RecDat);
 		UnlockTable(_T("Bin-Test"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 		printf("...[OK]\r\n");
 	}
 
@@ -143,7 +144,7 @@ int BasicBinaryTest02()
 		RecDat = RecDat->GetNextRecord();
 	} while (RecDat);
 
-	ClearRecordData(TopRecDat);
+	delete TopRecDat;
 
 	if (Err == 1 || Cnt != 5) {
 		printf("...[NG]\r\n");
@@ -185,8 +186,8 @@ int BasicBinaryTest04()
 		return -1;
 	}
 
-	ClearRecordData(RecDat);
-	ClearRecordData(GetRecDat);
+	delete RecDat;
+	delete GetRecDat;
 	printf("...[OK]\r\n");
 	return 0;
 }
@@ -222,8 +223,8 @@ int BasicBinaryTest05()
 		return -1;
 	}
 
-	ClearRecordData(RecDat);
-	ClearRecordData(GetRecDat);
+	delete RecDat;
+	delete GetRecDat;
 	printf("...[OK]\r\n");
 	return 0;
 }
@@ -261,8 +262,8 @@ int BasicBinaryTest06()
 		return -1;
 	}
 
-	ClearRecordData(RecDat);
-	ClearRecordData(GetRecDat);
+	delete RecDat;
+	delete GetRecDat;
 	printf("...[OK]\r\n");
 	return 0;
 }
@@ -294,8 +295,8 @@ int BasicBinaryTest07()
 		return -1;
 	}
 
-	ClearRecordData(RecDat);
-	ClearRecordData(GetRecDat);
+	delete RecDat;
+	delete GetRecDat;
 	printf("...[OK]\r\n");
 	return 0;
 }
@@ -331,8 +332,8 @@ int BasicBinaryTest08()
 		return -1;
 	}
 
-	ClearRecordData(RecDat1);
-	ClearRecordData(GetRecDat);
+	delete RecDat1;
+	delete GetRecDat;
 	printf("...[OK]\r\n");
 	return 0;
 }
@@ -413,7 +414,7 @@ int BasicBinaryTest09()
 			printf("...[NG]\r\n");
 			return -1;
 		}
-		ClearRecordData(Top);
+		delete Top;
 		printf("...[OK]\r\n");
 	}
 
@@ -431,7 +432,7 @@ int BasicBinaryTest09()
 		LockTable(_T("Bin-Test"), 2);
 		InsertRecord(RecDat);
 		UnlockTable(_T("Bin-Test"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 
 		LockTable(_T("Bin-Test"), LOCK_EXCLUSIVE);
 		if (AzSortRecord(_T("Bin-Test"), _T("Img1")) != 0) {
@@ -447,7 +448,7 @@ int BasicBinaryTest09()
 			printf("...[NG]\r\n");
 			return -1;
 		}
-		ClearRecordData(Top);
+		delete Top;
 		printf("...[OK]\r\n");
 	}
 
@@ -457,9 +458,9 @@ int BasicBinaryTest09()
 	DeleteRecord(RecDat3);
 	UnlockTable(_T("Bin-Test"));
 
-	ClearRecordData(RecDat1);
-	ClearRecordData(RecDat3);
-	ClearRecordData(Top);
+	delete RecDat1;
+	delete RecDat3;
+	delete Top;
 
 	if (DeleteTable(_T("Bin-Test")) != 0) {
 		printf("...[NG]\r\n");
@@ -542,7 +543,7 @@ int LargeBinaryTableTest02()
 		ColDat[1] = new ColumnDataBin(_T("Data"), Dat, 6000000);
 		RecDat = new RecordData(_T("LargeBinTable2"), ColDat, 2);
 		InsertRecord(RecDat);
-		ClearRecordData(RecDat);
+		delete RecDat;
 	}
 	UnlockTable(_T("LargeBinTable2"));
 	if (DeleteTable(_T("LargeBinTable2")) != 0) {

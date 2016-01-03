@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdataapi.h"
 
 /*
 SmallTable
@@ -54,7 +55,7 @@ int SmallTable()
 		LockTable(_T("SmallTable"), 2);
 		InsertRecord(TopRecDat);
 		UnlockTable(_T("SmallTable"));
-		ClearRecordData(TopRecDat);
+		delete TopRecDat;
 		if (GetMaxNumOfRecords(_T("SmallTable")) != 1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -93,7 +94,7 @@ int SmallTable()
 			printf("...[NG]\r\n");
 			return -1;
 		}
-		ClearRecordData(RecDatGet);
+		delete RecDatGet;
 		RecDatGet = GetRecord(&RecDatTake);
 		if (RecDatGet != NULL) {
 			printf("...[NG]\r\n");

@@ -3,6 +3,7 @@
 #include <tchar.h>
 #include "DataAcController.h"
 #include "stkdata.h"
+#include "stkdataapi.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -689,30 +690,6 @@ int DataAcController::UpdateRecord(RecordData* RecDatReq, RecordData* RecDatUdt)
 	int RetCode;
 	CommonRecordOperation(OPE_UPDATE, RecDatReq, RecDatUdt, &RetCode);
 	return RetCode;
-}
-
-// Clear record data
-// [in] RecordData* : response data which the function removes.
-void DataAcController::ClearRecordData(RecordData* RecDat)
-{
-	int Loop;
-	int ColCnt;
-	if (RecDat == NULL) {
-		return;
-	}
-	RecordData* NextRd = RecDat->GetNextRecord();
-	if (NextRd != NULL) {
-		ClearRecordData(NextRd);
-	}
-	ColCnt = RecDat->GetColumnCount();
-	for (Loop = ColCnt - 1; Loop >= 0 ; Loop--) {
-		ColumnData* ColDat = RecDat->GetColumn(Loop);
-		RecDat->DeleteColumn();
-		if (ColDat != NULL) {
-			delete ColDat;
-		}
-	}
-	delete RecDat;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

@@ -114,8 +114,6 @@ public:
 	RecordData* GetRecord(TCHAR*);
 	// Get records which are matched by the specified condition
 	RecordData* GetRecord(RecordData*);
-	// Clear specified response data
-	void ClearRecordData(RecordData*);
 
 	// Sort records
 	int AzSortRecord(TCHAR*, TCHAR*);

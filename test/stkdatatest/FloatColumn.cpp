@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdataapi.h"
 
 int BasicFloatTest01()
 {
@@ -124,11 +125,11 @@ int BasicFloatTest02()
 		RecDat = new RecordData(_T("Float-Test"), ColDat, 32);
 		if (InsertRecord(RecDat) != 0) {
 			printf("...[NG]\r\n");
-			ClearRecordData(RecDat);
+			delete RecDat;
 			UnlockTable(_T("Float-Test"));
 			return -1;
 		}
-		ClearRecordData(RecDat);
+		delete RecDat;
 	}
 	UnlockTable(_T("Float-Test"));
 	printf("...[OK]\r\n");
@@ -151,13 +152,13 @@ int BasicFloatTest02()
 		for (int i = 0; i < 32; i++) {
 			if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != (float)(100.0 + 0.1 * j + i * 0.001)) {
 				printf("...[NG]\r\n");
-				ClearRecordData(AcquiredRecDat);
+				delete AcquiredRecDat;
 				return -1;
 			}
 		}
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
-	ClearRecordData(AcquiredRecDat);
+	delete AcquiredRecDat;
 	printf("...[OK]\r\n");
 
 	return 0;
@@ -179,12 +180,12 @@ int BasicFloatTest03()
 		UpdRecDat = new RecordData(_T("Float-Test"), UpdColDat, 2);
 		if (UpdateRecord(RecDat, UpdRecDat) != 0) {
 			printf("...[NG]\r\n");
-			ClearRecordData(RecDat);
-			ClearRecordData(UpdRecDat);
+			delete RecDat;
+			delete UpdRecDat;
 			UnlockTable(_T("Float-Test"));
 		}
-		ClearRecordData(RecDat);
-		ClearRecordData(UpdRecDat);
+		delete RecDat;
+		delete UpdRecDat;
 	}
 	UnlockTable(_T("Float-Test"));
 	printf("...[OK]\r\n");
@@ -200,19 +201,19 @@ int BasicFloatTest03()
 			if (i == 0) {
 				if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != 0) {
 					printf("...[NG]\r\n");
-					ClearRecordData(AcquiredRecDat);
+					delete AcquiredRecDat;
 					return -1;
 				}
 			} else if (i == 1) {
 			} else if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != (float)(100.0 + 0.1 * j + i * 0.001)) {
 				printf("...[NG]\r\n");
-				ClearRecordData(AcquiredRecDat);
+				delete AcquiredRecDat;
 				return -1;
 			}
 		}
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
-	ClearRecordData(AcquiredRecDat);
+	delete AcquiredRecDat;
 	printf("...[OK]\r\n");
 
 	return 0;
@@ -242,12 +243,12 @@ int BasicFloatTest04()
 	LockTable(_T("Float-Test"), LOCK_EXCLUSIVE);
 	if (InsertRecord(HeadRecDat) != 0) {
 		printf("...[NG]\r\n");
-		ClearRecordData(HeadRecDat);
+		delete HeadRecDat;
 		UnlockTable(_T("Float-Test"));
 		return -1;
 	}
 	UnlockTable(_T("Float-Test"));
-	ClearRecordData(HeadRecDat);
+	delete HeadRecDat;
 	printf("...[OK]\r\n");
 
 
@@ -274,7 +275,7 @@ int BasicFloatTest04()
 	LockTable(_T("Float-Test"), LOCK_SHARE);
 	AcquiredRecDat = GetRecord(HeadRecDat);
 	UnlockTable(_T("Float-Test"));
-	ClearRecordData(HeadRecDat);
+	delete HeadRecDat;
 	if (AcquiredRecDat == NULL) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -283,13 +284,13 @@ int BasicFloatTest04()
 		for (int i = 0; i < 32; i++) {
 			if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != (float)(200.0 + 0.1 * j + i * 0.001)) {
 				printf("...[NG]\r\n");
-				ClearRecordData(AcquiredRecDat);
+				delete AcquiredRecDat;
 				return -1;
 			}
 		}
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
-	ClearRecordData(AcquiredRecDat);
+	delete AcquiredRecDat;
 	printf("...[OK]\r\n");
 
 	return 0;
@@ -320,12 +321,12 @@ int BasicFloatTest05()
 	UpdRecDat = new RecordData(_T("Float-Test"), UpdColDat, 2);
 	if (UpdateRecord(HeadRecDat, UpdRecDat) != 0) {
 		printf("...[NG]\r\n");
-		ClearRecordData(HeadRecDat);
-		ClearRecordData(UpdRecDat);
+		delete HeadRecDat;
+		delete UpdRecDat;
 		UnlockTable(_T("Float-Test"));
 	}
-	ClearRecordData(HeadRecDat);
-	ClearRecordData(UpdRecDat);
+	delete HeadRecDat;
+	delete UpdRecDat;
 	UnlockTable(_T("Float-Test"));
 	printf("...[OK]\r\n");
 
@@ -338,12 +339,12 @@ int BasicFloatTest05()
 	for (int j = 0; j < 20; j++) {
 		if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(0)))->GetValue() != 0) {
 			printf("...[NG]\r\n");
-			ClearRecordData(AcquiredRecDat);
+			delete AcquiredRecDat;
 			return -1;
 		}
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
-	ClearRecordData(AcquiredRecDat);
+	delete AcquiredRecDat;
 	printf("...[OK]\r\n");
 
 
@@ -371,11 +372,11 @@ int BasicFloatTest06()
 	if (DeleteRecord(RecDat) != 0) {
 		printf("...[NG]\r\n");
 		UnlockTable(_T("Float-Test"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 		return -1;
 	}
 	UnlockTable(_T("Float-Test"));
-	ClearRecordData(RecDat);
+	delete RecDat;
 	printf("...[OK]\r\n");
 
 

@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdataapi.h"
 
 /*
 ManyRecords
@@ -49,7 +50,7 @@ int ManyRecords()
 				return -1;
 			}
 			UnlockTable(_T("Ä’ÃÀ’Ã’CŒû’¬˜aò’¬’†“c–k”’Šy"));
-			ClearRecordData(RecDat);
+			delete RecDat;
 		}
 		printf("...[OK]\r\n");
 	}
@@ -84,7 +85,7 @@ int ManyRecords()
 			}
 		} while (CurRecDat = CurRecDat->GetNextRecord());
 		printf("...[OK]\r\n");
-		ClearRecordData(RecDat);
+		delete RecDat;
 	}
 
 	{
@@ -115,7 +116,7 @@ int ManyRecords()
 		LockTable(_T("Ä’ÃÀ’Ã’CŒû’¬˜aò’¬’†“c–k”’Šy"), 2);
 		DeleteRecord(TopRecDat);
 		UnlockTable(_T("Ä’ÃÀ’Ã’CŒû’¬˜aò’¬’†“c–k”’Šy"));
-		ClearRecordData(TopRecDat);
+		delete TopRecDat;
 		if (GetNumOfRecords(_T("Ä’ÃÀ’Ã’CŒû’¬˜aò’¬’†“c–k”’Šy")) != 16373) {
 			printf("...[NG]\r\n");
 			return -1;

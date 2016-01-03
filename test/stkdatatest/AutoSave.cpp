@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdataapi.h"
 
 
 int AutoSaveTest()
@@ -39,12 +40,12 @@ int AutoSaveTest()
 			LockTable(_T("Person"), LOCK_EXCLUSIVE);
 			if (InsertRecord(RecDat) != 0) {
 				UnlockTable(_T("Person"));
-				ClearRecordData(RecDat);
+				delete RecDat;
 				printf("...[NG]\r\n");
 				return -1;
 			}
 			UnlockTable(_T("Person"));
-			ClearRecordData(RecDat);
+			delete RecDat;
 			printf("...[OK]\r\n");
 		}
 
@@ -58,12 +59,12 @@ int AutoSaveTest()
 			LockTable(_T("Person"), LOCK_EXCLUSIVE);
 			if (InsertRecord(RecDat) != 0) {
 				UnlockTable(_T("Person"));
-				ClearRecordData(RecDat);
+				delete RecDat;
 				printf("...[NG]\r\n");
 				return -1;
 			}
 			UnlockTable(_T("Person"));
-			ClearRecordData(RecDat);
+			delete RecDat;
 			printf("...[OK]\r\n");
 		}
 
@@ -77,12 +78,12 @@ int AutoSaveTest()
 			LockTable(_T("Person"), LOCK_EXCLUSIVE);
 			if (InsertRecord(RecDat) != 0) {
 				UnlockTable(_T("Person"));
-				ClearRecordData(RecDat);
+				delete RecDat;
 				printf("...[NG]\r\n");
 				return -1;
 			}
 			UnlockTable(_T("Person"));
-			ClearRecordData(RecDat);
+			delete RecDat;
 			printf("...[OK]\r\n");
 		}
 
@@ -105,12 +106,12 @@ int AutoSaveTest()
 			LockTable(_T("Person"), LOCK_EXCLUSIVE);
 			if (InsertRecord(RecDat) != 0) {
 				UnlockTable(_T("Person"));
-				ClearRecordData(RecDat);
+				delete RecDat;
 				printf("...[NG]\r\n");
 				return -1;
 			}
 			UnlockTable(_T("Person"));
-			ClearRecordData(RecDat);
+			delete RecDat;
 			printf("...[OK]\r\n");
 		}
 

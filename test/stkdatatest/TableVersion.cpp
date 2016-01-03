@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
+#include "..\..\src\stkdata\stkdataapi.h"
 
 /*
 TableVersion
@@ -92,7 +93,7 @@ int TableVersion()
 		LockTable(_T("ŒÚ‹q"), LOCK_EXCLUSIVE);
 		InsertRecord(RecDat);
 		UnlockTable(_T("ŒÚ‹q"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 		if (GetTableVersion(_T("¤•i")) != 0 || GetTableVersion(_T("ŒÚ‹q")) != 1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -111,7 +112,7 @@ int TableVersion()
 		LockTable(_T("ŒÚ‹q"), LOCK_EXCLUSIVE);
 		InsertRecord(RecDat);
 		UnlockTable(_T("ŒÚ‹q"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 		if (GetNumOfRecords(_T("ŒÚ‹q")) != 1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -137,8 +138,8 @@ int TableVersion()
 		LockTable(_T("ŒÚ‹q"), LOCK_EXCLUSIVE);
 		UpdateRecord(RecTgt, RecUpd);
 		UnlockTable(_T("ŒÚ‹q"));
-		ClearRecordData(RecTgt);
-		ClearRecordData(RecUpd);
+		delete RecTgt;
+		delete RecUpd;
 		int a = GetTableVersion(_T("ŒÚ‹q"));
 		if (GetTableVersion(_T("¤•i")) != 0 || GetTableVersion(_T("ŒÚ‹q")) != 2) {
 			printf("...[NG]\r\n");
@@ -162,8 +163,8 @@ int TableVersion()
 			printf("...[NG]\r\n");
 			return -1;
 		}
-		ClearRecordData(RecDat);
-		ClearRecordData(RecGet);
+		delete RecDat;
+		delete RecGet;
 		if (GetTableVersion(_T("¤•i")) != 0 || GetTableVersion(_T("ŒÚ‹q")) != 2) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -180,7 +181,7 @@ int TableVersion()
 		LockTable(_T("ŒÚ‹q"), LOCK_EXCLUSIVE);
 		DeleteRecord(RecDat);
 		UnlockTable(_T("ŒÚ‹q"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 		if (GetNumOfRecords(_T("ŒÚ‹q")) != 0) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -230,7 +231,7 @@ int TableVersion()
 		LockTable(_T("¤•i"), LOCK_EXCLUSIVE);
 		for (int i = 0; i < 4; i++) {
 			InsertRecord(RecDat[i]);
-			ClearRecordData(RecDat[i]);
+			delete RecDat[i];
 		}
 		UnlockTable(_T("¤•i"));
 
@@ -269,10 +270,10 @@ int TableVersion()
 		LockTable(_T("¤•i"), LOCK_EXCLUSIVE);
 		for (int i = 0; i < 3; i++) {
 			UpdateRecord(RecTgt[i], RecUpd);
-			ClearRecordData(RecTgt[i]);
+			delete RecTgt[i];
 		}
 		UnlockTable(_T("¤•i"));
-		ClearRecordData(RecUpd);
+		delete RecUpd;
 
 		if (GetTableVersion(_T("¤•i")) != 3 || GetTableVersion(_T("ŒÚ‹q")) != 3) {
 			printf("...[NG]\r\n");
@@ -309,10 +310,10 @@ int TableVersion()
 		LockTable(_T("¤•i"), LOCK_EXCLUSIVE);
 		for (int i = 0; i < 3; i++) {
 			UpdateRecord(RecTgt[i], RecUpd);
-			ClearRecordData(RecTgt[i]);
+			delete RecTgt[i];
 		}
 		UnlockTable(_T("¤•i"));
-		ClearRecordData(RecUpd);
+		delete RecUpd;
 		int a = GetTableVersion(_T("¤•i"));
 
 		if (GetTableVersion(_T("¤•i")) != 3 || GetTableVersion(_T("ŒÚ‹q")) != 3) {
@@ -350,10 +351,10 @@ int TableVersion()
 		LockTable(_T("¤•i"), LOCK_EXCLUSIVE);
 		for (int i = 0; i < 3; i++) {
 			UpdateRecord(RecTgt[i], RecUpd);
-			ClearRecordData(RecTgt[i]);
+			delete RecTgt[i];
 		}
 		UnlockTable(_T("¤•i"));
-		ClearRecordData(RecUpd);
+		delete RecUpd;
 
 		if (GetTableVersion(_T("¤•i")) != 6 || GetTableVersion(_T("ŒÚ‹q")) != 3) {
 			printf("...[NG]\r\n");
@@ -395,7 +396,7 @@ int TableVersion()
 		LockTable(_T("¤•i"), LOCK_EXCLUSIVE);
 		DeleteRecord(RecDat);
 		UnlockTable(_T("¤•i"));
-		ClearRecordData(RecDat);
+		delete RecDat;
 		if (GetTableVersion(_T("¤•i")) != 3 || GetTableVersion(_T("ŒÚ‹q")) != 0) {
 			printf("...[NG]\r\n");
 			return -1;
