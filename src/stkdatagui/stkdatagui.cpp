@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <shlwapi.h>
 #include "..\stkdata\stkdata.h"
+#include "..\stkdata\stkdataapi.h"
 #include "resource.h"
 
 ///// Memory leak proc begin
@@ -200,7 +201,7 @@ void DeleteRecord(HWND WndHndl)
 	LockTable(SelectedTableName, LOCK_EXCLUSIVE);
 	DeleteRecord(RecDat);
 	UnlockTable(SelectedTableName);
-	ClearRecordData(RecDat);
+	delete RecDat;
 	ViewData(FALSE);
 }
 
@@ -330,7 +331,7 @@ LRESULT CALLBACK InsertDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 		LockTable(SelectedTableName, LOCK_EXCLUSIVE);
 		InsertRecord(RecDat);
 		UnlockTable(SelectedTableName);
-		ClearRecordData(RecDat);
+		delete RecDat;
 		EndDialog(hDlg, 0);
 		ViewData(FALSE);
 		return TRUE;
@@ -642,7 +643,7 @@ LRESULT SpecifyColumn(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, BOO
 				ColCnt++;
 			}
 			if (UpdtRecDat != NULL) {
-				ClearRecordData(UpdtRecDat);
+				delete UpdtRecDat;
 			}
 			UpdtRecDat = new RecordData(SelectedTableName, ColDat, ColCnt);
 		}
@@ -884,7 +885,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			LockTable(SelectedTableName, LOCK_EXCLUSIVE);
 			UpdateRecord(RecDat, UpdtRecDat);
 			UnlockTable(SelectedTableName);
-			ClearRecordData(RecDat);
+			delete RecDat;
 			ViewData(FALSE);
 			break;
 		}
@@ -1151,7 +1152,7 @@ void ViewData(BOOL Init)
 	if (FoundFltrCond != 0) {
 		RecordData* RqRecDat = new RecordData(SelectedTableName, RqColDat, FoundFltrCond);
 		RtRecDat = GetRecord(RqRecDat);
-		ClearRecordData(RqRecDat);
+		delete RqRecDat;
 	} else {
 		RtRecDat = GetRecord(SelectedTableName);
 	}
@@ -1200,7 +1201,7 @@ void ViewData(BOOL Init)
 		CurRecDat = CurRecDat->GetNextRecord();
 		Loop++;
 	};
-	ClearRecordData(RtRecDat);
+	delete RtRecDat;
 }
 
 void ChangeWindowTitle(HWND WndHndl)
