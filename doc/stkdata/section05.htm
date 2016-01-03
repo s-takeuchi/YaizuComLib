@@ -50,18 +50,17 @@
 (20) DeleteRecord（検索条件付削除）<BR>
 (21) GetRecord（全レコード取得）<BR>
 (22) GetRecord（検索条件付取得）<BR>
-(23) ClearRecordData<BR>
 </div><P>
 ■レコードソート用<BR>
 <div class=spc>
-(24) AzSortRecord<BR>
-(25) ZaSortRecord<BR>
+(23) AzSortRecord<BR>
+(24) ZaSortRecord<BR>
 </div><P>
 ■ファイルアクセス用<BR>
 <div class=spc>
-(26) SaveData<BR>
-(27) LoadData<BR>
-(28) AutoSave<BR>
+(25) SaveData<BR>
+(26) LoadData<BR>
+(27) AutoSave<BR>
 </div><P>
 
 
@@ -443,28 +442,7 @@ GetRecord関数は，各々のインスタンスが異なるテーブルを対�
 </TABLE>
 </div><P>
 
-(23) void ClearRecordData(RecordData* RecDat)<BR>
-<div class=spc>
-GetRecord関数はRecordDataインスタンスを生成し，それを呼び出し元に返します。
-RecordDataインスタンスはColumnDataインスタンスを含んでおり，また，RecordDataインスタンス
-自身も他のRecordDataインスタンスと連結している場合があります。
-GetRecord関数で取得したRecordDataインスタンスの数が膨大になる場合，使い終わった
-RecordDataインスタンスは削除してメモリを開放する必要があります。<BR>
-ClearResponseData関数は，指定されたRecordDataインスタンスおよびそれに連結するインスタンス
-について，中に梱包されているColumnDataインスタンスを含めて削除します。
-ClearRecordDataはGetRecord関数を用いて取得したインスタンスを削除するだけでなく，
-InsertRecord関数やUpdateRecord関数用にユーザーが作成したRecordDataインスタンスを削除
-することができます（InsertRecord関数等でユーザーが作成／指定したRecordDataインスタンスは，
-通常関数呼び出し後，別の用途で使用される機会は少ない）。
-<TABLE BORDER="1">
-<TR><TD>RecDat</TD><TD>削除したいRecordDataインスタンス。
-RecordDataインスタンスが連結して複数のデータを構成している場合は，先頭の
-RecordDataインスタンスを指定します。
-</TD></TR>
-</TABLE>
-</div><P>
-
-(24) int AzSortRecord(TCHAR* TableName, TCHAR* ColumnName)
+(23) int AzSortRecord(TCHAR* TableName, TCHAR* ColumnName)
 <div class=spc>
 指定したテーブル内の全レコードを，指定したカラムで昇順となるように並び替えます。<br>
 カラム種別がCOLUMN_TYPE_INT : 数値の小さい順に並び替えます。<br>
@@ -480,7 +458,7 @@ AzSortRecord関数を呼び出す前に対象のテーブルに排他ロック�
 </table>
 </div><P>
 
-(25) int ZaSortRecord(TCHAR* TableName, TCHAR* ColumnName)
+(24) int ZaSortRecord(TCHAR* TableName, TCHAR* ColumnName)
 <div class=spc>
 指定したテーブル内の全レコードを，指定したカラムで降順となるように並び替えます。<br>
 カラム種別がCOLUMN_TYPE_INT : 数値の大きい順に並び替えます。<br>
@@ -496,7 +474,7 @@ ZaSortRecord関数を呼び出す前に対象のテーブルに排他ロック�
 </table>
 </div><P>
 
-(26) int SaveData(TCHAR* FileName)<BR>
+(25) int SaveData(TCHAR* FileName)<BR>
 <div class=spc>
 StkDataにより操作された情報は全て仮想メモリ中に格納されます。したがって，
 仮想メモリ中のデータをファイルにセーブすることなくStkData利用プログラムを
@@ -510,7 +488,7 @@ SaveData関数を呼び出す前に全てのテーブルに共有ロックを掛
 </TABLE>
 </div><P>
 
-(27) int LoadData(TCHAR* FileName)<BR>
+(26) int LoadData(TCHAR* FileName)<BR>
 <div class=spc>
 LoadData関数は指定したファイルからテーブルおよびレコードをロードし，仮想メモリに格納します。
 LoadData関数は既存の全テーブルを削除後，読込んだファイル内に定義されている
@@ -525,7 +503,7 @@ LoadData関数は既存の全テーブルを削除後，読込んだファイル
 </TABLE>
 </div><P>
 
-(28) int AutoSave(TCHAR* FileName, int Sec, BOOL Flag)<br>
+(27) int AutoSave(TCHAR* FileName, int Sec, BOOL Flag)<br>
 <div class=spc>
 この関数は仮想メモリ中に存在する全てのテーブル，レコードを指定したファイルに自動的に書き出すかどうか
 を制御します。AutoSaveは指定された間隔で無条件にファイルに書き出すのではなく，内部的にGetTableVersionを呼び

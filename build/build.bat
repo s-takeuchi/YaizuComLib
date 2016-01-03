@@ -141,9 +141,11 @@ copy "..\src\stkthreadgui\Release\stkthreadgui.lib" deployment
 echo Building stkdata.sln...
 %DEVENV% "..\src\stkdata\stkdata.sln" /rebuild Release 
 copy "..\src\stkdata\stkdata.h" deployment
+copy "..\src\stkdata\stkdataapi.h" deployment
 copy "..\src\stkdata\Release\stkdata.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.lib
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.h
+%SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdataapi.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.pdf
 
 

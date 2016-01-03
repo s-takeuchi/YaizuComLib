@@ -12,7 +12,9 @@
 StkDataを構成するファイルは以下のとおりです。<BR>
 <TABLE BORDER="1">
 <TR><TD>ファイル名</TD><TD>説明</TD><TD>ビルド時</TD><TD>実行時</TD></TR>
-<TR><TD>stkdata.h</TD><TD>StkDataのクラス，関数の定義を記述したヘッダファイルです。
+<TR><TD>stkdata.h</TD><TD>StkDataのデータアクセス用データクラスおよびテーブル定義用データクラスを記述したヘッダファイルです。
+StkData利用プログラムのソースコードから#include文で読込んでください。</TD><TD>要</TD><TD>不要</TD></TR>
+<TR><TD>stkdataapi.lib</TD><TD>StkDataのAPIを定義したヘッダファイルです。
 StkData利用プログラムのソースコードから#include文で読込んでください。</TD><TD>要</TD><TD>不要</TD></TR>
 <TR><TD>stkdata.lib</TD>
 <TD>
