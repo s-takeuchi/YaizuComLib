@@ -17,6 +17,19 @@
 #define TABLE_NAME_SIZE  16
 #define COLUMN_NAME_SIZE 16
 
+// Comparison operator
+#define COMP_EQUAL           0 // Equal to
+#define COMP_NOT_EQUAL       1 // Not equal to
+#define COMP_GE              2 // Greater than or equal to
+#define COMP_GT              3 // Greater than
+#define COMP_LE              4 // Less than or qeual to
+#define COMP_LT              5 // Less than
+#define COMP_CONTAIN        11 // Contains
+#define COMP_NOT_CONTAIN    12 // Does not contain
+
+//
+// Table definition
+
 class ColumnDef
 {
 protected:
@@ -107,17 +120,23 @@ public:
 	int GetNumOfColumn();
 };
 
+//
+// Data access
+
 class ColumnData
 {
 protected:
 	TCHAR m_ColumnName[COLUMN_NAME_SIZE];
 	int m_ColumnType;
+	int m_ComparisonOperator;
 public:
 	ColumnData();
 	virtual ~ColumnData();
 	void SetColumnName(TCHAR*);
 	TCHAR* GetColumnName();
 	int GetColumnType();
+	void SetComparisonOperator(int);
+	int GetComparisonOperator();
 };
 
 class ColumnDataInt : public ColumnData

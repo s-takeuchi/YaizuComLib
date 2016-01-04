@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
+#include <shlwapi.h>
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
 
@@ -86,6 +87,97 @@ int ManyRecords()
 		} while (CurRecDat = CurRecDat->GetNextRecord());
 		printf("...[OK]\r\n");
 		delete RecDat;
+	}
+
+	{
+		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを検索(WStr複数条件:CONTAIN指定)する。");
+		ColumnData* ColDat[2];
+		ColDat[0] = new ColumnDataWStr(_T("東西南北老若男女焼肉定食愛2"), _T("100 2 :"));
+		ColDat[0]->SetComparisonOperator(COMP_CONTAIN);
+		ColDat[1] = new ColumnDataWStr(_T("東西南北老若男女焼肉定食愛3"), _T("100 3 :"));
+		ColDat[1]->SetComparisonOperator(COMP_CONTAIN);
+		RecordData* RecDatSch = new RecordData(_T("焼津沼津辰口町和泉町中田北白楽"), ColDat, 2);
+		LockTable(_T("焼津沼津辰口町和泉町中田北白楽"), LOCK_SHARE);
+		RecordData* RecDatRet = GetRecord(RecDatSch);
+		UnlockTable(_T("焼津沼津辰口町和泉町中田北白楽"));
+		RecordData* CurRecDat = RecDatRet;
+		do {
+			ColumnDataWStr* ColDat2 = (ColumnDataWStr*)CurRecDat->GetColumn(_T("東西南北老若男女焼肉定食愛2"));
+			ColumnDataWStr* ColDat3 = (ColumnDataWStr*)CurRecDat->GetColumn(_T("東西南北老若男女焼肉定食愛3"));
+			if (ColDat2 == NULL || ColDat3 == NULL) {
+				printf("...[NG]\r\n");
+				return -1;
+			}
+			TCHAR* ColDat0Value2 = ColDat2->GetValue();
+			TCHAR* ColDat0Value3 = ColDat3->GetValue();
+			if (StrStr(ColDat0Value2, _T("100 2 :")) == NULL) {
+				printf("...[NG]\r\n");
+				return -1;
+			}
+			if (StrStr(ColDat0Value3, _T("100 3 :")) == NULL) {
+				printf("...[NG]\r\n");
+				return -1;
+			}
+		} while (CurRecDat = CurRecDat->GetNextRecord());
+		delete RecDatSch;
+		delete RecDatRet;
+		printf("...[OK]\r\n");
+	}
+
+	{
+		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを検索(WStr複数条件:NOT CONTAIN指定)する。");
+		ColumnData* ColDat[2];
+		ColDat[0] = new ColumnDataWStr(_T("東西南北老若男女焼肉定食愛2"), _T("100 2 :"));
+		ColDat[0]->SetComparisonOperator(COMP_NOT_CONTAIN);
+		ColDat[1] = new ColumnDataWStr(_T("東西南北老若男女焼肉定食愛3"), _T("100 3 :"));
+		ColDat[1]->SetComparisonOperator(COMP_NOT_CONTAIN);
+		RecordData* RecDatSch = new RecordData(_T("焼津沼津辰口町和泉町中田北白楽"), ColDat, 2);
+		LockTable(_T("焼津沼津辰口町和泉町中田北白楽"), LOCK_SHARE);
+		RecordData* RecDatRet = GetRecord(RecDatSch);
+		UnlockTable(_T("焼津沼津辰口町和泉町中田北白楽"));
+		RecordData* CurRecDat = RecDatRet;
+		int NumOfDat = 0;
+		do {
+			ColumnDataWStr* ColDat2 = (ColumnDataWStr*)CurRecDat->GetColumn(_T("東西南北老若男女焼肉定食愛2"));
+			ColumnDataWStr* ColDat3 = (ColumnDataWStr*)CurRecDat->GetColumn(_T("東西南北老若男女焼肉定食愛3"));
+			if (ColDat2 == NULL || ColDat3 == NULL) {
+				printf("...[NG]\r\n");
+				return -1;
+			}
+			TCHAR* ColDat0Value2 = ColDat2->GetValue();
+			TCHAR* ColDat0Value3 = ColDat3->GetValue();
+			if (StrStr(ColDat0Value2, _T("100 2 :")) != NULL) {
+				printf("...[NG]\r\n");
+				return -1;
+			}
+			if (StrStr(ColDat0Value3, _T("100 3 :")) != NULL) {
+				printf("...[NG]\r\n");
+				return -1;
+			}
+			NumOfDat++;
+		} while (CurRecDat = CurRecDat->GetNextRecord());
+		delete RecDatSch;
+		delete RecDatRet;
+		printf("...%d[OK]\r\n", NumOfDat);
+	}
+
+	{
+		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを検索(WStr複数条件(不正)指定)する。");
+		ColumnData* ColDat[2];
+		ColDat[0] = new ColumnDataWStr(_T("東西南北老若男女焼肉定食愛2"), _T("100 2 :"));
+		ColDat[0]->SetComparisonOperator(COMP_CONTAIN);
+		ColDat[1] = new ColumnDataWStr(_T("東西南北老若男女焼肉定食愛3"), _T("100 3 :"));
+		ColDat[1]->SetComparisonOperator(COMP_NOT_CONTAIN);
+		RecordData* RecDatSch = new RecordData(_T("焼津沼津辰口町和泉町中田北白楽"), ColDat, 2);
+		LockTable(_T("焼津沼津辰口町和泉町中田北白楽"), LOCK_SHARE);
+		RecordData* RecDatRet = GetRecord(RecDatSch);
+		UnlockTable(_T("焼津沼津辰口町和泉町中田北白楽"));
+		if (RecDatRet != NULL) {
+			printf("...[NG]\r\n");
+			return -1;
+		}
+		delete RecDatSch;
+		printf("...[OK]\r\n");
 	}
 
 	{

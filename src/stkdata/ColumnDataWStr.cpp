@@ -8,6 +8,7 @@ ColumnDataWStr::ColumnDataWStr(TCHAR* ColumnName, TCHAR* Value)
 {
 	lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE);
 	m_ColumnType = COLUMN_TYPE_WSTR;
+	m_ComparisonOperator = COMP_EQUAL;
 	if (Value == NULL) {
 		lstrcpyn(m_Value, _T(""), 256);
 	} else {

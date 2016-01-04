@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <memory.h>
 #include <tchar.h>
+#include <shlwapi.h>
 #include "DataAcController.h"
 #include "stkdata.h"
 #include "stkdataapi.h"
@@ -778,31 +779,48 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 				if (CurColReq->GetColumnType() == COLUMN_TYPE_INT) {
 					INT32* Value = (INT32*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataInt* CurColIntReq = (ColumnDataInt*)CurColReq;
-					if ((int)*Value == CurColIntReq->GetValue()) {
+					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && (int)*Value == CurColIntReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && (int)*Value != CurColIntReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_GE && (int)*Value >= CurColIntReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_GT && (int)*Value > CurColIntReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_LE && (int)*Value <= CurColIntReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_LT && (int)*Value < CurColIntReq->GetValue())) {
 						FoundColCnt++;
 					}
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_FLOAT) {
 					FLOAT* Value = (FLOAT*)(Addr + m_ColumnOffset[TableId][ColIndx]);
-					ColumnDataFloat* CurColIntReq = (ColumnDataFloat*)CurColReq;
-					if ((float)*Value == CurColIntReq->GetValue()) {
+					ColumnDataFloat* CurColFloatReq = (ColumnDataFloat*)CurColReq;
+					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && (float)*Value == CurColFloatReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && (float)*Value != CurColFloatReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_GE && (float)*Value >= CurColFloatReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_GT && (float)*Value > CurColFloatReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_LE && (float)*Value <= CurColFloatReq->GetValue()) ||
+						(CurColReq->GetComparisonOperator() == COMP_LT && (float)*Value < CurColFloatReq->GetValue())) {
 						FoundColCnt++;
 					}
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_STR) {
 					char* Value = (char*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataStr* CurColStrReq = (ColumnDataStr*)CurColReq;
-					if (strcmp(Value, CurColStrReq->GetValue()) == 0) {
+					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && strcmp(Value, CurColStrReq->GetValue()) == 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && strcmp(Value, CurColStrReq->GetValue()) != 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_CONTAIN && strstr(Value, CurColStrReq->GetValue()) != 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_CONTAIN && strstr(Value, CurColStrReq->GetValue()) == 0)) {
 						FoundColCnt++;
 					}
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_WSTR) {
 					TCHAR* Value = (TCHAR*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataWStr* CurColWStrReq = (ColumnDataWStr*)CurColReq;
-					if (lstrcmp(Value, CurColWStrReq->GetValue()) == 0) {
+					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && lstrcmp(Value, CurColWStrReq->GetValue()) == 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && lstrcmp(Value, CurColWStrReq->GetValue()) != 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_CONTAIN && StrStr(Value, CurColWStrReq->GetValue()) != 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_CONTAIN && StrStr(Value, CurColWStrReq->GetValue()) == 0)) {
 						FoundColCnt++;
 					}
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_BIN) {
 					BYTE* Value = (BYTE*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataBin* CurColBinReq = (ColumnDataBin*)CurColReq;
-					if (memcmp(Value, CurColBinReq->GetValue(), m_ColumnSize[TableId][ColIndx]) == 0) {
+					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && memcmp(Value, CurColBinReq->GetValue(), m_ColumnSize[TableId][ColIndx]) == 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && memcmp(Value, CurColBinReq->GetValue(), m_ColumnSize[TableId][ColIndx]) != 0)) {
 						FoundColCnt++;
 					}
 				}
