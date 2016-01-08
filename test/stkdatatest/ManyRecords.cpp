@@ -125,6 +125,23 @@ int ManyRecords()
 	}
 
 	{
+		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを検索(WStr複数条件(不正EQUAL)指定)する。");
+		ColumnData* ColDat[1];
+		ColDat[0] = new ColumnDataWStr(_T("東西南北老若男女焼肉定食愛2"), _T("100 2 :"));
+		ColDat[0]->SetComparisonOperator(COMP_EQUAL);
+		RecordData* RecDatSch = new RecordData(_T("焼津沼津辰口町和泉町中田北白楽"), ColDat, 1);
+		LockTable(_T("焼津沼津辰口町和泉町中田北白楽"), LOCK_SHARE);
+		RecordData* RecDatRet = GetRecord(RecDatSch);
+		UnlockTable(_T("焼津沼津辰口町和泉町中田北白楽"));
+		if (RecDatRet != NULL) {
+			printf("...[NG]\r\n");
+			return -1;
+		}
+		delete RecDatSch;
+		printf("...[OK]\r\n");
+	}
+
+	{
 		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを検索(WStr複数条件:NOT CONTAIN指定)する。");
 		ColumnData* ColDat[2];
 		ColDat[0] = new ColumnDataWStr(_T("東西南北老若男女焼肉定食愛2"), _T("100 2 :"));

@@ -251,6 +251,25 @@ int BasicFloatTest04()
 	delete HeadRecDat;
 	printf("...[OK]\r\n");
 
+	printf("\"Float-table\"テーブルの検索を行う (Less than指定)");
+	ColDat[0] = new ColumnDataFloat(_T("Fcol05"), 200.5);
+	ColDat[0]->SetComparisonOperator(COMP_LT);
+	RecDat = new RecordData(_T("Float-Test"), ColDat, 1);
+	LockTable(_T("Float-Test"), LOCK_SHARE);
+	HeadRecDat = GetRecord(RecDat);
+	UnlockTable(_T("Float-Test"));
+	RecordData* CurRecDat;
+	for (CurRecDat = HeadRecDat; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
+		ColumnDataFloat* TmpCol = (ColumnDataFloat*)CurRecDat->GetColumn(_T("Fcol05"));
+		float TmpFl = TmpCol->GetValue();
+		if (TmpFl >= 200.5) {
+			printf("...[NG]\r\n");
+			return -1;
+		}
+	}
+	delete HeadRecDat;
+	delete RecDat;
+	printf("...[OK]\r\n");
 
 	printf("\"Float-Test\"テーブルに存在するレコードの数が20個であることを確認する");
 	if (GetNumOfRecords(_T("Float-Test")) != 20) {
