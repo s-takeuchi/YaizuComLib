@@ -15,6 +15,12 @@ ColumnDataStr::ColumnDataStr(TCHAR* ColumnName, char* Value)
 	}
 }
 
+ColumnDataStr::ColumnDataStr(TCHAR* ColumnName, char* Value, int CompOpe)
+{
+	ColumnDataStr(ColumnName, Value);
+	m_ComparisonOperator = CompOpe;
+}
+
 // Destructor
 ColumnDataStr::~ColumnDataStr()
 {

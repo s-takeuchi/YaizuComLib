@@ -17,6 +17,12 @@ ColumnDataBin::ColumnDataBin(TCHAR* ColumnName, BYTE* Value, int Length)
 	}
 }
 
+ColumnDataBin::ColumnDataBin(TCHAR* ColumnName, BYTE* Value, int Length, int CompOpe)
+{
+	ColumnDataBin(ColumnName, Value, Length);
+	m_ComparisonOperator = CompOpe;
+}
+
 // Destructor
 ColumnDataBin::~ColumnDataBin()
 {

@@ -10,6 +10,12 @@ ColumnDataFloat::ColumnDataFloat(TCHAR* ColumnName, float Value)
 	m_Value = Value;
 }
 
+ColumnDataFloat::ColumnDataFloat(TCHAR* ColumnName, float Value, int CompOpe)
+{
+	ColumnDataFloat(ColumnName, Value);
+	m_ComparisonOperator = CompOpe;
+}
+
 // Destructor
 ColumnDataFloat::~ColumnDataFloat()
 {

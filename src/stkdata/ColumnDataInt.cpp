@@ -10,6 +10,12 @@ ColumnDataInt::ColumnDataInt(TCHAR* ColumnName, int Value)
 	m_Value = Value;
 }
 
+ColumnDataInt::ColumnDataInt(TCHAR* ColumnName, int Value, int CompOpe)
+{
+	ColumnDataInt(ColumnName, Value);
+	m_ComparisonOperator = CompOpe;
+}
+
 // Destructor
 ColumnDataInt::~ColumnDataInt()
 {

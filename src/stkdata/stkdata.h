@@ -145,6 +145,7 @@ private:
 	int m_Value;
 public:
 	ColumnDataInt(TCHAR*, int);
+	ColumnDataInt(TCHAR*, int, int);
 	virtual ~ColumnDataInt();
 
 	int GetValue();
@@ -156,6 +157,7 @@ private:
 	float m_Value;
 public:
 	ColumnDataFloat(TCHAR*, float);
+	ColumnDataFloat(TCHAR*, float, int);
 	virtual ~ColumnDataFloat();
 
 	float GetValue();
@@ -168,6 +170,7 @@ private:
 
 public:
 	ColumnDataStr(TCHAR*, char*);
+	ColumnDataStr(TCHAR*, char*, int);
 	virtual ~ColumnDataStr();
 
 	char* GetValue();
@@ -180,6 +183,7 @@ private:
 
 public:
 	ColumnDataWStr(TCHAR*, TCHAR*);
+	ColumnDataWStr(TCHAR*, TCHAR*, int);
 	virtual ~ColumnDataWStr();
 
 	TCHAR* GetValue();
@@ -192,6 +196,7 @@ private:
 
 public:
 	ColumnDataBin(TCHAR*, BYTE*, int);
+	ColumnDataBin(TCHAR*, BYTE*, int, int);
 	virtual ~ColumnDataBin();
 
 	BYTE* GetValue();
