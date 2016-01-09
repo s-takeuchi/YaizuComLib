@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
+#include <shlwapi.h>
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
 
@@ -143,6 +144,43 @@ int Insert16383Records()
 		}
 		delete RecDatGet;
 		printf("...[OK]\r\n");
+	}
+
+
+	{
+		printf("追加した16383個のレコード中に存在するName=\"木村\"を含み，1000 < ID < 2000  のレコードを検索することができる");
+		BOOL Err = FALSE;
+		int FndCnt = 0;
+		RecordData *RecDatGet;
+		ColumnData *ColDatTake[3];
+		ColDatTake[0] = new ColumnDataWStr(_T("Name"), _T("木村"), COMP_CONTAIN);
+		ColDatTake[1] = new ColumnDataInt(_T("ID"), 1000, COMP_GT);
+		ColDatTake[2] = new ColumnDataInt(_T("ID"), 2000, COMP_LT);
+		RecordData* RecDatTake = new RecordData(_T("Person"), ColDatTake, 3);
+		LockTable(_T("Person"), 1);
+		RecDatGet = GetRecord(RecDatTake);
+		UnlockTable(_T("Person"));
+		if (RecDatGet == NULL) {
+			printf("...[NG]\r\n");
+			return -1;
+		}
+		int NumOfFnd = 0;
+		for (RecordData* CurRecDat = RecDatGet; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
+			ColumnDataWStr* ColName = (ColumnDataWStr*)CurRecDat->GetColumn(_T("Name"));
+			if (StrStr(ColName->GetValue(), _T("木村")) == NULL) {
+				printf("...[NG]\r\n");
+				return -1;
+			}
+			ColumnDataInt* ColId = (ColumnDataInt*)CurRecDat->GetColumn(_T("ID"));
+			if (ColId->GetValue() <= 1000 && ColId->GetValue() >= 2000) {
+				printf("...[NG]\r\n");
+				return -1;
+			}
+			NumOfFnd++;
+		}
+		delete RecDatTake;
+		delete RecDatGet;
+		printf("...%d[OK]\r\n", NumOfFnd);
 	}
 
 
