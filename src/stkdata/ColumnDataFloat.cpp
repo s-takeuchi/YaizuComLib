@@ -12,7 +12,7 @@ ColumnDataFloat::ColumnDataFloat(TCHAR* ColumnName, float Value)
 
 ColumnDataFloat::ColumnDataFloat(TCHAR* ColumnName, float Value, int CompOpe)
 {
-	ColumnDataFloat(ColumnName, Value);
+	*this = ColumnDataFloat(ColumnName, Value);
 	m_ComparisonOperator = CompOpe;
 }
 

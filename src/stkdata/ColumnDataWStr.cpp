@@ -18,7 +18,7 @@ ColumnDataWStr::ColumnDataWStr(TCHAR* ColumnName, TCHAR* Value)
 
 ColumnDataWStr::ColumnDataWStr(TCHAR* ColumnName, TCHAR* Value, int CompOpe)
 {
-	ColumnDataWStr(ColumnName, Value);
+	*this = ColumnDataWStr(ColumnName, Value);
 	m_ComparisonOperator = CompOpe;
 }
 

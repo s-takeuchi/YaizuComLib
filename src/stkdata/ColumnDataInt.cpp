@@ -12,7 +12,7 @@ ColumnDataInt::ColumnDataInt(TCHAR* ColumnName, int Value)
 
 ColumnDataInt::ColumnDataInt(TCHAR* ColumnName, int Value, int CompOpe)
 {
-	ColumnDataInt(ColumnName, Value);
+	*this = ColumnDataInt(ColumnName, Value);
 	m_ComparisonOperator = CompOpe;
 }
 
