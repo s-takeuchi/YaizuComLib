@@ -148,18 +148,29 @@ int Insert16383Records()
 
 
 	{
-		printf("追加した16383個のレコード中に存在するName=\"木村\"を含み，1000 < ID < 2000  のレコードを検索することができる");
+		printf("追加した16383個のレコード中に存在するName=\"木村\"または\"田中\"を含み，1000 < ID < 2000  のレコードを検索することができる");
 		BOOL Err = FALSE;
 		int FndCnt = 0;
 		RecordData *RecDatGet;
-		ColumnData *ColDatTake[3];
+		ColumnData *ColDatTake[6];
+		RecordData* RecDatKim;
+		RecordData* RecDatTan;
+
 		ColDatTake[0] = new ColumnDataWStr(_T("Name"), _T("木村"), COMP_CONTAIN);
 		ColDatTake[1] = new ColumnDataInt(_T("ID"), 1000, COMP_GT);
 		ColDatTake[2] = new ColumnDataInt(_T("ID"), 2000, COMP_LT);
-		RecordData* RecDatTake = new RecordData(_T("Person"), ColDatTake, 3);
+		RecDatKim = new RecordData(_T("Person"), &ColDatTake[0], 3);
+
+		ColDatTake[3] = new ColumnDataWStr(_T("Name"), _T("田中"), COMP_CONTAIN);
+		ColDatTake[4] = new ColumnDataInt(_T("ID"), 1000, COMP_GT);
+		ColDatTake[5] = new ColumnDataInt(_T("ID"), 2000, COMP_LT);
+		RecDatTan = new RecordData(_T("Person"), &ColDatTake[3], 3);
+		RecDatKim->SetNextRecord(RecDatTan);
+
 		LockTable(_T("Person"), 1);
-		RecDatGet = GetRecord(RecDatTake);
+		RecDatGet = GetRecord(RecDatKim);
 		UnlockTable(_T("Person"));
+
 		if (RecDatGet == NULL) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -167,7 +178,7 @@ int Insert16383Records()
 		int NumOfFnd = 0;
 		for (RecordData* CurRecDat = RecDatGet; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
 			ColumnDataWStr* ColName = (ColumnDataWStr*)CurRecDat->GetColumn(_T("Name"));
-			if (StrStr(ColName->GetValue(), _T("木村")) == NULL) {
+			if (StrStr(ColName->GetValue(), _T("木村")) == NULL && StrStr(ColName->GetValue(), _T("田中")) == NULL ) {
 				printf("...[NG]\r\n");
 				return -1;
 			}
@@ -178,9 +189,9 @@ int Insert16383Records()
 			}
 			NumOfFnd++;
 		}
-		delete RecDatTake;
+		delete RecDatKim;
 		delete RecDatGet;
-		printf("...%d[OK]\r\n", NumOfFnd);
+		printf("...%d records found [OK]\r\n", NumOfFnd);
 	}
 
 
@@ -330,8 +341,92 @@ int Insert16383Records()
 			return -1;
 		}
 		printf("...[OK]\r\n");
+	}
 
 
+	{
+		printf("16383個のレコード中に存在するName=\"由紀\"または\"由美\"を含み，100 < ID < 500  のレコードのKeyカラムを\"Key exist\"に変更する。");
+		RecordData *RecDatGet;
+		ColumnData *ColDat[7];
+		RecordData* RecDatSch1;
+		RecordData* RecDatSch2;
+		RecordData* RecDatUpd;
+
+		ColDat[0] = new ColumnDataWStr(_T("Name"), _T("由紀"), COMP_CONTAIN);
+		ColDat[1] = new ColumnDataInt(_T("ID"), 100, COMP_GT);
+		ColDat[2] = new ColumnDataInt(_T("ID"), 500, COMP_LT);
+		RecDatSch1 = new RecordData(_T("Person"), &ColDat[0], 3);
+
+		ColDat[3] = new ColumnDataWStr(_T("Name"), _T("由美"), COMP_CONTAIN);
+		ColDat[4] = new ColumnDataInt(_T("ID"), 100, COMP_GT);
+		ColDat[5] = new ColumnDataInt(_T("ID"), 500, COMP_LT);
+		RecDatSch2 = new RecordData(_T("Person"), &ColDat[3], 3);
+		RecDatSch1->SetNextRecord(RecDatSch2);
+
+		ColDat[6] = new ColumnDataStr(_T("Key"), "Key exist");
+		RecDatUpd = new RecordData(_T("Person"), &ColDat[6], 1);
+
+		LockTable(_T("Person"), LOCK_EXCLUSIVE);
+		UpdateRecord(RecDatSch1, RecDatUpd);
+		UnlockTable(_T("Person"));
+
+
+		LockTable(_T("Person"), LOCK_SHARE);
+		RecDatGet = GetRecord(_T("Person"));
+		UnlockTable(_T("Person"));
+
+		if (RecDatGet == NULL) {
+			printf("...[NG]\r\n");
+			return -1;
+		}
+		int NumOfKey = 0;
+		int NumOfNoKey = 0;
+		for (RecordData* CurRecDat = RecDatGet; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
+			ColumnDataWStr* ColName = (ColumnDataWStr*)CurRecDat->GetColumn(_T("Name"));
+			ColumnDataInt* ColId = (ColumnDataInt*)CurRecDat->GetColumn(_T("ID"));
+			ColumnDataStr* ColKey = (ColumnDataStr*)CurRecDat->GetColumn(_T("Key"));
+
+			if ((StrStr(ColName->GetValue(), _T("由紀")) != NULL || StrStr(ColName->GetValue(), _T("由美")) != NULL) && ColId->GetValue() > 100 && ColId->GetValue() < 500) {
+				if (strcmp(ColKey->GetValue(), "Key exist") != 0) {
+					printf("...[NG]\r\n");
+					return -1;
+				} else {
+					NumOfKey++;
+				}
+			} else {
+				if (strcmp(ColKey->GetValue(), "No Key") != 0) {
+					printf("...[NG]\r\n");
+					return -1;
+				} else {
+					NumOfNoKey++;
+				}
+			}
+		}
+		printf("(Key=%d, NoKey=%d)...[OK]\r\n", NumOfKey, NumOfNoKey);
+
+
+		printf("16383個のレコード中に存在するName=\"由紀\"または\"由美\"を含み，100 < ID < 500  のレコードを削除する。");
+		if (GetNumOfRecords(_T("Person")) != 16379) {
+			printf("...[NG]\r\n");
+			return -1;
+		}
+		LockTable(_T("Person"), LOCK_EXCLUSIVE);
+		DeleteRecord(RecDatSch1);
+		UnlockTable(_T("Person"));
+		int Rest = GetNumOfRecords(_T("Person"));
+		if (Rest != (16379 - NumOfKey)) {
+			printf("...[NG]\r\n");
+			return -1;
+		}
+		printf("(Deleted count = %d, Rest = %d)...[OK]\r\n", NumOfKey, Rest);
+
+		delete RecDatSch1;
+		delete RecDatUpd;
+		delete RecDatGet;
+	}
+
+
+	{
 		printf("DeleteRecord(_T(\"Person\")を排他ロックで実行した場合，0が返却され，GetNumOfRecords(_T(\"Person\"))の値は0となる");
 		LockTable(_T("Person"), LOCK_EXCLUSIVE);
 		if (DeleteRecord(_T("Person")) != 0) {
