@@ -28,13 +28,6 @@ public:
 	static BYTE* GetMsgUtf8Eng(int);
 	static BYTE* GetMsgUtf8Jpn(int);
 
-	static void StkErr(int, HWND);
-	static void StkErr(int, TCHAR*, HWND);
-	static void StkInf(int, HWND);
-	static void StkInf(int, TCHAR*, HWND);
-	static int StkYesNo(int, HWND);
-	static int StkYesNo(int, TCHAR*, HWND);
-
 	static void AddEng(int, TCHAR*);
 	static void AddJpn(int, TCHAR*);
 
