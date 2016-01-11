@@ -1,0 +1,64 @@
+﻿<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+<link rel="stylesheet" href="./style.css" type="text/css">
+</HEAD>
+
+<BODY>
+<div id="container">
+<H1>2. MessageProc</H1>
+
+
+
+<H2 ID="2.1">2.1 MessageProc概要</H2>
+<div class="topic">
+MessageProcは，クライアントプログラムのメッセージリソースおよびラベルリソースの管理を支援するクラスです。<br>
+MessageProcは，主に以下の機能をクライアントプログラムに提供します。<br>
+<ul>
+<li>メッセージリソースおよびラベルリソースの保持（最大10,000件）
+<li>ロケールに応じたメッセージリソースおよびラベルリソースの取得（英語ロケール，日本語ロケールに対応）
+<li>指定したエンコード種別に応じたメッセージリソースおよびラベルリソースの取得（UTF-16, UTF-8, S-JISに対応）
+</ul>
+</div><p>
+
+
+
+<H2 ID="2.2">2.2 MessageProcの使用方法</H2>
+<div class="topic">
+MessageProcの機能を利用するために，クライアントプログラムは，以下の.hファイル，.libファイルを事前に参照可能な状態にしておく必要がある。<p>
+<table class="tblstyle">
+<tr><td>.hファイル</td><td>msgproc.h</td></tr>
+<tr><td>.libファイル</td><td>commonfunc.lib</td></tr>
+</table><p>
+MessageProcのすべてのAPIはstatic宣言されており，クライアントプログラムから下記のように呼び出すことができる。<p>
+ex.) MessageProc::GetMsg(100);<br>
+</div><p>
+
+
+
+<H2 ID="2.3">2.3 API一覧</H2>
+<div class="topic">
+MessageProcクラスが提供するAPI一覧を以下に示す。<p>
+<table class="tblstyle">
+<tr><td>static void SetLocaleMode(int)</td><td></td></tr>
+<tr><td>static TCHAR* GetMsg(int)</td><td></td></tr>
+<tr><td>static TCHAR* GetMsgEng(int)</td><td></td></tr>
+<tr><td>static TCHAR* GetMsgJpn(int)</td><td></td></tr>
+<tr><td>static BYTE* GetMsgSjis(int)</td><td></td></tr>
+<tr><td>static BYTE* GetMsgSjisEng(int)</td><td></td></tr>
+<tr><td>static BYTE* GetMsgSjisJpn(int)</td><td></td></tr>
+<tr><td>static BYTE* GetMsgUtf8(int)</td><td></td></tr>
+<tr><td>static BYTE* GetMsgUtf8Eng(int)</td><td></td></tr>
+<tr><td>static BYTE* GetMsgUtf8Jpn(int)</td><td></td></tr>
+<tr><td>static void AddEng(int, TCHAR*)</td><td></td></tr>
+<tr><td>static void AddJpn(int, TCHAR*)</td><td></td></tr>
+<tr><td>static void DelEng(int)</td><td></td></tr>
+<tr><td>static void DelJpn(int)</td><td></td></tr>
+<tr><td>static void ClearAllMsg()</td><td></td></tr>
+</table><p>
+</div><p>
+
+
+
+</div>
+</BODY>
