@@ -18,6 +18,7 @@ public:
 	static const int LOCALE_MODE_JAPANESE = 11;
 
 	static void SetLocaleMode(int);
+
 	static TCHAR* GetMsg(int);
 	static TCHAR* GetMsgEng(int);
 	static TCHAR* GetMsgJpn(int);
@@ -30,6 +31,8 @@ public:
 
 	static void AddEng(int, TCHAR*);
 	static void AddJpn(int, TCHAR*);
+	static void DelEng(int);
+	static void DelJpn(int);
 
 	static void ClearAllMsg();
 };

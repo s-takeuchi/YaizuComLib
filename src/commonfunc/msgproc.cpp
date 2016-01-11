@@ -275,6 +275,38 @@ void MessageProc::AddJpn(int Id, TCHAR* Msg)
 	Impl::Instance->pImpl->Jpn(Id, Msg);
 }
 
+void MessageProc::DelEng(int Id)
+{
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+	if (Impl::Instance->pImpl->StkMsg[Id][Impl::ENG] != NULL) {
+		delete Impl::Instance->pImpl->StkMsg[Id][Impl::ENG];
+	}
+	if (Impl::Instance->pImpl->StkMsgSjis[Id][Impl::ENG] != NULL) {
+		delete Impl::Instance->pImpl->StkMsgSjis[Id][Impl::ENG];
+	}
+	if (Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::ENG] != NULL) {
+		delete Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::ENG];
+	}
+}
+
+void MessageProc::DelJpn(int Id)
+{
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+	if (Impl::Instance->pImpl->StkMsg[Id][Impl::JPN] != NULL) {
+		delete Impl::Instance->pImpl->StkMsg[Id][Impl::JPN];
+	}
+	if (Impl::Instance->pImpl->StkMsgSjis[Id][Impl::JPN] != NULL) {
+		delete Impl::Instance->pImpl->StkMsgSjis[Id][Impl::JPN];
+	}
+	if (Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::JPN] != NULL) {
+		delete Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::JPN];
+	}
+}
+
 void MessageProc::ClearAllMsg()
 {
 	if (Impl::Instance == NULL) {
