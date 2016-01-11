@@ -58,6 +58,17 @@ copy stksocket.pdf ..
 del *.pdf
 popd
 
+xcopy /y /q /s /i "..\doc\commonfunc" deployment\commonfunc
+pushd deployment\commonfunc
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm commonfunc00.pdf
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm commonfunc01.pdf
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm commonfunc02.pdf
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section03.htm commonfunc03.pdf
+%PDFTK% *.pdf output commonfunc.pdf
+copy commonfunc.pdf ..
+del *.pdf
+popd
+
 xcopy /y /q /s /i "..\doc\stkthread" deployment\stkthread
 pushd deployment\stkthread
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm stkthread00.pdf
@@ -121,6 +132,26 @@ copy "..\src\stksocket\Release\stksocket.lib" deployment
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.lib
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.h
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.pdf
+del ..\build\deployment\stksocket.lib
+del ..\build\deployment\stksocket.h
+del ..\build\deployment\stksocket.pdf
+
+echo Building commonfunc.sln...
+%DEVENV% "..\src\commonfunc\commonfunc.sln" /rebuild Release 
+copy "..\src\commonfunc\msgproc.h" deployment
+copy "..\src\commonfunc\StkGeneric.h" deployment
+copy "..\src\commonfunc\StkProperties.h" deployment
+copy "..\src\commonfunc\Release\commonfunc.lib" deployment
+%SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\commonfunc.lib
+%SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\msgproc.h
+%SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkGeneric.h
+%SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkProperties.h
+%SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\commonfunc.pdf
+del ..\build\deployment\commonfunc.lib
+del ..\build\deployment\msgproc.h
+del ..\build\deployment\StkGeneric.h
+del ..\build\deployment\StkProperties.h
+del ..\build\deployment\commonfunc.pdf
 
 echo Building stkthread.sln...
 %DEVENV% "..\src\stkthread\stkthread.sln" /rebuild Release 
@@ -129,6 +160,9 @@ copy "..\src\stkthread\Release\stkthread.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.lib
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.h
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.pdf
+del ..\build\deployment\stkthread.lib
+del ..\build\deployment\stkthread.h
+del ..\build\deployment\stkthread.pdf
 
 echo Building stkthreadgui.sln...
 %DEVENV% "..\src\stkthreadgui\stkthreadgui.sln" /rebuild Release 
@@ -137,6 +171,9 @@ copy "..\src\stkthreadgui\Release\stkthreadgui.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.lib
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.h
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.pdf
+del ..\build\deployment\stkthreadgui.lib
+del ..\build\deployment\stkthreadgui.h
+del ..\build\deployment\stkthreadgui.pdf
 
 echo Building stkdata.sln...
 %DEVENV% "..\src\stkdata\stkdata.sln" /rebuild Release 
@@ -147,6 +184,10 @@ copy "..\src\stkdata\Release\stkdata.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdataapi.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.pdf
+del ..\build\deployment\stkdata.lib
+del ..\build\deployment\stkdata.h
+del ..\build\deployment\stkdataapi.h
+del ..\build\deployment\stkdata.pdf
 
 
 echo;
