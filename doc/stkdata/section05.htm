@@ -15,7 +15,7 @@
 <div id="container">
 <H1>5. インターフェース</H1>
 
-<H2>5.1 インターフェース一覧</H2>
+<H2 id="5.1">5.1 インターフェース一覧</H2>
 
 ■リポジトリ情報取得用<BR>
 <div class=spc>
@@ -64,7 +64,7 @@
 </div><P>
 
 
-<H2>5.2 インターフェース詳細</H2>
+<H2 id="5.2">5.2 インターフェース詳細</H2>
 (1) int GetTableCount()<BR>
 <div class=spc>
 この関数は存在するテーブルの数を返却します。
@@ -324,7 +324,7 @@ Thread (B) : [Table-2 排他ロック] ---> [Table-1 排他ロック]<BR>
 この関数は1つ目のRecordDataで検索された既存のレコードを2つ目のRecordDataに
 置き換えます。<BR>
 <TABLE BORDER="1">
-<TR><TD>SchRec</TD><TD>検索用レコードを指定します。詳細な検索条件は，GetRecord関数の説明を参照してください。<BR>
+<TR><TD>SchRec</TD><TD>検索用レコードを指定します。検索条件の詳細は，<A HREF="section05.htm#5.3">5.3検索条件</a>を参照してください。<br>
 複数のレコードを検索するために，SetNextRecord()関数を用いて連結したRecordDataインスタンス
 を指定することができます。UpdateRecord関数は，連結された複数のRecordDataインスタンスの
 操作対象テーブルが異なることを許していません。
@@ -392,18 +392,18 @@ ColumnDataBinインスタンスとしてNULLを指定することはできない
 </TABLE>
 </div><P>
 
-(20) int DeleteRecord(RecordData* DelRec)<BR>
+(20) int DeleteRecord(RecordData* SchRec)<BR>
 <div class=spc>
-この関数は指定したRecordDataインスタンスで検索されたレコードを削除します。<BR>
+この関数は指定したRecordDataインスタンスで検索されたレコードを削除します。<br>
 レコードを削除した場所には，対象テーブルの最後のレコードが移動します。
 この結果DeleteRecord実行前と実行後でテーブル内のレコードの並び順序が異なる場合があります。
 （レコード削除性能を向上するためにこのような仕様となっています。）
 <TABLE BORDER="1">
-<TR><TD>DelRec</TD><TD>検索用レコードを指定します。詳細な検索条件は，GetRecord関数の説明を参照してください。<BR>
-DelRecで検索されたレコードは削除されます。DelRecのRecordDataインスタンスに
+<TR><TD>SchRec</TD><TD>検索用レコードを指定します。検索条件の詳細は，<A HREF="section05.htm#5.3">5.3検索条件</a>を参照してください。<br>
+SchRecで検索されたレコードは削除されます。SchRecのRecordDataインスタンスに
 レコードの全てのカラムを指定する必要はありません。何もカラムを指定しない場合，
 指定したテーブルのすべてのレコードが削除されます。
-DeleteRecord関数は，DelRecに連結された複数のRecordDataインスタンスが指定されることを許します。
+DeleteRecord関数は，SchRecに連結された複数のRecordDataインスタンスが指定されることを許します。
 また，上記複数のインスタンスがそれぞれ異なるテーブルを操作対象とすることを許します。
 </TD></TR>
 <TR><TD>戻り値</TD><TD>0 : 成功<BR>-1 : 失敗</TD></TR>
@@ -428,18 +428,9 @@ DeleteRecord関数は，DelRecに連結された複数のRecordDataインスタ�
 この関数はSchRecで検索されたレコードを返却します。
 <TABLE BORDER="1">
 <TR><TD>SchRec</TD><TD>
-取得するレコードの検索条件を指定します。検索条件は，SchRec内のColumnDataで指定します。複数のColumnDataで検索条件を指定する場合，
-それらの条件はAND条件で結合されます。<br>
-指定可能な検索条件はColumnDataの種類によって異なります。<br>
-<ul>
-<li>ColumnDataInt → COMP_EQUAL, COMP_NOT_EQUAL, COMP_GE, COMP_GT, COMP_LE, COMP_LTを指定可能。<br>
-<li>ColumnDataFloat → COMP_EQUAL, COMP_NOT_EQUAL, COMP_GE, COMP_GT, COMP_LE, COMP_LTを指定可能。<br>
-<li>ColumnDataStr → COMP_EQUAL, COMP_NOT_EQUAL, COMP_CONTAIN, COMP_NOT_CONTAINを指定可能。<br>
-<li>ColumnDataWStr → COMP_EQUAL, COMP_NOT_EQUAL, COMP_CONTAIN, COMP_NOT_CONTAINを指定可能。<br>
-<li>ColumnDataBin → COMP_EQUAL, COMP_NOT_EQUALを指定可能。<br>
-</ul>
-連結された複数のRecordDataインスタンスを指定することができます。連結された複数のRecordDataインスタンスを指定する場合，
-OR条件で結合された検索条件として扱われます。GetRecord関数は，各々のインスタンスが異なるテーブルを対象とすることを許します。
+取得するレコードの検索条件を指定します。検索条件の詳細は，<A HREF="section05.htm#5.3">5.3検索条件</a>を参照してください。<br>
+SchRecのRecordDataインスタンスにレコードの全てのカラムを指定する必要はありません。<br>
+SchRecが連結した複数のRecordDataの場合，GetRecord関数は，各々のインスタンスが異なるテーブルを対象とすることを許します。
 </TD></TR>
 <TR><TD>戻り値</TD><TD>
 連結された複数のRecordDataインスタンスが返却されます。
@@ -530,6 +521,26 @@ AutoSaveは，CreateTable, DeleteTableによりテーブル数が変化したと
 <TR><TD>戻り値</TD><TD>0 : 成功<BR>-1 : 失敗</TD></TR>
 </TABLE>
 </div><P>
+
+<H2 id="5.3">5.3 検索条件</H2>
+下記のAPIでは，SchRec(RecordData)内のColumnDataで検索条件を指定することができます。<br>
+<ul>
+<li>RecordData* GetRecord(RecordData* SchRec)
+<li>int UpdateRecord(RecordData* SchRec, RecordData* UpdRec)
+<li>int DeleteRecord(RecordData* SchRec)
+</ul><p>
+ColumnDataで指定する検索条件は，比較種別と値によって決定します。詳細は，<a href="section04-9.htm">4.9 ColumnData</a>を参照してください。
+指定可能な比較種別はColumnDataの種類によって異なります。<br>
+<TABLE BORDER="1">
+<tr><td>ColumnDataInt</td><td>COMP_EQUAL, COMP_NOT_EQUAL, COMP_GE, COMP_GT, COMP_LE, COMP_LTを指定可能。</td></tr>
+<tr><td>ColumnDataFloat</td><td>COMP_EQUAL, COMP_NOT_EQUAL, COMP_GE, COMP_GT, COMP_LE, COMP_LTを指定可能。</td></tr>
+<tr><td>ColumnDataStr</td><td>COMP_EQUAL, COMP_NOT_EQUAL, COMP_CONTAIN, COMP_NOT_CONTAINを指定可能。</td></tr>
+<tr><td>ColumnDataWStr</td><td>COMP_EQUAL, COMP_NOT_EQUAL, COMP_CONTAIN, COMP_NOT_CONTAINを指定可能。</td></tr>
+<tr><td>ColumnDataBin</td><td>COMP_EQUAL, COMP_NOT_EQUALを指定可能。</td></tr>
+</TABLE><p>
+同一RecordData内の複数のColumnDataで検索条件を指定する場合，検索条件は複数のColumnDataの条件をANDで結合したものとなります。
+SchRecで，連結した複数のRecordDataインスタンスを指定する場合，RecordDataは，OR条件で結合された検索条件として扱われます。<p>
+
 
 </div>
 
