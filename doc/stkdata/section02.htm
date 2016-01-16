@@ -20,13 +20,14 @@ StkData利用プログラムのソースコードから#include文で読込ん�
 StkData利用プログラムのソースコードから#include文で読込んでください。</TD><TD>要</TD><TD>不要</TD></TR>
 
 <TR><TD>stkdata.lib</TD><TD>StkDataの機能を提供する静的ライブラリ（StkData本体）です。
+stkdata.hおよびstkdataapi.hで定義したクラスおよびAPIを実装しています。
 本ファイルはStkData利用プログラムのビルド時に，StkData利用プログラムに取り込まれます。</TD><TD>要</TD><TD>不要</TD></TR>
 
 </TABLE>
 <P>
 
 <H2>2.2 ビルド方法</H2>
-StkData利用プログラムのソースコードからstkdata.hをインクルードしてください。また，
+StkData利用プログラムのソースコードからstkdata.hおよびstkdataapi.hをインクルードしてください。また，
 StkData利用プログラムのビルド時にstkdata.libを静的リンクするようプロジェクトの設定を変更してください。<P>
 StkData利用プログラムはWin32用アプリケーションとしてビルドされる必要があります。<BR>
 StkDataは，StkData利用プログラムがMicrosoftのVisual C++で記載されることを想定しています。<BR>

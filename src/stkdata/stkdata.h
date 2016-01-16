@@ -24,8 +24,8 @@
 #define COMP_GT              3 // Greater than
 #define COMP_LE              4 // Less than or qeual to
 #define COMP_LT              5 // Less than
-#define COMP_CONTAIN        11 // Contains
-#define COMP_NOT_CONTAIN    12 // Does not contain
+#define COMP_CONTAIN        11 // Contain
+#define COMP_NOT_CONTAIN    12 // Not contain
 
 //
 // Table definition
