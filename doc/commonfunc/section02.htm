@@ -25,12 +25,12 @@ MessageProcは，主に以下の機能をクライアントプログラムに提
 
 <H2 ID="2.2">2.2 MessageProcの使用方法</H2>
 <div class="topic">
-MessageProcの機能を利用するために，クライアントプログラムは，以下の.hファイル，.libファイルを事前に参照可能な状態にしておく必要がある。<p>
+MessageProcの機能を利用するために，クライアントプログラムは，以下の.hファイル，.libファイルを事前に参照可能な状態にしておく必要があります。<p>
 <table class="tblstyle">
 <tr><td>.hファイル</td><td>msgproc.h</td></tr>
 <tr><td>.libファイル</td><td>commonfunc.lib</td></tr>
 </table><p>
-MessageProcのすべてのAPIはstatic宣言されており，クライアントプログラムから下記のように呼び出すことができる。<p>
+MessageProcのすべてのAPIはstatic宣言されており，クライアントプログラムから下記のように呼び出すことができます。<p>
 ex.) MessageProc::GetMsg(100);<br>
 </div><p>
 
@@ -38,23 +38,23 @@ ex.) MessageProc::GetMsg(100);<br>
 
 <H2 ID="2.3">2.3 API一覧</H2>
 <div class="topic">
-MessageProcクラスが提供するAPI一覧を以下に示す。<p>
+MessageProcクラスが提供するAPI一覧を以下に示します。<p>
 <table class="tblstyle">
-<tr><td>static void SetLocaleMode(int)</td><td></td></tr>
-<tr><td>static TCHAR* GetMsg(int)</td><td></td></tr>
-<tr><td>static TCHAR* GetMsgEng(int)</td><td></td></tr>
-<tr><td>static TCHAR* GetMsgJpn(int)</td><td></td></tr>
-<tr><td>static BYTE* GetMsgSjis(int)</td><td></td></tr>
-<tr><td>static BYTE* GetMsgSjisEng(int)</td><td></td></tr>
-<tr><td>static BYTE* GetMsgSjisJpn(int)</td><td></td></tr>
-<tr><td>static BYTE* GetMsgUtf8(int)</td><td></td></tr>
-<tr><td>static BYTE* GetMsgUtf8Eng(int)</td><td></td></tr>
-<tr><td>static BYTE* GetMsgUtf8Jpn(int)</td><td></td></tr>
-<tr><td>static void AddEng(int, TCHAR*)</td><td></td></tr>
-<tr><td>static void AddJpn(int, TCHAR*)</td><td></td></tr>
-<tr><td>static void DelEng(int)</td><td></td></tr>
-<tr><td>static void DelJpn(int)</td><td></td></tr>
-<tr><td>static void ClearAllMsg()</td><td></td></tr>
+<tr><td>static void SetLocaleMode(int)</td><td>GetMsg, GetMsgSjis, GetMsgUft8 APIが返すメッセージのロケールを指定します。</td></tr>
+<tr><td>static TCHAR* GetMsg(int)</td><td>UTF-16エンコーディングしたメッセージを返却します。</td></tr>
+<tr><td>static TCHAR* GetMsgEng(int)</td><td>UTF-16エンコーディングした英語メッセージを返却します。</td></tr>
+<tr><td>static TCHAR* GetMsgJpn(int)</td><td>UTF-16エンコーディングした日本語メッセージを返却します。</td></tr>
+<tr><td>static BYTE* GetMsgSjis(int)</td><td>SJISエンコーディングしたメッセージを返却します。</td></tr>
+<tr><td>static BYTE* GetMsgSjisEng(int)</td><td>SJISエンコーディングした英語メッセージを返却します。</td></tr>
+<tr><td>static BYTE* GetMsgSjisJpn(int)</td><td>SJISエンコーディングした日本語メッセージを返却します。</td></tr>
+<tr><td>static BYTE* GetMsgUtf8(int)</td><td>UTF-8エンコーディングしたメッセージを返却します。</td></tr>
+<tr><td>static BYTE* GetMsgUtf8Eng(int)</td><td>UTF-8エンコーディングした英語メッセージを返却します。</td></tr>
+<tr><td>static BYTE* GetMsgUtf8Jpn(int)</td><td>UTF-8エンコーディングした日本語メッセージを返却します。</td></tr>
+<tr><td>static void AddEng(int, TCHAR*)</td><td>指定した英語メッセージを追加します。</td></tr>
+<tr><td>static void AddJpn(int, TCHAR*)</td><td>指定した日本語メッセージを追加します。</td></tr>
+<tr><td>static void DelEng(int)</td><td>指定した英語メッセージを削除します。</td></tr>
+<tr><td>static void DelJpn(int)</td><td>指定した日本語メッセージを削除します。</td></tr>
+<tr><td>static void ClearAllMsg()</td><td>すべてのメッセージを削除します。</td></tr>
 </table><p>
 </div><p>
 
