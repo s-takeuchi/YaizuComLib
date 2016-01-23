@@ -125,6 +125,10 @@ echo ==========================================
 echo Making libraries
 echo;
 
+echo Build version: > buildver.txt
+date /T >> buildver.txt
+time /T >> buildver.txt
+
 echo Building stksocket.sln...
 %DEVENV% "..\src\stksocket\stksocket.sln" /rebuild Release 
 copy "..\src\stksocket\stksocket.h" deployment
@@ -132,6 +136,7 @@ copy "..\src\stksocket\Release\stksocket.lib" deployment
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.lib
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.h
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.pdf
+%SEVENZIP% a ..\build\deployment\stksocket.zip buildver.txt
 del ..\build\deployment\stksocket.lib
 del ..\build\deployment\stksocket.h
 del ..\build\deployment\stksocket.pdf
@@ -147,6 +152,7 @@ copy "..\src\commonfunc\Release\commonfunc.lib" deployment
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkGeneric.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkProperties.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\commonfunc.pdf
+%SEVENZIP% a ..\build\deployment\commonfunc.zip buildver.txt
 del ..\build\deployment\commonfunc.lib
 del ..\build\deployment\msgproc.h
 del ..\build\deployment\StkGeneric.h
@@ -160,6 +166,7 @@ copy "..\src\stkthread\Release\stkthread.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.lib
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.h
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.pdf
+%SEVENZIP% a ..\build\deployment\stkthread.zip buildver.txt
 del ..\build\deployment\stkthread.lib
 del ..\build\deployment\stkthread.h
 del ..\build\deployment\stkthread.pdf
@@ -171,6 +178,7 @@ copy "..\src\stkthreadgui\Release\stkthreadgui.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.lib
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.h
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.pdf
+%SEVENZIP% a ..\build\deployment\stkthreadgui.zip buildver.txt
 del ..\build\deployment\stkthreadgui.lib
 del ..\build\deployment\stkthreadgui.h
 del ..\build\deployment\stkthreadgui.pdf
@@ -184,6 +192,7 @@ copy "..\src\stkdata\Release\stkdata.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdataapi.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.pdf
+%SEVENZIP% a ..\build\deployment\stkdata.zip buildver.txt
 del ..\build\deployment\stkdata.lib
 del ..\build\deployment\stkdata.h
 del ..\build\deployment\stkdataapi.h
