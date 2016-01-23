@@ -62,5 +62,37 @@ void MsgProcTest()
 		printf("After clear API is called no message can be acquired ... OK case\n");
 	}
 
+	MessageProc::AddJpn(101, _T("‚ ‚¢‚¤‚¦‚¨"));
+	MessageProc::AddEng(101, _T("abcde"));
+	MessageProc::AddJpn(102, _T("‚©‚«‚­‚¯‚±"));
+	MessageProc::AddEng(102, _T("fghij"));
+	MessageProc::DelJpn(101);
+	MessageProc::DelEng(102);
+	if (MessageProc::GetMsgEng(101) == NULL || MessageProc::GetMsgSjisEng(101) == NULL || MessageProc::GetMsgUtf8Eng(101) == NULL) {
+		printf("Existing English message is not returned ... NG case\n");
+		exit(0);
+	} else {
+		printf("Existing English message is returned ... OK case\n");
+	}
+	if (MessageProc::GetMsgJpn(102) == NULL || MessageProc::GetMsgSjisJpn(102) == NULL || MessageProc::GetMsgUtf8Jpn(102) == NULL) {
+		printf("Existing Japanese message is not returned ... NG case\n");
+		exit(0);
+	} else {
+		printf("Existing Japanese message is returned ... OK case\n");
+	}
+	if (MessageProc::GetMsgJpn(101) == NULL || MessageProc::GetMsgSjisJpn(101) == NULL || MessageProc::GetMsgUtf8Jpn(101) == NULL) {
+		printf("Deleted Japanese message is not returned ... OK case\n");
+	} else {
+		printf("Deleted Japanese message is returned ... NG case\n");
+		exit(0);
+	}
+	if (MessageProc::GetMsgEng(102) == NULL || MessageProc::GetMsgSjisEng(102) == NULL || MessageProc::GetMsgUtf8Eng(102) == NULL) {
+		printf("Deleted English message is not returned ... OK case\n");
+	} else {
+		printf("Deleted English message is returned ... NG case\n");
+		exit(0);
+	}
+
+
 	printf("MsgProcTest completed.\n\n\n");
 }

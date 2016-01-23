@@ -289,6 +289,9 @@ void MessageProc::DelEng(int Id)
 	if (Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::ENG] != NULL) {
 		delete Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::ENG];
 	}
+	Impl::Instance->pImpl->StkMsg[Id][Impl::ENG] = NULL;
+	Impl::Instance->pImpl->StkMsgSjis[Id][Impl::ENG] = NULL;
+	Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::ENG] = NULL;
 }
 
 void MessageProc::DelJpn(int Id)
@@ -305,6 +308,9 @@ void MessageProc::DelJpn(int Id)
 	if (Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::JPN] != NULL) {
 		delete Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::JPN];
 	}
+	Impl::Instance->pImpl->StkMsg[Id][Impl::JPN] = NULL;
+	Impl::Instance->pImpl->StkMsgSjis[Id][Impl::JPN] = NULL;
+	Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::JPN] = NULL;
 }
 
 void MessageProc::ClearAllMsg()
