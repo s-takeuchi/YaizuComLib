@@ -46,6 +46,11 @@ int GetStkThreadIdByIndex(int Index)
 	return StkThreadManager::GetInstance()->GetStkThreadIdByIndex(Index);
 }
 
+int GetStkThreadIds(int Ids[StkThreadManager::MAX_NUM_OF_STKTHREADS])
+{
+	return StkThreadManager::GetInstance()->GetStkThreadIds(Ids);
+}
+
 int GetStkThreadStatus(int Id)
 {
 	return StkThreadManager::GetInstance()->GetStkThreadStatus(Id);
@@ -94,4 +99,14 @@ int StartSpecifiedStkThreads(int Ids[StkThreadManager::MAX_NUM_OF_STKTHREADS], i
 int StopSpecifiedStkThreads(int Ids[StkThreadManager::MAX_NUM_OF_STKTHREADS], int NumOfIds)
 {
 	return StkThreadManager::GetInstance()->StopSpecifiedStkThreads(Ids, NumOfIds);
+}
+
+int StartAllStkThreads()
+{
+	return StkThreadManager::GetInstance()->StartAllStkThreads();
+}
+
+int StopAllStkThreads()
+{
+	return StkThreadManager::GetInstance()->StopAllStkThreads();
 }

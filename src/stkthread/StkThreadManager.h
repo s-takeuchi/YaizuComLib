@@ -53,6 +53,7 @@ public:
 	void DeleteStkThread(int);
 
 	int GetStkThreadIdByIndex(int);
+	int GetStkThreadIds(int[MAX_NUM_OF_STKTHREADS]);
 	int GetStkThreadStatus(int);
 	int GetStkThreadStatusByIndex(int);
 	int GetStkThreadName(int, TCHAR[MAX_LENGTH_OF_STKTHREAD_NAME]);
@@ -64,4 +65,6 @@ public:
 	void SetProcAfterLastThreadStops(void*);
 	int StartSpecifiedStkThreads(int[MAX_NUM_OF_STKTHREADS], int);
 	int StopSpecifiedStkThreads(int[MAX_NUM_OF_STKTHREADS], int);
+	int StartAllStkThreads();
+	int StopAllStkThreads();
 };

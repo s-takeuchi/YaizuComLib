@@ -81,6 +81,24 @@ int StkThreadManager::StopSpecifiedStkThreads(int Ids[MAX_NUM_OF_STKTHREADS], in
 	return NumOfRunThreads;
 }
 
+// This method starts all of StkThreads
+// Return : Number of running threads before this thread is called
+int StkThreadManager::StartAllStkThreads()
+{
+	int TmpIds[MAX_NUM_OF_STKTHREADS];
+	int TmpNumOfIds = GetStkThreadIds(TmpIds);
+	return StartSpecifiedStkThreads(TmpIds, TmpNumOfIds);
+}
+
+// This method stops all of StkThreads
+// Return : Number of running threads before this thread is called
+int StkThreadManager::StopAllStkThreads()
+{
+	int TmpIds[MAX_NUM_OF_STKTHREADS];
+	int TmpNumOfIds = GetStkThreadIds(TmpIds);
+	return StopSpecifiedStkThreads(TmpIds, TmpNumOfIds);
+}
+
 // This method checks the conditions and executes ProcBeforeFirstThreadStarts().
 // Ids [in] : IDs which are specified for stopping thread.
 // NumOfIds [in] : Number of IDs
@@ -322,6 +340,17 @@ int StkThreadManager::GetStkThreadIdByIndex(int Index)
 		return -1;
 	}
 	return StkThreadArray[Index]->GetId();
+}
+
+// Get all registered IDs.
+// Ids [out] : Acquired IDs
+// Return : Number of acquired IDs
+int StkThreadManager::GetStkThreadIds(int Ids[MAX_NUM_OF_STKTHREADS])
+{
+	for (int Loop = 0; Loop < StkThreadElementCount; Loop++) {
+		Ids[Loop] = StkThreadArray[Loop]->GetId();
+	}
+	return StkThreadElementCount;
 }
 
 // Get name of the specified StkThread.
