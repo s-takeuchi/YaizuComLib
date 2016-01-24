@@ -205,6 +205,42 @@ int Create1000Threads()
 	printf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
 
 	//////////////////////////////
+	printf("Check Number of threads...");
+	int TmpIds[MAX_NUM_OF_STKTHREADS];
+	int NumOfIds = GetStkThreadIds(TmpIds);
+	if (NumOfIds != 1000) {
+		printf("[NG] NumOfIds=%d \r\n", NumOfIds);
+		return -1;
+	}
+	for (int Loop = 0; Loop < NumOfIds; Loop++) {
+		if (TmpIds[Loop] < 0 || TmpIds[Loop] >= 1000) {
+			printf("[NG] Invalid ID[%d] = %d \r\n", Loop, TmpIds[Loop]);
+			return -1;
+		}
+	}
+	printf("[OK] (NumOfIds=%d)\r\n", NumOfIds);
+
+	//////////////////////////////
+	printf("Starts all threads...");
+	StartAllStkThreads();
+	Sleep(2000);
+	if (GetNumOfRunStkThread() != 1000) {
+		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		return -1;
+	}
+	printf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
+
+	//////////////////////////////
+	printf("Stops all threads...");
+	StopAllStkThreads();
+	Sleep(2000);
+	if (GetNumOfRunStkThread() != 0) {
+		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		return -1;
+	}
+	printf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
+
+	//////////////////////////////
 	printf("Deletes 1000 threads...");
 	while (GetNumOfStkThread() >= 1) {
 		int TargetId = GetStkThreadIdByIndex(0);
