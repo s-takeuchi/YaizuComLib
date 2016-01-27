@@ -5,9 +5,11 @@
 
 void StkPropertiesTest();
 void MsgProcTest();
+void StkObjectTest();
 
 int main(int argc, char *argv[])
 {
+	StkObjectTest();
 	StkPropertiesTest();
 	MsgProcTest();
 

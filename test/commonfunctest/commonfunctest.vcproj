@@ -181,6 +181,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StkObjectTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\StkPropertiesTest.cpp"
 				>
 			</File>

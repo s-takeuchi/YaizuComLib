@@ -182,6 +182,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="StkObject"
+			>
+			<File
+				RelativePath=".\StkObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StkObjectMgr.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkObjectMgr.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
