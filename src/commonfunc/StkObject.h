@@ -20,11 +20,13 @@ public:
 	StkObject(TCHAR*, TCHAR*); // for string attribute
 	virtual ~StkObject();
 
+	StkObject* Clone();
+
 	TCHAR* GetName();
 	int GetType();
 	int GetIntValue();
 	float GetFloatValue();
-	TCHAR* GetStringVaue();
+	TCHAR* GetStringValue();
 
 	StkObject* GetFirstChildElement();
 	StkObject* GetLastChildElement();

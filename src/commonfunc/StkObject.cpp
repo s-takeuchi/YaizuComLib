@@ -92,10 +92,10 @@ StkObject::~StkObject()
 		delete pImpl->Next;
 	}
 	if (pImpl->FirstAttr != NULL) {
-		delete pImpl->Next;
+		delete pImpl->FirstAttr;
 	}
 	if (pImpl->FirstElem != NULL) {
-		delete pImpl->Next;
+		delete pImpl->FirstElem;
 	}
 	if (pImpl->Name != NULL) {
 		delete pImpl->Name;
@@ -103,6 +103,41 @@ StkObject::~StkObject()
 	if (pImpl->Value != NULL) {
 		delete pImpl->Value;
 	}
+	delete pImpl;
+}
+
+StkObject* StkObject::Clone()
+{
+	StkObject* NewObj;
+	TCHAR* TmpName = GetName();
+	if (pImpl->Type == STKOBJECT_INT) {
+		NewObj = new StkObject(TmpName, GetIntValue());
+	} else if (pImpl->Type == STKOBJECT_FLOAT) {
+		NewObj = new StkObject(TmpName, GetFloatValue());
+	} else if (pImpl->Type == STKOBJECT_STRING) {
+		NewObj = new StkObject(TmpName, GetStringValue());
+	} else if (pImpl->Type == STKOBJECT_ELEMENT) {
+		NewObj = new StkObject(TmpName);
+		StkObject* TmpAttr = GetFirstAttribute();
+		if (TmpAttr != NULL) {
+			NewObj->AppendAttribute(TmpAttr->Clone());
+			StkObject* CurAttr = TmpAttr->GetNext();
+			while (CurAttr != NULL) {
+				NewObj->AppendAttribute(CurAttr->Clone());
+				CurAttr = CurAttr->GetNext();
+			}
+		}
+		StkObject* TmpElem = GetFirstChildElement();
+		if (TmpElem != NULL) {
+			NewObj->AppendChildElement(TmpElem->Clone());
+			StkObject* CurElem = TmpElem->GetNext();
+			while (CurElem != NULL) {
+				NewObj->AppendChildElement(CurElem->Clone());
+				CurElem = CurElem->GetNext();
+			}
+		}
+	}
+	return NewObj;
 }
 
 TCHAR* StkObject::GetName()
@@ -127,7 +162,7 @@ float StkObject::GetFloatValue()
 	return *Val;
 }
 
-TCHAR* StkObject::GetStringVaue()
+TCHAR* StkObject::GetStringValue()
 {
 	return (TCHAR*)pImpl->Value;
 }

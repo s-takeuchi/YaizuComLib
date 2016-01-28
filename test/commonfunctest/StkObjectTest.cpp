@@ -1,7 +1,52 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
+#include <Psapi.h>
+
 #include "..\..\src\commonfunc\StkObject.h"
+
+int GetUsedMemorySizeOfCurrentProcess()
+{
+	DWORD dwProcessID = GetCurrentProcessId();
+	HANDLE hProcess;
+	PROCESS_MEMORY_COUNTERS pmc = { 0 };
+
+	long Size;
+	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dwProcessID)) != NULL) {
+		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
+			Size = pmc.WorkingSetSize;
+		}
+	}
+	CloseHandle(hProcess);
+	return Size;
+}
+
+int MemoryLeakChecking(StkObject* PassedObj)
+{
+	printf("Checks memory leak...");
+	long MaxMem[30];
+	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
+		for (int Loop = 0; Loop < 1000; Loop++) {
+			StkObject* NewObj = PassedObj->Clone();
+			delete NewObj;
+		}
+		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
+	}
+	if (MaxMem[0] < MaxMem[3] &&
+		MaxMem[3] < MaxMem[6] &&
+		MaxMem[6] < MaxMem[9] &&
+		MaxMem[9] < MaxMem[12] &&
+		MaxMem[12] < MaxMem[15] &&
+		MaxMem[15] < MaxMem[18] &&
+		MaxMem[18] < MaxMem[21] &&
+		MaxMem[21] < MaxMem[24] &&
+		MaxMem[24] < MaxMem[27]) {
+		printf("[NG]\r\n");
+		return -1;
+	}
+	printf("[OK]\r\n");
+	return 0;
+}
 
 void StkObjectTest()
 {
@@ -35,5 +80,18 @@ void StkObjectTest()
 	Elem1->AppendChildElement(Elem3);
 	Elem1->AppendChildElement(Elem4);
 	Elem1->ToXml(2);
+
+	MemoryLeakChecking(Elem1);
+
+	StkObject* NewObj1 = Elem1->Clone();
+	StkObject* NewObj2 = Elem1->Clone();
 	delete Elem1;
+
+	NewObj1->ToXml(2);
+	NewObj2->ToXml(2);
+
+	delete NewObj1;
+	delete NewObj2;
+
+
 }
