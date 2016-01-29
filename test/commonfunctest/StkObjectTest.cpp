@@ -81,6 +81,11 @@ void StkObjectTest()
 	Elem1->AppendChildElement(Elem4);
 	Elem1->ToXml(2);
 
+	int Len1 = Elem1->GetFirstChildElement()->GetArrayLength();
+	printf("Len of Elem1-Child = %d\r\n", Len1);
+	int Len2 = Elem1->GetArrayLength();
+	printf("Len of Elem1 = %d\r\n", Len2);
+
 	MemoryLeakChecking(Elem1);
 
 	StkObject* NewObj1 = Elem1->Clone();

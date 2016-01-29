@@ -21,6 +21,7 @@ public:
 	virtual ~StkObject();
 
 	StkObject* Clone();
+	int GetArrayLength();
 
 	TCHAR* GetName();
 	int GetType();

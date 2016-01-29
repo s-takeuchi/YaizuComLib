@@ -140,6 +140,15 @@ StkObject* StkObject::Clone()
 	return NewObj;
 }
 
+int StkObject::GetArrayLength()
+{
+	StkObject* NextObj = pImpl->Next;
+	if (NextObj != NULL) {
+		return 1 + NextObj->GetArrayLength();
+	}
+	return 1;
+}
+
 TCHAR* StkObject::GetName()
 {
 	return pImpl->Name;
