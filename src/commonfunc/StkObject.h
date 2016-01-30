@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <string>
 #pragma once
 
 class StkObject
@@ -22,6 +23,8 @@ public:
 
 	StkObject* Clone();
 	int GetArrayLength();
+	int GetChildElementCount();
+	int GetAttributeCount();
 
 	TCHAR* GetName();
 	int GetType();
@@ -39,5 +42,5 @@ public:
 	void AppendAttribute(StkObject*);
 	void SetNext(StkObject*); // DO NOT USE THIS API. USE Append* API INSTEAD.
 
-	void ToXml(int);
+	void ToXml(std::wstring* Msg, int Indent = 0);
 };

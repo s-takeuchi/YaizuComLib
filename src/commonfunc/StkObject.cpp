@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <string>
 #include <tchar.h>
 #include "StkObject.h"
 
@@ -149,6 +150,24 @@ int StkObject::GetArrayLength()
 	return 1;
 }
 
+int StkObject::GetChildElementCount()
+{
+	StkObject* CldObj = pImpl->FirstElem;
+	if (CldObj != NULL) {
+		return CldObj->GetArrayLength();
+	}
+	return 0;
+}
+
+int StkObject::GetAttributeCount()
+{
+	StkObject* AtrObj = pImpl->FirstAttr;
+	if (AtrObj != NULL) {
+		return AtrObj->GetArrayLength();
+	}
+	return 0;
+}
+
 TCHAR* StkObject::GetName()
 {
 	return pImpl->Name;
@@ -232,45 +251,52 @@ void StkObject::SetNext(StkObject* TmpObj)
 	}
 }
 
-void StkObject::ToXml(int Indent)
+void StkObject::ToXml(std::wstring* Msg, int Indent)
 {
+	if (pImpl->Name == NULL || pImpl->Type == STKOBJECT_UNKNOWN) {
+		return;
+	}
 	if (pImpl->Type != STKOBJECT_ELEMENT) {
 		if (pImpl->Type == STKOBJECT_INT) {
 			int *Val = (int*)pImpl->Value;
-			wprintf(_T("%s=\"%d\" "), pImpl->Name, *Val);
+			TCHAR TmpBuf[15];
+			_snwprintf_s(TmpBuf, 15, _TRUNCATE, _T("%d"), *Val);
+			*Msg = *Msg + pImpl->Name + _T("=\"") + TmpBuf + _T("\" ");
 		} else if (pImpl->Type == STKOBJECT_FLOAT) {
 			float *Val = (float*)pImpl->Value;
-			wprintf(_T("%s=\"%f\" "), pImpl->Name, *Val);
+			TCHAR TmpBuf[25];
+			_snwprintf_s(TmpBuf, 25, _TRUNCATE, _T("%f"), *Val);
+			*Msg = *Msg + pImpl->Name + _T("=\"") + TmpBuf + _T("\" ");
 		} else if (pImpl->Type == STKOBJECT_STRING) {
-			wprintf(_T("%s=\"%s\" "), pImpl->Name, pImpl->Value);
+			*Msg = *Msg + pImpl->Name + _T("=\"") + (TCHAR*)pImpl->Value + _T("\" ");
 		}
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;
-			TmpObj->ToXml(Indent);
+			TmpObj->ToXml(Msg, Indent);
 		}
 	} else {
 		for (int Loop = 0; Loop < Indent; Loop++) {
-			wprintf(_T(" "));
+			*Msg += _T(" ");
 		}
-		wprintf(_T("<%s "), pImpl->Name);
+		*Msg = *Msg + _T("<") + pImpl->Name + _T(" ");
 		if (pImpl->FirstAttr != NULL) {
 			StkObject* TmpObj = pImpl->FirstAttr;
-			TmpObj->ToXml(Indent);
+			TmpObj->ToXml(Msg, Indent);
 		}
 		if (pImpl->FirstElem != NULL) {
-			wprintf(_T(">\r\n"));
+			*Msg += _T(">\r\n");
 			StkObject* TmpObj = pImpl->FirstElem;
-			TmpObj->ToXml(Indent + 2);
+			TmpObj->ToXml(Msg, Indent + 2);
 			for (int Loop = 0; Loop < Indent; Loop++) {
-				wprintf(_T(" "));
+				*Msg += _T(" ");
 			}
-			wprintf(_T("</%s>\r\n"), pImpl->Name);
+			*Msg = *Msg + _T("<") + pImpl->Name + _T("\r\n");
 		} else {
-			wprintf(_T("/>\r\n"));
+			*Msg += _T("/>\r\n");
 		}
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;
-			TmpObj->ToXml(Indent);
+			TmpObj->ToXml(Msg, Indent);
 		}
 	}
 }
