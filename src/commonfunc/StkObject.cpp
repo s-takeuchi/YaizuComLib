@@ -290,7 +290,7 @@ void StkObject::ToXml(std::wstring* Msg, int Indent)
 			for (int Loop = 0; Loop < Indent; Loop++) {
 				*Msg += _T(" ");
 			}
-			*Msg = *Msg + _T("<") + pImpl->Name + _T("\r\n");
+			*Msg = *Msg + _T("</") + pImpl->Name + _T(">\r\n");
 		} else {
 			*Msg += _T("/>\r\n");
 		}

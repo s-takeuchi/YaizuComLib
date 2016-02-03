@@ -5,6 +5,7 @@
 #include <Psapi.h>
 
 #include "..\..\src\commonfunc\StkObject.h"
+#include "..\..\src\commonfunc\StkObjectUtil.h"
 
 int GetUsedMemorySizeOfCurrentProcess()
 {
@@ -159,10 +160,57 @@ void CloneTest(StkObject* Obj)
 	delete NewObj2;
 }
 
+void StkObjectUtilTest()
+{
+	int Offset = 0;
+	StkObjectUtil Sou;
+
+	TCHAR* Xml1 = _T("<Aaaa/>");
+	TCHAR* Xml2 = _T("<Aaaa></Aaaa>");
+	TCHAR* Xml3 = _T("<Aaaa> <Bbbb/> </Aaaa>");
+	TCHAR* Xml4 = _T("<Aaaa> <Bbbb></Bbbb> </Aaaa>");
+	TCHAR* Xml5 = _T("<Aaaa> <Bbbb></Bbbb><Bbbb></Bbbb><Bbbb></Bbbb> </Aaaa>");
+	TCHAR* Xml6 = _T(" <	 Aaaa	  >		  <		  /		  Aaaa		 >	 ");
+	TCHAR* Xml7 = _T("<Aaaa><Bbbb><Cccc/><Cccc/></Bbbb><Bbbb><Cccc></Cccc></Bbbb><Bbbb><Cccc></Cccc></Bbbb> </Aaaa>");
+
+	StkObject* RetObj1 = Sou.CreateObjectFromXml(Xml1, &Offset);
+	StkObject* RetObj2 = Sou.CreateObjectFromXml(Xml2, &Offset);
+	StkObject* RetObj3 = Sou.CreateObjectFromXml(Xml3, &Offset);
+	StkObject* RetObj4 = Sou.CreateObjectFromXml(Xml4, &Offset);
+	StkObject* RetObj5 = Sou.CreateObjectFromXml(Xml5, &Offset);
+	StkObject* RetObj6 = Sou.CreateObjectFromXml(Xml6, &Offset);
+	StkObject* RetObj7 = Sou.CreateObjectFromXml(Xml7, &Offset);
+
+	std::wstring Msg1;
+	std::wstring Msg2;
+	std::wstring Msg3;
+	std::wstring Msg4;
+	std::wstring Msg5;
+	std::wstring Msg6;
+	std::wstring Msg7;
+
+	RetObj1->ToXml(&Msg1);
+	RetObj2->ToXml(&Msg2);
+	RetObj3->ToXml(&Msg3);
+	RetObj4->ToXml(&Msg4);
+	RetObj5->ToXml(&Msg5);
+	RetObj6->ToXml(&Msg6);
+	RetObj7->ToXml(&Msg7);
+
+	delete RetObj1;
+	delete RetObj2;
+	delete RetObj3;
+	delete RetObj4;
+	delete RetObj5;
+	delete RetObj6;
+	delete RetObj7;
+}
+
 void StkObjectTest()
 {
 	printf("StkObjectTest started.\r\n");
 
+	StkObjectUtilTest();
 	StkObject* Elem1 = GeneralTestCase1();
 	MemoryLeakChecking(Elem1);
 	CloneTest(Elem1);
