@@ -5,7 +5,8 @@
 class StkObjectUtil
 {
 private:
-	TCHAR* StkObjectUtil::GetElementName(TCHAR*, int*);
+	TCHAR* GetName(TCHAR*, int*);
+	TCHAR* GetAttrValue(TCHAR*, int*);
 
 public:
 	StkObject* CreateObjectFromXml(TCHAR*, int*);

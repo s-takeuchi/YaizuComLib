@@ -171,7 +171,7 @@ void StkObjectUtilTest()
 	TCHAR* Xml4 = _T("<Aaaa> <Bbbb></Bbbb> </Aaaa>");
 	TCHAR* Xml5 = _T("<Aaaa> <Bbbb></Bbbb><Bbbb></Bbbb><Bbbb></Bbbb> </Aaaa>");
 	TCHAR* Xml6 = _T(" <	 Aaaa	  >		  <		  /		  Aaaa		 >	 ");
-	TCHAR* Xml7 = _T("<Aaaa><Bbbb><Cccc/><Cccc/></Bbbb><Bbbb><Cccc></Cccc></Bbbb><Bbbb><Cccc></Cccc></Bbbb> </Aaaa>");
+	TCHAR* Xml7 = _T("<Aaaa Xxx=\"1234\" Yyy=\"987\"><Bbbb><Cccc Zzz=\"000\"/><Cccc/></Bbbb><Bbbb><Cccc Zzz=\"000\"></Cccc></Bbbb><Bbbb><Cccc></Cccc></Bbbb> </Aaaa>");
 
 	StkObject* RetObj1 = Sou.CreateObjectFromXml(Xml1, &Offset);
 	StkObject* RetObj2 = Sou.CreateObjectFromXml(Xml2, &Offset);

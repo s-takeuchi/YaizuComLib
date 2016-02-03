@@ -261,14 +261,14 @@ void StkObject::ToXml(std::wstring* Msg, int Indent)
 			int *Val = (int*)pImpl->Value;
 			TCHAR TmpBuf[15];
 			_snwprintf_s(TmpBuf, 15, _TRUNCATE, _T("%d"), *Val);
-			*Msg = *Msg + pImpl->Name + _T("=\"") + TmpBuf + _T("\" ");
+			*Msg = *Msg + _T(" ") + pImpl->Name + _T("=\"") + TmpBuf + _T("\"");
 		} else if (pImpl->Type == STKOBJECT_FLOAT) {
 			float *Val = (float*)pImpl->Value;
 			TCHAR TmpBuf[25];
 			_snwprintf_s(TmpBuf, 25, _TRUNCATE, _T("%f"), *Val);
-			*Msg = *Msg + pImpl->Name + _T("=\"") + TmpBuf + _T("\" ");
+			*Msg = *Msg + _T(" ") + pImpl->Name + _T("=\"") + TmpBuf + _T("\"");
 		} else if (pImpl->Type == STKOBJECT_STRING) {
-			*Msg = *Msg + pImpl->Name + _T("=\"") + (TCHAR*)pImpl->Value + _T("\" ");
+			*Msg = *Msg + _T(" ") + pImpl->Name + _T("=\"") + (TCHAR*)pImpl->Value + _T("\"");
 		}
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;
@@ -278,7 +278,7 @@ void StkObject::ToXml(std::wstring* Msg, int Indent)
 		for (int Loop = 0; Loop < Indent; Loop++) {
 			*Msg += _T(" ");
 		}
-		*Msg = *Msg + _T("<") + pImpl->Name + _T(" ");
+		*Msg = *Msg + _T("<") + pImpl->Name;
 		if (pImpl->FirstAttr != NULL) {
 			StkObject* TmpObj = pImpl->FirstAttr;
 			TmpObj->ToXml(Msg, Indent);
