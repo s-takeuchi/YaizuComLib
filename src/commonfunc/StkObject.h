@@ -9,16 +9,19 @@ private:
 	Impl* pImpl;
 
 public:
-	static const int STKOBJECT_UNKNOWN = 0;
-	static const int STKOBJECT_INT = 1;
-	static const int STKOBJECT_FLOAT = 2;
-	static const int STKOBJECT_STRING = 3;
+	static const int STKOBJECT_ATTRIBUTE = 0;
+	static const int STKOBJECT_ATTR_INT = 1;
+	static const int STKOBJECT_ATTR_FLOAT = 2;
+	static const int STKOBJECT_ATTR_STRING = 3;
 	static const int STKOBJECT_ELEMENT = 10;
+	static const int STKOBJECT_ELEM_INT = 11;
+	static const int STKOBJECT_ELEM_FLOAT = 12;
+	static const int STKOBJECT_ELEM_STRING = 13;
 
-	StkObject(TCHAR*); // for element
-	StkObject(TCHAR*, int); // for int attribute
-	StkObject(TCHAR*, float); // for float attribute
-	StkObject(TCHAR*, TCHAR*); // for string attribute
+	StkObject(TCHAR*);
+	StkObject(int, TCHAR*, int);
+	StkObject(int, TCHAR*, float);
+	StkObject(int, TCHAR*, TCHAR*);
 	virtual ~StkObject();
 
 	StkObject* Clone();
@@ -28,9 +31,14 @@ public:
 
 	TCHAR* GetName();
 	int GetType();
+	void SetType(int);
+
 	int GetIntValue();
 	float GetFloatValue();
 	TCHAR* GetStringValue();
+	void SetIntValue(int);
+	void SetFloatValue(float);
+	void SetStringValue(TCHAR*);
 
 	StkObject* GetFirstChildElement();
 	StkObject* GetLastChildElement();

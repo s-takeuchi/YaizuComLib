@@ -23,7 +23,6 @@ public:
 void StkObject::Impl::ClearMember()
 {
 	Name = NULL;
-	Type = STKOBJECT_UNKNOWN;
 	Value = NULL;
 	FirstAttr = NULL;
 	LastAttr = NULL;
@@ -44,11 +43,15 @@ StkObject::StkObject(TCHAR* TmpName)
 	}
 }
 
-StkObject::StkObject(TCHAR* TmpName, int TmpValue)
+StkObject::StkObject(int TmpType, TCHAR* TmpName, int TmpValue)
 {
 	pImpl = new Impl;
 	pImpl->ClearMember();
-	pImpl->Type = STKOBJECT_INT;
+	if (TmpType == STKOBJECT_ATTRIBUTE) {
+		pImpl->Type = STKOBJECT_ATTR_INT;
+	} else if (TmpType == STKOBJECT_ELEMENT) {
+		pImpl->Type = STKOBJECT_ELEM_INT;
+	}
 	if (TmpName != NULL) {
 		int Len = lstrlen(TmpName) + 1;
 		pImpl->Name = new TCHAR[Len];
@@ -57,11 +60,15 @@ StkObject::StkObject(TCHAR* TmpName, int TmpValue)
 	pImpl->Value = new int(TmpValue);
 }
 
-StkObject::StkObject(TCHAR* TmpName, float TmpValue)
+StkObject::StkObject(int TmpType, TCHAR* TmpName, float TmpValue)
 {
 	pImpl = new Impl;
 	pImpl->ClearMember();
-	pImpl->Type = STKOBJECT_FLOAT;
+	if (TmpType == STKOBJECT_ATTRIBUTE) {
+		pImpl->Type = STKOBJECT_ATTR_FLOAT;
+	} else if (TmpType == STKOBJECT_ELEMENT) {
+		pImpl->Type = STKOBJECT_ELEM_FLOAT;
+	}
 	if (TmpName != NULL) {
 		int Len = lstrlen(TmpName) + 1;
 		pImpl->Name = new TCHAR[Len];
@@ -70,11 +77,15 @@ StkObject::StkObject(TCHAR* TmpName, float TmpValue)
 	pImpl->Value = new float(TmpValue);
 }
 
-StkObject::StkObject(TCHAR* TmpName, TCHAR* TmpValue)
+StkObject::StkObject(int TmpType, TCHAR* TmpName, TCHAR* TmpValue)
 {
 	pImpl = new Impl;
 	pImpl->ClearMember();
-	pImpl->Type = STKOBJECT_STRING;
+	if (TmpType == STKOBJECT_ATTRIBUTE) {
+		pImpl->Type = STKOBJECT_ATTR_STRING;
+	} else if (TmpType == STKOBJECT_ELEMENT) {
+		pImpl->Type = STKOBJECT_ELEM_STRING;
+	}
 	if (TmpName != NULL) {
 		int Len = lstrlen(TmpName) + 1;
 		pImpl->Name = new TCHAR[Len];
@@ -111,12 +122,18 @@ StkObject* StkObject::Clone()
 {
 	StkObject* NewObj;
 	TCHAR* TmpName = GetName();
-	if (pImpl->Type == STKOBJECT_INT) {
-		NewObj = new StkObject(TmpName, GetIntValue());
-	} else if (pImpl->Type == STKOBJECT_FLOAT) {
-		NewObj = new StkObject(TmpName, GetFloatValue());
-	} else if (pImpl->Type == STKOBJECT_STRING) {
-		NewObj = new StkObject(TmpName, GetStringValue());
+	if (pImpl->Type == STKOBJECT_ATTR_INT) {
+		NewObj = new StkObject(STKOBJECT_ATTRIBUTE, TmpName, GetIntValue());
+	} else if (pImpl->Type == STKOBJECT_ATTR_FLOAT) {
+		NewObj = new StkObject(STKOBJECT_ATTRIBUTE, TmpName, GetFloatValue());
+	} else if (pImpl->Type == STKOBJECT_ATTR_STRING) {
+		NewObj = new StkObject(STKOBJECT_ATTRIBUTE, TmpName, GetStringValue());
+	} else if (pImpl->Type == STKOBJECT_ELEM_INT) {
+		NewObj = new StkObject(STKOBJECT_ELEMENT, TmpName, GetIntValue());
+	} else if (pImpl->Type == STKOBJECT_ELEM_FLOAT) {
+		NewObj = new StkObject(STKOBJECT_ELEMENT, TmpName, GetFloatValue());
+	} else if (pImpl->Type == STKOBJECT_ELEM_STRING) {
+		NewObj = new StkObject(STKOBJECT_ELEMENT, TmpName, GetStringValue());
 	} else if (pImpl->Type == STKOBJECT_ELEMENT) {
 		NewObj = new StkObject(TmpName);
 		StkObject* TmpAttr = GetFirstAttribute();
@@ -168,6 +185,32 @@ int StkObject::GetAttributeCount()
 	return 0;
 }
 
+void StkObject::SetIntValue(int TmpValue)
+{
+	if (pImpl->Value != NULL) {
+		delete pImpl->Value;
+	}
+	pImpl->Value = new int(TmpValue);
+}
+
+void StkObject::SetFloatValue(float TmpValue)
+{
+	if (pImpl->Value != NULL) {
+		delete pImpl->Value;
+	}
+	pImpl->Value = new float(TmpValue);
+}
+
+void StkObject::SetStringValue(TCHAR* TmpValue)
+{
+	if (pImpl->Value != NULL) {
+		delete pImpl->Value;
+	}
+	int Len = lstrlen(TmpValue) + 1;
+	pImpl->Value = new TCHAR[Len];
+	lstrcpy((TCHAR*)pImpl->Value, TmpValue);
+}
+
 TCHAR* StkObject::GetName()
 {
 	return pImpl->Name;
@@ -176,6 +219,11 @@ TCHAR* StkObject::GetName()
 int StkObject::GetType()
 {
 	return pImpl->Type;
+}
+
+void StkObject::SetType(int TmpType)
+{
+	pImpl->Type = TmpType;
 }
 
 int StkObject::GetIntValue()
@@ -253,28 +301,28 @@ void StkObject::SetNext(StkObject* TmpObj)
 
 void StkObject::ToXml(std::wstring* Msg, int Indent)
 {
-	if (pImpl->Name == NULL || pImpl->Type == STKOBJECT_UNKNOWN) {
+	if (pImpl->Name == NULL) {
 		return;
 	}
-	if (pImpl->Type != STKOBJECT_ELEMENT) {
-		if (pImpl->Type == STKOBJECT_INT) {
+	if (pImpl->Type == STKOBJECT_ATTR_INT || pImpl->Type == STKOBJECT_ATTR_FLOAT || pImpl->Type == STKOBJECT_ATTR_STRING) {
+		if (pImpl->Type == STKOBJECT_ATTR_INT) {
 			int *Val = (int*)pImpl->Value;
 			TCHAR TmpBuf[15];
 			_snwprintf_s(TmpBuf, 15, _TRUNCATE, _T("%d"), *Val);
 			*Msg = *Msg + _T(" ") + pImpl->Name + _T("=\"") + TmpBuf + _T("\"");
-		} else if (pImpl->Type == STKOBJECT_FLOAT) {
+		} else if (pImpl->Type == STKOBJECT_ATTR_FLOAT) {
 			float *Val = (float*)pImpl->Value;
 			TCHAR TmpBuf[25];
 			_snwprintf_s(TmpBuf, 25, _TRUNCATE, _T("%f"), *Val);
 			*Msg = *Msg + _T(" ") + pImpl->Name + _T("=\"") + TmpBuf + _T("\"");
-		} else if (pImpl->Type == STKOBJECT_STRING) {
+		} else if (pImpl->Type == STKOBJECT_ATTR_STRING) {
 			*Msg = *Msg + _T(" ") + pImpl->Name + _T("=\"") + (TCHAR*)pImpl->Value + _T("\"");
 		}
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;
 			TmpObj->ToXml(Msg, Indent);
 		}
-	} else {
+	} else if (pImpl->Type == STKOBJECT_ELEMENT) {
 		for (int Loop = 0; Loop < Indent; Loop++) {
 			*Msg += _T(" ");
 		}
@@ -293,6 +341,27 @@ void StkObject::ToXml(std::wstring* Msg, int Indent)
 			*Msg = *Msg + _T("</") + pImpl->Name + _T(">\r\n");
 		} else {
 			*Msg += _T("/>\r\n");
+		}
+		if (pImpl->Next != NULL) {
+			StkObject* TmpObj = pImpl->Next;
+			TmpObj->ToXml(Msg, Indent);
+		}
+	} else if (pImpl->Type == STKOBJECT_ELEM_INT || pImpl->Type == STKOBJECT_ELEM_FLOAT || pImpl->Type == STKOBJECT_ELEM_STRING) {
+		for (int Loop = 0; Loop < Indent; Loop++) {
+			*Msg += _T(" ");
+		}
+		if (pImpl->Type == STKOBJECT_ELEM_INT) {
+			int *Val = (int*)pImpl->Value;
+			TCHAR TmpBuf[15];
+			_snwprintf_s(TmpBuf, 15, _TRUNCATE, _T("%d"), *Val);
+			*Msg = *Msg + _T("<") + pImpl->Name + _T(">") + TmpBuf + _T("</") + pImpl->Name + _T(">\r\n");
+		} else if (pImpl->Type == STKOBJECT_ELEM_FLOAT) {
+			float *Val = (float*)pImpl->Value;
+			TCHAR TmpBuf[25];
+			_snwprintf_s(TmpBuf, 25, _TRUNCATE, _T("%f"), *Val);
+			*Msg = *Msg + _T("<") + pImpl->Name + _T(">") + TmpBuf + _T("</") + pImpl->Name + _T(">\r\n");
+		} else if (pImpl->Type == STKOBJECT_ELEM_STRING) {
+			*Msg = *Msg + _T("<") + pImpl->Name + _T(">") + (TCHAR*)pImpl->Value + _T("</") + pImpl->Name + _T(">\r\n");
 		}
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;

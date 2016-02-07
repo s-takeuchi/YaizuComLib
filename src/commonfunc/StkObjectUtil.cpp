@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <tchar.h>
 #include "StkObjectUtil.h"
 #include "StkObject.h"
 
@@ -19,11 +20,11 @@ TCHAR* StkObjectUtil::GetName(TCHAR* TgtName, int* Len)
 	return RtnName;
 }
 
-TCHAR* StkObjectUtil::GetAttrValue(TCHAR* TgtValue, int* Len)
+TCHAR* StkObjectUtil::GetValue(TCHAR* TgtValue, int* Len)
 {
 	TCHAR* CurPnt = TgtValue;
 	int ValueLength = 0;
-	while (*CurPnt != TCHAR('\"')) {
+	while (*CurPnt != TCHAR('\"') && *CurPnt != TCHAR('<')) {
 		ValueLength++;
 		CurPnt++;
 	}
@@ -72,7 +73,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 	for (int Loop = 0; Xml[Loop] != TCHAR('\0'); Loop++) {
 
 		// if blank is appeared...
-		if (Xml[Loop] == TCHAR(' ') || Xml[Loop] == TCHAR('\t') || Xml[Loop] == TCHAR('\r') || Xml[Loop] == TCHAR('\n')) {
+		if ((Xml[Loop] == TCHAR(' ') || Xml[Loop] == TCHAR('\t') || Xml[Loop] == TCHAR('\r') || Xml[Loop] == TCHAR('\n')) && PrevStatus != ATTRVAL_START) {
 			continue;
 		}
 
@@ -124,6 +125,12 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 			if (PrevStatus == ATTR_EQUAL) {
 				PrevStatus = ATTRVAL_START;
 				continue;
+			} else if (PrevStatus == ATTRVAL_START) {
+				StkObject* AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevAttrName, _T(""));
+				RetObj->AppendAttribute(AttrObj);
+				delete PrevAttrName;
+				PrevStatus = ATTRVAL_END;
+				continue;
 			} else {
 				*Offset = 0;
 				return RetObj;
@@ -173,8 +180,8 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 		}
 		if (PrevStatus == ATTRVAL_START) {
 			int StrLen = 0;
-			TCHAR* Value = GetAttrValue(&Xml[Loop], &StrLen);
-			StkObject* AttrObj = new StkObject(PrevAttrName, Value);
+			TCHAR* Value = GetValue(&Xml[Loop], &StrLen);
+			StkObject* AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevAttrName, Value);
 			RetObj->AppendAttribute(AttrObj);
 			delete PrevAttrName;
 			delete Value;
@@ -182,7 +189,17 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 			PrevStatus = ATTRVAL_END;
 			continue;
 		}
-
+		if (PrevStatus == ELEM_DOWN) {
+			int StrLen = 0;
+			TCHAR* Value = GetValue(&Xml[Loop], &StrLen);
+			Loop = Loop + StrLen;
+			if (RetObj != NULL) {
+				RetObj->SetType(StkObject::STKOBJECT_ELEM_STRING);
+				RetObj->SetStringValue(Value);
+			}
+			delete Value;
+			continue;
+		}
 	}
 
 	return NULL;
