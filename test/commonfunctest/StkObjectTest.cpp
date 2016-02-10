@@ -89,6 +89,38 @@ StkObject* MakeSampleXml1()
 	return Elem1;
 }
 
+StkObject* MakeSampleXml2()
+{
+	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Gt"), _T(">")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Amp"), _T("&")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Quot"), _T("\"")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Apos"), _T("\'")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("<")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T(">")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("&")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\"")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\'")));
+	return Xml2;
+}
+
+StkObject* MakeSampleXml3()
+{
+	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<<<<<<<<<<")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Gt"), _T(">>>>>>>>>>")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Amp"), _T("&&&&&&&&&&")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Quot"), _T("\"\"\"\"\"\"\"\"\"\"")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Apos"), _T("\'\'\'\'\'\'\'\'\'\'")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("<<<<<<<<<<")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T(">>>>>>>>>>")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("&&&&&&&&&&")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\"\"\"\"\"\"\"\"\"\"")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\'\'\'\'\'\'\'\'\'\'")));
+	return Xml2;
+}
+
 void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 {
 	int Len1 = Elem1->GetFirstChildElement()->GetArrayLength();
@@ -144,6 +176,72 @@ void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 	} else {
 		printf("NG\r\n");
 		exit(0);
+	}
+}
+
+void GeneralTestCase2(StkObject* Elem, TCHAR* Name)
+{
+	StkObject* Attr1 = Elem->GetFirstAttribute();
+	std::wstring Attr1Val;
+	Attr1->ToXml(&Attr1Val);
+	wprintf(_T("%s#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... "), Name);
+	if (Attr1Val.find(_T("Lt=\"&lt;\"")) == std::wstring::npos ||
+		Attr1Val.find(_T("Gt=\"&gt;\"")) == std::wstring::npos ||
+		Attr1Val.find(_T("Amp=\"&amp;\"")) == std::wstring::npos ||
+		Attr1Val.find(_T("Quot=\"&quot;\"")) == std::wstring::npos ||
+		Attr1Val.find(_T("Apos=\"&apos;\"")) == std::wstring::npos) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
+	}
+
+	StkObject* Elem1 = Elem->GetFirstChildElement();
+	std::wstring Elem1Val;
+	Elem1->ToXml(&Elem1Val);
+	wprintf(_T("%s#Element value '<', '>', '&', '\"' and '\'' are escaped ... "), Name);
+	if (Elem1Val.find(_T(">&lt;<")) == std::wstring::npos ||
+		Elem1Val.find(_T(">&gt;<")) == std::wstring::npos ||
+		Elem1Val.find(_T(">&amp;<")) == std::wstring::npos ||
+		Elem1Val.find(_T(">&quot;<")) == std::wstring::npos ||
+		Elem1Val.find(_T(">&apos;<")) == std::wstring::npos) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
+	}
+}
+
+void GeneralTestCase3(StkObject* Elem, TCHAR* Name)
+{
+	StkObject* Attr1 = Elem->GetFirstAttribute();
+	std::wstring Attr1Val;
+	Attr1->ToXml(&Attr1Val);
+	wprintf(_T("%s#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... "), Name);
+	if (Attr1Val.find(_T("Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\"")) == std::wstring::npos ||
+		Attr1Val.find(_T("Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\"")) == std::wstring::npos ||
+		Attr1Val.find(_T("Amp=\"&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;\"")) == std::wstring::npos ||
+		Attr1Val.find(_T("Quot=\"&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;\"")) == std::wstring::npos ||
+		Attr1Val.find(_T("Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"")) == std::wstring::npos) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
+	}
+
+	StkObject* Elem1 = Elem->GetFirstChildElement();
+	std::wstring Elem1Val;
+	Elem1->ToXml(&Elem1Val);
+	wprintf(_T("%s#Element value '<', '>', '&', '\"' and '\'' are escaped ... "), Name);
+	if (Elem1Val.find(_T(">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<")) == std::wstring::npos ||
+		Elem1Val.find(_T(">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;<")) == std::wstring::npos ||
+		Elem1Val.find(_T(">&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;<")) == std::wstring::npos ||
+		Elem1Val.find(_T(">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;<")) == std::wstring::npos ||
+		Elem1Val.find(_T(">&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;<")) == std::wstring::npos) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
 	}
 }
 
@@ -226,6 +324,14 @@ void StkObjectTest()
 	printf("StkObjectTest started.\r\n");
 
 	StkObjectUtilTest();
+
+	StkObject* Elem2 = MakeSampleXml2();
+	GeneralTestCase2(Elem2, _T("EscapeCheck1"));
+	delete Elem2;
+
+	StkObject* Elem3 = MakeSampleXml3();
+	GeneralTestCase3(Elem3, _T("EscapeCheck2"));
+	delete Elem3;
 
 	StkObject* Elem1 = MakeSampleXml1();
 	GeneralTestCase1(Elem1, _T("Sample1"));

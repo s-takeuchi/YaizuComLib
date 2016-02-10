@@ -18,6 +18,8 @@ public:
 
 public:
 	void ClearMember();
+	int XmlEncodeSize(TCHAR*);
+	void XmlEncode(TCHAR*, TCHAR*, int);
 };
 
 void StkObject::Impl::ClearMember()
@@ -29,6 +31,77 @@ void StkObject::Impl::ClearMember()
 	FirstElem = NULL;
 	LastElem = NULL;
 	Next = NULL;
+}
+
+// Returns word size of escaped message.
+// InMsg [in] : Original string
+// Return : Word size of escaped message.
+int StkObject::Impl::XmlEncodeSize(TCHAR* InMsg)
+{
+	int Size = 0;
+	int InMsgLen = lstrlen(InMsg);
+	for (int Loop = 0; Loop < InMsgLen; Loop++) {
+		if (InMsg[Loop] == '<') Size += 4;
+		else if (InMsg[Loop] == '>') Size += 4;
+		else if (InMsg[Loop] == '&') Size += 5;
+		else if (InMsg[Loop] == '\"') Size += 6;
+		else if (InMsg[Loop] == '\'') Size += 6;
+		else Size ++;
+	}
+	return Size;
+}
+
+
+// Convert the string to escaped message.
+// InMsg [in] : Zero terminate string
+// OutMsg [out] : Converted string.
+// SizeOfOutMsg [in] : Length of OutData
+void StkObject::Impl::XmlEncode(TCHAR* InMsg, TCHAR* OutMsg, int SizeOfOutMsg)
+{
+	int OutMsgIndex = 0;
+	int InMsgLen = lstrlen(InMsg);
+	for (int Loop = 0; Loop < InMsgLen; Loop++) {
+		if (InMsg[Loop] == '<') {
+			if (OutMsgIndex + 4 >= SizeOfOutMsg)
+				break;
+			lstrcpy(&OutMsg[OutMsgIndex], _T("&lt;"));
+			OutMsgIndex += 4;
+			continue;
+		}
+		if (InMsg[Loop] == '>') {
+			if (OutMsgIndex + 4 >= SizeOfOutMsg)
+				break;
+			lstrcpy(&OutMsg[OutMsgIndex], _T("&gt;"));
+			OutMsgIndex += 4;
+			continue;
+		}
+		if (InMsg[Loop] == '&') {
+			if (OutMsgIndex + 5 >= SizeOfOutMsg)
+				break;
+			lstrcpy(&OutMsg[OutMsgIndex], _T("&amp;"));
+			OutMsgIndex += 5;
+			continue;
+		}
+		if (InMsg[Loop] == '\"') {
+			if (OutMsgIndex + 6 >= SizeOfOutMsg)
+				break;
+			lstrcpy(&OutMsg[OutMsgIndex], _T("&quot;"));
+			OutMsgIndex += 6;
+			continue;
+		}
+		if (InMsg[Loop] == '\'') {
+			if (OutMsgIndex + 6 >= SizeOfOutMsg)
+				break;
+			lstrcpy(&OutMsg[OutMsgIndex], _T("&apos;"));
+			OutMsgIndex += 6;
+			continue;
+		}
+		if (OutMsgIndex + 1 >= SizeOfOutMsg)
+			break;
+		OutMsg[OutMsgIndex] = InMsg[Loop];
+		OutMsgIndex++;
+	}
+	OutMsg[OutMsgIndex] = '\0';
 }
 
 StkObject::StkObject(TCHAR* TmpName)
@@ -316,7 +389,11 @@ void StkObject::ToXml(std::wstring* Msg, int Indent)
 			_snwprintf_s(TmpBuf, 25, _TRUNCATE, _T("%f"), *Val);
 			*Msg = *Msg + _T(" ") + pImpl->Name + _T("=\"") + TmpBuf + _T("\"");
 		} else if (pImpl->Type == STKOBJECT_ATTR_STRING) {
-			*Msg = *Msg + _T(" ") + pImpl->Name + _T("=\"") + (TCHAR*)pImpl->Value + _T("\"");
+			int StrLen = pImpl->XmlEncodeSize((TCHAR*)pImpl->Value);
+			TCHAR* TmpStr = new TCHAR[StrLen + 1];
+			pImpl->XmlEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
+			*Msg = *Msg + _T(" ") + pImpl->Name + _T("=\"") + TmpStr + _T("\"");
+			delete TmpStr;
 		}
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;
@@ -361,7 +438,11 @@ void StkObject::ToXml(std::wstring* Msg, int Indent)
 			_snwprintf_s(TmpBuf, 25, _TRUNCATE, _T("%f"), *Val);
 			*Msg = *Msg + _T("<") + pImpl->Name + _T(">") + TmpBuf + _T("</") + pImpl->Name + _T(">\r\n");
 		} else if (pImpl->Type == STKOBJECT_ELEM_STRING) {
-			*Msg = *Msg + _T("<") + pImpl->Name + _T(">") + (TCHAR*)pImpl->Value + _T("</") + pImpl->Name + _T(">\r\n");
+			int StrLen = pImpl->XmlEncodeSize((TCHAR*)pImpl->Value);
+			TCHAR* TmpStr = new TCHAR[StrLen + 1];
+			pImpl->XmlEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
+			*Msg = *Msg + _T("<") + pImpl->Name + _T(">") + TmpStr + _T("</") + pImpl->Name + _T(">\r\n");
+			delete TmpStr;
 		}
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;
