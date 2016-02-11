@@ -315,7 +315,7 @@ void GeneralTestCase6()
 	TCHAR* Xml2 = _T("<Aaaa A1=\"a1\" A2=\"a2\" A3=\"a3\"><Bbbb B1=\"b1\" B2=\"b2\" B3=\"b3\"></Bbbb><Cccc C1=\"c1\" C2=\"c2\" C3=\"c3\"></Cccc></Aaaa>");
 	TCHAR* Xml3 = _T("  <  Aaaa  A1  =  \"a1\"  A2  =  \"a2\"  A3  =  \"a3\"  >  <  Bbbb  B1  =  \"b1\"  B2  =  \"b2\"  B3  =  \"b3\"  /  >  <  Cccc  C1  =  \"c1\"  C2  =  \"c2\"  C3  =  \"c3\"  /  >  <  /  Aaaa  >  ");
 	TCHAR* Xml4 = _T("\t<\tAaaa\tA1\t=\t\"a1\"\tA2\t=\t\"a2\"\tA3\t=\t\"a3\"\t>\t<\tBbbb\tB1\t=\t\"b1\"\tB2\t=\t\"b2\"\tB3\t=\t\"b3\"\t/\t>\t<\tCccc\tC1\t=\t\"c1\"\tC2\t=\t\"c2\"\tC3\t=\t\"c3\"\t/\t>\t<\t/\tAaaa\t>\t");
-	TCHAR* Xml5 = _T("\r\n<Aaaa A1=\"a1\" A2=\"a2\" A3=\"a3\">\r\n<Bbbb B1=\"b1\" B2=\"b2\" B3=\"b3\"/>\r\n<Cccc C1=\"c1\" C2=\"c2\" C3=\"c3\"/>\r\n</Aaaa>\r\n");
+	TCHAR* Xml5 = _T("\r\n<\r\nAaaa\r\nA1\r\n=\r\n\"a1\"\r\nA2\r\n=\r\n\"a2\"\r\nA3\r\n=\r\n\"a3\"\r\n>\r\n<\r\nBbbb\r\nB1\r\n=\r\n\"b1\"\r\nB2\r\n=\r\n\"b2\"\r\nB3\r\n=\r\n\"b3\"\r\n/\r\n>\r\n<\r\nCccc\r\nC1\r\n=\r\n\"c1\"\r\nC2\r\n=\r\n\"c2\"\r\nC3\r\n=\r\n\"c3\"\r\n/\r\n>\r\n<\r\n/\r\nAaaa\r\n>\r\n");
 
 	StkObject* RetObj1 = Sou.CreateObjectFromXml(Xml1, &Offset);
 	StkObject* RetObj2 = Sou.CreateObjectFromXml(Xml2, &Offset);
@@ -360,6 +360,78 @@ void GeneralTestCase6()
 	delete RetObj3;
 	delete RetObj4;
 	delete RetObj5;
+}
+
+void GeneralTestCase7()
+{
+	int Offset = 0;
+	StkObjectUtil Sou;
+	StkObject* RetObj;
+
+	{
+		printf("Abnormal case: \"<>\" is presented...");
+		TCHAR* Xml = _T("<>");
+		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_ELEMENT_END_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+		delete RetObj;
+	}
+
+	{
+		printf("Abnormal case: \"\" is presented...");
+		TCHAR* Xml = _T("");
+		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_NO_ELEMENT_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+		delete RetObj;
+	}
+
+	{
+		printf("Abnormal case: \"<<\" is presented...");
+		TCHAR* Xml = _T("<<");
+		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_ELEMENT_START_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+		delete RetObj;
+	}
+
+	{
+		printf("Abnormal case: \"<\"ABC\"/>\" is presented...");
+		TCHAR* Xml = _T("<\"ABC\"/>");
+		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_QUOT_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+		delete RetObj;
+	}
+
+	{
+		printf("Abnormal case: \"xyz\" is presented...");
+		TCHAR* Xml = _T("xyz");
+		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_CANNOT_HANDLE) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+		delete RetObj;
+	}
 }
 
 void CloneTest(StkObject* Obj)
@@ -499,6 +571,11 @@ void StkObjectTest()
 		StkObject* Elem3 = MakeSampleXml3();
 		CloneTest(Elem3);
 		delete Elem3;
+	}
+
+	// Decoding error case
+	{
+		GeneralTestCase7();
 	}
 
 	// Memory leak check
