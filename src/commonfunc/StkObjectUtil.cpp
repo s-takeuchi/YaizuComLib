@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <tchar.h>
+#include <shlwapi.h>
 #include "StkObjectUtil.h"
 #include "StkObject.h"
 
@@ -24,14 +25,64 @@ TCHAR* StkObjectUtil::GetValue(TCHAR* TgtValue, int* Len)
 {
 	TCHAR* CurPnt = TgtValue;
 	int ValueLength = 0;
-	while (*CurPnt != TCHAR('\"') && *CurPnt != TCHAR('<')) {
+	while (*CurPnt != TCHAR('\"') && *CurPnt != TCHAR('<') && *CurPnt != TCHAR('\0')) {
+		if (*CurPnt == TCHAR('&')) {
+			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && StrStr(CurPnt, _T("&lt;")) == CurPnt) {
+				CurPnt += 4;
+			}
+			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && StrStr(CurPnt, _T("&gt;")) == CurPnt) {
+				CurPnt += 4;
+			}
+			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && *(CurPnt + 4) != TCHAR('\0') && StrStr(CurPnt, _T("&amp;")) == CurPnt) {
+				CurPnt += 5;
+			}
+			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && *(CurPnt + 4) != TCHAR('\0') && *(CurPnt + 5) != TCHAR('\0') && StrStr(CurPnt, _T("&quot;")) == CurPnt) {
+				CurPnt += 6;
+			}
+			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && *(CurPnt + 4) != TCHAR('\0') && *(CurPnt + 5) != TCHAR('\0') && StrStr(CurPnt, _T("&apos;")) == CurPnt) {
+				CurPnt += 6;
+			}
+		} else {
+			CurPnt++;
+		}
 		ValueLength++;
-		CurPnt++;
 	}
-	*Len = ValueLength;
+	*Len = CurPnt - TgtValue;
 	TCHAR* RtnValue = new TCHAR[ValueLength + 1];
-	for (int Loop = 0; Loop < ValueLength; Loop++) {
-		RtnValue[Loop] = TgtValue[Loop];
+	int RtnLoop = 0;
+	for (TCHAR* Loop = TgtValue; Loop < CurPnt; Loop++) {
+		if (StrStr(Loop, _T("&lt;")) == Loop) {
+			RtnValue[RtnLoop] = '<';
+			RtnLoop++;
+			Loop += 3;
+			continue;
+		}
+		if (StrStr(Loop, _T("&gt;")) == Loop) {
+			RtnValue[RtnLoop] = '>';
+			RtnLoop++;
+			Loop += 3;
+			continue;
+		}
+		if (StrStr(Loop, _T("&amp;")) == Loop) {
+			RtnValue[RtnLoop] = '&';
+			RtnLoop++;
+			Loop += 4;
+			continue;
+		}
+		if (StrStr(Loop, _T("&quot;")) == Loop) {
+			RtnValue[RtnLoop] = '\"';
+			RtnLoop++;
+			Loop += 5;
+			continue;
+		}
+		if (StrStr(Loop, _T("&apos;")) == Loop) {
+			RtnValue[RtnLoop] = '\'';
+			RtnLoop++;
+			Loop += 5;
+			continue;
+		}
+		RtnValue[RtnLoop] = *Loop;
+		RtnLoop++;
 	}
 	RtnValue[ValueLength] = TCHAR('\0');
 	return RtnValue;

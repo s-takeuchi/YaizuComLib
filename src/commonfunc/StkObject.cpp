@@ -51,7 +51,6 @@ int StkObject::Impl::XmlEncodeSize(TCHAR* InMsg)
 	return Size;
 }
 
-
 // Convert the string to escaped message.
 // InMsg [in] : Zero terminate string
 // OutMsg [out] : Converted string.
