@@ -102,11 +102,11 @@ TCHAR* StkObjectUtil::GetValue(TCHAR* TgtValue, int* Len)
 	return RtnValue;
 }
 
-//   < Aaa Xxx = " Xxxxxxxxx"  Yyy = " Yyyyyyyyy" >   < / Aaa>
-//  | |   |   | | |          |    | | |          |  |  | |
-//  | |   |   | | |          |    | | |          |  |  | ELEM_END
-//  | |   |   | | |          |    | | |          |  |  ELEMNAME_START
-//  | |   |   | | |          |    | | |          |  ELEM_DOWN
+//   < Aaa Xxx = " Xxxxxxxxx"  Yyy = " Yyyyyyyyy" >  < / Aaa>
+//  | |   |   | | |          |    | | |          | |  | |
+//  | |   |   | | |          |    | | |          | |  | ELEM_END
+//  | |   |   | | |          |    | | |          | |  ELEMNAME_START
+//  | |   |   | | |          |    | | |          | ELEM_DOWN
 //  | |   |   | | |          |    | | |          ATTRVAL_END
 //  | |   |   | | |          |    | | ATTRVAL_START
 //  | |   |   | | |          |    | ATTR_EQUAL
@@ -225,6 +225,24 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				CleanupObjects(PrevAttrName, RetObj);
 				*Offset = ERROR_INVALID_ELEMENT_END_FOUND;
 				return NULL;
+			}
+		}
+
+		// if '?' is appeared...
+		if (Xml[Loop] == TCHAR('?') && PrevStatus != ELEM_DOWN) {
+			if (PrevStatus == ELEMNAME_START) {
+				PrevStatus = ELEM_START;
+				for (; Xml[Loop] != TCHAR('\0'); Loop++) {
+					if (Xml[Loop] == TCHAR('>')) {
+						break;
+					}
+				}
+				if (Xml[Loop] == TCHAR('\0')) {
+					CleanupObjects(PrevAttrName, RetObj);
+					*Offset = ERROR_ELEMENT_END_NOT_FOUND;
+					return NULL;
+				}
+				continue;
 			}
 		}
 
