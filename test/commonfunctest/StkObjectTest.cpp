@@ -369,68 +369,135 @@ void GeneralTestCase7()
 	StkObject* RetObj;
 
 	{
-		printf("Abnormal case: \"<>\" is presented...");
-		TCHAR* Xml = _T("<>");
-		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_ELEMENT_END_FOUND) {
-			printf("NG\r\n");
-			exit(0);
-		} else {
-			printf("OK\r\n");
-		}
-		delete RetObj;
-	}
-
-	{
 		printf("Abnormal case: \"\" is presented...");
-		TCHAR* Xml = _T("");
-		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
+		RetObj = Sou.CreateObjectFromXml(_T(""), &Offset);
 		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_NO_ELEMENT_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
 			printf("OK\r\n");
 		}
-		delete RetObj;
+	}
+
+	{
+		printf("Abnormal case: NULL is presented...");
+		RetObj = Sou.CreateObjectFromXml(NULL, &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_NO_ELEMENT_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
+
+	{
+		printf("Abnormal case: \"<>\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<>"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_ELEMENT_END_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
 	}
 
 	{
 		printf("Abnormal case: \"<<\" is presented...");
-		TCHAR* Xml = _T("<<");
-		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
+		RetObj = Sou.CreateObjectFromXml(_T("<<"), &Offset);
 		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_ELEMENT_START_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
 			printf("OK\r\n");
 		}
-		delete RetObj;
 	}
 
 	{
 		printf("Abnormal case: \"<\"ABC\"/>\" is presented...");
-		TCHAR* Xml = _T("<\"ABC\"/>");
-		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
+		RetObj = Sou.CreateObjectFromXml(_T("<\"ABC\"/>"), &Offset);
 		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_QUOT_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
 			printf("OK\r\n");
 		}
-		delete RetObj;
 	}
 
 	{
 		printf("Abnormal case: \"xyz\" is presented...");
-		TCHAR* Xml = _T("xyz");
-		RetObj = Sou.CreateObjectFromXml(Xml, &Offset);
+		RetObj = Sou.CreateObjectFromXml(_T("xyz"), &Offset);
 		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_CANNOT_HANDLE) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
 			printf("OK\r\n");
 		}
-		delete RetObj;
+	}
+
+	{
+		printf("Abnormal case: \"<Aaa Bbb=Ccc/>\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<Aaa Bbb=Ccc/>"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_CANNOT_HANDLE) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
+
+	{
+		printf("Abnormal case: \"<Aaa Bbb=></Aaa>\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<Aaa Bbb=></Aaa>"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_ELEMENT_END_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
+
+	{
+		printf("Abnormal case: \"<Aaa =></Aaa>\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<Aaa =></Aaa>"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_EQUAL_FOUND_WITHOUT_ATTRIBUTE_NAME) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
+
+	{
+		printf("Abnormal case: \"<Aaa></Aaa\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<Aaa></Aaa"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_SLASH_FOUND_WITHOUT_ELEMENT_END) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
+
+	{
+		printf("Abnormal case: \"<Aaa>/Aaa\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<Aaa>/Aaa"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_SLASH_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
+
+	{
+		printf("Abnormal case: \"</Aaa>\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("</Aaa>"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_SLASH_FOUND_WITHOUT_ELEMENT) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
 	}
 }
 
@@ -492,7 +559,7 @@ int MemoryLeakChecking2()
 	long MaxMem[30];
 
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
-		for (int Loop = 0; Loop < 1000; Loop++) {
+		for (int Loop = 0; Loop < 250; Loop++) {
 			StkObject* NewObj = MakeSampleXml3();
 			std::wstring StrVal;
 			NewObj->ToXml(&StrVal);
@@ -504,6 +571,46 @@ int MemoryLeakChecking2()
 			StkObject* NewObj2 = Sou.CreateObjectFromXml(NewStr, &Offset);
 			delete NewStr;
 			delete NewObj2;
+		}
+		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
+	}
+	if (MaxMem[0] < MaxMem[3] &&
+		MaxMem[3] < MaxMem[6] &&
+		MaxMem[6] < MaxMem[9] &&
+		MaxMem[9] < MaxMem[12] &&
+		MaxMem[12] < MaxMem[15] &&
+		MaxMem[15] < MaxMem[18] &&
+		MaxMem[18] < MaxMem[21] &&
+		MaxMem[21] < MaxMem[24] &&
+		MaxMem[24] < MaxMem[27]) {
+		printf("NG\r\n");
+		return -1;
+	}
+	printf("OK\r\n");
+	return 0;
+}
+
+int MemoryLeakChecking3()
+{
+	printf("Checks memory leak (repeat abnormal case)...");
+	long MaxMem[30];
+	StkObjectUtil Sou;
+	int Offset = 0;
+
+	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
+		for (int Loop = 0; Loop < 1000; Loop++) {
+			Sou.CreateObjectFromXml(_T(""), &Offset);
+			Sou.CreateObjectFromXml(NULL, &Offset);
+			Sou.CreateObjectFromXml(_T("<X><Y><Z><></X></Y></Z>"), &Offset);
+			Sou.CreateObjectFromXml(_T("<X><Y><Z><<</X></Y></Z>"), &Offset);
+			Sou.CreateObjectFromXml(_T("<X><Y><Z><\"ABC\"/></X></Y></Z>"), &Offset);
+			Sou.CreateObjectFromXml(_T("xyz"), &Offset);
+			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb=Ccc/></X></Y></Z>"), &Offset);
+			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb=></Aaa></X></Y></Z>"), &Offset);
+			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa =></Aaa></X></Y></Z>"), &Offset);
+			Sou.CreateObjectFromXml(_T("<Aaa></Aaa"), &Offset);
+			Sou.CreateObjectFromXml(_T("<Aaa>/Aaa"), &Offset);
+			Sou.CreateObjectFromXml(_T("</Aaa>"), &Offset);
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}
@@ -584,6 +691,7 @@ void StkObjectTest()
 		MemoryLeakChecking1(Elem1);
 		delete Elem1;
 		MemoryLeakChecking2();
+		MemoryLeakChecking3();
 	}
 
 	printf("StkObjectTest completed.\r\n\r\n\r\n");

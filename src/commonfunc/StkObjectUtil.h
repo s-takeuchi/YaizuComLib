@@ -18,6 +18,8 @@ public:
 	static const int ERROR_SLASH_FOUND_WITHOUT_ELEMENT_END = -105;
 	static const int ERROR_CANNOT_HANDLE = -106;
 	static const int ERROR_NO_ELEMENT_FOUND = -107;
+	static const int ERROR_INVALID_SLASH_FOUND = -108;
+	static const int ERROR_SLASH_FOUND_WITHOUT_ELEMENT = -109;
 
 	StkObject* CreateObjectFromXml(TCHAR*, int*);
 };

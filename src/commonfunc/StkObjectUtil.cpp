@@ -57,7 +57,11 @@ TCHAR* StkObjectUtil::GetValue(TCHAR* TgtValue, int* Len)
 		}
 		ValueLength++;
 	}
-	*Len = CurPnt - TgtValue;
+	if (*CurPnt == TCHAR('\"')) {
+		*Len = CurPnt - TgtValue;
+	} else if (*CurPnt == TCHAR('<')) {
+		*Len = CurPnt - TgtValue - 1;
+	}
 	TCHAR* RtnValue = new TCHAR[ValueLength + 1];
 	int RtnLoop = 0;
 	for (TCHAR* Loop = TgtValue; Loop < CurPnt; Loop++) {
@@ -228,9 +232,18 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 		if (Xml[Loop] == TCHAR('/')) {
 			if (PrevStatus == ELEMNAME_START || PrevStatus == ELEMNAME_END || PrevStatus == ATTRVAL_END) {
 				PrevStatus = ELEM_END;
+			} else {
+				CleanupObjects(PrevAttrName, RetObj);
+				*Offset = ERROR_INVALID_SLASH_FOUND;
+				return NULL;
 			}
 			for (int Loop2 = Loop + 1; Xml[Loop2] != TCHAR('\0'); Loop2++) {
 				if (Xml[Loop2] == TCHAR('>')) {
+					if (RetObj == NULL) {
+						CleanupObjects(PrevAttrName, RetObj);
+						*Offset = ERROR_SLASH_FOUND_WITHOUT_ELEMENT;
+						return NULL;
+					}
 					*Offset = Loop2 + 1;
 					if (PrevAttrName != NULL) {
 						delete PrevAttrName;
