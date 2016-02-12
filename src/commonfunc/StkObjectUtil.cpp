@@ -229,7 +229,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 		}
 
 		// if '?' is appeared...
-		if (Xml[Loop] == TCHAR('?') && PrevStatus != ELEM_DOWN) {
+		if ((Xml[Loop] == TCHAR('?') || Xml[Loop] == TCHAR('!')) && PrevStatus != ELEM_DOWN) {
 			if (PrevStatus == ELEMNAME_START) {
 				PrevStatus = ELEM_START;
 				for (; Xml[Loop] != TCHAR('\0'); Loop++) {

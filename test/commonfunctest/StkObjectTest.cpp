@@ -311,8 +311,8 @@ void GeneralTestCase6()
 	int Offset = 0;
 	StkObjectUtil Sou;
 
-	TCHAR* Xml1 = _T("<?xml version=\"1.0\"?><Aaaa A1=\"a1\" A2=\"a2\" A3=\"a3\"><Bbbb B1=\"b1\" B2=\"b2\" B3=\"b3\"/><Cccc C1=\"c1\" C2=\"c2\" C3=\"c3\"/></Aaaa>");
-	TCHAR* Xml2 = _T("<?xml version=\"1.0\"?><Aaaa A1=\"a1\" A2=\"a2\" A3=\"a3\"><Bbbb B1=\"b1\" B2=\"b2\" B3=\"b3\"></Bbbb><Cccc C1=\"c1\" C2=\"c2\" C3=\"c3\"></Cccc></Aaaa>");
+	TCHAR* Xml1 = _T("<?xml version=\"1.0\"?><!-- comment --><Aaaa A1=\"a1\" A2=\"a2\" A3=\"a3\"><Bbbb B1=\"b1\" B2=\"b2\" B3=\"b3\"/><Cccc C1=\"c1\" C2=\"c2\" C3=\"c3\"/></Aaaa>");
+	TCHAR* Xml2 = _T("<?xml version=\"1.0\"?><!-- comment --><Aaaa A1=\"a1\" A2=\"a2\" A3=\"a3\"><Bbbb B1=\"b1\" B2=\"b2\" B3=\"b3\"></Bbbb><Cccc C1=\"c1\" C2=\"c2\" C3=\"c3\"></Cccc></Aaaa>");
 	TCHAR* Xml3 = _T("  <  Aaaa  A1  =  \"a1\"  A2  =  \"a2\"  A3  =  \"a3\"  >  <  Bbbb  B1  =  \"b1\"  B2  =  \"b2\"  B3  =  \"b3\"  /  >  <  Cccc  C1  =  \"c1\"  C2  =  \"c2\"  C3  =  \"c3\"  /  >  <  /  Aaaa  >  ");
 	TCHAR* Xml4 = _T("\t<\tAaaa\tA1\t=\t\"a1\"\tA2\t=\t\"a2\"\tA3\t=\t\"a3\"\t>\t<\tBbbb\tB1\t=\t\"b1\"\tB2\t=\t\"b2\"\tB3\t=\t\"b3\"\t/\t>\t<\tCccc\tC1\t=\t\"c1\"\tC2\t=\t\"c2\"\tC3\t=\t\"c3\"\t/\t>\t<\t/\tAaaa\t>\t");
 	TCHAR* Xml5 = _T("\r\n<\r\nAaaa\r\nA1\r\n=\r\n\"a1\"\r\nA2\r\n=\r\n\"a2\"\r\nA3\r\n=\r\n\"a3\"\r\n>\r\n<\r\nBbbb\r\nB1\r\n=\r\n\"b1\"\r\nB2\r\n=\r\n\"b2\"\r\nB3\r\n=\r\n\"b3\"\r\n/\r\n>\r\n<\r\nCccc\r\nC1\r\n=\r\n\"c1\"\r\nC2\r\n=\r\n\"c2\"\r\nC3\r\n=\r\n\"c3\"\r\n/\r\n>\r\n<\r\n/\r\nAaaa\r\n>\r\n");
@@ -525,7 +525,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<?xml?></?xml?>\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<?xml?></?xml?>"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_ELEMENT_END_NOT_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_SLASH_FOUND_WITHOUT_ELEMENT) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -536,17 +536,19 @@ void GeneralTestCase7()
 
 void GeneralTestCase8()
 {
-	printf("<Aaaa>=</Aaaa> ; <Aaaa>/</Aaaa> ; <Aaaa>?</Aaaa> ; ---> Element value can be acquired...");
+	printf("<Aaaa>=</Aaaa> ; <Aaaa>/</Aaaa> ; <Aaaa>?</Aaaa> ; <Aaaa>!</Aaaa> ; ---> Element value can be acquired...");
 	int Offset = 0;
 	StkObjectUtil Sou;
 
 	TCHAR* Xml1 = _T("<Aaaa>=</Aaaa>");
 	TCHAR* Xml2 = _T("<Aaaa>/</Aaaa>");
 	TCHAR* Xml3 = _T("<Aaaa>?</Aaaa>");
+	TCHAR* Xml4 = _T("<Aaaa>!</Aaaa>");
 
 	StkObject* RetObj1 = Sou.CreateObjectFromXml(Xml1, &Offset);
 	StkObject* RetObj2 = Sou.CreateObjectFromXml(Xml2, &Offset);
 	StkObject* RetObj3 = Sou.CreateObjectFromXml(Xml3, &Offset);
+	StkObject* RetObj4 = Sou.CreateObjectFromXml(Xml4, &Offset);
 
 	if (lstrcmp(RetObj1->GetStringValue(), _T("=")) != 0) {
 		printf("NG\r\n");
@@ -560,10 +562,15 @@ void GeneralTestCase8()
 		printf("NG\r\n");
 		exit(0);
 	}
+	if (lstrcmp(RetObj4->GetStringValue(), _T("!")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
 
 	delete RetObj1;
 	delete RetObj2;
 	delete RetObj3;
+	delete RetObj4;
 	printf("OK\r\n");
 }
 
