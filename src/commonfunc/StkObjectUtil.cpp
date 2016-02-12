@@ -18,7 +18,7 @@ TCHAR* StkObjectUtil::GetName(TCHAR* TgtName, int* Len)
 {
 	TCHAR* CurPnt = TgtName;
 	int NameLength = 0;
-	while (*CurPnt != TCHAR(' ') && *CurPnt != TCHAR('\t') && *CurPnt != TCHAR('\r') && *CurPnt != TCHAR('\n') && *CurPnt != TCHAR('>') && *CurPnt != TCHAR('/') && *CurPnt != TCHAR('=')) {
+	while (*CurPnt != TCHAR(' ') && *CurPnt != TCHAR('\t') && *CurPnt != TCHAR('\r') && *CurPnt != TCHAR('\n') && *CurPnt != TCHAR('>') && *CurPnt != TCHAR('/') && *CurPnt != TCHAR('=') && *CurPnt != TCHAR('\0')) {
 		NameLength++;
 		CurPnt++;
 	}
@@ -59,7 +59,7 @@ TCHAR* StkObjectUtil::GetValue(TCHAR* TgtValue, int* Len)
 	}
 	if (*CurPnt == TCHAR('\"')) {
 		*Len = CurPnt - TgtValue;
-	} else if (*CurPnt == TCHAR('<')) {
+	} else if (*CurPnt == TCHAR('<') || *CurPnt == TCHAR('\0')) {
 		*Len = CurPnt - TgtValue - 1;
 	}
 	TCHAR* RtnValue = new TCHAR[ValueLength + 1];
@@ -186,7 +186,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 		}
 
 		// if '=' is appeared...
-		if (Xml[Loop] == TCHAR('=')) {
+		if (Xml[Loop] == TCHAR('=') && PrevStatus != ELEM_DOWN) {
 			if (PrevStatus == ATTRNAME_END) {
 				PrevStatus = ATTR_EQUAL;
 				continue;
@@ -229,7 +229,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 		}
 
 		// if '/' is appeared...
-		if (Xml[Loop] == TCHAR('/')) {
+		if (Xml[Loop] == TCHAR('/') && PrevStatus != ELEM_DOWN) {
 			if (PrevStatus == ELEMNAME_START || PrevStatus == ELEMNAME_END || PrevStatus == ATTRVAL_END) {
 				PrevStatus = ELEM_END;
 			} else {

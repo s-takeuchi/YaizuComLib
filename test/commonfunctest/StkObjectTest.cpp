@@ -481,7 +481,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<Aaa>/Aaa\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<Aaa>/Aaa"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_SLASH_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_ELEMENT_END_NOT_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -499,6 +499,54 @@ void GeneralTestCase7()
 			printf("OK\r\n");
 		}
 	}
+
+	{
+		printf("Abnormal case: \"<Aaaa\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<Aaaa"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_ELEMENT_END_NOT_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
+
+	{
+		printf("Abnormal case: \"<Aaaa Xxx=\"Xxx\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<Aaaa Xxx=\"Xxx"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_ELEMENT_END_NOT_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
+}
+
+void GeneralTestCase8()
+{
+	printf("<Aaaa>=</Aaaa> ; <Aaaa>/</Aaaa> ;  ---> Element value can be acquired...");
+	int Offset = 0;
+	StkObjectUtil Sou;
+
+	TCHAR* Xml1 = _T("<Aaaa>=</Aaaa>");
+	TCHAR* Xml2 = _T("<Aaaa>/</Aaaa>");
+
+	StkObject* RetObj1 = Sou.CreateObjectFromXml(Xml1, &Offset);
+	StkObject* RetObj2 = Sou.CreateObjectFromXml(Xml2, &Offset);
+
+	if (lstrcmp(RetObj1->GetStringValue(), _T("=")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	if (lstrcmp(RetObj2->GetStringValue(), _T("/")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+
+	delete RetObj1;
+	delete RetObj2;
+	printf("OK\r\n");
 }
 
 void CloneTest(StkObject* Obj)
@@ -656,6 +704,7 @@ void StkObjectTest()
 		delete Xml5;
 
 		GeneralTestCase6();
+		GeneralTestCase8();
 	}
 
 	// General check
