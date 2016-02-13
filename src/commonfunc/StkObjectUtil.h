@@ -5,9 +5,8 @@
 class StkObjectUtil
 {
 private:
-	TCHAR* GetName(TCHAR*, int*);
-	TCHAR* GetValue(TCHAR*, int*);
-	void CleanupObjects(TCHAR*, StkObject*);
+	class Impl;
+	Impl* pImpl;
 
 public:
 	static const int ERROR_ELEMENT_END_NOT_FOUND = -100;
@@ -20,6 +19,9 @@ public:
 	static const int ERROR_NO_ELEMENT_FOUND = -107;
 	static const int ERROR_INVALID_SLASH_FOUND = -108;
 	static const int ERROR_SLASH_FOUND_WITHOUT_ELEMENT = -109;
+
+	StkObjectUtil();
+	virtual ~StkObjectUtil();
 
 	StkObject* CreateObjectFromXml(TCHAR*, int*);
 };

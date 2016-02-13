@@ -4,7 +4,15 @@
 #include "StkObjectUtil.h"
 #include "StkObject.h"
 
-void StkObjectUtil::CleanupObjects(TCHAR* PrevAttrName, StkObject* RetObj)
+class StkObjectUtil::Impl
+{
+public:
+	TCHAR* GetName(TCHAR*, int*);
+	TCHAR* GetValue(TCHAR*, int*);
+	void CleanupObjects(TCHAR*, StkObject*);
+};
+
+void StkObjectUtil::Impl::CleanupObjects(TCHAR* PrevAttrName, StkObject* RetObj)
 {
 	if (PrevAttrName != NULL) {
 		delete PrevAttrName;
@@ -14,7 +22,7 @@ void StkObjectUtil::CleanupObjects(TCHAR* PrevAttrName, StkObject* RetObj)
 	}
 }
 
-TCHAR* StkObjectUtil::GetName(TCHAR* TgtName, int* Len)
+TCHAR* StkObjectUtil::Impl::GetName(TCHAR* TgtName, int* Len)
 {
 	TCHAR* CurPnt = TgtName;
 	int NameLength = 0;
@@ -31,7 +39,7 @@ TCHAR* StkObjectUtil::GetName(TCHAR* TgtName, int* Len)
 	return RtnName;
 }
 
-TCHAR* StkObjectUtil::GetValue(TCHAR* TgtValue, int* Len)
+TCHAR* StkObjectUtil::Impl::GetValue(TCHAR* TgtValue, int* Len)
 {
 	TCHAR* CurPnt = TgtValue;
 	int ValueLength = 0;
@@ -102,6 +110,16 @@ TCHAR* StkObjectUtil::GetValue(TCHAR* TgtValue, int* Len)
 	return RtnValue;
 }
 
+StkObjectUtil::StkObjectUtil()
+{
+	pImpl = new Impl;
+}
+
+StkObjectUtil::~StkObjectUtil()
+{
+	delete pImpl;
+}
+
 //   < Aaa Xxx = " Xxxxxxxxx"  Yyy = " Yyyyyyyyy" >  < / Aaa>
 //  | |   |   | | |          |    | | |          | |  | |
 //  | |   |   | | |          |    | | |          | |  | ELEM_END
@@ -136,7 +154,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 	int PrevStatus = ELEM_START;
 
 	if (Xml == NULL || lstrcmp(Xml, _T("")) == 0) {
-		CleanupObjects(PrevAttrName, RetObj);
+		pImpl->CleanupObjects(PrevAttrName, RetObj);
 		*Offset = ERROR_NO_ELEMENT_FOUND;
 		return NULL;
 	}
@@ -173,13 +191,13 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				if (ChildElem != NULL) {
 					RetObj->AppendChildElement(ChildElem);
 				} else {
-					CleanupObjects(PrevAttrName, RetObj);
+					pImpl->CleanupObjects(PrevAttrName, RetObj);
 					*Offset = OffsetCld;
 					return NULL;
 				}
 				continue;
 			} else {
-				CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjects(PrevAttrName, RetObj);
 				*Offset = ERROR_INVALID_ELEMENT_START_FOUND;
 				return NULL;
 			}
@@ -191,7 +209,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				PrevStatus = ATTR_EQUAL;
 				continue;
 			} else {
-				CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjects(PrevAttrName, RetObj);
 				*Offset = ERROR_EQUAL_FOUND_WITHOUT_ATTRIBUTE_NAME;
 				return NULL;
 			}
@@ -210,7 +228,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				PrevStatus = ATTRVAL_END;
 				continue;
 			} else {
-				CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjects(PrevAttrName, RetObj);
 				*Offset = ERROR_INVALID_QUOT_FOUND;
 				return NULL;
 			}
@@ -222,7 +240,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				PrevStatus = ELEM_DOWN;
 				continue;
 			} else {
-				CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjects(PrevAttrName, RetObj);
 				*Offset = ERROR_INVALID_ELEMENT_END_FOUND;
 				return NULL;
 			}
@@ -238,7 +256,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 					}
 				}
 				if (Xml[Loop] == TCHAR('\0')) {
-					CleanupObjects(PrevAttrName, RetObj);
+					pImpl->CleanupObjects(PrevAttrName, RetObj);
 					*Offset = ERROR_ELEMENT_END_NOT_FOUND;
 					return NULL;
 				}
@@ -251,14 +269,14 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 			if (PrevStatus == ELEMNAME_START || PrevStatus == ELEMNAME_END || PrevStatus == ATTRVAL_END) {
 				PrevStatus = ELEM_END;
 			} else {
-				CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjects(PrevAttrName, RetObj);
 				*Offset = ERROR_INVALID_SLASH_FOUND;
 				return NULL;
 			}
 			for (int Loop2 = Loop + 1; Xml[Loop2] != TCHAR('\0'); Loop2++) {
 				if (Xml[Loop2] == TCHAR('>')) {
 					if (RetObj == NULL) {
-						CleanupObjects(PrevAttrName, RetObj);
+						pImpl->CleanupObjects(PrevAttrName, RetObj);
 						*Offset = ERROR_SLASH_FOUND_WITHOUT_ELEMENT;
 						return NULL;
 					}
@@ -269,7 +287,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 					return RetObj;
 				}
 			}
-			CleanupObjects(PrevAttrName, RetObj);
+			pImpl->CleanupObjects(PrevAttrName, RetObj);
 			*Offset = ERROR_SLASH_FOUND_WITHOUT_ELEMENT_END;
 			return NULL;
 		}
@@ -277,7 +295,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 		// if other...
 		if (PrevStatus == ELEMNAME_START) {
 			int StrLen = 0;
-			TCHAR* Name = GetName(&Xml[Loop], &StrLen);
+			TCHAR* Name = pImpl->GetName(&Xml[Loop], &StrLen);
 			RetObj = new StkObject(Name);
 			delete Name;
 			Loop = Loop + StrLen - 1;
@@ -286,14 +304,14 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 		}
 		if (PrevStatus == ELEMNAME_END || PrevStatus == ATTRVAL_END) {
 			int StrLen = 0;
-			PrevAttrName = GetName(&Xml[Loop], &StrLen);
+			PrevAttrName = pImpl->GetName(&Xml[Loop], &StrLen);
 			Loop = Loop + StrLen - 1;
 			PrevStatus = ATTRNAME_END;
 			continue;
 		}
 		if (PrevStatus == ATTRVAL_START) {
 			int StrLen = 0;
-			TCHAR* Value = GetValue(&Xml[Loop], &StrLen);
+			TCHAR* Value = pImpl->GetValue(&Xml[Loop], &StrLen);
 			StkObject* AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevAttrName, Value);
 			RetObj->AppendAttribute(AttrObj);
 			delete PrevAttrName;
@@ -305,7 +323,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 		}
 		if (PrevStatus == ELEM_DOWN) {
 			int StrLen = 0;
-			TCHAR* Value = GetValue(&Xml[Loop], &StrLen);
+			TCHAR* Value = pImpl->GetValue(&Xml[Loop], &StrLen);
 			Loop = Loop + StrLen;
 			if (RetObj != NULL) {
 				RetObj->SetType(StkObject::STKOBJECT_ELEM_STRING);
@@ -314,12 +332,12 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 			delete Value;
 			continue;
 		}
-		CleanupObjects(PrevAttrName, RetObj);
+		pImpl->CleanupObjects(PrevAttrName, RetObj);
 		*Offset = ERROR_CANNOT_HANDLE;
 		return NULL;
 	}
 
-	CleanupObjects(PrevAttrName, RetObj);
+	pImpl->CleanupObjects(PrevAttrName, RetObj);
 	*Offset = ERROR_ELEMENT_END_NOT_FOUND;
 	return NULL;
 }
