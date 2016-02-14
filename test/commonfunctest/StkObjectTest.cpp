@@ -574,6 +574,30 @@ void GeneralTestCase8()
 	printf("OK\r\n");
 }
 
+void GeneralTestCase9()
+{
+	StkObject* TopElem = new StkObject(_T("House"));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Material"), _T("Wood")));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Size"), 200));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Address"), _T("_“ÞìŒ§“¡‘òŽs‚‘q 1000-2000")));
+
+	StkObject* ChildElem1 = new StkObject(_T("KitchenRoom"));
+	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 20));
+	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Brown")));
+	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Table")));
+	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Gas Cooker")));
+	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Rack")));
+
+	TopElem->AppendChildElement(ChildElem1);
+
+	std::wstring XmlTxt;
+	std::wstring JsonTxt;
+	TopElem->ToXml(&XmlTxt);
+	TopElem->ToJson(&JsonTxt);
+
+	delete TopElem;
+}
+
 void CloneTest(StkObject* Obj)
 {
 	std::wstring OrgMsg;
@@ -718,6 +742,8 @@ void StkObjectTest()
 		StkObject* Elem3 = MakeSampleXml3();
 		GeneralTestCase3(Elem3, _T("EncodeCheck2"));
 		delete Elem3;
+
+		GeneralTestCase9();
 	}
 
 	// Decode check

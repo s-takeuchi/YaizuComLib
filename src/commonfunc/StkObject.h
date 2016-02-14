@@ -50,5 +50,6 @@ public:
 	void AppendAttribute(StkObject*);
 	void SetNext(StkObject*); // DO NOT USE THIS API. USE Append* API INSTEAD.
 
-	void ToXml(std::wstring* Msg, int Indent = 0);
+	void ToXml(std::wstring* Msg, int Indent = 0); // DO NOT SPECIFY 2ND PARAMETER
+	void ToJson(std::wstring* Msg, int Indent = 0, BOOL ArrayFlag = FALSE); // DO NOT SPECIFY 2ND AND 3RD PARAMETERS
 };
