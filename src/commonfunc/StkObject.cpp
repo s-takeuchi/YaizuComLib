@@ -20,6 +20,9 @@ public:
 	void ClearMember();
 	int XmlEncodeSize(TCHAR*);
 	void XmlEncode(TCHAR*, TCHAR*, int);
+	int JsonEncodeSize(TCHAR*);
+	void JsonEncode(TCHAR*, TCHAR*, int);
+
 	BOOL IsArrayExpression(StkObject*);
 };
 
@@ -48,6 +51,25 @@ int StkObject::Impl::XmlEncodeSize(TCHAR* InMsg)
 		else if (InMsg[Loop] == '\"') Size += 6;
 		else if (InMsg[Loop] == '\'') Size += 6;
 		else Size ++;
+	}
+	return Size;
+}
+
+// Returns word size of escaped message.
+// InMsg [in] : Original string
+// Return : Word size of escaped message.
+int StkObject::Impl::JsonEncodeSize(TCHAR* InMsg)
+{
+	int Size = 0;
+	int InMsgLen = lstrlen(InMsg);
+	for (int Loop = 0; Loop < InMsgLen; Loop++) {
+		if (InMsg[Loop] == '\"' || InMsg[Loop] == '\\' || InMsg[Loop] == '/' ||
+			InMsg[Loop] == '\b' || InMsg[Loop] == '\f' || InMsg[Loop] == '\n' ||
+			InMsg[Loop] == '\r' || InMsg[Loop] == '\t') {
+				Size += 2;
+		} else {
+			Size ++;
+		}
 	}
 	return Size;
 }
@@ -102,6 +124,45 @@ void StkObject::Impl::XmlEncode(TCHAR* InMsg, TCHAR* OutMsg, int SizeOfOutMsg)
 		OutMsgIndex++;
 	}
 	OutMsg[OutMsgIndex] = '\0';
+}
+
+// Convert the string to escaped message.
+// InData [in] : Zero terminate string
+// OutData [out] : Converted string.
+// OutDataLen [in] : Length of OutData
+void StkObject::Impl::JsonEncode(TCHAR* InData, TCHAR* OutData, int OutDataLen)
+{
+	TCHAR* CurInPtr = InData;
+	TCHAR* CurOutPtr = OutData;
+	for (;;) {
+		if (*CurInPtr == '\0') {
+			*CurOutPtr = '\0';
+			return;
+		} else if (*CurInPtr == '\"' || *CurInPtr == '\\' || *CurInPtr == '/' ||
+			*CurInPtr == '\b' || *CurInPtr == '\f' || *CurInPtr == '\n' ||
+			*CurInPtr == '\r' || *CurInPtr == '\t') {
+			*CurOutPtr = '\\';
+			CurOutPtr++;
+			switch (*CurInPtr) {
+			case '\"': *CurOutPtr = '\"'; break;
+			case '\\': *CurOutPtr = '\\'; break;
+			case '/': *CurOutPtr = '/';  break;
+			case '\b': *CurOutPtr = 'b';  break;
+			case '\f': *CurOutPtr = 'f';  break;
+			case '\n': *CurOutPtr = 'n';  break;
+			case '\r': *CurOutPtr = 'r';  break;
+			case '\t': *CurOutPtr = 't';  break;
+			}
+		} else {
+			*CurOutPtr = *CurInPtr;
+		}
+		CurOutPtr++;
+		CurInPtr++;
+		if (CurOutPtr - OutData == OutDataLen) {
+			*CurOutPtr = '\0';
+			return;
+		}
+	}
 }
 
 BOOL StkObject::Impl::IsArrayExpression(StkObject* Obj)
@@ -486,9 +547,9 @@ void StkObject::ToJson(std::wstring* Msg, int Indent, BOOL ArrayFlag)
 			_snwprintf_s(TmpBuf, 25, _TRUNCATE, _T("%f"), *Val);
 			*Msg = *Msg + _T("\"") + pImpl->Name + _T("\" : ") + TmpBuf;
 		} else if (pImpl->Type == STKOBJECT_ATTR_STRING) {
-			int StrLen = pImpl->XmlEncodeSize((TCHAR*)pImpl->Value);
+			int StrLen = pImpl->JsonEncodeSize((TCHAR*)pImpl->Value);
 			TCHAR* TmpStr = new TCHAR[StrLen + 1];
-			pImpl->XmlEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
+			pImpl->JsonEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
 			*Msg = *Msg + _T("\"") + pImpl->Name + _T("\" : \"") + TmpStr + _T("\"");
 			delete TmpStr;
 		}
@@ -523,9 +584,9 @@ void StkObject::ToJson(std::wstring* Msg, int Indent, BOOL ArrayFlag)
 				*Msg = *Msg + TmpBuf;
 			}
 		} else if (pImpl->Type == STKOBJECT_ELEM_STRING) {
-			int StrLen = pImpl->XmlEncodeSize((TCHAR*)pImpl->Value);
+			int StrLen = pImpl->JsonEncodeSize((TCHAR*)pImpl->Value);
 			TCHAR* TmpStr = new TCHAR[StrLen + 1];
-			pImpl->XmlEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
+			pImpl->JsonEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
 			if (ArrayFlag == FALSE) {
 				*Msg = *Msg + _T("\"") + pImpl->Name + _T("\" : \"") + TmpStr + _T("\"");
 			} else {
@@ -603,6 +664,7 @@ void StkObject::ToJson(std::wstring* Msg, int Indent, BOOL ArrayFlag)
 				TmpObj = TmpObj->GetNext();
 			}
 		}
+
 		for (int Loop = 0; Loop < Indent; Loop++) {
 			*Msg += _T(" ");
 		}

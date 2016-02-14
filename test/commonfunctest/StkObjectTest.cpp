@@ -23,7 +23,7 @@ int GetUsedMemorySizeOfCurrentProcess()
 	return Size;
 }
 
-StkObject* MakeSampleXml1()
+StkObject* MakeTestData1()
 {
 	StkObject* Elem1 = new StkObject(_T("SoftwareCompany"));
 
@@ -62,7 +62,7 @@ StkObject* MakeSampleXml1()
 	return Elem1;
 }
 
-StkObject* MakeSampleXml2()
+StkObject* MakeTestData2()
 {
 	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
 	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<")));
@@ -78,7 +78,7 @@ StkObject* MakeSampleXml2()
 	return Xml2;
 }
 
-StkObject* MakeSampleXml3()
+StkObject* MakeTestData3()
 {
 	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
 	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<<<<<<<<<<")));
@@ -94,18 +94,56 @@ StkObject* MakeSampleXml3()
 	return Xml2;
 }
 
-TCHAR* MakeSampleXml4()
+TCHAR* MakeTestData4()
 {
 	TCHAR* RtnXml = new TCHAR[512];
 	lstrcpy(RtnXml, _T("<Aaaa Lt=\"&lt;\" Gt=\"&gt;\" Amp=\"&amp;\" Quot=\"&quot;\" Apos=\"&apos;\"><Bbbb>&lt;</Bbbb><Bbbb>&gt;</Bbbb><Bbbb>&amp;</Bbbb><Bbbb>&quot;</Bbbb><Bbbb>&apos;</Bbbb></Aaaa>"));
 	return RtnXml;
 }
 
-TCHAR* MakeSampleXml5()
+TCHAR* MakeTestData5()
 {
 	TCHAR* RtnXml = new TCHAR[512];
 	lstrcpy(RtnXml, _T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Bbbb>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Bbbb><Bbbb>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Bbbb></Aaaa>"));
 	return RtnXml;
+}
+
+StkObject* MakeTestData6()
+{
+	StkObject* TopElem = new StkObject(_T("House"));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Material"), _T("Wood")));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Size"), 200));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Address"), _T("_“ÞìŒ§“¡‘òŽs‚‘q 1000-2000")));
+
+	StkObject* ChildElem1 = new StkObject(_T("KitchenRoom"));
+	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 20));
+	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Brown")));
+	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Table")));
+	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Gas Cooker")));
+	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Rack")));
+
+	StkObject* ChildElem2 = new StkObject(_T("KidsRoom"));
+
+	StkObject* ChildElem2a = new StkObject(_T("Kid"));
+	ChildElem2a->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 30));
+	ChildElem2a->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Red")));
+	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Desk")));
+	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Chair")));
+	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Bed")));
+	ChildElem2->AppendChildElement(ChildElem2a);
+
+	StkObject* ChildElem2b = new StkObject(_T("Kid"));
+	ChildElem2b->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 35));
+	ChildElem2b->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("White")));
+	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Desk")));
+	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Chair")));
+	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Bed")));
+	ChildElem2->AppendChildElement(ChildElem2b);
+
+	TopElem->AppendChildElement(ChildElem1);
+	TopElem->AppendChildElement(ChildElem2);
+
+	return TopElem;
 }
 
 void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
@@ -574,28 +612,12 @@ void GeneralTestCase8()
 	printf("OK\r\n");
 }
 
-void GeneralTestCase9()
+void GeneralTestCase9(StkObject* TopElem)
 {
-	StkObject* TopElem = new StkObject(_T("House"));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Material"), _T("Wood")));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Size"), 200));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Address"), _T("_“ÞìŒ§“¡‘òŽs‚‘q 1000-2000")));
-
-	StkObject* ChildElem1 = new StkObject(_T("KitchenRoom"));
-	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 20));
-	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Brown")));
-	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Table")));
-	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Gas Cooker")));
-	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Rack")));
-
-	TopElem->AppendChildElement(ChildElem1);
-
 	std::wstring XmlTxt;
 	std::wstring JsonTxt;
 	TopElem->ToXml(&XmlTxt);
 	TopElem->ToJson(&JsonTxt);
-
-	delete TopElem;
 }
 
 void CloneTest(StkObject* Obj)
@@ -657,12 +679,12 @@ int MemoryLeakChecking2()
 
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		for (int Loop = 0; Loop < 250; Loop++) {
-			StkObject* NewObj = MakeSampleXml3();
+			StkObject* NewObj = MakeTestData3();
 			std::wstring StrVal;
 			NewObj->ToXml(&StrVal);
 			delete NewObj;
 
-			TCHAR* NewStr = MakeSampleXml5();
+			TCHAR* NewStr = MakeTestData5();
 			StkObjectUtil Sou;
 			int Offset = 0;
 			StkObject* NewObj2 = Sou.CreateObjectFromXml(NewStr, &Offset);
@@ -735,24 +757,26 @@ void StkObjectTest()
 
 	// Encode check
 	{
-		StkObject* Elem2 = MakeSampleXml2();
+		StkObject* Elem2 = MakeTestData2();
 		GeneralTestCase2(Elem2, _T("EncodeCheck1"));
 		delete Elem2;
 
-		StkObject* Elem3 = MakeSampleXml3();
+		StkObject* Elem3 = MakeTestData3();
 		GeneralTestCase3(Elem3, _T("EncodeCheck2"));
 		delete Elem3;
 
-		GeneralTestCase9();
+		StkObject* Elem6 = MakeTestData6();
+		GeneralTestCase9(Elem6);
+		delete Elem6;
 	}
 
 	// Decode check
 	{
-		TCHAR* Xml4 = MakeSampleXml4();
+		TCHAR* Xml4 = MakeTestData4();
 		GeneralTestCase4(Xml4, _T("DecodeCheck1"));
 		delete Xml4;
 
-		TCHAR* Xml5 = MakeSampleXml5();
+		TCHAR* Xml5 = MakeTestData5();
 		GeneralTestCase5(Xml5, _T("DecodeCheck2"));
 		delete Xml5;
 
@@ -762,22 +786,22 @@ void StkObjectTest()
 
 	// General check
 	{
-		StkObject* Elem1 = MakeSampleXml1();
+		StkObject* Elem1 = MakeTestData1();
 		GeneralTestCase1(Elem1, _T("Sample1"));
 		delete Elem1;
 	}
 
 	// Clone check
 	{
-		StkObject* Elem1 = MakeSampleXml1();
+		StkObject* Elem1 = MakeTestData1();
 		CloneTest(Elem1);
 		delete Elem1;
 
-		StkObject* Elem2 = MakeSampleXml2();
+		StkObject* Elem2 = MakeTestData2();
 		CloneTest(Elem2);
 		delete Elem2;
 
-		StkObject* Elem3 = MakeSampleXml3();
+		StkObject* Elem3 = MakeTestData3();
 		CloneTest(Elem3);
 		delete Elem3;
 	}
@@ -790,7 +814,7 @@ void StkObjectTest()
 	// Memory leak check
 	{
 		MemoryLeakChecking3();
-		StkObject* Elem1 = MakeSampleXml1();
+		StkObject* Elem1 = MakeTestData1();
 		MemoryLeakChecking1(Elem1);
 		delete Elem1;
 		MemoryLeakChecking2();
