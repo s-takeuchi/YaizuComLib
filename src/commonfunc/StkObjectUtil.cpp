@@ -7,12 +7,14 @@
 class StkObjectUtil::Impl
 {
 public:
+	TCHAR* GetJsonString(TCHAR*, int*);
 	TCHAR* GetName(TCHAR*, int*);
 	TCHAR* GetValue(TCHAR*, int*);
-	void CleanupObjects(TCHAR*, StkObject*);
+	void CleanupObjectsForXml(TCHAR*, StkObject*);
+	void CleanupObjectsForJson(StkObject*);
 };
 
-void StkObjectUtil::Impl::CleanupObjects(TCHAR* PrevAttrName, StkObject* RetObj)
+void StkObjectUtil::Impl::CleanupObjectsForXml(TCHAR* PrevAttrName, StkObject* RetObj)
 {
 	if (PrevAttrName != NULL) {
 		delete PrevAttrName;
@@ -20,6 +22,24 @@ void StkObjectUtil::Impl::CleanupObjects(TCHAR* PrevAttrName, StkObject* RetObj)
 	if (RetObj != NULL) {
 		delete RetObj;
 	}
+}
+
+void StkObjectUtil::Impl::CleanupObjectsForJson(StkObject* RetObj)
+{
+	if (RetObj != NULL) {
+		delete RetObj;
+	}
+}
+
+TCHAR* StkObjectUtil::Impl::GetJsonString(TCHAR* OrgStr, int* Len)
+{
+	TCHAR* CurPnt = OrgStr;
+	int ValueLength = 0;
+	while (CurPnt != _T('\0')) {
+		
+	}
+
+	return NULL;
 }
 
 TCHAR* StkObjectUtil::Impl::GetName(TCHAR* TgtName, int* Len)
@@ -158,6 +178,38 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 	StkObject* RetObj = NULL;
 	int PrevStatus = ELEM_START;
 
+	if (Json == NULL || lstrcmp(Json, _T("")) == 0) {
+		pImpl->CleanupObjectsForJson(RetObj);
+		*Offset = ERROR_JSON_NO_ELEMENT_FOUND;
+		return NULL;
+	}
+
+	for (int Loop = 0; Json[Loop] != TCHAR('\0'); Loop++) {
+
+		// if blank is appeared...
+		if ((Json[Loop] == TCHAR(' ') || Json[Loop] == TCHAR('\t') || Json[Loop] == TCHAR('\r') || Json[Loop] == TCHAR('\n')) && PrevStatus != ELEMNAME_START && PrevStatus != STRVAL_START) {
+			continue;
+		}
+
+		// if \" is appeared...
+		if (Json[Loop] == TCHAR('\"')) {
+			if (PrevStatus == ELEM_START || PrevStatus == ARRAY_START) {
+				PrevStatus = ELEMNAME_START;
+				continue;
+			} else if (PrevStatus == ELEMOBJ_START) {
+				PrevStatus =STRVAL_START;
+				continue;
+			} else {
+				pImpl->CleanupObjectsForJson(RetObj);
+				*Offset = ERROR_JSON_INVALID_QUOT_FOUND;
+				return NULL;
+			}
+		}
+
+		// if other...
+
+	}
+
 	return NULL;
 }
 
@@ -195,7 +247,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 	int PrevStatus = ELEM_START;
 
 	if (Xml == NULL || lstrcmp(Xml, _T("")) == 0) {
-		pImpl->CleanupObjects(PrevAttrName, RetObj);
+		pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 		*Offset = ERROR_XML_NO_ELEMENT_FOUND;
 		return NULL;
 	}
@@ -232,13 +284,13 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				if (ChildElem != NULL) {
 					RetObj->AppendChildElement(ChildElem);
 				} else {
-					pImpl->CleanupObjects(PrevAttrName, RetObj);
+					pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 					*Offset = OffsetCld;
 					return NULL;
 				}
 				continue;
 			} else {
-				pImpl->CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 				*Offset = ERROR_XML_INVALID_ELEMENT_START_FOUND;
 				return NULL;
 			}
@@ -250,7 +302,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				PrevStatus = ATTR_EQUAL;
 				continue;
 			} else {
-				pImpl->CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 				*Offset = ERROR_XML_EQUAL_FOUND_WITHOUT_ATTRIBUTE_NAME;
 				return NULL;
 			}
@@ -269,7 +321,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				PrevStatus = ATTRVAL_END;
 				continue;
 			} else {
-				pImpl->CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 				*Offset = ERROR_XML_INVALID_QUOT_FOUND;
 				return NULL;
 			}
@@ -281,7 +333,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				PrevStatus = ELEM_DOWN;
 				continue;
 			} else {
-				pImpl->CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 				*Offset = ERROR_XML_INVALID_ELEMENT_END_FOUND;
 				return NULL;
 			}
@@ -297,7 +349,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 					}
 				}
 				if (Xml[Loop] == TCHAR('\0')) {
-					pImpl->CleanupObjects(PrevAttrName, RetObj);
+					pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 					*Offset = ERROR_XML_ELEMENT_END_NOT_FOUND;
 					return NULL;
 				}
@@ -310,14 +362,14 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 			if (PrevStatus == ELEMNAME_START || PrevStatus == ELEMNAME_END || PrevStatus == ATTRVAL_END) {
 				PrevStatus = ELEM_END;
 			} else {
-				pImpl->CleanupObjects(PrevAttrName, RetObj);
+				pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 				*Offset = ERROR_XML_INVALID_SLASH_FOUND;
 				return NULL;
 			}
 			for (int Loop2 = Loop + 1; Xml[Loop2] != TCHAR('\0'); Loop2++) {
 				if (Xml[Loop2] == TCHAR('>')) {
 					if (RetObj == NULL) {
-						pImpl->CleanupObjects(PrevAttrName, RetObj);
+						pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 						*Offset = ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT;
 						return NULL;
 					}
@@ -328,7 +380,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 					return RetObj;
 				}
 			}
-			pImpl->CleanupObjects(PrevAttrName, RetObj);
+			pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 			*Offset = ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT_END;
 			return NULL;
 		}
@@ -373,12 +425,12 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 			delete Value;
 			continue;
 		}
-		pImpl->CleanupObjects(PrevAttrName, RetObj);
+		pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 		*Offset = ERROR_XML_CANNOT_HANDLE;
 		return NULL;
 	}
 
-	pImpl->CleanupObjects(PrevAttrName, RetObj);
+	pImpl->CleanupObjectsForXml(PrevAttrName, RetObj);
 	*Offset = ERROR_XML_ELEMENT_END_NOT_FOUND;
 	return NULL;
 }

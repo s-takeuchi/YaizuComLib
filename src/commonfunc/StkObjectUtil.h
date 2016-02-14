@@ -20,6 +20,9 @@ public:
 	static const int ERROR_XML_INVALID_SLASH_FOUND = -108;
 	static const int ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT = -109;
 
+	static const int ERROR_JSON_NO_ELEMENT_FOUND = -200;
+	static const int ERROR_JSON_INVALID_QUOT_FOUND = -201;
+
 	StkObjectUtil();
 	virtual ~StkObjectUtil();
 

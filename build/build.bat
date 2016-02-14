@@ -146,17 +146,23 @@ echo Building commonfunc.sln...
 copy "..\src\commonfunc\msgproc.h" deployment
 copy "..\src\commonfunc\StkGeneric.h" deployment
 copy "..\src\commonfunc\StkProperties.h" deployment
+copy "..\src\commonfunc\StkObject.h" deployment
+copy "..\src\commonfunc\StkObjectUtil.h" deployment
 copy "..\src\commonfunc\Release\commonfunc.lib" deployment
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\commonfunc.lib
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\msgproc.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkGeneric.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkProperties.h
+%SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkObject.h
+%SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkObjectUtil.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\commonfunc.pdf
 %SEVENZIP% a ..\build\deployment\commonfunc.zip buildver.txt
 del ..\build\deployment\commonfunc.lib
 del ..\build\deployment\msgproc.h
 del ..\build\deployment\StkGeneric.h
 del ..\build\deployment\StkProperties.h
+del ..\build\deployment\StkObject.h
+del ..\build\deployment\StkObjectUtil.h
 del ..\build\deployment\commonfunc.pdf
 
 echo Building stkthread.sln...
