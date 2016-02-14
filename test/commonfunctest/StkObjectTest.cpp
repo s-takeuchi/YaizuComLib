@@ -409,7 +409,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T(""), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_NO_ELEMENT_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_NO_ELEMENT_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -420,7 +420,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: NULL is presented...");
 		RetObj = Sou.CreateObjectFromXml(NULL, &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_NO_ELEMENT_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_NO_ELEMENT_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -431,7 +431,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<>\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<>"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_ELEMENT_END_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_INVALID_ELEMENT_END_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -442,7 +442,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<<\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<<"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_ELEMENT_START_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_INVALID_ELEMENT_START_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -453,7 +453,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<\"ABC\"/>\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<\"ABC\"/>"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_QUOT_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_INVALID_QUOT_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -464,7 +464,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"xyz\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("xyz"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_CANNOT_HANDLE) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_CANNOT_HANDLE) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -475,7 +475,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<Aaa Bbb=Ccc/>\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<Aaa Bbb=Ccc/>"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_CANNOT_HANDLE) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_CANNOT_HANDLE) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -486,7 +486,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<Aaa Bbb=></Aaa>\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<Aaa Bbb=></Aaa>"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_INVALID_ELEMENT_END_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_INVALID_ELEMENT_END_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -497,7 +497,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<Aaa =></Aaa>\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<Aaa =></Aaa>"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_EQUAL_FOUND_WITHOUT_ATTRIBUTE_NAME) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_EQUAL_FOUND_WITHOUT_ATTRIBUTE_NAME) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -508,7 +508,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<Aaa></Aaa\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<Aaa></Aaa"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_SLASH_FOUND_WITHOUT_ELEMENT_END) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT_END) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -519,7 +519,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<Aaa>/Aaa\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<Aaa>/Aaa"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_ELEMENT_END_NOT_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_ELEMENT_END_NOT_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -530,7 +530,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"</Aaa>\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("</Aaa>"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_SLASH_FOUND_WITHOUT_ELEMENT) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -541,7 +541,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<Aaaa\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<Aaaa"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_ELEMENT_END_NOT_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_ELEMENT_END_NOT_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -552,7 +552,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<Aaaa Xxx=\"Xxx\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<Aaaa Xxx=\"Xxx"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_ELEMENT_END_NOT_FOUND) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_ELEMENT_END_NOT_FOUND) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
@@ -563,7 +563,7 @@ void GeneralTestCase7()
 	{
 		printf("Abnormal case: \"<?xml?></?xml?>\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<?xml?></?xml?>"), &Offset);
-		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_SLASH_FOUND_WITHOUT_ELEMENT) {
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT) {
 			printf("NG\r\n");
 			exit(0);
 		} else {
