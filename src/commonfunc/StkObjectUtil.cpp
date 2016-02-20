@@ -8,6 +8,7 @@ class StkObjectUtil::Impl
 {
 public:
 	TCHAR* GetJsonString(TCHAR*, int*);
+	BOOL GetJsonNumber(TCHAR*, int*, int*, float*);
 	TCHAR* GetName(TCHAR*, int*);
 	TCHAR* GetValue(TCHAR*, int*);
 	void CleanupObjectsForXml(TCHAR*, StkObject*);
@@ -32,6 +33,41 @@ void StkObjectUtil::Impl::CleanupObjectsForJson(TCHAR* PrevName, StkObject* RetO
 	if (RetObj != NULL) {
 		delete RetObj;
 	}
+}
+
+BOOL StkObjectUtil::Impl::GetJsonNumber(TCHAR* OrgStr, int* Len, int* ValInt, float* ValFloat)
+{
+	TCHAR* CurPnt = OrgStr;
+	int ValueLength = 0;
+	BOOL FloatFlag = FALSE;
+
+	while (*CurPnt != TCHAR('\0')) {
+		if (*CurPnt >= TCHAR('0') && *CurPnt <= TCHAR('9')) {
+			ValueLength++;
+			CurPnt++;
+		} else if (*CurPnt == TCHAR('.')) {
+			ValueLength++;
+			CurPnt++;
+			FloatFlag = TRUE;
+		} else {
+			break;
+		}
+	}
+	TCHAR* RtnValue = new TCHAR[ValueLength + 1];
+	*Len = ValueLength;
+	int Loop = 0;
+	for (; Loop < ValueLength + 1; Loop++) {
+		RtnValue[Loop] = OrgStr[Loop];
+	}
+	RtnValue[Loop] = TCHAR('\0');
+
+	if (FloatFlag == TRUE) {
+		*ValFloat = (float)_wtof(RtnValue);
+	} else {
+		*ValInt = _wtoi(RtnValue);
+	}
+	delete RtnValue;
+	return FloatFlag;
 }
 
 TCHAR* StkObjectUtil::Impl::GetJsonString(TCHAR* OrgStr, int* Len)
@@ -275,6 +311,41 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 				pImpl->CleanupObjectsForJson(PrevName, RetObj);
 				*Offset = ERROR_JSON_INVALID_QUOT_FOUND;
 				return NULL;
+			}
+		}
+
+		// if : is appeared...
+		if (Json[Loop] == TCHAR(':')) {
+			if (PrevStatus == ELEMNAME_END) {
+				PrevStatus = ELEMOBJ_START;
+				continue;
+			} else {
+				pImpl->CleanupObjectsForJson(PrevName, RetObj);
+				*Offset = ERROR_JSON_INVALID_COLON_FOUND;
+				return NULL;
+			}
+		}
+
+		// if decimal number is appeared...
+		if (Json[Loop] >= TCHAR('0') && Json[Loop] <= TCHAR('9')) {
+			int ValInt = 0;
+			float ValFloat = 0;
+			if (PrevStatus == ELEMOBJ_START) {
+				int StrLen = 0;
+				BOOL IsFloat = pImpl->GetJsonNumber(&Json[Loop], &StrLen, &ValInt, &ValFloat);
+				StkObject* AttrObj;
+				if (IsFloat) {
+					AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevName, ValFloat);
+				} else {
+					AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevName, ValInt);
+				}
+				RetObj->AppendAttribute(AttrObj);
+				delete PrevName;
+				PrevName = NULL;
+				Loop = Loop + StrLen;
+				PrevStatus = ELEMOBJ_END;
+				continue;
+			} else {
 			}
 		}
 

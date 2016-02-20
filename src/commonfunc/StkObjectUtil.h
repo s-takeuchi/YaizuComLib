@@ -22,6 +22,7 @@ public:
 
 	static const int ERROR_JSON_NO_ELEMENT_FOUND = -200;
 	static const int ERROR_JSON_INVALID_QUOT_FOUND = -201;
+	static const int ERROR_JSON_INVALID_COLON_FOUND = -202;
 
 	StkObjectUtil();
 	virtual ~StkObjectUtil();
