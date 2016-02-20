@@ -11,7 +11,7 @@ public:
 	TCHAR* GetName(TCHAR*, int*);
 	TCHAR* GetValue(TCHAR*, int*);
 	void CleanupObjectsForXml(TCHAR*, StkObject*);
-	void CleanupObjectsForJson(StkObject*);
+	void CleanupObjectsForJson(TCHAR*, StkObject*);
 };
 
 void StkObjectUtil::Impl::CleanupObjectsForXml(TCHAR* PrevAttrName, StkObject* RetObj)
@@ -24,8 +24,11 @@ void StkObjectUtil::Impl::CleanupObjectsForXml(TCHAR* PrevAttrName, StkObject* R
 	}
 }
 
-void StkObjectUtil::Impl::CleanupObjectsForJson(StkObject* RetObj)
+void StkObjectUtil::Impl::CleanupObjectsForJson(TCHAR* PrevName, StkObject* RetObj)
 {
+	if (PrevName != NULL) {
+		delete PrevName;
+	}
 	if (RetObj != NULL) {
 		delete RetObj;
 	}
@@ -35,11 +38,80 @@ TCHAR* StkObjectUtil::Impl::GetJsonString(TCHAR* OrgStr, int* Len)
 {
 	TCHAR* CurPnt = OrgStr;
 	int ValueLength = 0;
-	while (CurPnt != _T('\0')) {
-		
+	while (*CurPnt != TCHAR('\"') && CurPnt != _T('\0')) {
+		if (*CurPnt == TCHAR('\\')) {
+			if (*(CurPnt + 1) == TCHAR('\"') || *(CurPnt + 1) == TCHAR('\\') || *(CurPnt + 1) == TCHAR('/') || *(CurPnt + 1) == TCHAR('b') ||
+				*(CurPnt + 1) == TCHAR('f') || *(CurPnt + 1) == TCHAR('n') || *(CurPnt + 1) == TCHAR('r') || *(CurPnt + 1) == TCHAR('t')) {
+				CurPnt += 2;
+			} else {
+				CurPnt++;
+				continue;
+			}
+		} else {
+			CurPnt++;
+		}
 	}
-
-	return NULL;
+	if (*CurPnt == TCHAR('\"')) {
+		*Len = CurPnt - OrgStr;
+	} else if (*CurPnt == TCHAR('\0')) {
+		*Len = CurPnt - OrgStr - 1;
+	}
+	TCHAR* RtnValue = new TCHAR[ValueLength + 1];
+	int RtnLoop = 0;
+	for (TCHAR* Loop = OrgStr; Loop < CurPnt; Loop++) {
+		if (StrStr(Loop, _T("\\\"")) == Loop) {
+			RtnValue[RtnLoop] = '\"';
+			RtnLoop++;
+			Loop += 2;
+			continue;
+		}
+		if (StrStr(Loop, _T("\\\\")) == Loop) {
+			RtnValue[RtnLoop] = '\\';
+			RtnLoop++;
+			Loop += 2;
+			continue;
+		}
+		if (StrStr(Loop, _T("\\/")) == Loop) {
+			RtnValue[RtnLoop] = '/';
+			RtnLoop++;
+			Loop += 2;
+			continue;
+		}
+		if (StrStr(Loop, _T("\\\b")) == Loop) {
+			RtnValue[RtnLoop] = '\b';
+			RtnLoop++;
+			Loop += 2;
+			continue;
+		}
+		if (StrStr(Loop, _T("\\\f")) == Loop) {
+			RtnValue[RtnLoop] = '\f';
+			RtnLoop++;
+			Loop += 2;
+			continue;
+		}
+		if (StrStr(Loop, _T("\\\n")) == Loop) {
+			RtnValue[RtnLoop] = '\n';
+			RtnLoop++;
+			Loop += 2;
+			continue;
+		}
+		if (StrStr(Loop, _T("\\\r")) == Loop) {
+			RtnValue[RtnLoop] = '\r';
+			RtnLoop++;
+			Loop += 2;
+			continue;
+		}
+		if (StrStr(Loop, _T("\\\t")) == Loop) {
+			RtnValue[RtnLoop] = '\t';
+			RtnLoop++;
+			Loop += 2;
+			continue;
+		}
+		RtnValue[RtnLoop] = *Loop;
+		RtnLoop++;
+	}
+	RtnValue[ValueLength] = TCHAR('\0');
+	return RtnValue;
 }
 
 TCHAR* StkObjectUtil::Impl::GetName(TCHAR* TgtName, int* Len)
@@ -67,18 +139,17 @@ TCHAR* StkObjectUtil::Impl::GetValue(TCHAR* TgtValue, int* Len)
 		if (*CurPnt == TCHAR('&')) {
 			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && StrStr(CurPnt, _T("&lt;")) == CurPnt) {
 				CurPnt += 4;
-			}
-			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && StrStr(CurPnt, _T("&gt;")) == CurPnt) {
+			} else if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && StrStr(CurPnt, _T("&gt;")) == CurPnt) {
 				CurPnt += 4;
-			}
-			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && *(CurPnt + 4) != TCHAR('\0') && StrStr(CurPnt, _T("&amp;")) == CurPnt) {
+			} else if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && *(CurPnt + 4) != TCHAR('\0') && StrStr(CurPnt, _T("&amp;")) == CurPnt) {
 				CurPnt += 5;
-			}
-			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && *(CurPnt + 4) != TCHAR('\0') && *(CurPnt + 5) != TCHAR('\0') && StrStr(CurPnt, _T("&quot;")) == CurPnt) {
+			} else if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && *(CurPnt + 4) != TCHAR('\0') && *(CurPnt + 5) != TCHAR('\0') && StrStr(CurPnt, _T("&quot;")) == CurPnt) {
 				CurPnt += 6;
-			}
-			if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && *(CurPnt + 4) != TCHAR('\0') && *(CurPnt + 5) != TCHAR('\0') && StrStr(CurPnt, _T("&apos;")) == CurPnt) {
+			} else if (*(CurPnt + 1) != TCHAR('\0') && *(CurPnt + 2) != TCHAR('\0') && *(CurPnt + 3) != TCHAR('\0') && *(CurPnt + 4) != TCHAR('\0') && *(CurPnt + 5) != TCHAR('\0') && StrStr(CurPnt, _T("&apos;")) == CurPnt) {
 				CurPnt += 6;
+			} else {
+				CurPnt++;
+				continue;
 			}
 		} else {
 			CurPnt++;
@@ -176,10 +247,11 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 	static const int ARRAY_END = 8;
 
 	StkObject* RetObj = NULL;
+	TCHAR* PrevName = NULL;
 	int PrevStatus = ELEM_START;
 
 	if (Json == NULL || lstrcmp(Json, _T("")) == 0) {
-		pImpl->CleanupObjectsForJson(RetObj);
+		pImpl->CleanupObjectsForJson(PrevName, RetObj);
 		*Offset = ERROR_JSON_NO_ELEMENT_FOUND;
 		return NULL;
 	}
@@ -197,16 +269,35 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 				PrevStatus = ELEMNAME_START;
 				continue;
 			} else if (PrevStatus == ELEMOBJ_START) {
-				PrevStatus =STRVAL_START;
+				PrevStatus = STRVAL_START;
 				continue;
 			} else {
-				pImpl->CleanupObjectsForJson(RetObj);
+				pImpl->CleanupObjectsForJson(PrevName, RetObj);
 				*Offset = ERROR_JSON_INVALID_QUOT_FOUND;
 				return NULL;
 			}
 		}
 
 		// if other...
+		if (PrevStatus == ELEMNAME_START) {
+			int StrLen = 0;
+			PrevName = pImpl->GetJsonString(&Json[Loop], &StrLen);
+			Loop = Loop + StrLen - 1;
+			PrevStatus = ELEMNAME_END;
+			continue;
+		}
+		if (PrevStatus == STRVAL_START) {
+			int StrLen = 0;
+			TCHAR* Value = pImpl->GetJsonString(&Json[Loop], &StrLen);
+			StkObject* AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevName, Value);
+			RetObj->AppendAttribute(AttrObj);
+			delete PrevName;
+			PrevName = NULL;
+			delete Value;
+			Loop = Loop + StrLen;
+			PrevStatus = ELEMOBJ_END;
+			continue;
+		}
 
 	}
 
