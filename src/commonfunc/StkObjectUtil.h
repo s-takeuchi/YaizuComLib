@@ -24,10 +24,12 @@ public:
 	static const int ERROR_JSON_INVALID_QUOT_FOUND = -201;
 	static const int ERROR_JSON_INVALID_COLON_FOUND = -202;
 	static const int ERROR_JSON_INVALID_STRUCTURE = -203;
+	static const int ERROR_JSON_INVALID_COMMA = -204;
+	static const int ERROR_JSON_CANNOT_HANDLE = -205;
 
 	StkObjectUtil();
 	virtual ~StkObjectUtil();
 
 	StkObject* CreateObjectFromXml(TCHAR*, int*);
-	StkObject* CreateObjectFromJson(TCHAR*, int*);
+	StkObject* CreateObjectFromJson(TCHAR*, int*, StkObject*);
 };

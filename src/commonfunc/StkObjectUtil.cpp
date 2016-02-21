@@ -56,7 +56,7 @@ BOOL StkObjectUtil::Impl::GetJsonNumber(TCHAR* OrgStr, int* Len, int* ValInt, fl
 	TCHAR* RtnValue = new TCHAR[ValueLength + 1];
 	*Len = ValueLength;
 	int Loop = 0;
-	for (; Loop < ValueLength + 1; Loop++) {
+	for (; Loop < ValueLength; Loop++) {
 		RtnValue[Loop] = OrgStr[Loop];
 	}
 	RtnValue[Loop] = TCHAR('\0');
@@ -73,7 +73,6 @@ BOOL StkObjectUtil::Impl::GetJsonNumber(TCHAR* OrgStr, int* Len, int* ValInt, fl
 TCHAR* StkObjectUtil::Impl::GetJsonString(TCHAR* OrgStr, int* Len)
 {
 	TCHAR* CurPnt = OrgStr;
-	int ValueLength = 0;
 	while (*CurPnt != TCHAR('\"') && CurPnt != _T('\0')) {
 		if (*CurPnt == TCHAR('\\')) {
 			if (*(CurPnt + 1) == TCHAR('\"') || *(CurPnt + 1) == TCHAR('\\') || *(CurPnt + 1) == TCHAR('/') || *(CurPnt + 1) == TCHAR('b') ||
@@ -92,7 +91,7 @@ TCHAR* StkObjectUtil::Impl::GetJsonString(TCHAR* OrgStr, int* Len)
 	} else if (*CurPnt == TCHAR('\0')) {
 		*Len = CurPnt - OrgStr - 1;
 	}
-	TCHAR* RtnValue = new TCHAR[ValueLength + 1];
+	TCHAR* RtnValue = new TCHAR[*Len + 1];
 	int RtnLoop = 0;
 	for (TCHAR* Loop = OrgStr; Loop < CurPnt; Loop++) {
 		if (StrStr(Loop, _T("\\\"")) == Loop) {
@@ -146,7 +145,7 @@ TCHAR* StkObjectUtil::Impl::GetJsonString(TCHAR* OrgStr, int* Len)
 		RtnValue[RtnLoop] = *Loop;
 		RtnLoop++;
 	}
-	RtnValue[ValueLength] = TCHAR('\0');
+	RtnValue[*Len] = TCHAR('\0');
 	return RtnValue;
 }
 
@@ -270,7 +269,7 @@ StkObjectUtil::~StkObjectUtil()
 //  | ELEMNAME_START
 //  ELEM_START
 //
-StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
+StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObject* Parent)
 {
 	static const int ELEM_START = 1;
 	static const int ELEMNAME_START = 2;
@@ -281,9 +280,8 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 	static const int ARRAY_START = 7;
 	static const int ARRAY_END = 8;
 
-	StkObject* RetObj = NULL;
+	StkObject* RetObj = Parent;
 	TCHAR* PrevName = NULL;
-	TCHAR* PrevNamePtr = NULL;
 	int PrevStatus = ELEM_START;
 
 	if (Json == NULL || lstrcmp(Json, _T("")) == 0) {
@@ -303,7 +301,6 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 		if (Json[Loop] == TCHAR('\"')) {
 			if (PrevStatus == ELEM_START || PrevStatus == ARRAY_START) {
 				PrevStatus = ELEMNAME_START;
-				PrevNamePtr = &Json[Loop];
 				continue;
 			} else if (PrevStatus == ELEMOBJ_START) {
 				PrevStatus = STRVAL_START;
@@ -331,16 +328,25 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 		if (Json[Loop] == TCHAR('{')) {
 			if (PrevStatus == ELEMOBJ_START) {
 				int OffsetCld = 0;
-				StkObject* ChildElem = CreateObjectFromJson(PrevNamePtr, &OffsetCld);
-				Loop += (OffsetCld - (&Json[Loop] - PrevNamePtr));
+				StkObject* ChildElem;
+				if (RetObj == NULL) {
+					RetObj = new StkObject(PrevName);
+					ChildElem = CreateObjectFromJson(&Json[Loop + 1], &OffsetCld, RetObj);
+				} else {
+					StkObject* TmpObj = new StkObject(PrevName);
+					RetObj->AppendChildElement(TmpObj);
+					ChildElem = CreateObjectFromJson(&Json[Loop + 1], &OffsetCld, TmpObj);
+				}
+				Loop += OffsetCld;
 				PrevStatus = ELEMOBJ_END;
 				if (ChildElem != NULL) {
-					RetObj->AppendChildElement(ChildElem);
+					// Nothing to do
 				} else {
-					pImpl->CleanupObjectsForXml(PrevName, RetObj);
+					pImpl->CleanupObjectsForJson(PrevName, RetObj);
 					*Offset = OffsetCld;
 					return NULL;
 				}
+				continue;
 			} else {
 				pImpl->CleanupObjectsForJson(PrevName, RetObj);
 				*Offset = ERROR_JSON_INVALID_STRUCTURE;
@@ -350,6 +356,26 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 
 		// if } is appeared...
 		if (Json[Loop] == TCHAR('}')) {
+			if (PrevStatus == ELEMOBJ_END || PrevStatus == ARRAY_END) {
+				*Offset = Loop + 1;
+				return RetObj;
+			} else {
+				pImpl->CleanupObjectsForJson(PrevName, RetObj);
+				*Offset = ERROR_JSON_INVALID_STRUCTURE;
+				return NULL;
+			}
+		}
+
+		// if } is appeared...
+		if (Json[Loop] == TCHAR(',')) {
+			if (PrevStatus == ELEMOBJ_END) {
+				PrevStatus = ELEM_START;
+				continue;
+			} else {
+				pImpl->CleanupObjectsForJson(PrevName, RetObj);
+				*Offset = ERROR_JSON_INVALID_COMMA;
+				return NULL;
+			}
 		}
 
 		// if decimal number is appeared...
@@ -359,16 +385,16 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 			if (PrevStatus == ELEMOBJ_START) {
 				int StrLen = 0;
 				BOOL IsFloat = pImpl->GetJsonNumber(&Json[Loop], &StrLen, &ValInt, &ValFloat);
-				StkObject* AttrObj;
+				StkObject* ChildObj;
 				if (IsFloat) {
-					AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevName, ValFloat);
+					ChildObj = new StkObject(StkObject::STKOBJECT_ELEMENT, PrevName, ValFloat);
 				} else {
-					AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevName, ValInt);
+					ChildObj = new StkObject(StkObject::STKOBJECT_ELEMENT, PrevName, ValInt);
 				}
-				RetObj->AppendAttribute(AttrObj);
+				RetObj->AppendChildElement(ChildObj);
 				delete PrevName;
 				PrevName = NULL;
-				Loop = Loop + StrLen;
+				Loop = Loop + StrLen - 1;
 				PrevStatus = ELEMOBJ_END;
 				continue;
 			} else {
@@ -381,15 +407,12 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 			PrevName = pImpl->GetJsonString(&Json[Loop], &StrLen);
 			Loop = Loop + StrLen;
 			PrevStatus = ELEMNAME_END;
-			if (RetObj == NULL) {
-				RetObj = new StkObject(PrevName);
-			}
 			continue;
 		}
 		if (PrevStatus == STRVAL_START) {
 			int StrLen = 0;
 			TCHAR* Value = pImpl->GetJsonString(&Json[Loop], &StrLen);
-			RetObj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevName, Value));
+			RetObj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, PrevName, Value));
 			delete PrevName;
 			PrevName = NULL;
 			delete Value;
@@ -397,10 +420,17 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 			PrevStatus = ELEMOBJ_END;
 			continue;
 		}
-
+		pImpl->CleanupObjectsForJson(PrevName, RetObj);
+		*Offset = ERROR_JSON_CANNOT_HANDLE;
+		return NULL;
 	}
 
-	return NULL;
+	if (RetObj == NULL) {
+		*Offset = ERROR_JSON_NO_ELEMENT_FOUND;
+		return NULL;
+	}
+
+	return RetObj;
 }
 
 //   < Aaa Xxx = " Xxxxxxxxx"  Yyy = " Yyyyyyyyy" >  < / Aaa>

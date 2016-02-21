@@ -620,6 +620,27 @@ void GeneralTestCase9(StkObject* TopElem)
 	TopElem->ToJson(&JsonTxt);
 }
 
+void GeneralTestCase10()
+{
+	TCHAR* Msg = new TCHAR[512];
+	StkObjectUtil Sou;
+	int Offset;
+	StkObject* RetObj;
+	std::wstring JsonTxt;
+
+	lstrcpy(Msg, _T("\"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : 999.9 }"));
+	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
+	RetObj->ToJson(&JsonTxt);
+	delete RetObj;
+	JsonTxt = _T("");
+
+	lstrcpy(Msg, _T("\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : 2}, \"Eee\" : 999.9 }}"));
+	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
+	RetObj->ToJson(&JsonTxt);
+	delete RetObj;
+	JsonTxt = _T("");
+}
+
 void CloneTest(StkObject* Obj)
 {
 	std::wstring OrgMsg;
@@ -782,6 +803,9 @@ void StkObjectTest()
 
 		GeneralTestCase6();
 		GeneralTestCase8();
+
+		// JSON
+		GeneralTestCase10();
 	}
 
 	// General check
