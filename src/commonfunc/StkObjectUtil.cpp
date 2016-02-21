@@ -247,7 +247,6 @@ StkObjectUtil::~StkObjectUtil()
 	delete pImpl;
 }
 
-
 //   " Aaa" : { " Bbb" : " Xxx" , " Ccc" : 123 , " Ddd" : [ " Eee" : 345 ,  " Fff" : 678 ] }
 //  | |    | | | |    | | |    | | |    | |   | |        | |                              | |
 //  | |    | | | |    | | |    | | |    | |   | |        | |                              | ELEMOBJ_END
@@ -284,6 +283,7 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 
 	StkObject* RetObj = NULL;
 	TCHAR* PrevName = NULL;
+	TCHAR* PrevNamePtr = NULL;
 	int PrevStatus = ELEM_START;
 
 	if (Json == NULL || lstrcmp(Json, _T("")) == 0) {
@@ -303,6 +303,7 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 		if (Json[Loop] == TCHAR('\"')) {
 			if (PrevStatus == ELEM_START || PrevStatus == ARRAY_START) {
 				PrevStatus = ELEMNAME_START;
+				PrevNamePtr = &Json[Loop];
 				continue;
 			} else if (PrevStatus == ELEMOBJ_START) {
 				PrevStatus = STRVAL_START;
@@ -324,6 +325,31 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 				*Offset = ERROR_JSON_INVALID_COLON_FOUND;
 				return NULL;
 			}
+		}
+
+		// if { is appeared...
+		if (Json[Loop] == TCHAR('{')) {
+			if (PrevStatus == ELEMOBJ_START) {
+				int OffsetCld = 0;
+				StkObject* ChildElem = CreateObjectFromJson(PrevNamePtr, &OffsetCld);
+				Loop += (OffsetCld - (&Json[Loop] - PrevNamePtr));
+				PrevStatus = ELEMOBJ_END;
+				if (ChildElem != NULL) {
+					RetObj->AppendChildElement(ChildElem);
+				} else {
+					pImpl->CleanupObjectsForXml(PrevName, RetObj);
+					*Offset = OffsetCld;
+					return NULL;
+				}
+			} else {
+				pImpl->CleanupObjectsForJson(PrevName, RetObj);
+				*Offset = ERROR_JSON_INVALID_STRUCTURE;
+				return NULL;
+			}
+		}
+
+		// if } is appeared...
+		if (Json[Loop] == TCHAR('}')) {
 		}
 
 		// if decimal number is appeared...
@@ -353,15 +379,17 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset)
 		if (PrevStatus == ELEMNAME_START) {
 			int StrLen = 0;
 			PrevName = pImpl->GetJsonString(&Json[Loop], &StrLen);
-			Loop = Loop + StrLen - 1;
+			Loop = Loop + StrLen;
 			PrevStatus = ELEMNAME_END;
+			if (RetObj == NULL) {
+				RetObj = new StkObject(PrevName);
+			}
 			continue;
 		}
 		if (PrevStatus == STRVAL_START) {
 			int StrLen = 0;
 			TCHAR* Value = pImpl->GetJsonString(&Json[Loop], &StrLen);
-			StkObject* AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevName, Value);
-			RetObj->AppendAttribute(AttrObj);
+			RetObj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevName, Value));
 			delete PrevName;
 			PrevName = NULL;
 			delete Value;
