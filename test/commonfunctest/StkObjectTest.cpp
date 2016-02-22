@@ -634,11 +634,24 @@ void GeneralTestCase10()
 	delete RetObj;
 	JsonTxt = _T("");
 
-	lstrcpy(Msg, _T("\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : 2}, \"Eee\" : 999.9 }}"));
+	lstrcpy(Msg, _T("\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 999.9 }}"));
 	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
 	RetObj->ToJson(&JsonTxt);
 	delete RetObj;
 	JsonTxt = _T("");
+
+	lstrcpy(Msg, _T("\"Yyy\" : {\"Xxx\" : [\"Aaa\", \"Bbb\", \"Ccc\"]}"));
+	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
+	RetObj->ToJson(&JsonTxt);
+	delete RetObj;
+	JsonTxt = _T("");
+
+	lstrcpy(Msg, _T("\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : 333, \"Aaa\" : 111, \"Aaa\":222}]}"));
+	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
+	RetObj->ToJson(&JsonTxt);
+	delete RetObj;
+	JsonTxt = _T("");
+
 }
 
 void CloneTest(StkObject* Obj)

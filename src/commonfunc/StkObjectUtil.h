@@ -26,6 +26,7 @@ public:
 	static const int ERROR_JSON_INVALID_STRUCTURE = -203;
 	static const int ERROR_JSON_INVALID_COMMA = -204;
 	static const int ERROR_JSON_CANNOT_HANDLE = -205;
+	static const int ERROR_JSON_INVALID_ARRAY_STRUCTURE = -206;
 
 	StkObjectUtil();
 	virtual ~StkObjectUtil();

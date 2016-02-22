@@ -246,10 +246,10 @@ StkObjectUtil::~StkObjectUtil()
 	delete pImpl;
 }
 
-//   " Aaa" : { " Bbb" : " Xxx" , " Ccc" : 123 , " Ddd" : [ " Eee" : 345 ,  " Fff" : 678 ] }
-//  | |    | | | |    | | |    | | |    | |   | |        | |                              | |
-//  | |    | | | |    | | |    | | |    | |   | |        | |                              | ELEMOBJ_END
-//  | |    | | | |    | | |    | | |    | |   | |        | |                              ARRAY_END
+//   " Aaa" : { " Bbb" : " Xxx" , " Ccc" : 123 , " Ddd" : [ 345, 678 ] }
+//  | |    | | | |    | | |    | | |    | |   | |        | |          | |
+//  | |    | | | |    | | |    | | |    | |   | |        | |          | ELEMOBJ_END
+//  | |    | | | |    | | |    | | |    | |   | |        | |          ARRAY_END
 //  | |    | | | |    | | |    | | |    | |   | |        | ARRAY_START
 //  | |    | | | |    | | |    | | |    | |   | |        ELEMOBJ_START
 //  | |    | | | |    | | |    | | |    | |   | ELEM_START
@@ -283,6 +283,7 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 	StkObject* RetObj = Parent;
 	TCHAR* PrevName = NULL;
 	int PrevStatus = ELEM_START;
+	BOOL ArrayFlag = FALSE;
 
 	if (Json == NULL || lstrcmp(Json, _T("")) == 0) {
 		pImpl->CleanupObjectsForJson(PrevName, RetObj);
@@ -291,6 +292,11 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 	}
 
 	for (int Loop = 0; Json[Loop] != TCHAR('\0'); Loop++) {
+
+		// If ArrayFlag is TRUE, mode needs to be changed.
+		if (ArrayFlag == TRUE && (PrevStatus == ARRAY_START || PrevStatus == ELEM_START)) {
+			PrevStatus = ELEMOBJ_START;
+		}
 
 		// if blank is appeared...
 		if ((Json[Loop] == TCHAR(' ') || Json[Loop] == TCHAR('\t') || Json[Loop] == TCHAR('\r') || Json[Loop] == TCHAR('\n')) && PrevStatus != ELEMNAME_START && PrevStatus != STRVAL_START) {
@@ -346,6 +352,10 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 					*Offset = OffsetCld;
 					return NULL;
 				}
+				if (ArrayFlag == FALSE) {
+					delete PrevName;
+					PrevName = NULL;
+				}
 				continue;
 			} else {
 				pImpl->CleanupObjectsForJson(PrevName, RetObj);
@@ -366,7 +376,33 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 			}
 		}
 
-		// if } is appeared...
+		// if [ is appeared...
+		if (Json[Loop] == TCHAR('[')) {
+			if (PrevStatus == ELEMOBJ_START) {
+				PrevStatus = ARRAY_START;
+				ArrayFlag = TRUE;
+				continue;
+			} else {
+				pImpl->CleanupObjectsForJson(PrevName, RetObj);
+				*Offset = ERROR_JSON_INVALID_ARRAY_STRUCTURE;
+				return NULL;
+			}
+		}
+
+		// if ] is appeared...
+		if (Json[Loop] == TCHAR(']')) {
+			if (PrevStatus == ELEMOBJ_END) {
+				ArrayFlag = FALSE;
+				*Offset = Loop + 1;
+				return RetObj;
+			} else {
+				pImpl->CleanupObjectsForJson(PrevName, RetObj);
+				*Offset = ERROR_JSON_INVALID_ARRAY_STRUCTURE;
+				return NULL;
+			}
+		}
+
+		// if , is appeared...
 		if (Json[Loop] == TCHAR(',')) {
 			if (PrevStatus == ELEMOBJ_END) {
 				PrevStatus = ELEM_START;
@@ -392,8 +428,10 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 					ChildObj = new StkObject(StkObject::STKOBJECT_ELEMENT, PrevName, ValInt);
 				}
 				RetObj->AppendChildElement(ChildObj);
-				delete PrevName;
-				PrevName = NULL;
+				if (ArrayFlag == FALSE) {
+					delete PrevName;
+					PrevName = NULL;
+				}
 				Loop = Loop + StrLen - 1;
 				PrevStatus = ELEMOBJ_END;
 				continue;
@@ -413,8 +451,10 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 			int StrLen = 0;
 			TCHAR* Value = pImpl->GetJsonString(&Json[Loop], &StrLen);
 			RetObj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, PrevName, Value));
-			delete PrevName;
-			PrevName = NULL;
+			if (ArrayFlag == FALSE) {
+				delete PrevName;
+				PrevName = NULL;
+			}
 			delete Value;
 			Loop = Loop + StrLen;
 			PrevStatus = ELEMOBJ_END;
