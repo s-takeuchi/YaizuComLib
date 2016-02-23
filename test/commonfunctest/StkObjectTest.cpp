@@ -94,58 +94,6 @@ StkObject* MakeTestData3()
 	return Xml2;
 }
 
-TCHAR* MakeTestData4()
-{
-	TCHAR* RtnXml = new TCHAR[512];
-	lstrcpy(RtnXml, _T("<Aaaa Lt=\"&lt;\" Gt=\"&gt;\" Amp=\"&amp;\" Quot=\"&quot;\" Apos=\"&apos;\"><Bbbb>&lt;</Bbbb><Bbbb>&gt;</Bbbb><Bbbb>&amp;</Bbbb><Bbbb>&quot;</Bbbb><Bbbb>&apos;</Bbbb></Aaaa>"));
-	return RtnXml;
-}
-
-TCHAR* MakeTestData5()
-{
-	TCHAR* RtnXml = new TCHAR[512];
-	lstrcpy(RtnXml, _T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Bbbb>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Bbbb><Bbbb>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Bbbb></Aaaa>"));
-	return RtnXml;
-}
-
-StkObject* MakeTestData6()
-{
-	StkObject* TopElem = new StkObject(_T("House"));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Material"), _T("Wood")));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Size"), 200));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Address"), _T("_“ÞìŒ§“¡‘òŽs‚‘q 1000-2000")));
-
-	StkObject* ChildElem1 = new StkObject(_T("KitchenRoom"));
-	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 20));
-	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Brown")));
-	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Table")));
-	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Gas Cooker")));
-	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Rack")));
-
-	StkObject* ChildElem2 = new StkObject(_T("KidsRoom"));
-
-	StkObject* ChildElem2a = new StkObject(_T("Kid"));
-	ChildElem2a->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 30));
-	ChildElem2a->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Red")));
-	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Desk")));
-	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Chair")));
-	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Bed")));
-	ChildElem2->AppendChildElement(ChildElem2a);
-
-	StkObject* ChildElem2b = new StkObject(_T("Kid"));
-	ChildElem2b->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 35));
-	ChildElem2b->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("White")));
-	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Desk")));
-	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Chair")));
-	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Bed")));
-	ChildElem2->AppendChildElement(ChildElem2b);
-
-	TopElem->AppendChildElement(ChildElem1);
-	TopElem->AppendChildElement(ChildElem2);
-
-	return TopElem;
-}
-
 void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 {
 	int Len1 = Elem1->GetFirstChildElement()->GetArrayLength();
@@ -270,81 +218,50 @@ void GeneralTestCase3(StkObject* Elem, TCHAR* Name)
 	}
 }
 
-void GeneralTestCase4(TCHAR* Xml, TCHAR* Name)
+void XmlJsonEncodingTest1()
 {
-	StkObjectUtil Sou;
-	int Offset = 0;
-	StkObject* Elem = Sou.CreateObjectFromXml(Xml, &Offset);
-	StkObject* Attr1 = Elem->GetFirstAttribute();
-	StkObject* Attr2 = Attr1->GetNext();
-	StkObject* Attr3 = Attr2->GetNext();
-	StkObject* Attr4 = Attr3->GetNext();
-	StkObject* Attr5 = Attr4->GetNext();
-	StkObject* Elem1 = Elem->GetFirstChildElement();
-	StkObject* Elem2 = Elem1->GetNext();
-	StkObject* Elem3 = Elem2->GetNext();
-	StkObject* Elem4 = Elem3->GetNext();
-	StkObject* Elem5 = Elem4->GetNext();
+	StkObject* TopElem = new StkObject(_T("House"));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Material"), _T("Wood")));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Size"), 200));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Address"), _T("_“ÞìŒ§“¡‘òŽs‚‘q 1000-2000")));
 
-	wprintf(_T("%s#Attribute value '&lt;', '&gt;', '&amp;', '&quot;' and '&apos;' are decoded appropriately... "), Name);
-	if (lstrcmp(Attr1->GetStringValue(), _T("<")) != 0 ||
-		lstrcmp(Attr2->GetStringValue(), _T(">")) != 0 ||
-		lstrcmp(Attr3->GetStringValue(), _T("&")) != 0 ||
-		lstrcmp(Attr4->GetStringValue(), _T("\"")) != 0 ||
-		lstrcmp(Attr5->GetStringValue(), _T("\'")) != 0) {
-		printf("NG\r\n");
-		exit(0);
-	} else {
-		printf("OK\r\n");
-	}
+	StkObject* ChildElem1 = new StkObject(_T("KitchenRoom"));
+	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 20));
+	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Brown")));
+	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Table")));
+	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Gas Cooker")));
+	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Rack")));
 
-	wprintf(_T("%s#Element value '&lt;', '&gt;', '&amp;', '&quot;' and '&apos;' are decoded appropriately... "), Name);
-	if (lstrcmp(Elem1->GetStringValue(), _T("<")) != 0 ||
-		lstrcmp(Elem2->GetStringValue(), _T(">")) != 0 ||
-		lstrcmp(Elem3->GetStringValue(), _T("&")) != 0 ||
-		lstrcmp(Elem4->GetStringValue(), _T("\"")) != 0 ||
-		lstrcmp(Elem5->GetStringValue(), _T("\'")) != 0) {
-		printf("NG\r\n");
-		exit(0);
-	} else {
-		printf("OK\r\n");
-	}
+	StkObject* ChildElem2 = new StkObject(_T("KidsRoom"));
 
-	delete Elem;
+	StkObject* ChildElem2a = new StkObject(_T("Kid"));
+	ChildElem2a->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 30));
+	ChildElem2a->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Red")));
+	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Desk")));
+	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Chair")));
+	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Bed")));
+	ChildElem2->AppendChildElement(ChildElem2a);
+
+	StkObject* ChildElem2b = new StkObject(_T("Kid"));
+	ChildElem2b->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 35));
+	ChildElem2b->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("White")));
+	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Desk")));
+	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Chair")));
+	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Bed")));
+	ChildElem2->AppendChildElement(ChildElem2b);
+
+	TopElem->AppendChildElement(ChildElem1);
+	TopElem->AppendChildElement(ChildElem2);
+
+	std::wstring XmlTxt;
+	std::wstring JsonTxt;
+	TopElem->ToXml(&XmlTxt);
+	TopElem->ToJson(&JsonTxt);
+
+	delete TopElem;
 }
 
-void GeneralTestCase5(TCHAR* Xml, TCHAR* Name)
-{
-	StkObjectUtil Sou;
-	int Offset = 0;
-	StkObject* Elem = Sou.CreateObjectFromXml(Xml, &Offset);
-	StkObject* Attr1 = Elem->GetFirstAttribute();
-	StkObject* Attr2 = Attr1->GetNext();
-	StkObject* Elem1 = Elem->GetFirstChildElement();
-	StkObject* Elem2 = Elem1->GetNext();
-
-	wprintf(_T("%s#Attribute value '&lt;...&lt;' and '&apos;...&apos;' are decoded appropriately... "), Name);
-	if (lstrcmp(Attr1->GetStringValue(), _T("<<<<<<<<<<")) != 0 ||
-		lstrcmp(Attr2->GetStringValue(), _T("\'\'\'\'\'\'\'\'\'\'")) != 0) {
-		printf("NG\r\n");
-		exit(0);
-	} else {
-		printf("OK\r\n");
-	}
-
-	wprintf(_T("%s#Element value '&amp;...&amp;' and '&quot;...&quot;' are decoded appropriately... "), Name);
-	if (lstrcmp(Elem1->GetStringValue(), _T("&&&&&&&&&&")) != 0 ||
-		lstrcmp(Elem2->GetStringValue(), _T("\"\"\"\"\"\"\"\"\"\"")) != 0) {
-		printf("NG\r\n");
-		exit(0);
-	} else {
-		printf("OK\r\n");
-	}
-
-	delete Elem;
-}
-
-void GeneralTestCase6()
+void XmlDecodingTest1()
 {
 	int Offset = 0;
 	StkObjectUtil Sou;
@@ -400,7 +317,129 @@ void GeneralTestCase6()
 	delete RetObj5;
 }
 
-void GeneralTestCase7()
+void XmlDecodingTest2()
+{
+	printf("<Aaaa>=</Aaaa> ; <Aaaa>/</Aaaa> ; <Aaaa>?</Aaaa> ; <Aaaa>!</Aaaa> ; ---> Element value can be acquired...");
+	int Offset = 0;
+	StkObjectUtil Sou;
+
+	TCHAR* Xml1 = _T("<Aaaa>=</Aaaa>");
+	TCHAR* Xml2 = _T("<Aaaa>/</Aaaa>");
+	TCHAR* Xml3 = _T("<Aaaa>?</Aaaa>");
+	TCHAR* Xml4 = _T("<Aaaa>!</Aaaa>");
+
+	StkObject* RetObj1 = Sou.CreateObjectFromXml(Xml1, &Offset);
+	StkObject* RetObj2 = Sou.CreateObjectFromXml(Xml2, &Offset);
+	StkObject* RetObj3 = Sou.CreateObjectFromXml(Xml3, &Offset);
+	StkObject* RetObj4 = Sou.CreateObjectFromXml(Xml4, &Offset);
+
+	if (lstrcmp(RetObj1->GetStringValue(), _T("=")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	if (lstrcmp(RetObj2->GetStringValue(), _T("/")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	if (lstrcmp(RetObj3->GetStringValue(), _T("?")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	if (lstrcmp(RetObj4->GetStringValue(), _T("!")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+
+	delete RetObj1;
+	delete RetObj2;
+	delete RetObj3;
+	delete RetObj4;
+	printf("OK\r\n");
+}
+
+void XmlDecodingTest3(TCHAR* Name)
+{
+	TCHAR* Xml = new TCHAR[512];
+	lstrcpy(Xml, _T("<Aaaa Lt=\"&lt;\" Gt=\"&gt;\" Amp=\"&amp;\" Quot=\"&quot;\" Apos=\"&apos;\"><Bbbb>&lt;</Bbbb><Bbbb>&gt;</Bbbb><Bbbb>&amp;</Bbbb><Bbbb>&quot;</Bbbb><Bbbb>&apos;</Bbbb></Aaaa>"));
+
+	StkObjectUtil Sou;
+	int Offset = 0;
+	StkObject* Elem = Sou.CreateObjectFromXml(Xml, &Offset);
+	StkObject* Attr1 = Elem->GetFirstAttribute();
+	StkObject* Attr2 = Attr1->GetNext();
+	StkObject* Attr3 = Attr2->GetNext();
+	StkObject* Attr4 = Attr3->GetNext();
+	StkObject* Attr5 = Attr4->GetNext();
+	StkObject* Elem1 = Elem->GetFirstChildElement();
+	StkObject* Elem2 = Elem1->GetNext();
+	StkObject* Elem3 = Elem2->GetNext();
+	StkObject* Elem4 = Elem3->GetNext();
+	StkObject* Elem5 = Elem4->GetNext();
+
+	wprintf(_T("%s#Attribute value '&lt;', '&gt;', '&amp;', '&quot;' and '&apos;' are decoded appropriately... "), Name);
+	if (lstrcmp(Attr1->GetStringValue(), _T("<")) != 0 ||
+		lstrcmp(Attr2->GetStringValue(), _T(">")) != 0 ||
+		lstrcmp(Attr3->GetStringValue(), _T("&")) != 0 ||
+		lstrcmp(Attr4->GetStringValue(), _T("\"")) != 0 ||
+		lstrcmp(Attr5->GetStringValue(), _T("\'")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
+	}
+
+	wprintf(_T("%s#Element value '&lt;', '&gt;', '&amp;', '&quot;' and '&apos;' are decoded appropriately... "), Name);
+	if (lstrcmp(Elem1->GetStringValue(), _T("<")) != 0 ||
+		lstrcmp(Elem2->GetStringValue(), _T(">")) != 0 ||
+		lstrcmp(Elem3->GetStringValue(), _T("&")) != 0 ||
+		lstrcmp(Elem4->GetStringValue(), _T("\"")) != 0 ||
+		lstrcmp(Elem5->GetStringValue(), _T("\'")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
+	}
+
+	delete Elem;
+	delete Xml;
+}
+
+void XmlDecodingTest4(TCHAR* Name)
+{
+	TCHAR* Xml = new TCHAR[512];
+	lstrcpy(Xml, _T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Bbbb>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Bbbb><Bbbb>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Bbbb></Aaaa>"));
+
+	StkObjectUtil Sou;
+	int Offset = 0;
+	StkObject* Elem = Sou.CreateObjectFromXml(Xml, &Offset);
+	StkObject* Attr1 = Elem->GetFirstAttribute();
+	StkObject* Attr2 = Attr1->GetNext();
+	StkObject* Elem1 = Elem->GetFirstChildElement();
+	StkObject* Elem2 = Elem1->GetNext();
+
+	wprintf(_T("%s#Attribute value '&lt;...&lt;' and '&apos;...&apos;' are decoded appropriately... "), Name);
+	if (lstrcmp(Attr1->GetStringValue(), _T("<<<<<<<<<<")) != 0 ||
+		lstrcmp(Attr2->GetStringValue(), _T("\'\'\'\'\'\'\'\'\'\'")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
+	}
+
+	wprintf(_T("%s#Element value '&amp;...&amp;' and '&quot;...&quot;' are decoded appropriately... "), Name);
+	if (lstrcmp(Elem1->GetStringValue(), _T("&&&&&&&&&&")) != 0 ||
+		lstrcmp(Elem2->GetStringValue(), _T("\"\"\"\"\"\"\"\"\"\"")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
+	}
+
+	delete Elem;
+	delete Xml;
+}
+
+void XmlDecordingAbnormalTest1()
 {
 	int Offset = 0;
 	StkObjectUtil Sou;
@@ -572,86 +611,62 @@ void GeneralTestCase7()
 	}
 }
 
-void GeneralTestCase8()
+void JsonDecodingTest1()
 {
-	printf("<Aaaa>=</Aaaa> ; <Aaaa>/</Aaaa> ; <Aaaa>?</Aaaa> ; <Aaaa>!</Aaaa> ; ---> Element value can be acquired...");
-	int Offset = 0;
-	StkObjectUtil Sou;
-
-	TCHAR* Xml1 = _T("<Aaaa>=</Aaaa>");
-	TCHAR* Xml2 = _T("<Aaaa>/</Aaaa>");
-	TCHAR* Xml3 = _T("<Aaaa>?</Aaaa>");
-	TCHAR* Xml4 = _T("<Aaaa>!</Aaaa>");
-
-	StkObject* RetObj1 = Sou.CreateObjectFromXml(Xml1, &Offset);
-	StkObject* RetObj2 = Sou.CreateObjectFromXml(Xml2, &Offset);
-	StkObject* RetObj3 = Sou.CreateObjectFromXml(Xml3, &Offset);
-	StkObject* RetObj4 = Sou.CreateObjectFromXml(Xml4, &Offset);
-
-	if (lstrcmp(RetObj1->GetStringValue(), _T("=")) != 0) {
-		printf("NG\r\n");
-		exit(0);
-	}
-	if (lstrcmp(RetObj2->GetStringValue(), _T("/")) != 0) {
-		printf("NG\r\n");
-		exit(0);
-	}
-	if (lstrcmp(RetObj3->GetStringValue(), _T("?")) != 0) {
-		printf("NG\r\n");
-		exit(0);
-	}
-	if (lstrcmp(RetObj4->GetStringValue(), _T("!")) != 0) {
-		printf("NG\r\n");
-		exit(0);
-	}
-
-	delete RetObj1;
-	delete RetObj2;
-	delete RetObj3;
-	delete RetObj4;
-	printf("OK\r\n");
-}
-
-void GeneralTestCase9(StkObject* TopElem)
-{
-	std::wstring XmlTxt;
-	std::wstring JsonTxt;
-	TopElem->ToXml(&XmlTxt);
-	TopElem->ToJson(&JsonTxt);
-}
-
-void GeneralTestCase10()
-{
-	TCHAR* Msg = new TCHAR[512];
+	TCHAR Msg[512];
 	StkObjectUtil Sou;
 	int Offset;
 	StkObject* RetObj;
-	std::wstring JsonTxt;
 
+	////////////////////////////////////////////////////
 	lstrcpy(Msg, _T("\"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : 999.9 }"));
+	wprintf(_T("JSON Decoding : %s ..."), Msg);
 	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
-	RetObj->ToJson(&JsonTxt);
+	if (RetObj == NULL || RetObj->GetChildElementCount() != 3 || lstrcmp(RetObj->GetName(), _T("Aaa")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), _T("This is a test.")) != 0 ||
+		RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
+		printf("NG\r\n");
+		exit(0);
+	}
 	delete RetObj;
-	JsonTxt = _T("");
-
+	printf("OK\r\n");
+	////////////////////////////////////////////////////
 	lstrcpy(Msg, _T("\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 999.9 }}"));
+	wprintf(_T("JSON Decoding : %s ..."), Msg);
 	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
-	RetObj->ToJson(&JsonTxt);
+	if (RetObj == NULL ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), _T("D1")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetStringValue(), _T("test")) != 0 ||
+		RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
+		printf("NG\r\n");
+		exit(0);
+	}
 	delete RetObj;
-	JsonTxt = _T("");
-
+	printf("OK\r\n");
+	////////////////////////////////////////////////////
 	lstrcpy(Msg, _T("\"Yyy\" : {\"Xxx\" : [\"Aaa\", \"Bbb\", \"Ccc\"]}"));
+	wprintf(_T("JSON Decoding : %s ..."), Msg);
 	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
-	RetObj->ToJson(&JsonTxt);
+	if (RetObj == NULL ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetName(), _T("Xxx")) != 0 || lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), _T("Aaa")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), _T("Xxx")) != 0 || lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), _T("Ccc")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
 	delete RetObj;
-	JsonTxt = _T("");
-
-	lstrcpy(Msg, _T("\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : 333, \"Aaa\" : 111, \"Aaa\":222}]}"));
+	printf("OK\r\n");
+	////////////////////////////////////////////////////
+	lstrcpy(Msg, _T("\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}"));
+	wprintf(_T("JSON Decoding : %s ..."), Msg);
 	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
-	RetObj->ToJson(&JsonTxt);
+	if (RetObj == NULL ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetName(), _T("Aaa")) != 0 || RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetIntValue() != 456 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetName(), _T("Aaa")) != 0 || RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 222) {
+		printf("NG\r\n");
+		exit(0);
+	}
 	delete RetObj;
-	JsonTxt = _T("");
-
+	printf("OK\r\n");
 }
 
 void CloneTest(StkObject* Obj)
@@ -711,6 +726,9 @@ int MemoryLeakChecking2()
 	printf("Checks memory leak (repeat encoding and decoding)...");
 	long MaxMem[30];
 
+	TCHAR* NewStr = new TCHAR[512];
+	lstrcpy(NewStr, _T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Bbbb>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Bbbb><Bbbb>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Bbbb></Aaaa>"));
+
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		for (int Loop = 0; Loop < 250; Loop++) {
 			StkObject* NewObj = MakeTestData3();
@@ -718,15 +736,14 @@ int MemoryLeakChecking2()
 			NewObj->ToXml(&StrVal);
 			delete NewObj;
 
-			TCHAR* NewStr = MakeTestData5();
 			StkObjectUtil Sou;
 			int Offset = 0;
 			StkObject* NewObj2 = Sou.CreateObjectFromXml(NewStr, &Offset);
-			delete NewStr;
 			delete NewObj2;
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}
+	delete NewStr;
 	if (MaxMem[0] < MaxMem[3] &&
 		MaxMem[3] < MaxMem[6] &&
 		MaxMem[6] < MaxMem[9] &&
@@ -799,26 +816,20 @@ void StkObjectTest()
 		GeneralTestCase3(Elem3, _T("EncodeCheck2"));
 		delete Elem3;
 
-		StkObject* Elem6 = MakeTestData6();
-		GeneralTestCase9(Elem6);
-		delete Elem6;
+		XmlJsonEncodingTest1();
 	}
 
 	// Decode check
 	{
-		TCHAR* Xml4 = MakeTestData4();
-		GeneralTestCase4(Xml4, _T("DecodeCheck1"));
-		delete Xml4;
-
-		TCHAR* Xml5 = MakeTestData5();
-		GeneralTestCase5(Xml5, _T("DecodeCheck2"));
-		delete Xml5;
-
-		GeneralTestCase6();
-		GeneralTestCase8();
+		// XML
+		XmlDecodingTest1();
+		XmlDecodingTest2();
+		XmlDecodingTest3(_T("DecodeCheck1"));
+		XmlDecodingTest4(_T("DecodeCheck2"));
+		XmlDecordingAbnormalTest1();
 
 		// JSON
-		GeneralTestCase10();
+		JsonDecodingTest1();
 	}
 
 	// General check
@@ -841,11 +852,6 @@ void StkObjectTest()
 		StkObject* Elem3 = MakeTestData3();
 		CloneTest(Elem3);
 		delete Elem3;
-	}
-
-	// Decoding error case
-	{
-		GeneralTestCase7();
 	}
 
 	// Memory leak check
