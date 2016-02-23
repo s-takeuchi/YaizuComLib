@@ -392,9 +392,9 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 		// if ] is appeared...
 		if (Json[Loop] == TCHAR(']')) {
 			if (PrevStatus == ELEMOBJ_END) {
+				PrevStatus = ARRAY_END;
 				ArrayFlag = FALSE;
-				*Offset = Loop + 1;
-				return RetObj;
+				continue;
 			} else {
 				pImpl->CleanupObjectsForJson(PrevName, RetObj);
 				*Offset = ERROR_JSON_INVALID_ARRAY_STRUCTURE;

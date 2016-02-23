@@ -221,13 +221,8 @@ void GeneralTestCase3(StkObject* Elem, TCHAR* Name)
 void XmlJsonEncodingTest1()
 {
 	StkObject* TopElem = new StkObject(_T("House"));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Material"), _T("Wood")));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Size"), 200));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Address"), _T("_“ÞìŒ§“¡‘òŽs‚‘q 1000-2000")));
 
 	StkObject* ChildElem1 = new StkObject(_T("KitchenRoom"));
-	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 20));
-	ChildElem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Brown")));
 	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Table")));
 	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Gas Cooker")));
 	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Rack")));
@@ -235,19 +230,15 @@ void XmlJsonEncodingTest1()
 	StkObject* ChildElem2 = new StkObject(_T("KidsRoom"));
 
 	StkObject* ChildElem2a = new StkObject(_T("Kid"));
-	ChildElem2a->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 30));
-	ChildElem2a->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("Red")));
 	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Desk")));
 	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Chair")));
 	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Bed")));
 	ChildElem2->AppendChildElement(ChildElem2a);
 
 	StkObject* ChildElem2b = new StkObject(_T("Kid"));
-	ChildElem2b->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Speca"), 35));
-	ChildElem2b->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("WallColor"), _T("White")));
-	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Desk")));
-	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Chair")));
-	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Bed")));
+	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Wood Desk")));
+	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Wood Chair")));
+	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Wood Bed")));
 	ChildElem2->AppendChildElement(ChildElem2b);
 
 	TopElem->AppendChildElement(ChildElem1);
@@ -257,6 +248,30 @@ void XmlJsonEncodingTest1()
 	std::wstring JsonTxt;
 	TopElem->ToXml(&XmlTxt);
 	TopElem->ToJson(&JsonTxt);
+
+	StkObjectUtil Sou;
+	int Offset;
+	StkObject* ObjFromXml  = Sou.CreateObjectFromXml((TCHAR*)XmlTxt.c_str(), &Offset);
+	StkObject* ObjFromJson = Sou.CreateObjectFromJson((TCHAR*)JsonTxt.c_str(), &Offset, NULL);
+	std::wstring Temp1;
+	std::wstring Temp2;
+	printf("[Obj--->XML--->Obj--->JSON] and [Obj--->JSON--->Obj--->JSON] bring the same result...");
+	ObjFromXml->ToJson(&Temp1);
+	ObjFromJson->ToJson(&Temp2);
+	if (lstrcmp(Temp1.c_str(), Temp2.c_str()) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	printf("[Obj--->XML--->Obj--->XML] and [Obj--->JSON--->Obj--->XML] bring the same result...");
+	ObjFromXml->ToXml(&Temp1);
+	ObjFromJson->ToXml(&Temp2);
+	if (lstrcmp(Temp1.c_str(), Temp2.c_str()) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
 
 	delete TopElem;
 }
@@ -669,6 +684,48 @@ void JsonDecodingTest1()
 	printf("OK\r\n");
 }
 
+void JsonDecodingTest2()
+{
+	TCHAR Msg1[512];
+	TCHAR Msg2[512];
+	TCHAR Msg3[512];
+	TCHAR Msg4[512];
+	StkObject* RetObj1;
+	StkObject* RetObj2;
+	StkObject* RetObj3;
+	StkObject* RetObj4;
+	std::wstring Str1;
+	std::wstring Str2;
+	std::wstring Str3;
+	std::wstring Str4;
+	StkObjectUtil Sou;
+	int Offset;
+
+	////////////////////////////////////////////////////
+	lstrcpy(Msg1, _T("\"Aaa\":{\"Bbb\":[{\"Xxx\":123,\"Bbb\":456,\"Ccc\":789},\"test\",0.1]}"));
+	lstrcpy(Msg2, _T(    "\"Aaa\"    :    {    \"Bbb\"    :    [    {    \"Xxx\"    :    123    ,    \"Bbb\"    :    456    ,    \"Ccc\"    :    789    }    ,    \"test\"    ,    0.1    ]    }    "));
+	lstrcpy(Msg3, _T("\t\t\"Aaa\"\t\t:\t\t{\t\t\"Bbb\"\t\t:\t\t[\t\t{\t\t\"Xxx\"\t\t:\t\t123\t\t,\t\t\"Bbb\"\t\t:\t\t456\t\t,\t\t\"Ccc\"\t\t:\t\t789\t\t}\t\t,\t\t\"test\"\t\t,\t\t0.1\t\t]\t\t}\t\t"));
+	lstrcpy(Msg4, _T("\r\n\"Aaa\"\r\n:\r\n{\r\n\"Bbb\"\r\n:\r\n[\r\n{\r\n\"Xxx\"\r\n:\r\n123\r\n,\r\n\"Bbb\"\r\n:\r\n456\r\n,\r\n\"Ccc\"\r\n:\r\n789\r\n}\r\n,\r\n\"test\"\r\n,\r\n0.1\r\n]\r\n}\r\n"));
+	RetObj1 = Sou.CreateObjectFromJson(Msg1, &Offset, NULL);
+	RetObj2 = Sou.CreateObjectFromJson(Msg2, &Offset, NULL);
+	RetObj3 = Sou.CreateObjectFromJson(Msg3, &Offset, NULL);
+	RetObj4 = Sou.CreateObjectFromJson(Msg4, &Offset, NULL);
+	RetObj1->ToJson(&Str1);
+	RetObj2->ToJson(&Str2);
+	RetObj3->ToJson(&Str3);
+	RetObj4->ToJson(&Str4);
+	printf("JSON Decoding (empty charactor)...");
+	if (lstrcmp(Str1.c_str(), Str2.c_str()) != 0 || lstrcmp(Str2.c_str(), Str3.c_str()) != 0 || lstrcmp(Str3.c_str(), Str4.c_str()) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	delete RetObj1;
+	delete RetObj2;
+	delete RetObj3;
+	delete RetObj4;
+}
+
 void CloneTest(StkObject* Obj)
 {
 	std::wstring OrgMsg;
@@ -830,6 +887,7 @@ void StkObjectTest()
 
 		// JSON
 		JsonDecodingTest1();
+		JsonDecodingTest2();
 	}
 
 	// General check
