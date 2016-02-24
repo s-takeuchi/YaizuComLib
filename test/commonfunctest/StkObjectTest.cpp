@@ -239,7 +239,17 @@ void XmlJsonEncodingTest1()
 	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Wood Desk")));
 	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Wood Chair")));
 	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Wood Bed")));
+	StkObject* ChildElem2bx = new StkObject(_T("WalkInCloset"));
+	ChildElem2bx->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Hunger"), _T("Wood")));
+	ChildElem2bx->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Rack"), _T("Wood")));
+	ChildElem2b->AppendChildElement(ChildElem2bx);
 	ChildElem2->AppendChildElement(ChildElem2b);
+
+	StkObject* ChildElem2c = new StkObject(_T("Kid"));
+	ChildElem2c->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Steel Desk")));
+	ChildElem2c->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Steel Chair")));
+	ChildElem2c->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Steel Bed")));
+	ChildElem2->AppendChildElement(ChildElem2c);
 
 	TopElem->AppendChildElement(ChildElem1);
 	TopElem->AppendChildElement(ChildElem2);
@@ -538,6 +548,17 @@ void XmlDecordingAbnormalTest1()
 	}
 
 	{
+		printf("Abnormal case: \"<Aaa Bbb Ccc=\"Ddd\"/>\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<Aaa Bbb Ccc=\"Ddd\"/>"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_CANNOT_HANDLE) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
+
+	{
 		printf("Abnormal case: \"<Aaa Bbb=></Aaa>\" is presented...");
 		RetObj = Sou.CreateObjectFromXml(_T("<Aaa Bbb=></Aaa>"), &Offset);
 		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_INVALID_ELEMENT_END_FOUND) {
@@ -782,25 +803,49 @@ int MemoryLeakChecking2()
 {
 	printf("Checks memory leak (repeat encoding and decoding)...");
 	long MaxMem[30];
-
-	TCHAR* NewStr = new TCHAR[512];
-	lstrcpy(NewStr, _T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Bbbb>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Bbbb><Bbbb>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Bbbb></Aaaa>"));
+	std::wstring StrVal;
+	StkObjectUtil Sou;
+	int Offset = 0;
+	StkObject* NewObj1;
+	StkObject* NewObj2;
 
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		for (int Loop = 0; Loop < 250; Loop++) {
-			StkObject* NewObj = MakeTestData3();
-			std::wstring StrVal;
-			NewObj->ToXml(&StrVal);
-			delete NewObj;
+			NewObj1 = new StkObject(_T("EncodeTesting"));
+			NewObj1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("XmlLt"), _T("<<<<<<<<<<<<<<<<<<<<")));
+			NewObj1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("XmlGt"), _T(">>>>>>>>>>>>>>>>>>>>")));
+			NewObj1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("XmlApos"), _T("\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'")));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("XmlAmp"), _T("&&&&&&&&&&&&&&&&&&&&")));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("XmlQuot"), _T("\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"")));
+			StrVal = _T("");
+			NewObj1->ToXml(&StrVal);
+			delete NewObj1;
 
-			StkObjectUtil Sou;
-			int Offset = 0;
-			StkObject* NewObj2 = Sou.CreateObjectFromXml(NewStr, &Offset);
+			NewObj1 = new StkObject(_T("EncodeTesting"));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\"\"\"\"\"\"\"\"\"\"")));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\\\\\\\\\\\\\\\\\\\\")));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("//////////")));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\b\b\b\b\b\b\b\b\b\b")));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\f\f\f\f\f\f\f\f\f\f")));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\n\n\n\n\n\n\n\n\n\n")));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\r\r\r\r\r\r\r\r\r\r")));
+			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\t\t\t\t\t\t\t\t\t\t")));
+			StrVal = _T("");
+			NewObj1->ToJson(&StrVal);
+			delete NewObj1;
+
+			NewObj2 = Sou.CreateObjectFromXml(_T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Amp>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Amp><Quot>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Quot></Aaaa>"), &Offset);
+			StrVal = _T("");
+			NewObj2->ToXml(&StrVal);
+			delete NewObj2;
+
+			NewObj2 = Sou.CreateObjectFromJson(_T("\"Aaaa\" : { \"Bbbb\" : \"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\", \"Bbbb\" : \"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", \"Bbbb\" : \"\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\", \"Bbbb\" : \"\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\", \"Bbbb\" : \"\\f\\f\\f\\f\\f\\f\\f\\f\\f\\f\", \"Bbbb\" : \"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\", \"Bbbb\" : \"\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\", \"Bbbb\" : \"\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\" }"), &Offset, NULL);
+			StrVal = _T("");
+			NewObj2->ToJson(&StrVal);
 			delete NewObj2;
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}
-	delete NewStr;
 	if (MaxMem[0] < MaxMem[3] &&
 		MaxMem[3] < MaxMem[6] &&
 		MaxMem[6] < MaxMem[9] &&
@@ -833,6 +878,7 @@ int MemoryLeakChecking3()
 			Sou.CreateObjectFromXml(_T("<X><Y><Z><\"ABC\"/></X></Y></Z>"), &Offset);
 			Sou.CreateObjectFromXml(_T("xyz"), &Offset);
 			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb=Ccc/></X></Y></Z>"), &Offset);
+			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb Ccc=\"Ddd\"/></X></Y></Z>"), &Offset);
 			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb=></Aaa></X></Y></Z>"), &Offset);
 			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa =></Aaa></X></Y></Z>"), &Offset);
 			Sou.CreateObjectFromXml(_T("<Aaa></Aaa"), &Offset);
@@ -914,11 +960,11 @@ void StkObjectTest()
 
 	// Memory leak check
 	{
-		MemoryLeakChecking3();
 		StkObject* Elem1 = MakeTestData1();
 		MemoryLeakChecking1(Elem1);
 		delete Elem1;
 		MemoryLeakChecking2();
+		MemoryLeakChecking3();
 	}
 
 	printf("StkObjectTest completed.\r\n\r\n\r\n");

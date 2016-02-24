@@ -72,17 +72,20 @@ BOOL StkObjectUtil::Impl::GetJsonNumber(TCHAR* OrgStr, int* Len, int* ValInt, fl
 
 TCHAR* StkObjectUtil::Impl::GetJsonString(TCHAR* OrgStr, int* Len)
 {
+	int OutLength = 0;
 	TCHAR* CurPnt = OrgStr;
 	while (*CurPnt != TCHAR('\"') && CurPnt != _T('\0')) {
 		if (*CurPnt == TCHAR('\\')) {
 			if (*(CurPnt + 1) == TCHAR('\"') || *(CurPnt + 1) == TCHAR('\\') || *(CurPnt + 1) == TCHAR('/') || *(CurPnt + 1) == TCHAR('b') ||
 				*(CurPnt + 1) == TCHAR('f') || *(CurPnt + 1) == TCHAR('n') || *(CurPnt + 1) == TCHAR('r') || *(CurPnt + 1) == TCHAR('t')) {
+				OutLength++;
 				CurPnt += 2;
 			} else {
+				OutLength++;
 				CurPnt++;
-				continue;
 			}
 		} else {
+			OutLength++;
 			CurPnt++;
 		}
 	}
@@ -91,61 +94,62 @@ TCHAR* StkObjectUtil::Impl::GetJsonString(TCHAR* OrgStr, int* Len)
 	} else if (*CurPnt == TCHAR('\0')) {
 		*Len = CurPnt - OrgStr - 1;
 	}
-	TCHAR* RtnValue = new TCHAR[*Len + 1];
+
+	TCHAR* RtnValue = new TCHAR[OutLength + 1];
 	int RtnLoop = 0;
 	for (TCHAR* Loop = OrgStr; Loop < CurPnt; Loop++) {
 		if (StrStr(Loop, _T("\\\"")) == Loop) {
 			RtnValue[RtnLoop] = '\"';
 			RtnLoop++;
-			Loop += 2;
+			Loop++;
 			continue;
 		}
 		if (StrStr(Loop, _T("\\\\")) == Loop) {
 			RtnValue[RtnLoop] = '\\';
 			RtnLoop++;
-			Loop += 2;
+			Loop++;
 			continue;
 		}
 		if (StrStr(Loop, _T("\\/")) == Loop) {
 			RtnValue[RtnLoop] = '/';
 			RtnLoop++;
-			Loop += 2;
+			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, _T("\\\b")) == Loop) {
+		if (StrStr(Loop, _T("\\b")) == Loop) {
 			RtnValue[RtnLoop] = '\b';
 			RtnLoop++;
-			Loop += 2;
+			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, _T("\\\f")) == Loop) {
+		if (StrStr(Loop, _T("\\f")) == Loop) {
 			RtnValue[RtnLoop] = '\f';
 			RtnLoop++;
-			Loop += 2;
+			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, _T("\\\n")) == Loop) {
+		if (StrStr(Loop, _T("\\n")) == Loop) {
 			RtnValue[RtnLoop] = '\n';
 			RtnLoop++;
-			Loop += 2;
+			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, _T("\\\r")) == Loop) {
+		if (StrStr(Loop, _T("\\r")) == Loop) {
 			RtnValue[RtnLoop] = '\r';
 			RtnLoop++;
-			Loop += 2;
+			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, _T("\\\t")) == Loop) {
+		if (StrStr(Loop, _T("\\t")) == Loop) {
 			RtnValue[RtnLoop] = '\t';
 			RtnLoop++;
-			Loop += 2;
+			Loop++;
 			continue;
 		}
 		RtnValue[RtnLoop] = *Loop;
 		RtnLoop++;
 	}
-	RtnValue[*Len] = TCHAR('\0');
+	RtnValue[OutLength] = TCHAR('\0');
 	return RtnValue;
 }
 
@@ -291,7 +295,8 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 		return NULL;
 	}
 
-	for (int Loop = 0; Json[Loop] != TCHAR('\0'); Loop++) {
+	int Loop = 0;
+	for (; Json[Loop] != TCHAR('\0'); Loop++) {
 
 		// If ArrayFlag is TRUE, mode needs to be changed.
 		if (ArrayFlag == TRUE && (PrevStatus == ARRAY_START || PrevStatus == ELEM_START)) {
@@ -470,6 +475,7 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 		return NULL;
 	}
 
+	*Offset = Loop;
 	return RetObj;
 }
 
