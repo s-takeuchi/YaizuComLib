@@ -195,15 +195,11 @@ StkObject::StkObject(TCHAR* TmpName)
 	}
 }
 
-StkObject::StkObject(int TmpType, TCHAR* TmpName, int TmpValue)
+StkObject::StkObject(TCHAR* TmpName, int TmpValue)
 {
 	pImpl = new Impl;
 	pImpl->ClearMember();
-	if (TmpType == STKOBJECT_ATTRIBUTE) {
-		pImpl->Type = STKOBJECT_ATTR_INT;
-	} else if (TmpType == STKOBJECT_ELEMENT) {
-		pImpl->Type = STKOBJECT_ELEM_INT;
-	}
+	pImpl->Type = STKOBJECT_UNKW_INT;
 	if (TmpName != NULL) {
 		int Len = lstrlen(TmpName) + 1;
 		pImpl->Name = new TCHAR[Len];
@@ -212,15 +208,11 @@ StkObject::StkObject(int TmpType, TCHAR* TmpName, int TmpValue)
 	pImpl->Value = new int(TmpValue);
 }
 
-StkObject::StkObject(int TmpType, TCHAR* TmpName, float TmpValue)
+StkObject::StkObject(TCHAR* TmpName, float TmpValue)
 {
 	pImpl = new Impl;
 	pImpl->ClearMember();
-	if (TmpType == STKOBJECT_ATTRIBUTE) {
-		pImpl->Type = STKOBJECT_ATTR_FLOAT;
-	} else if (TmpType == STKOBJECT_ELEMENT) {
-		pImpl->Type = STKOBJECT_ELEM_FLOAT;
-	}
+	pImpl->Type = STKOBJECT_UNKW_FLOAT;
 	if (TmpName != NULL) {
 		int Len = lstrlen(TmpName) + 1;
 		pImpl->Name = new TCHAR[Len];
@@ -229,15 +221,11 @@ StkObject::StkObject(int TmpType, TCHAR* TmpName, float TmpValue)
 	pImpl->Value = new float(TmpValue);
 }
 
-StkObject::StkObject(int TmpType, TCHAR* TmpName, TCHAR* TmpValue)
+StkObject::StkObject(TCHAR* TmpName, TCHAR* TmpValue)
 {
 	pImpl = new Impl;
 	pImpl->ClearMember();
-	if (TmpType == STKOBJECT_ATTRIBUTE) {
-		pImpl->Type = STKOBJECT_ATTR_STRING;
-	} else if (TmpType == STKOBJECT_ELEMENT) {
-		pImpl->Type = STKOBJECT_ELEM_STRING;
-	}
+	pImpl->Type = STKOBJECT_UNKW_STRING;
 	if (TmpName != NULL) {
 		int Len = lstrlen(TmpName) + 1;
 		pImpl->Name = new TCHAR[Len];
@@ -275,17 +263,17 @@ StkObject* StkObject::Clone()
 	StkObject* NewObj;
 	TCHAR* TmpName = GetName();
 	if (pImpl->Type == STKOBJECT_ATTR_INT) {
-		NewObj = new StkObject(STKOBJECT_ATTRIBUTE, TmpName, GetIntValue());
+		NewObj = new StkObject(TmpName, GetIntValue());
 	} else if (pImpl->Type == STKOBJECT_ATTR_FLOAT) {
-		NewObj = new StkObject(STKOBJECT_ATTRIBUTE, TmpName, GetFloatValue());
+		NewObj = new StkObject(TmpName, GetFloatValue());
 	} else if (pImpl->Type == STKOBJECT_ATTR_STRING) {
-		NewObj = new StkObject(STKOBJECT_ATTRIBUTE, TmpName, GetStringValue());
+		NewObj = new StkObject(TmpName, GetStringValue());
 	} else if (pImpl->Type == STKOBJECT_ELEM_INT) {
-		NewObj = new StkObject(STKOBJECT_ELEMENT, TmpName, GetIntValue());
+		NewObj = new StkObject(TmpName, GetIntValue());
 	} else if (pImpl->Type == STKOBJECT_ELEM_FLOAT) {
-		NewObj = new StkObject(STKOBJECT_ELEMENT, TmpName, GetFloatValue());
+		NewObj = new StkObject(TmpName, GetFloatValue());
 	} else if (pImpl->Type == STKOBJECT_ELEM_STRING) {
-		NewObj = new StkObject(STKOBJECT_ELEMENT, TmpName, GetStringValue());
+		NewObj = new StkObject(TmpName, GetStringValue());
 	} else if (pImpl->Type == STKOBJECT_ELEMENT) {
 		NewObj = new StkObject(TmpName);
 		StkObject* TmpAttr = GetFirstAttribute();
@@ -422,6 +410,14 @@ StkObject* StkObject::GetNext()
 
 void StkObject::AppendChildElement(StkObject* TmpObj)
 {
+	int TmpType = TmpObj->GetType();
+	if (TmpType == STKOBJECT_UNKW_INT) {
+		TmpObj->SetType(STKOBJECT_ELEM_INT);
+	} else if (TmpType == STKOBJECT_UNKW_FLOAT) {
+		TmpObj->SetType(STKOBJECT_ELEM_FLOAT);
+	} else if (TmpType == STKOBJECT_UNKW_STRING) {
+		TmpObj->SetType(STKOBJECT_ELEM_STRING);
+	}
 	if (pImpl->FirstElem == NULL) {
 		pImpl->FirstElem = TmpObj;
 		pImpl->LastElem = TmpObj;
@@ -434,6 +430,14 @@ void StkObject::AppendChildElement(StkObject* TmpObj)
 
 void StkObject::AppendAttribute(StkObject* TmpObj)
 {
+	int TmpType = TmpObj->GetType();
+	if (TmpType == STKOBJECT_UNKW_INT) {
+		TmpObj->SetType(STKOBJECT_ATTR_INT);
+	} else if (TmpType == STKOBJECT_UNKW_FLOAT) {
+		TmpObj->SetType(STKOBJECT_ATTR_FLOAT);
+	} else if (TmpType == STKOBJECT_UNKW_STRING) {
+		TmpObj->SetType(STKOBJECT_ATTR_STRING);
+	}
 	if (pImpl->FirstAttr == NULL) {
 		pImpl->FirstAttr = TmpObj;
 		pImpl->LastAttr = TmpObj;

@@ -9,19 +9,23 @@ private:
 	Impl* pImpl;
 
 public:
-	static const int STKOBJECT_ATTRIBUTE = 0;
-	static const int STKOBJECT_ATTR_INT = 1;
-	static const int STKOBJECT_ATTR_FLOAT = 2;
-	static const int STKOBJECT_ATTR_STRING = 3;
-	static const int STKOBJECT_ELEMENT = 10;
-	static const int STKOBJECT_ELEM_INT = 11;
-	static const int STKOBJECT_ELEM_FLOAT = 12;
-	static const int STKOBJECT_ELEM_STRING = 13;
+	static const int STKOBJECT_UNKNOWN = 0;
+	static const int STKOBJECT_UNKW_INT = 1;
+	static const int STKOBJECT_UNKW_FLOAT = 2;
+	static const int STKOBJECT_UNKW_STRING = 3;
+	static const int STKOBJECT_ATTRIBUTE = 10;
+	static const int STKOBJECT_ATTR_INT = 11;
+	static const int STKOBJECT_ATTR_FLOAT = 12;
+	static const int STKOBJECT_ATTR_STRING = 13;
+	static const int STKOBJECT_ELEMENT = 20;
+	static const int STKOBJECT_ELEM_INT = 21;
+	static const int STKOBJECT_ELEM_FLOAT = 22;
+	static const int STKOBJECT_ELEM_STRING = 23;
 
 	StkObject(TCHAR*);
-	StkObject(int, TCHAR*, int);
-	StkObject(int, TCHAR*, float);
-	StkObject(int, TCHAR*, TCHAR*);
+	StkObject(TCHAR*, int);
+	StkObject(TCHAR*, float);
+	StkObject(TCHAR*, TCHAR*);
 	virtual ~StkObject();
 
 	StkObject* Clone();

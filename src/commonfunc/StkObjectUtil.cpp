@@ -428,9 +428,9 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 				BOOL IsFloat = pImpl->GetJsonNumber(&Json[Loop], &StrLen, &ValInt, &ValFloat);
 				StkObject* ChildObj;
 				if (IsFloat) {
-					ChildObj = new StkObject(StkObject::STKOBJECT_ELEMENT, PrevName, ValFloat);
+					ChildObj = new StkObject(PrevName, ValFloat);
 				} else {
-					ChildObj = new StkObject(StkObject::STKOBJECT_ELEMENT, PrevName, ValInt);
+					ChildObj = new StkObject(PrevName, ValInt);
 				}
 				RetObj->AppendChildElement(ChildObj);
 				if (ArrayFlag == FALSE) {
@@ -455,7 +455,7 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 		if (PrevStatus == STRVAL_START) {
 			int StrLen = 0;
 			TCHAR* Value = pImpl->GetJsonString(&Json[Loop], &StrLen);
-			RetObj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, PrevName, Value));
+			RetObj->AppendChildElement(new StkObject(PrevName, Value));
 			if (ArrayFlag == FALSE) {
 				delete PrevName;
 				PrevName = NULL;
@@ -580,7 +580,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 				PrevStatus = ATTRVAL_START;
 				continue;
 			} else if (PrevStatus == ATTRVAL_START) {
-				StkObject* AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevAttrName, _T(""));
+				StkObject* AttrObj = new StkObject(PrevAttrName, _T(""));
 				RetObj->AppendAttribute(AttrObj);
 				delete PrevAttrName;
 				PrevAttrName = NULL;
@@ -671,7 +671,7 @@ StkObject* StkObjectUtil::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 		if (PrevStatus == ATTRVAL_START) {
 			int StrLen = 0;
 			TCHAR* Value = pImpl->GetValue(&Xml[Loop], &StrLen);
-			StkObject* AttrObj = new StkObject(StkObject::STKOBJECT_ATTRIBUTE, PrevAttrName, Value);
+			StkObject* AttrObj = new StkObject(PrevAttrName, Value);
 			RetObj->AppendAttribute(AttrObj);
 			delete PrevAttrName;
 			PrevAttrName = NULL;

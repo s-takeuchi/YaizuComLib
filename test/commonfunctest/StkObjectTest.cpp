@@ -29,35 +29,81 @@ StkObject* MakeTestData1()
 
 	for (int Loop = 0; Loop < 20; Loop++) {
 		StkObject* Elem6 = new StkObject(_T("Product"));
-		Elem6->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Name"), _T("qwer")));
-		Elem6->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Price"), 10000));
+		Elem6->AppendAttribute(new StkObject(_T("Name"), _T("qwer")));
+		Elem6->AppendAttribute(new StkObject(_T("Price"), 10000));
 		Elem1->AppendChildElement(Elem6);
 	}
 
 	StkObject* Elem2 = new StkObject(_T("Product"));
-	Elem2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Name"), _T("Xxxxx paint")));
-	Elem2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Price"), _T("11000")));
+	Elem2->AppendAttribute(new StkObject(_T("Name"), _T("Xxxxx paint")));
+	Elem2->AppendAttribute(new StkObject(_T("Price"), _T("11000")));
 
 	StkObject* Elem5 = new StkObject(_T("License"));
-	Elem5->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Cap"), 322.44f));
+	Elem5->AppendAttribute(new StkObject(_T("Cap"), 322.44f));
 	Elem2->AppendChildElement(Elem5);
 
 	StkObject* Elem3 = new StkObject(_T("Product"));
-	Elem3->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Name"), _T("Aaaaa 3D")));
-	Elem3->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Price"), _T("39000")));
+	Elem3->AppendAttribute(new StkObject(_T("Name"), _T("Aaaaa 3D")));
+	Elem3->AppendAttribute(new StkObject(_T("Price"), _T("39000")));
 
-	StkObject* Elem4 = new StkObject(StkObject::STKOBJECT_ELEMENT, _T("ELEM_INT"), 123);
-	StkObject* Elem7 = new StkObject(StkObject::STKOBJECT_ELEMENT, _T("ELEM_FLOAT"), 456.7f);
-	StkObject* Elem8 = new StkObject(StkObject::STKOBJECT_ELEMENT, _T("ELEM_STRING"), _T(" ABC FFF DDD EEE "));
+	StkObject* Elem4 = new StkObject(_T("ELEM_INT"), 123);
+	StkObject* Elem7 = new StkObject(_T("ELEM_FLOAT"), 456.7f);
+	StkObject* Elem8 = new StkObject(_T("ELEM_STRING"), _T(" ABC FFF DDD EEE "));
 
-	Elem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("CompanyName"), _T("TakeuchiSoft")));
-	Elem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Employee"), _T("110")));
-	Elem1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Address"), _T("Shizuoka Pref. Yaizu city")));
+	Elem1->AppendAttribute(new StkObject(_T("CompanyName"), _T("TakeuchiSoft")));
+	Elem1->AppendAttribute(new StkObject(_T("Employee"), _T("110")));
+	Elem1->AppendAttribute(new StkObject(_T("Address"), _T("Shizuoka Pref. Yaizu city")));
 	Elem1->AppendChildElement(Elem2);
 	Elem1->AppendChildElement(Elem3);
 	Elem1->AppendChildElement(Elem4);
 	Elem1->AppendChildElement(Elem7);
 	Elem1->AppendChildElement(Elem8);
+
+	return Elem1;
+}
+
+StkObject* MakeTestData2()
+{
+	StkObject* Elem1 = new StkObject(_T("個人の財産"));
+
+	StkObject* Elem1_1 = new StkObject(_T("乗用車"));
+	StkObject* Elem1_1_1 = new StkObject(_T("カローラ"));
+	Elem1_1_1->AppendAttribute(new StkObject(_T("色"), _T("赤")));
+	Elem1_1_1->AppendAttribute(new StkObject(_T("メーカー"), _T("トヨタ")));
+	Elem1_1->AppendChildElement(Elem1_1_1);
+	StkObject* Elem1_1_2 = new StkObject(_T("ブルーバード"));
+	Elem1_1_2->AppendAttribute(new StkObject(_T("色"), _T("白")));
+	Elem1_1_2->AppendAttribute(new StkObject(_T("メーカー"), _T("日産")));
+	Elem1_1->AppendChildElement(Elem1_1_2);
+	Elem1->AppendChildElement(Elem1_1);
+
+	StkObject* Elem1_2 = new StkObject(_T("時計"));
+	Elem1_2->AppendChildElement(new StkObject(_T("グランドセイコー"), _T("白")));
+	Elem1_2->AppendChildElement(new StkObject(_T("オメガ"), _T("黒")));
+	Elem1_2->AppendChildElement(new StkObject(_T("ロレックス"), _T("金")));
+	Elem1->AppendChildElement(Elem1_2);
+
+	StkObject* Elem1_3 = new StkObject(_T("現金"));
+	Elem1_3->AppendChildElement(new StkObject(_T("A銀行"), 5000000));
+	Elem1_3->AppendChildElement(new StkObject(_T("B銀行"), 10000000));
+	Elem1_3->AppendChildElement(new StkObject(_T("C銀行"), 7000000));
+	Elem1->AppendChildElement(Elem1_3);
+
+	StkObject* Elem1_4 = new StkObject(_T("証券"));
+	StkObject* Elem1_4_1 = new StkObject(_T("株"));
+	Elem1_4_1->AppendChildElement(new StkObject(_T("A社"), 2000000));
+	Elem1_4_1->AppendChildElement(new StkObject(_T("B社"), 500000));
+	Elem1_4->AppendChildElement(Elem1_4_1);
+	StkObject* Elem1_4_2 = new StkObject(_T("国債"));
+	Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 1000000));
+	Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 2000000));
+	Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 1500000));
+	Elem1_4->AppendChildElement(Elem1_4_2);
+	StkObject* Elem1_4_3 = new StkObject(_T("金券"));
+	Elem1_4_3->AppendChildElement(new StkObject(_T("VISA"), 200000));
+	Elem1_4_3->AppendChildElement(new StkObject(_T("JCB"), 100000));
+	Elem1_4->AppendChildElement(Elem1_4_3);
+	Elem1->AppendChildElement(Elem1_4);
 
 	return Elem1;
 }
@@ -128,17 +174,57 @@ void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 	}
 }
 
+void GeneralTestCase2(StkObject* Elem1, TCHAR* Name)
+{
+	wprintf(_T("%s#Proper count can be acquired."), Name);
+	if (Elem1->GetChildElementCount() != Elem1->GetFirstChildElement()->GetArrayLength()) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	wprintf(_T("%s#Each name is correct..."), Name);
+	if (lstrcmp(Elem1->GetName(), _T("個人の財産")) != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetName(), _T("乗用車")) != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetName(), _T("時計")) != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetName(), _T("現金")) != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), _T("証券")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	wprintf(_T("%s#Attribute of car is correct..."), Name);
+	if (lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetStringValue(), _T("赤")) != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetNext()->GetStringValue(), _T("トヨタ")) != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), _T("白")) != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetNext()->GetStringValue(), _T("日産")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	wprintf(_T("%s#Fetch integer value..."), Name);
+	if (Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetIntValue() != 5000000 ||
+		Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 10000000 ||
+		Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetIntValue() != 7000000) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+}
+
 void JsonEncodingTest1()
 {
 	StkObject* Obj = new StkObject(_T("EncodeTesting"));
-	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element1"), _T("Hello-\\\\\\\\\\-World!!")));
-	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element2"), _T("Hello-\"\"\"\"\"-World!!")));
-	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element3"), _T("Hello-/////-World!!")));
-	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element4"), _T("Hello-\b\b\b\b\b-World!!")));
-	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element5"), _T("Hello-\f\f\f\f\f-World!!")));
-	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element6"), _T("Hello-\r\r\r\r\r-World!!")));
-	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element7"), _T("Hello-\n\n\n\n\n-World!!")));
-	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element8"), _T("Hello-\t\t\t\t\t-World!!")));
+	Obj->AppendChildElement(new StkObject(_T("Element1"), _T("Hello-\\\\\\\\\\-World!!")));
+	Obj->AppendChildElement(new StkObject(_T("Element2"), _T("Hello-\"\"\"\"\"-World!!")));
+	Obj->AppendChildElement(new StkObject(_T("Element3"), _T("Hello-/////-World!!")));
+	Obj->AppendChildElement(new StkObject(_T("Element4"), _T("Hello-\b\b\b\b\b-World!!")));
+	Obj->AppendChildElement(new StkObject(_T("Element5"), _T("Hello-\f\f\f\f\f-World!!")));
+	Obj->AppendChildElement(new StkObject(_T("Element6"), _T("Hello-\r\r\r\r\r-World!!")));
+	Obj->AppendChildElement(new StkObject(_T("Element7"), _T("Hello-\n\n\n\n\n-World!!")));
+	Obj->AppendChildElement(new StkObject(_T("Element8"), _T("Hello-\t\t\t\t\t-World!!")));
 	std::wstring JsonTxt;
 	Obj->ToJson(&JsonTxt);
 	wprintf(_T("JSON Encoding#Escape ... "));
@@ -161,16 +247,16 @@ void JsonEncodingTest1()
 void XmlEncodingTest2()
 {
 	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Gt"), _T(">")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Amp"), _T("&")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Quot"), _T("\"")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Apos"), _T("\'")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("<")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T(">")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("&")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\"")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\'")));
+	Xml2->AppendAttribute(new StkObject(_T("Lt"), _T("<")));
+	Xml2->AppendAttribute(new StkObject(_T("Gt"), _T(">")));
+	Xml2->AppendAttribute(new StkObject(_T("Amp"), _T("&")));
+	Xml2->AppendAttribute(new StkObject(_T("Quot"), _T("\"")));
+	Xml2->AppendAttribute(new StkObject(_T("Apos"), _T("\'")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("<")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T(">")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("&")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("\"")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("\'")));
 
 	StkObject* Attr1 = Xml2->GetFirstAttribute();
 	std::wstring Attr1Val;
@@ -207,16 +293,16 @@ void XmlEncodingTest2()
 void XmlEncodingTest3()
 {
 	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<<<<<<<<<<")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Gt"), _T(">>>>>>>>>>")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Amp"), _T("&&&&&&&&&&")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Quot"), _T("\"\"\"\"\"\"\"\"\"\"")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Apos"), _T("\'\'\'\'\'\'\'\'\'\'")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("<<<<<<<<<<")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T(">>>>>>>>>>")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("&&&&&&&&&&")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\"\"\"\"\"\"\"\"\"\"")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\'\'\'\'\'\'\'\'\'\'")));
+	Xml2->AppendAttribute(new StkObject(_T("Lt"), _T("<<<<<<<<<<")));
+	Xml2->AppendAttribute(new StkObject(_T("Gt"), _T(">>>>>>>>>>")));
+	Xml2->AppendAttribute(new StkObject(_T("Amp"), _T("&&&&&&&&&&")));
+	Xml2->AppendAttribute(new StkObject(_T("Quot"), _T("\"\"\"\"\"\"\"\"\"\"")));
+	Xml2->AppendAttribute(new StkObject(_T("Apos"), _T("\'\'\'\'\'\'\'\'\'\'")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("<<<<<<<<<<")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T(">>>>>>>>>>")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("&&&&&&&&&&")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("\"\"\"\"\"\"\"\"\"\"")));
+	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("\'\'\'\'\'\'\'\'\'\'")));
 
 	StkObject* Attr1 = Xml2->GetFirstAttribute();
 	std::wstring Attr1Val;
@@ -255,32 +341,32 @@ void XmlJsonEncodingTest1()
 	StkObject* TopElem = new StkObject(_T("House"));
 
 	StkObject* ChildElem1 = new StkObject(_T("KitchenRoom"));
-	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Table")));
-	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Gas Cooker")));
-	ChildElem1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Kitchen Rack")));
+	ChildElem1->AppendChildElement(new StkObject(_T("Furniture"), _T("Kitchen Table")));
+	ChildElem1->AppendChildElement(new StkObject(_T("Furniture"), _T("Gas Cooker")));
+	ChildElem1->AppendChildElement(new StkObject(_T("Furniture"), _T("Kitchen Rack")));
 
 	StkObject* ChildElem2 = new StkObject(_T("KidsRoom"));
 
 	StkObject* ChildElem2a = new StkObject(_T("Kid"));
-	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Desk")));
-	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Chair")));
-	ChildElem2a->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Bed")));
+	ChildElem2a->AppendChildElement(new StkObject(_T("Furniture"), _T("Desk")));
+	ChildElem2a->AppendChildElement(new StkObject(_T("Furniture"), _T("Chair")));
+	ChildElem2a->AppendChildElement(new StkObject(_T("Furniture"), _T("Bed")));
 	ChildElem2->AppendChildElement(ChildElem2a);
 
 	StkObject* ChildElem2b = new StkObject(_T("Kid"));
-	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Wood Desk")));
-	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Wood Chair")));
-	ChildElem2b->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Wood Bed")));
+	ChildElem2b->AppendChildElement(new StkObject(_T("Furniture"), _T("Wood Desk")));
+	ChildElem2b->AppendChildElement(new StkObject(_T("Furniture"), _T("Wood Chair")));
+	ChildElem2b->AppendChildElement(new StkObject(_T("Furniture"), _T("Wood Bed")));
 	StkObject* ChildElem2bx = new StkObject(_T("WalkInCloset"));
-	ChildElem2bx->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Hunger"), _T("Wood")));
-	ChildElem2bx->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Rack"), _T("Wood")));
+	ChildElem2bx->AppendChildElement(new StkObject(_T("Hunger"), _T("Wood")));
+	ChildElem2bx->AppendChildElement(new StkObject(_T("Rack"), _T("Wood")));
 	ChildElem2b->AppendChildElement(ChildElem2bx);
 	ChildElem2->AppendChildElement(ChildElem2b);
 
 	StkObject* ChildElem2c = new StkObject(_T("Kid"));
-	ChildElem2c->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Steel Desk")));
-	ChildElem2c->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Steel Chair")));
-	ChildElem2c->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Furniture"), _T("Steel Bed")));
+	ChildElem2c->AppendChildElement(new StkObject(_T("Furniture"), _T("Steel Desk")));
+	ChildElem2c->AppendChildElement(new StkObject(_T("Furniture"), _T("Steel Chair")));
+	ChildElem2c->AppendChildElement(new StkObject(_T("Furniture"), _T("Steel Bed")));
 	ChildElem2->AppendChildElement(ChildElem2c);
 
 	TopElem->AppendChildElement(ChildElem1);
@@ -324,15 +410,27 @@ void XmlJsonEncodingTest2()
 	std::wstring Temp2;
 
 	StkObject* TopElem = new StkObject(_T("Japan"));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T(""), _T("")));
-	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("A"), _T("B")));
+	TopElem->AppendAttribute(new StkObject(_T(""), _T("")));
+	TopElem->AppendAttribute(new StkObject(_T("A"), _T("B")));
 	StkObject* ChildElem = new StkObject(_T(""));
 	ChildElem->AppendChildElement(new StkObject(_T("")));
-	ChildElem->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T(""), _T("")));
-	ChildElem->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("A"), _T("B")));
+	ChildElem->AppendChildElement(new StkObject(_T(""), _T("")));
+	ChildElem->AppendChildElement(new StkObject(_T("A"), _T("B")));
 	TopElem->AppendChildElement(ChildElem);
 	TopElem->ToXml(&Temp1);
 	TopElem->ToJson(&Temp2);
+	printf("XML encoding with no name and no value...");
+	if (Temp1.find(_T("<Japan =\"\" A=\"B\">\r\n  <>\r\n    </>\r\n    <></>\r\n    <A>B</A>\r\n  </>\r\n</Japan>")) == std::wstring::npos) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	printf("JSON encoding with no name and no value...");
+	if (Temp2.find(_T("\"Japan\" : {\r\n  \"@attributes\" : {\r\n    \"\" : \"\", \"A\" : \"B\"\r\n  },\r\n  \"\" : {\r\n    \"\" : {\r\n    },\r\n    \"\" : \"\",\r\n    \"A\" : \"B\"\r\n  }\r\n}")) == std::wstring::npos) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
 	delete TopElem;
 }
 
@@ -862,24 +960,24 @@ int MemoryLeakChecking2()
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		for (int Loop = 0; Loop < 250; Loop++) {
 			NewObj1 = new StkObject(_T("EncodeTesting"));
-			NewObj1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("XmlLt"), _T("<<<<<<<<<<<<<<<<<<<<")));
-			NewObj1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("XmlGt"), _T(">>>>>>>>>>>>>>>>>>>>")));
-			NewObj1->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("XmlApos"), _T("\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'")));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("XmlAmp"), _T("&&&&&&&&&&&&&&&&&&&&")));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("XmlQuot"), _T("\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"")));
+			NewObj1->AppendAttribute(new StkObject(_T("XmlLt"), _T("<<<<<<<<<<<<<<<<<<<<")));
+			NewObj1->AppendAttribute(new StkObject(_T("XmlGt"), _T(">>>>>>>>>>>>>>>>>>>>")));
+			NewObj1->AppendAttribute(new StkObject(_T("XmlApos"), _T("\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'")));
+			NewObj1->AppendChildElement(new StkObject(_T("XmlAmp"), _T("&&&&&&&&&&&&&&&&&&&&")));
+			NewObj1->AppendChildElement(new StkObject(_T("XmlQuot"), _T("\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"")));
 			StrVal = _T("");
 			NewObj1->ToXml(&StrVal);
 			delete NewObj1;
 
 			NewObj1 = new StkObject(_T("EncodeTesting"));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\"\"\"\"\"\"\"\"\"\"")));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\\\\\\\\\\\\\\\\\\\\")));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("//////////")));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\b\b\b\b\b\b\b\b\b\b")));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\f\f\f\f\f\f\f\f\f\f")));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\n\n\n\n\n\n\n\n\n\n")));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\r\r\r\r\r\r\r\r\r\r")));
-			NewObj1->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Bbbb"), _T("\t\t\t\t\t\t\t\t\t\t")));
+			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\"\"\"\"\"\"\"\"\"\"")));
+			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\\\\\\\\\\\\\\\\\\\\")));
+			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("//////////")));
+			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\b\b\b\b\b\b\b\b\b\b")));
+			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\f\f\f\f\f\f\f\f\f\f")));
+			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\n\n\n\n\n\n\n\n\n\n")));
+			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\r\r\r\r\r\r\r\r\r\r")));
+			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\t\t\t\t\t\t\t\t\t\t")));
 			StrVal = _T("");
 			NewObj1->ToJson(&StrVal);
 			delete NewObj1;
@@ -987,6 +1085,10 @@ void StkObjectTest()
 		StkObject* Elem1 = MakeTestData1();
 		GeneralTestCase1(Elem1, _T("GeneralCheck1"));
 		delete Elem1;
+
+		StkObject* Elem2 = MakeTestData2();
+		GeneralTestCase2(Elem2, _T("GeneralCheck2"));
+		delete Elem2;
 	}
 
 	// Clone check
@@ -994,6 +1096,10 @@ void StkObjectTest()
 		StkObject* Elem1 = MakeTestData1();
 		CloneTest(Elem1);
 		delete Elem1;
+
+		StkObject* Elem2 = MakeTestData2();
+		CloneTest(Elem2);
+		delete Elem2;
 	}
 
 	// Memory leak check
@@ -1001,6 +1107,11 @@ void StkObjectTest()
 		StkObject* Elem1 = MakeTestData1();
 		MemoryLeakChecking1(Elem1);
 		delete Elem1;
+
+		StkObject* Elem2 = MakeTestData2();
+		MemoryLeakChecking1(Elem2);
+		delete Elem2;
+
 		MemoryLeakChecking2();
 		MemoryLeakChecking3();
 	}
