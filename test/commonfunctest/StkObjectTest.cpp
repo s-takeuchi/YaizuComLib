@@ -62,38 +62,6 @@ StkObject* MakeTestData1()
 	return Elem1;
 }
 
-StkObject* MakeTestData2()
-{
-	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Gt"), _T(">")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Amp"), _T("&")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Quot"), _T("\"")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Apos"), _T("\'")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("<")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T(">")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("&")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\"")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\'")));
-	return Xml2;
-}
-
-StkObject* MakeTestData3()
-{
-	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<<<<<<<<<<")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Gt"), _T(">>>>>>>>>>")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Amp"), _T("&&&&&&&&&&")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Quot"), _T("\"\"\"\"\"\"\"\"\"\"")));
-	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Apos"), _T("\'\'\'\'\'\'\'\'\'\'")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("<<<<<<<<<<")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T(">>>>>>>>>>")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("&&&&&&&&&&")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\"\"\"\"\"\"\"\"\"\"")));
-	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\'\'\'\'\'\'\'\'\'\'")));
-	return Xml2;
-}
-
 void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 {
 	int Len1 = Elem1->GetFirstChildElement()->GetArrayLength();
@@ -104,10 +72,18 @@ void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 		printf("NG\r\n");
 		exit(0);
 	}
+	wprintf(_T("%s#Acquired element is validated..."), Name);
 	StkObject* Elem3 = Elem1->GetFirstChildElement();
 	for (int Loop = 0; Loop < 21; Loop++) {
+		if (Loop < 20) {
+			if (lstrcmp(Elem3->GetName(), _T("Product")) != 0 || lstrcmp(Elem3->GetFirstAttribute()->GetStringValue(), _T("qwer")) != 0) {
+				printf("NG\r\n");
+				exit(0);
+			}
+		}
 		Elem3 = Elem3->GetNext();
 	}
+	printf("OK\r\n");
 	int Len1_1 = Elem3->GetArrayLength();
 	wprintf(_T("%s#Len of top level element's 2nd child = %d..."), Name, Len1_1);
 	if (Len1_1 == 4) {
@@ -152,12 +128,54 @@ void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 	}
 }
 
-void GeneralTestCase2(StkObject* Elem, TCHAR* Name)
+void JsonEncodingTest1()
 {
-	StkObject* Attr1 = Elem->GetFirstAttribute();
+	StkObject* Obj = new StkObject(_T("EncodeTesting"));
+	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element1"), _T("Hello-\\\\\\\\\\-World!!")));
+	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element2"), _T("Hello-\"\"\"\"\"-World!!")));
+	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element3"), _T("Hello-/////-World!!")));
+	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element4"), _T("Hello-\b\b\b\b\b-World!!")));
+	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element5"), _T("Hello-\f\f\f\f\f-World!!")));
+	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element6"), _T("Hello-\r\r\r\r\r-World!!")));
+	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element7"), _T("Hello-\n\n\n\n\n-World!!")));
+	Obj->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element8"), _T("Hello-\t\t\t\t\t-World!!")));
+	std::wstring JsonTxt;
+	Obj->ToJson(&JsonTxt);
+	wprintf(_T("JSON Encoding#Escape ... "));
+	if (JsonTxt.find(_T("\"Element1\" : \"Hello-\\\\\\\\\\\\\\\\\\\\-World!!\"")) == std::wstring::npos ||
+		JsonTxt.find(_T("\"Element2\" : \"Hello-\\\"\\\"\\\"\\\"\\\"-World!!\"")) == std::wstring::npos ||
+		JsonTxt.find(_T("\"Element3\" : \"Hello-\\/\\/\\/\\/\\/-World!!\"")) == std::wstring::npos ||
+		JsonTxt.find(_T("\"Element4\" : \"Hello-\\b\\b\\b\\b\\b-World!!\"")) == std::wstring::npos ||
+		JsonTxt.find(_T("\"Element5\" : \"Hello-\\f\\f\\f\\f\\f-World!!\"")) == std::wstring::npos ||
+		JsonTxt.find(_T("\"Element6\" : \"Hello-\\r\\r\\r\\r\\r-World!!\"")) == std::wstring::npos ||
+		JsonTxt.find(_T("\"Element7\" : \"Hello-\\n\\n\\n\\n\\n-World!!\"")) == std::wstring::npos ||
+		JsonTxt.find(_T("\"Element8\" : \"Hello-\\t\\t\\t\\t\\t-World!!\"")) == std::wstring::npos) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
+	}
+	delete Obj;
+}
+
+void XmlEncodingTest2()
+{
+	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Gt"), _T(">")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Amp"), _T("&")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Quot"), _T("\"")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Apos"), _T("\'")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("<")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T(">")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("&")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\"")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\'")));
+
+	StkObject* Attr1 = Xml2->GetFirstAttribute();
 	std::wstring Attr1Val;
 	Attr1->ToXml(&Attr1Val);
-	wprintf(_T("%s#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... "), Name);
+	wprintf(_T("XmlEncoding(Single)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... "));
 	if (Attr1Val.find(_T("Lt=\"&lt;\"")) == std::wstring::npos ||
 		Attr1Val.find(_T("Gt=\"&gt;\"")) == std::wstring::npos ||
 		Attr1Val.find(_T("Amp=\"&amp;\"")) == std::wstring::npos ||
@@ -169,10 +187,10 @@ void GeneralTestCase2(StkObject* Elem, TCHAR* Name)
 		printf("OK\r\n");
 	}
 
-	StkObject* Elem1 = Elem->GetFirstChildElement();
+	StkObject* Elem1 = Xml2->GetFirstChildElement();
 	std::wstring Elem1Val;
 	Elem1->ToXml(&Elem1Val);
-	wprintf(_T("%s#Element value '<', '>', '&', '\"' and '\'' are escaped ... "), Name);
+	wprintf(_T("XmlEncoding(Single)#Element value '<', '>', '&', '\"' and '\'' are escaped ... "));
 	if (Elem1Val.find(_T(">&lt;<")) == std::wstring::npos ||
 		Elem1Val.find(_T(">&gt;<")) == std::wstring::npos ||
 		Elem1Val.find(_T(">&amp;<")) == std::wstring::npos ||
@@ -183,14 +201,27 @@ void GeneralTestCase2(StkObject* Elem, TCHAR* Name)
 	} else {
 		printf("OK\r\n");
 	}
+	delete Xml2;
 }
 
-void GeneralTestCase3(StkObject* Elem, TCHAR* Name)
+void XmlEncodingTest3()
 {
-	StkObject* Attr1 = Elem->GetFirstAttribute();
+	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Lt"), _T("<<<<<<<<<<")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Gt"), _T(">>>>>>>>>>")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Amp"), _T("&&&&&&&&&&")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Quot"), _T("\"\"\"\"\"\"\"\"\"\"")));
+	Xml2->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("Apos"), _T("\'\'\'\'\'\'\'\'\'\'")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("<<<<<<<<<<")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T(">>>>>>>>>>")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("&&&&&&&&&&")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\"\"\"\"\"\"\"\"\"\"")));
+	Xml2->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("Element"), _T("\'\'\'\'\'\'\'\'\'\'")));
+
+	StkObject* Attr1 = Xml2->GetFirstAttribute();
 	std::wstring Attr1Val;
 	Attr1->ToXml(&Attr1Val);
-	wprintf(_T("%s#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... "), Name);
+	wprintf(_T("XmlEncoding(Multi)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... "));
 	if (Attr1Val.find(_T("Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\"")) == std::wstring::npos ||
 		Attr1Val.find(_T("Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\"")) == std::wstring::npos ||
 		Attr1Val.find(_T("Amp=\"&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;\"")) == std::wstring::npos ||
@@ -202,10 +233,10 @@ void GeneralTestCase3(StkObject* Elem, TCHAR* Name)
 		printf("OK\r\n");
 	}
 
-	StkObject* Elem1 = Elem->GetFirstChildElement();
+	StkObject* Elem1 = Xml2->GetFirstChildElement();
 	std::wstring Elem1Val;
 	Elem1->ToXml(&Elem1Val);
-	wprintf(_T("%s#Element value '<', '>', '&', '\"' and '\'' are escaped ... "), Name);
+	wprintf(_T("XmlEncoding(Multi)#Element value '<', '>', '&', '\"' and '\'' are escaped ... "));
 	if (Elem1Val.find(_T(">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<")) == std::wstring::npos ||
 		Elem1Val.find(_T(">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;<")) == std::wstring::npos ||
 		Elem1Val.find(_T(">&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;<")) == std::wstring::npos ||
@@ -216,6 +247,7 @@ void GeneralTestCase3(StkObject* Elem, TCHAR* Name)
 	} else {
 		printf("OK\r\n");
 	}
+	delete Xml2;
 }
 
 void XmlJsonEncodingTest1()
@@ -283,6 +315,24 @@ void XmlJsonEncodingTest1()
 	}
 	printf("OK\r\n");
 
+	delete TopElem;
+}
+
+void XmlJsonEncodingTest2()
+{
+	std::wstring Temp1;
+	std::wstring Temp2;
+
+	StkObject* TopElem = new StkObject(_T("Japan"));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T(""), _T("")));
+	TopElem->AppendAttribute(new StkObject(StkObject::STKOBJECT_ATTRIBUTE, _T("A"), _T("B")));
+	StkObject* ChildElem = new StkObject(_T(""));
+	ChildElem->AppendChildElement(new StkObject(_T("")));
+	ChildElem->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T(""), _T("")));
+	ChildElem->AppendChildElement(new StkObject(StkObject::STKOBJECT_ELEMENT, _T("A"), _T("B")));
+	TopElem->AppendChildElement(ChildElem);
+	TopElem->ToXml(&Temp1);
+	TopElem->ToJson(&Temp2);
 	delete TopElem;
 }
 
@@ -911,15 +961,11 @@ void StkObjectTest()
 
 	// Encode check
 	{
-		StkObject* Elem2 = MakeTestData2();
-		GeneralTestCase2(Elem2, _T("EncodeCheck1"));
-		delete Elem2;
-
-		StkObject* Elem3 = MakeTestData3();
-		GeneralTestCase3(Elem3, _T("EncodeCheck2"));
-		delete Elem3;
-
+		JsonEncodingTest1();
+		XmlEncodingTest2();
+		XmlEncodingTest3();
 		XmlJsonEncodingTest1();
+		XmlJsonEncodingTest2();
 	}
 
 	// Decode check
@@ -939,7 +985,7 @@ void StkObjectTest()
 	// General check
 	{
 		StkObject* Elem1 = MakeTestData1();
-		GeneralTestCase1(Elem1, _T("Sample1"));
+		GeneralTestCase1(Elem1, _T("GeneralCheck1"));
 		delete Elem1;
 	}
 
@@ -948,14 +994,6 @@ void StkObjectTest()
 		StkObject* Elem1 = MakeTestData1();
 		CloneTest(Elem1);
 		delete Elem1;
-
-		StkObject* Elem2 = MakeTestData2();
-		CloneTest(Elem2);
-		delete Elem2;
-
-		StkObject* Elem3 = MakeTestData3();
-		CloneTest(Elem3);
-		delete Elem3;
 	}
 
 	// Memory leak check
