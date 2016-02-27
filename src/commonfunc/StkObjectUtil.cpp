@@ -353,6 +353,7 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 				if (ChildElem != NULL) {
 					// Nothing to do
 				} else {
+					RetObj = NULL;
 					pImpl->CleanupObjectsForJson(PrevName, RetObj);
 					*Offset = OffsetCld;
 					return NULL;
@@ -432,6 +433,11 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 				} else {
 					ChildObj = new StkObject(PrevName, ValInt);
 				}
+				if (RetObj == NULL) {
+					pImpl->CleanupObjectsForJson(PrevName, RetObj);
+					*Offset = ERROR_JSON_NO_ROOT_ELEMENT;
+					return NULL;
+				}
 				RetObj->AppendChildElement(ChildObj);
 				if (ArrayFlag == FALSE) {
 					delete PrevName;
@@ -455,6 +461,11 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 		if (PrevStatus == STRVAL_START) {
 			int StrLen = 0;
 			TCHAR* Value = pImpl->GetJsonString(&Json[Loop], &StrLen);
+			if (RetObj == NULL) {
+				pImpl->CleanupObjectsForJson(PrevName, RetObj);
+				*Offset = ERROR_JSON_NO_ROOT_ELEMENT;
+				return NULL;
+			}
 			RetObj->AppendChildElement(new StkObject(PrevName, Value));
 			if (ArrayFlag == FALSE) {
 				delete PrevName;
@@ -467,6 +478,12 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 		}
 		pImpl->CleanupObjectsForJson(PrevName, RetObj);
 		*Offset = ERROR_JSON_CANNOT_HANDLE;
+		return NULL;
+	}
+
+	if (PrevStatus != ELEMOBJ_END) {
+		pImpl->CleanupObjectsForJson(PrevName, RetObj);
+		*Offset = ERROR_JSON_INVALID_STRUCTURE;
 		return NULL;
 	}
 

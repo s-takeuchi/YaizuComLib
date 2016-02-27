@@ -212,6 +212,15 @@ void GeneralTestCase2(StkObject* Elem1, TCHAR* Name)
 		exit(0);
 	}
 	printf("OK\r\n");
+
+	wprintf(_T("%s#Fetch tail element..."), Name);
+	if (Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetIntValue() != 200000 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), _T("VISA")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
 }
 
 void JsonEncodingTest1()
@@ -793,6 +802,17 @@ void XmlDecordingAbnormalTest1()
 			printf("OK\r\n");
 		}
 	}
+
+	{
+		printf("Abnormal case: \"<Aaa><Bbb><Cc\" is presented...");
+		RetObj = Sou.CreateObjectFromXml(_T("<Aaa><Bbb><Cc"), &Offset);
+		if (RetObj != NULL || Offset != StkObjectUtil::ERROR_XML_ELEMENT_END_NOT_FOUND) {
+			printf("NG\r\n");
+			exit(0);
+		} else {
+			printf("OK\r\n");
+		}
+	}
 }
 
 void JsonDecodingTest1()
@@ -893,6 +913,78 @@ void JsonDecodingTest2()
 	delete RetObj2;
 	delete RetObj3;
 	delete RetObj4;
+}
+
+void JsonDecordingAbnormalTest1()
+{
+	int Offset = 0;
+	StkObjectUtil Sou;
+	StkObject* RetObj;
+
+	printf("Abnormal case: \"\" is presented...");
+	RetObj = Sou.CreateObjectFromJson(_T(""), &Offset, NULL);
+	if (RetObj != NULL || Offset != StkObjectUtil::ERROR_JSON_NO_ELEMENT_FOUND) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	printf("Abnormal case: NULL is presented...");
+	RetObj = Sou.CreateObjectFromJson(NULL, &Offset, NULL);
+	if (RetObj != NULL || Offset != StkObjectUtil::ERROR_JSON_NO_ELEMENT_FOUND) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	printf("Abnormal case: \"{ \"Aaa\" : \"Xxx\" }\" is presented...");
+	RetObj = Sou.CreateObjectFromJson(_T("{ \"Aaa\" : \"Xxx\" }"), &Offset, NULL);
+	if (RetObj != NULL || Offset != StkObjectUtil::ERROR_JSON_INVALID_STRUCTURE) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	printf("Abnormal case: \"[ \"Aaa\" : \"Xxx\" [\" is presented...");
+	RetObj = Sou.CreateObjectFromJson(_T("[ \"Aaa\" : \"Xxx\" ]"), &Offset, NULL);
+	if (RetObj != NULL || Offset != StkObjectUtil::ERROR_JSON_INVALID_ARRAY_STRUCTURE) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	printf("Abnormal case: \"\"Aaa\" : 123\" is presented...");
+	RetObj = Sou.CreateObjectFromJson(_T("\"Aaa\" : 123"), &Offset, NULL);
+	if (RetObj != NULL || Offset != StkObjectUtil::ERROR_JSON_NO_ROOT_ELEMENT) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	printf("Abnormal case: \"\"Aaa\" : 999.9\" is presented...");
+	RetObj = Sou.CreateObjectFromJson(_T("\"Aaa\" : 999.9"), &Offset, NULL);
+	if (RetObj != NULL || Offset != StkObjectUtil::ERROR_JSON_NO_ROOT_ELEMENT) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	printf("Abnormal case: \"\"Aaa\" : \"Xyz\"\" is presented...");
+	RetObj = Sou.CreateObjectFromJson(_T("\"Aaa\" : \"Xyz\""), &Offset, NULL);
+	if (RetObj != NULL || Offset != StkObjectUtil::ERROR_JSON_NO_ROOT_ELEMENT) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+	printf("Abnormal case: \"\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : \" is presented...");
+	RetObj = Sou.CreateObjectFromJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : "), &Offset, NULL);
+	if (RetObj != NULL || Offset != StkObjectUtil::ERROR_JSON_INVALID_STRUCTURE) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
 }
 
 void CloneTest(StkObject* Obj)
@@ -1019,6 +1111,7 @@ int MemoryLeakChecking3()
 
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		for (int Loop = 0; Loop < 1000; Loop++) {
+			// For XML
 			Sou.CreateObjectFromXml(_T(""), &Offset);
 			Sou.CreateObjectFromXml(NULL, &Offset);
 			Sou.CreateObjectFromXml(_T("<X><Y><Z><></X></Y></Z>"), &Offset);
@@ -1034,6 +1127,16 @@ int MemoryLeakChecking3()
 			Sou.CreateObjectFromXml(_T("</Aaa>"), &Offset);
 			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaaa"), &Offset);
 			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaaa Xxx=\"Xxx"), &Offset);
+			Sou.CreateObjectFromXml(_T("<Aaa><Bbb><Cc"), &Offset);
+
+			// For JSON
+			Sou.CreateObjectFromJson(_T(""), &Offset, NULL);
+			Sou.CreateObjectFromJson(NULL, &Offset, NULL);
+			Sou.CreateObjectFromJson(_T("{ \"Aaa\" : \"Xxx\" }"), &Offset, NULL);
+			Sou.CreateObjectFromJson(_T("[ \"Aaa\" : \"Xxx\" ]"), &Offset, NULL);
+			Sou.CreateObjectFromJson(_T("\"Aaa\" : 123"), &Offset, NULL);
+			Sou.CreateObjectFromJson(_T("\"Aaa\" : 999.9"), &Offset, NULL);
+			Sou.CreateObjectFromJson(_T("\"Aaa\" : \"Xyz\""), &Offset, NULL);
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}
@@ -1078,6 +1181,7 @@ void StkObjectTest()
 		// JSON
 		JsonDecodingTest1();
 		JsonDecodingTest2();
+		JsonDecordingAbnormalTest1();
 	}
 
 	// General check
