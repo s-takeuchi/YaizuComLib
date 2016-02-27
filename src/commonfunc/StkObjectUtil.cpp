@@ -74,7 +74,7 @@ TCHAR* StkObjectUtil::Impl::GetJsonString(TCHAR* OrgStr, int* Len)
 {
 	int OutLength = 0;
 	TCHAR* CurPnt = OrgStr;
-	while (*CurPnt != TCHAR('\"') && CurPnt != _T('\0')) {
+	while (*CurPnt != TCHAR('\"') && *CurPnt != _T('\0')) {
 		if (*CurPnt == TCHAR('\\')) {
 			if (*(CurPnt + 1) == TCHAR('\"') || *(CurPnt + 1) == TCHAR('\\') || *(CurPnt + 1) == TCHAR('/') || *(CurPnt + 1) == TCHAR('b') ||
 				*(CurPnt + 1) == TCHAR('f') || *(CurPnt + 1) == TCHAR('n') || *(CurPnt + 1) == TCHAR('r') || *(CurPnt + 1) == TCHAR('t')) {
@@ -428,15 +428,15 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 				int StrLen = 0;
 				BOOL IsFloat = pImpl->GetJsonNumber(&Json[Loop], &StrLen, &ValInt, &ValFloat);
 				StkObject* ChildObj;
-				if (IsFloat) {
-					ChildObj = new StkObject(PrevName, ValFloat);
-				} else {
-					ChildObj = new StkObject(PrevName, ValInt);
-				}
 				if (RetObj == NULL) {
 					pImpl->CleanupObjectsForJson(PrevName, RetObj);
 					*Offset = ERROR_JSON_NO_ROOT_ELEMENT;
 					return NULL;
+				}
+				if (IsFloat) {
+					ChildObj = new StkObject(PrevName, ValFloat);
+				} else {
+					ChildObj = new StkObject(PrevName, ValInt);
 				}
 				RetObj->AppendChildElement(ChildObj);
 				if (ArrayFlag == FALSE) {
@@ -462,16 +462,17 @@ StkObject* StkObjectUtil::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObje
 			int StrLen = 0;
 			TCHAR* Value = pImpl->GetJsonString(&Json[Loop], &StrLen);
 			if (RetObj == NULL) {
+				delete Value;
 				pImpl->CleanupObjectsForJson(PrevName, RetObj);
 				*Offset = ERROR_JSON_NO_ROOT_ELEMENT;
 				return NULL;
 			}
 			RetObj->AppendChildElement(new StkObject(PrevName, Value));
+			delete Value;
 			if (ArrayFlag == FALSE) {
 				delete PrevName;
 				PrevName = NULL;
 			}
-			delete Value;
 			Loop = Loop + StrLen;
 			PrevStatus = ELEMOBJ_END;
 			continue;
