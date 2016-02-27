@@ -193,14 +193,6 @@
 				RelativePath=".\StkObject.h"
 				>
 			</File>
-			<File
-				RelativePath=".\StkObjectUtil.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\StkObjectUtil.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

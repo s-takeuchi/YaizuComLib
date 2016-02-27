@@ -5,13 +5,11 @@
 #include <Psapi.h>
 
 #include "..\..\src\commonfunc\StkObject.h"
-#include "..\..\src\commonfunc\StkObjectUtil.h"
 
 
 void AbnormalCaseForJson(TCHAR* JsonTxt, int ErrorCode)
 {
 	int Offset = 0;
-	StkObjectUtil Sou;
 	StkObject* RetObj;
 
 	if (JsonTxt == NULL) {
@@ -19,7 +17,7 @@ void AbnormalCaseForJson(TCHAR* JsonTxt, int ErrorCode)
 	} else {
 		wprintf(_T("Abnormal case (JSON): \"%s\" is presented..."), JsonTxt);
 	}
-	RetObj = Sou.CreateObjectFromJson(JsonTxt, &Offset, NULL);
+	RetObj = StkObject::CreateObjectFromJson(JsonTxt, &Offset, NULL);
 	if (RetObj != NULL || Offset != ErrorCode) {
 		printf("NG\r\n");
 		exit(0);
@@ -31,7 +29,6 @@ void AbnormalCaseForJson(TCHAR* JsonTxt, int ErrorCode)
 void AbnormalCaseForXml(TCHAR* XmlTxt, int ErrorCode)
 {
 	int Offset = 0;
-	StkObjectUtil Sou;
 	StkObject* RetObj;
 
 	if (XmlTxt == NULL) {
@@ -39,7 +36,7 @@ void AbnormalCaseForXml(TCHAR* XmlTxt, int ErrorCode)
 	} else {
 		wprintf(_T("Abnormal case (XML): \"%s\" is presented..."), XmlTxt);
 	}
-	RetObj = Sou.CreateObjectFromXml(XmlTxt, &Offset);
+	RetObj = StkObject::CreateObjectFromXml(XmlTxt, &Offset);
 	if (RetObj != NULL || Offset != ErrorCode) {
 		printf("NG\r\n");
 		exit(0);
@@ -427,10 +424,9 @@ void XmlJsonEncodingTest1()
 	TopElem->ToXml(&XmlTxt);
 	TopElem->ToJson(&JsonTxt);
 
-	StkObjectUtil Sou;
 	int Offset;
-	StkObject* ObjFromXml  = Sou.CreateObjectFromXml((TCHAR*)XmlTxt.c_str(), &Offset);
-	StkObject* ObjFromJson = Sou.CreateObjectFromJson((TCHAR*)JsonTxt.c_str(), &Offset, NULL);
+	StkObject* ObjFromXml  = StkObject::CreateObjectFromXml((TCHAR*)XmlTxt.c_str(), &Offset);
+	StkObject* ObjFromJson = StkObject::CreateObjectFromJson((TCHAR*)JsonTxt.c_str(), &Offset, NULL);
 	std::wstring Temp1;
 	std::wstring Temp2;
 	printf("[Obj--->XML--->Obj--->JSON] and [Obj--->JSON--->Obj--->JSON] bring the same result...");
@@ -487,7 +483,6 @@ void XmlJsonEncodingTest2()
 void XmlDecodingTest1()
 {
 	int Offset = 0;
-	StkObjectUtil Sou;
 
 	TCHAR* Xml1 = _T("<?xml version=\"1.0\"?><!-- comment --><Aaaa A1=\"a1\" A2=\"a2\" A3=\"a3\"><Bbbb B1=\"b1\" B2=\"b2\" B3=\"b3\"/><Cccc C1=\"c1\" C2=\"c2\" C3=\"c3\"/></Aaaa>");
 	TCHAR* Xml2 = _T("<?xml version=\"1.0\"?><!-- comment --><Aaaa A1=\"a1\" A2=\"a2\" A3=\"a3\"><Bbbb B1=\"b1\" B2=\"b2\" B3=\"b3\"></Bbbb><Cccc C1=\"c1\" C2=\"c2\" C3=\"c3\"></Cccc></Aaaa>");
@@ -495,11 +490,11 @@ void XmlDecodingTest1()
 	TCHAR* Xml4 = _T("\t<\tAaaa\tA1\t=\t\"a1\"\tA2\t=\t\"a2\"\tA3\t=\t\"a3\"\t>\t<\tBbbb\tB1\t=\t\"b1\"\tB2\t=\t\"b2\"\tB3\t=\t\"b3\"\t/\t>\t<\tCccc\tC1\t=\t\"c1\"\tC2\t=\t\"c2\"\tC3\t=\t\"c3\"\t/\t>\t<\t/\tAaaa\t>\t");
 	TCHAR* Xml5 = _T("\r\n<\r\nAaaa\r\nA1\r\n=\r\n\"a1\"\r\nA2\r\n=\r\n\"a2\"\r\nA3\r\n=\r\n\"a3\"\r\n>\r\n<\r\nBbbb\r\nB1\r\n=\r\n\"b1\"\r\nB2\r\n=\r\n\"b2\"\r\nB3\r\n=\r\n\"b3\"\r\n/\r\n>\r\n<\r\nCccc\r\nC1\r\n=\r\n\"c1\"\r\nC2\r\n=\r\n\"c2\"\r\nC3\r\n=\r\n\"c3\"\r\n/\r\n>\r\n<\r\n/\r\nAaaa\r\n>\r\n");
 
-	StkObject* RetObj1 = Sou.CreateObjectFromXml(Xml1, &Offset);
-	StkObject* RetObj2 = Sou.CreateObjectFromXml(Xml2, &Offset);
-	StkObject* RetObj3 = Sou.CreateObjectFromXml(Xml3, &Offset);
-	StkObject* RetObj4 = Sou.CreateObjectFromXml(Xml4, &Offset);
-	StkObject* RetObj5 = Sou.CreateObjectFromXml(Xml5, &Offset);
+	StkObject* RetObj1 = StkObject::CreateObjectFromXml(Xml1, &Offset);
+	StkObject* RetObj2 = StkObject::CreateObjectFromXml(Xml2, &Offset);
+	StkObject* RetObj3 = StkObject::CreateObjectFromXml(Xml3, &Offset);
+	StkObject* RetObj4 = StkObject::CreateObjectFromXml(Xml4, &Offset);
+	StkObject* RetObj5 = StkObject::CreateObjectFromXml(Xml5, &Offset);
 
 	std::wstring Msg1;
 	std::wstring Msg2;
@@ -544,17 +539,16 @@ void XmlDecodingTest2()
 {
 	printf("<Aaaa>=</Aaaa> ; <Aaaa>/</Aaaa> ; <Aaaa>?</Aaaa> ; <Aaaa>!</Aaaa> ; ---> Element value can be acquired...");
 	int Offset = 0;
-	StkObjectUtil Sou;
 
 	TCHAR* Xml1 = _T("<Aaaa>=</Aaaa>");
 	TCHAR* Xml2 = _T("<Aaaa>/</Aaaa>");
 	TCHAR* Xml3 = _T("<Aaaa>?</Aaaa>");
 	TCHAR* Xml4 = _T("<Aaaa>!</Aaaa>");
 
-	StkObject* RetObj1 = Sou.CreateObjectFromXml(Xml1, &Offset);
-	StkObject* RetObj2 = Sou.CreateObjectFromXml(Xml2, &Offset);
-	StkObject* RetObj3 = Sou.CreateObjectFromXml(Xml3, &Offset);
-	StkObject* RetObj4 = Sou.CreateObjectFromXml(Xml4, &Offset);
+	StkObject* RetObj1 = StkObject::CreateObjectFromXml(Xml1, &Offset);
+	StkObject* RetObj2 = StkObject::CreateObjectFromXml(Xml2, &Offset);
+	StkObject* RetObj3 = StkObject::CreateObjectFromXml(Xml3, &Offset);
+	StkObject* RetObj4 = StkObject::CreateObjectFromXml(Xml4, &Offset);
 
 	if (lstrcmp(RetObj1->GetStringValue(), _T("=")) != 0) {
 		printf("NG\r\n");
@@ -585,9 +579,8 @@ void XmlDecodingTest3(TCHAR* Name)
 	TCHAR* Xml = new TCHAR[512];
 	lstrcpy(Xml, _T("<Aaaa Lt=\"&lt;\" Gt=\"&gt;\" Amp=\"&amp;\" Quot=\"&quot;\" Apos=\"&apos;\"><Bbbb>&lt;</Bbbb><Bbbb>&gt;</Bbbb><Bbbb>&amp;</Bbbb><Bbbb>&quot;</Bbbb><Bbbb>&apos;</Bbbb></Aaaa>"));
 
-	StkObjectUtil Sou;
 	int Offset = 0;
-	StkObject* Elem = Sou.CreateObjectFromXml(Xml, &Offset);
+	StkObject* Elem =StkObject::CreateObjectFromXml(Xml, &Offset);
 	StkObject* Attr1 = Elem->GetFirstAttribute();
 	StkObject* Attr2 = Attr1->GetNext();
 	StkObject* Attr3 = Attr2->GetNext();
@@ -632,9 +625,8 @@ void XmlDecodingTest4(TCHAR* Name)
 	TCHAR* Xml = new TCHAR[512];
 	lstrcpy(Xml, _T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Bbbb>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Bbbb><Bbbb>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Bbbb></Aaaa>"));
 
-	StkObjectUtil Sou;
 	int Offset = 0;
-	StkObject* Elem = Sou.CreateObjectFromXml(Xml, &Offset);
+	StkObject* Elem = StkObject::CreateObjectFromXml(Xml, &Offset);
 	StkObject* Attr1 = Elem->GetFirstAttribute();
 	StkObject* Attr2 = Attr1->GetNext();
 	StkObject* Elem1 = Elem->GetFirstChildElement();
@@ -664,37 +656,36 @@ void XmlDecodingTest4(TCHAR* Name)
 
 void XmlDecordingAbnormalTest1()
 {
-	AbnormalCaseForXml(_T(""), StkObjectUtil::ERROR_XML_NO_ELEMENT_FOUND);
-	AbnormalCaseForXml(NULL, StkObjectUtil::ERROR_XML_NO_ELEMENT_FOUND);
-	AbnormalCaseForXml(_T("<>"), StkObjectUtil::ERROR_XML_INVALID_ELEMENT_END_FOUND);
-	AbnormalCaseForXml(_T("<<"), StkObjectUtil::ERROR_XML_INVALID_ELEMENT_START_FOUND);
-	AbnormalCaseForXml(_T("<\"ABC\"/>"), StkObjectUtil::ERROR_XML_INVALID_QUOT_FOUND);
-	AbnormalCaseForXml(_T("xyz"), StkObjectUtil::ERROR_XML_CANNOT_HANDLE);
-	AbnormalCaseForXml(_T("<Aaa Bbb=Ccc/>"), StkObjectUtil::ERROR_XML_CANNOT_HANDLE);
-	AbnormalCaseForXml(_T("<Aaa Bbb Ccc=\"Ddd\"/>"), StkObjectUtil::ERROR_XML_CANNOT_HANDLE);
-	AbnormalCaseForXml(_T("<Aaa Bbb=></Aaa>"), StkObjectUtil::ERROR_XML_INVALID_ELEMENT_END_FOUND);
-	AbnormalCaseForXml(_T("<Aaa =></Aaa>"), StkObjectUtil::ERROR_XML_EQUAL_FOUND_WITHOUT_ATTRIBUTE_NAME);
-	AbnormalCaseForXml(_T("<Aaa></Aaa"), StkObjectUtil::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT_END);
-	AbnormalCaseForXml(_T("<Aaa>/Aaa"), StkObjectUtil::ERROR_XML_ELEMENT_END_NOT_FOUND);
-	AbnormalCaseForXml(_T("</Aaa>"), StkObjectUtil::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT);
-	AbnormalCaseForXml(_T("<Aaaa"), StkObjectUtil::ERROR_XML_ELEMENT_END_NOT_FOUND);
-	AbnormalCaseForXml(_T("<Aaaa Xxx=\"Xxx"), StkObjectUtil::ERROR_XML_ELEMENT_END_NOT_FOUND);
-	AbnormalCaseForXml(_T("<?xml?></?xml?>"), StkObjectUtil::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT);
-	AbnormalCaseForXml(_T("<Aaa><Bbb><Cc"), StkObjectUtil::ERROR_XML_ELEMENT_END_NOT_FOUND);
-	AbnormalCaseForXml(_T("<Aaa>&"), StkObjectUtil::ERROR_XML_ELEMENT_END_NOT_FOUND);
+	AbnormalCaseForXml(_T(""), StkObject::ERROR_XML_NO_ELEMENT_FOUND);
+	AbnormalCaseForXml(NULL, StkObject::ERROR_XML_NO_ELEMENT_FOUND);
+	AbnormalCaseForXml(_T("<>"), StkObject::ERROR_XML_INVALID_ELEMENT_END_FOUND);
+	AbnormalCaseForXml(_T("<<"), StkObject::ERROR_XML_INVALID_ELEMENT_START_FOUND);
+	AbnormalCaseForXml(_T("<\"ABC\"/>"), StkObject::ERROR_XML_INVALID_QUOT_FOUND);
+	AbnormalCaseForXml(_T("xyz"), StkObject::ERROR_XML_CANNOT_HANDLE);
+	AbnormalCaseForXml(_T("<Aaa Bbb=Ccc/>"), StkObject::ERROR_XML_CANNOT_HANDLE);
+	AbnormalCaseForXml(_T("<Aaa Bbb Ccc=\"Ddd\"/>"), StkObject::ERROR_XML_CANNOT_HANDLE);
+	AbnormalCaseForXml(_T("<Aaa Bbb=></Aaa>"), StkObject::ERROR_XML_INVALID_ELEMENT_END_FOUND);
+	AbnormalCaseForXml(_T("<Aaa =></Aaa>"), StkObject::ERROR_XML_EQUAL_FOUND_WITHOUT_ATTRIBUTE_NAME);
+	AbnormalCaseForXml(_T("<Aaa></Aaa"), StkObject::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT_END);
+	AbnormalCaseForXml(_T("<Aaa>/Aaa"), StkObject::ERROR_XML_ELEMENT_END_NOT_FOUND);
+	AbnormalCaseForXml(_T("</Aaa>"), StkObject::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT);
+	AbnormalCaseForXml(_T("<Aaaa"), StkObject::ERROR_XML_ELEMENT_END_NOT_FOUND);
+	AbnormalCaseForXml(_T("<Aaaa Xxx=\"Xxx"), StkObject::ERROR_XML_ELEMENT_END_NOT_FOUND);
+	AbnormalCaseForXml(_T("<?xml?></?xml?>"), StkObject::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT);
+	AbnormalCaseForXml(_T("<Aaa><Bbb><Cc"), StkObject::ERROR_XML_ELEMENT_END_NOT_FOUND);
+	AbnormalCaseForXml(_T("<Aaa>&"), StkObject::ERROR_XML_ELEMENT_END_NOT_FOUND);
 }
 
 void JsonDecodingTest1()
 {
 	TCHAR Msg[512];
-	StkObjectUtil Sou;
 	int Offset;
 	StkObject* RetObj;
 
 	////////////////////////////////////////////////////
 	lstrcpy(Msg, _T("\"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : 999.9 }"));
 	wprintf(_T("JSON Decoding : %s ..."), Msg);
-	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset, NULL);
 	if (RetObj == NULL || RetObj->GetChildElementCount() != 3 || lstrcmp(RetObj->GetName(), _T("Aaa")) != 0 ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), _T("This is a test.")) != 0 ||
 		RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
@@ -706,7 +697,7 @@ void JsonDecodingTest1()
 	////////////////////////////////////////////////////
 	lstrcpy(Msg, _T("\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 999.9 }}"));
 	wprintf(_T("JSON Decoding : %s ..."), Msg);
-	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset, NULL);
 	if (RetObj == NULL ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), _T("D1")) != 0 ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetStringValue(), _T("test")) != 0 ||
@@ -719,7 +710,7 @@ void JsonDecodingTest1()
 	////////////////////////////////////////////////////
 	lstrcpy(Msg, _T("\"Yyy\" : {\"Xxx\" : [\"Aaa\", \"Bbb\", \"Ccc\"]}"));
 	wprintf(_T("JSON Decoding : %s ..."), Msg);
-	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset, NULL);
 	if (RetObj == NULL ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetName(), _T("Xxx")) != 0 || lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), _T("Aaa")) != 0 ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), _T("Xxx")) != 0 || lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), _T("Ccc")) != 0) {
@@ -731,7 +722,7 @@ void JsonDecodingTest1()
 	////////////////////////////////////////////////////
 	lstrcpy(Msg, _T("\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}"));
 	wprintf(_T("JSON Decoding : %s ..."), Msg);
-	RetObj = Sou.CreateObjectFromJson(Msg, &Offset, NULL);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset, NULL);
 	if (RetObj == NULL ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetName(), _T("Aaa")) != 0 || RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetIntValue() != 456 ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetName(), _T("Aaa")) != 0 || RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 222) {
@@ -756,7 +747,6 @@ void JsonDecodingTest2()
 	std::wstring Str2;
 	std::wstring Str3;
 	std::wstring Str4;
-	StkObjectUtil Sou;
 	int Offset;
 
 	////////////////////////////////////////////////////
@@ -764,10 +754,10 @@ void JsonDecodingTest2()
 	lstrcpy(Msg2, _T(    "\"Aaa\"    :    {    \"Bbb\"    :    [    {    \"Xxx\"    :    123    ,    \"Bbb\"    :    456    ,    \"Ccc\"    :    789    }    ,    \"test\"    ,    0.1    ]    }    "));
 	lstrcpy(Msg3, _T("\t\t\"Aaa\"\t\t:\t\t{\t\t\"Bbb\"\t\t:\t\t[\t\t{\t\t\"Xxx\"\t\t:\t\t123\t\t,\t\t\"Bbb\"\t\t:\t\t456\t\t,\t\t\"Ccc\"\t\t:\t\t789\t\t}\t\t,\t\t\"test\"\t\t,\t\t0.1\t\t]\t\t}\t\t"));
 	lstrcpy(Msg4, _T("\r\n\"Aaa\"\r\n:\r\n{\r\n\"Bbb\"\r\n:\r\n[\r\n{\r\n\"Xxx\"\r\n:\r\n123\r\n,\r\n\"Bbb\"\r\n:\r\n456\r\n,\r\n\"Ccc\"\r\n:\r\n789\r\n}\r\n,\r\n\"test\"\r\n,\r\n0.1\r\n]\r\n}\r\n"));
-	RetObj1 = Sou.CreateObjectFromJson(Msg1, &Offset, NULL);
-	RetObj2 = Sou.CreateObjectFromJson(Msg2, &Offset, NULL);
-	RetObj3 = Sou.CreateObjectFromJson(Msg3, &Offset, NULL);
-	RetObj4 = Sou.CreateObjectFromJson(Msg4, &Offset, NULL);
+	RetObj1 = StkObject::CreateObjectFromJson(Msg1, &Offset, NULL);
+	RetObj2 = StkObject::CreateObjectFromJson(Msg2, &Offset, NULL);
+	RetObj3 = StkObject::CreateObjectFromJson(Msg3, &Offset, NULL);
+	RetObj4 = StkObject::CreateObjectFromJson(Msg4, &Offset, NULL);
 	RetObj1->ToJson(&Str1);
 	RetObj2->ToJson(&Str2);
 	RetObj3->ToJson(&Str3);
@@ -786,19 +776,19 @@ void JsonDecodingTest2()
 
 void JsonDecordingAbnormalTest1()
 {
-	AbnormalCaseForJson(_T(""), StkObjectUtil::ERROR_JSON_NO_ELEMENT_FOUND);
-	AbnormalCaseForJson(NULL, StkObjectUtil::ERROR_JSON_NO_ELEMENT_FOUND);
-	AbnormalCaseForJson(_T("{ \"Aaa\" : \"Xxx\" }"), StkObjectUtil::ERROR_JSON_INVALID_STRUCTURE);
-	AbnormalCaseForJson(_T("[ \"Aaa\" : \"Xxx\" ]"), StkObjectUtil::ERROR_JSON_INVALID_ARRAY_STRUCTURE);
-	AbnormalCaseForJson(_T("\"Aaa\" : 123"), StkObjectUtil::ERROR_JSON_NO_ROOT_ELEMENT);
-	AbnormalCaseForJson(_T("\"Aaa\" : 999.9"), StkObjectUtil::ERROR_JSON_NO_ROOT_ELEMENT);
-	AbnormalCaseForJson(_T("\"Aaa\" : \"Xyz\""), StkObjectUtil::ERROR_JSON_NO_ROOT_ELEMENT);
-	AbnormalCaseForJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : "), StkObjectUtil::ERROR_JSON_INVALID_STRUCTURE);
-	AbnormalCaseForJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : \""), StkObjectUtil::ERROR_JSON_INVALID_STRUCTURE);
-	AbnormalCaseForJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" \"Xyz\" }"), StkObjectUtil::ERROR_JSON_INVALID_QUOT_FOUND);
-	AbnormalCaseForJson(_T("\"Aaa\" : { \"Bbb\" : 123, Ccc : 456 }"), StkObjectUtil::ERROR_JSON_CANNOT_HANDLE);
-	AbnormalCaseForJson(_T("\"Aaa\" : { \"Bbb\" : 123, \"Ccc\" : 456, \"Ddd\" : 789 {"), StkObjectUtil::ERROR_JSON_INVALID_STRUCTURE);
-	AbnormalCaseForJson(_T("\"Aaa\" : {}"), StkObjectUtil::ERROR_JSON_INVALID_STRUCTURE);
+	AbnormalCaseForJson(_T(""), StkObject::ERROR_JSON_NO_ELEMENT_FOUND);
+	AbnormalCaseForJson(NULL, StkObject::ERROR_JSON_NO_ELEMENT_FOUND);
+	AbnormalCaseForJson(_T("{ \"Aaa\" : \"Xxx\" }"), StkObject::ERROR_JSON_INVALID_STRUCTURE);
+	AbnormalCaseForJson(_T("[ \"Aaa\" : \"Xxx\" ]"), StkObject::ERROR_JSON_INVALID_ARRAY_STRUCTURE);
+	AbnormalCaseForJson(_T("\"Aaa\" : 123"), StkObject::ERROR_JSON_NO_ROOT_ELEMENT);
+	AbnormalCaseForJson(_T("\"Aaa\" : 999.9"), StkObject::ERROR_JSON_NO_ROOT_ELEMENT);
+	AbnormalCaseForJson(_T("\"Aaa\" : \"Xyz\""), StkObject::ERROR_JSON_NO_ROOT_ELEMENT);
+	AbnormalCaseForJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : "), StkObject::ERROR_JSON_INVALID_STRUCTURE);
+	AbnormalCaseForJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : \""), StkObject::ERROR_JSON_INVALID_STRUCTURE);
+	AbnormalCaseForJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" \"Xyz\" }"), StkObject::ERROR_JSON_INVALID_QUOT_FOUND);
+	AbnormalCaseForJson(_T("\"Aaa\" : { \"Bbb\" : 123, Ccc : 456 }"), StkObject::ERROR_JSON_CANNOT_HANDLE);
+	AbnormalCaseForJson(_T("\"Aaa\" : { \"Bbb\" : 123, \"Ccc\" : 456, \"Ddd\" : 789 {"), StkObject::ERROR_JSON_INVALID_STRUCTURE);
+	AbnormalCaseForJson(_T("\"Aaa\" : {}"), StkObject::ERROR_JSON_INVALID_STRUCTURE);
 }
 
 void CloneTest(StkObject* Obj)
@@ -864,7 +854,6 @@ int MemoryLeakChecking2()
 	printf("Checks memory leak (repeat encoding and decoding)...");
 	long MaxMem[30];
 	std::wstring StrVal;
-	StkObjectUtil Sou;
 	int Offset = 0;
 	StkObject* NewObj1;
 	StkObject* NewObj2;
@@ -894,12 +883,12 @@ int MemoryLeakChecking2()
 			NewObj1->ToJson(&StrVal);
 			delete NewObj1;
 
-			NewObj2 = Sou.CreateObjectFromXml(_T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Amp>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Amp><Quot>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Quot></Aaaa>"), &Offset);
+			NewObj2 = StkObject::CreateObjectFromXml(_T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Amp>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Amp><Quot>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Quot></Aaaa>"), &Offset);
 			StrVal = _T("");
 			NewObj2->ToXml(&StrVal);
 			delete NewObj2;
 
-			NewObj2 = Sou.CreateObjectFromJson(_T("\"Aaaa\" : { \"Bbbb\" : \"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\", \"Bbbb\" : \"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", \"Bbbb\" : \"\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\", \"Bbbb\" : \"\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\", \"Bbbb\" : \"\\f\\f\\f\\f\\f\\f\\f\\f\\f\\f\", \"Bbbb\" : \"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\", \"Bbbb\" : \"\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\", \"Bbbb\" : \"\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\" }"), &Offset, NULL);
+			NewObj2 = StkObject::CreateObjectFromJson(_T("\"Aaaa\" : { \"Bbbb\" : \"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\", \"Bbbb\" : \"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", \"Bbbb\" : \"\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\", \"Bbbb\" : \"\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\", \"Bbbb\" : \"\\f\\f\\f\\f\\f\\f\\f\\f\\f\\f\", \"Bbbb\" : \"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\", \"Bbbb\" : \"\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\", \"Bbbb\" : \"\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\" }"), &Offset, NULL);
 			StrVal = _T("");
 			NewObj2->ToJson(&StrVal);
 			delete NewObj2;
@@ -926,44 +915,43 @@ int MemoryLeakChecking3()
 {
 	printf("Checks memory leak (repeat abnormal case)...");
 	long MaxMem[30];
-	StkObjectUtil Sou;
 	int Offset = 0;
 
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		for (int Loop = 0; Loop < 1000; Loop++) {
 			// For XML
-			Sou.CreateObjectFromXml(_T(""), &Offset);
-			Sou.CreateObjectFromXml(NULL, &Offset);
-			Sou.CreateObjectFromXml(_T("<X><Y><Z><></X></Y></Z>"), &Offset);
-			Sou.CreateObjectFromXml(_T("<X><Y><Z><<</X></Y></Z>"), &Offset);
-			Sou.CreateObjectFromXml(_T("<X><Y><Z><\"ABC\"/></X></Y></Z>"), &Offset);
-			Sou.CreateObjectFromXml(_T("xyz"), &Offset);
-			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb=Ccc/></X></Y></Z>"), &Offset);
-			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb Ccc=\"Ddd\"/></X></Y></Z>"), &Offset);
-			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb=></Aaa></X></Y></Z>"), &Offset);
-			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaa =></Aaa></X></Y></Z>"), &Offset);
-			Sou.CreateObjectFromXml(_T("<Aaa></Aaa"), &Offset);
-			Sou.CreateObjectFromXml(_T("<Aaa>/Aaa"), &Offset);
-			Sou.CreateObjectFromXml(_T("</Aaa>"), &Offset);
-			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaaa"), &Offset);
-			Sou.CreateObjectFromXml(_T("<X><Y><Z><Aaaa Xxx=\"Xxx"), &Offset);
-			Sou.CreateObjectFromXml(_T("<Aaa><Bbb><Cc"), &Offset);
-			Sou.CreateObjectFromXml(_T("<Aaa>&"), &Offset);
+			StkObject::CreateObjectFromXml(_T(""), &Offset);
+			StkObject::CreateObjectFromXml(NULL, &Offset);
+			StkObject::CreateObjectFromXml(_T("<X><Y><Z><></X></Y></Z>"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<X><Y><Z><<</X></Y></Z>"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<X><Y><Z><\"ABC\"/></X></Y></Z>"), &Offset);
+			StkObject::CreateObjectFromXml(_T("xyz"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb=Ccc/></X></Y></Z>"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb Ccc=\"Ddd\"/></X></Y></Z>"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<X><Y><Z><Aaa Bbb=></Aaa></X></Y></Z>"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<X><Y><Z><Aaa =></Aaa></X></Y></Z>"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<Aaa></Aaa"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<Aaa>/Aaa"), &Offset);
+			StkObject::CreateObjectFromXml(_T("</Aaa>"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<X><Y><Z><Aaaa"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<X><Y><Z><Aaaa Xxx=\"Xxx"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Cc"), &Offset);
+			StkObject::CreateObjectFromXml(_T("<Aaa>&"), &Offset);
 
 			// For JSON
-			Sou.CreateObjectFromJson(_T(""), &Offset, NULL);
-			Sou.CreateObjectFromJson(NULL, &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("{ \"Aaa\" : \"Xxx\" }"), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("[ \"Aaa\" : \"Xxx\" ]"), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("\"Aaa\" : 123"), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("\"Aaa\" : 999.9"), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("\"Aaa\" : \"Xyz\""), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : "), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : \""), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" \"Xyz\" }"), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("\"Aaa\" : { \"Bbb\" : 123, Ccc : 456 }"), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("\"Aaa\" : { \"Bbb\" : 123, \"Ccc\" : 456, \"Ddd\" : 789 {"), &Offset, NULL);
-			Sou.CreateObjectFromJson(_T("\"Aaa\" : {}"), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T(""), &Offset, NULL);
+			StkObject::CreateObjectFromJson(NULL, &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("{ \"Aaa\" : \"Xxx\" }"), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("[ \"Aaa\" : \"Xxx\" ]"), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("\"Aaa\" : 123"), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("\"Aaa\" : 999.9"), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("\"Aaa\" : \"Xyz\""), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : "), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" : \""), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("\"Aaa\" : { \"Xyz\" : 123, \"Abc\" \"Xyz\" }"), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("\"Aaa\" : { \"Bbb\" : 123, Ccc : 456 }"), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("\"Aaa\" : { \"Bbb\" : 123, \"Ccc\" : 456, \"Ddd\" : 789 {"), &Offset, NULL);
+			StkObject::CreateObjectFromJson(_T("\"Aaa\" : {}"), &Offset, NULL);
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}

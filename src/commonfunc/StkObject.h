@@ -22,6 +22,28 @@ public:
 	static const int STKOBJECT_ELEM_FLOAT = 22;
 	static const int STKOBJECT_ELEM_STRING = 23;
 
+	// XMS decoding error code
+	static const int ERROR_XML_ELEMENT_END_NOT_FOUND = -100;
+	static const int ERROR_XML_EQUAL_FOUND_WITHOUT_ATTRIBUTE_NAME = -101;
+	static const int ERROR_XML_INVALID_ELEMENT_START_FOUND = -102;
+	static const int ERROR_XML_INVALID_QUOT_FOUND = -103;
+	static const int ERROR_XML_INVALID_ELEMENT_END_FOUND = -104;
+	static const int ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT_END = -105;
+	static const int ERROR_XML_CANNOT_HANDLE = -106;
+	static const int ERROR_XML_NO_ELEMENT_FOUND = -107;
+	static const int ERROR_XML_INVALID_SLASH_FOUND = -108;
+	static const int ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT = -109;
+
+	// JSON decoding error code
+	static const int ERROR_JSON_NO_ELEMENT_FOUND = -200;
+	static const int ERROR_JSON_INVALID_QUOT_FOUND = -201;
+	static const int ERROR_JSON_INVALID_COLON_FOUND = -202;
+	static const int ERROR_JSON_INVALID_STRUCTURE = -203;
+	static const int ERROR_JSON_INVALID_COMMA = -204;
+	static const int ERROR_JSON_CANNOT_HANDLE = -205;
+	static const int ERROR_JSON_INVALID_ARRAY_STRUCTURE = -206;
+	static const int ERROR_JSON_NO_ROOT_ELEMENT = -207;
+
 	StkObject(TCHAR*);
 	StkObject(TCHAR*, int);
 	StkObject(TCHAR*, float);
@@ -56,4 +78,7 @@ public:
 
 	void ToXml(std::wstring* Msg, int Indent = 0); // DO NOT SPECIFY 2ND PARAMETER
 	void ToJson(std::wstring* Msg, int Indent = 0, BOOL ArrayFlag = FALSE); // DO NOT SPECIFY 2ND AND 3RD PARAMETERS
+
+	static StkObject* CreateObjectFromXml(TCHAR*, int*);
+	static StkObject* CreateObjectFromJson(TCHAR*, int*, StkObject*);
 };
