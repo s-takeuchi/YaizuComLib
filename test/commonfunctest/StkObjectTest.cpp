@@ -61,7 +61,7 @@ int GetUsedMemorySizeOfCurrentProcess()
 	return Size;
 }
 
-StkObject* MakeTestData1()
+StkObject* MakeTestData1(int Mode = 0)
 {
 	StkObject* Elem1 = new StkObject(_T("SoftwareCompany"));
 
@@ -73,16 +73,30 @@ StkObject* MakeTestData1()
 	}
 
 	StkObject* Elem2 = new StkObject(_T("Product"));
-	Elem2->AppendAttribute(new StkObject(_T("Name"), _T("Xxxxx paint")));
-	Elem2->AppendAttribute(new StkObject(_T("Price"), _T("11000")));
+	if (Mode == 1) {
+		Elem2->AppendAttribute(new StkObject(_T("Price"), _T("11000")));
+		Elem2->AppendAttribute(new StkObject(_T("Name"), _T("Xxxxx paint")));
+	} else {
+		Elem2->AppendAttribute(new StkObject(_T("Name"), _T("Xxxxx paint")));
+		Elem2->AppendAttribute(new StkObject(_T("Price"), _T("11000")));
+	}
 
 	StkObject* Elem5 = new StkObject(_T("License"));
 	Elem5->AppendAttribute(new StkObject(_T("Cap"), 322.44f));
 	Elem2->AppendChildElement(Elem5);
 
 	StkObject* Elem3 = new StkObject(_T("Product"));
-	Elem3->AppendAttribute(new StkObject(_T("Name"), _T("Aaaaa 3D")));
-	Elem3->AppendAttribute(new StkObject(_T("Price"), _T("39000")));
+	if (Mode == 1) {
+		Elem3->AppendAttribute(new StkObject(_T("Price"), _T("39000")));
+		Elem3->AppendAttribute(new StkObject(_T("Name"), _T("Aaaaa 3D")));
+	} else {
+		Elem3->AppendAttribute(new StkObject(_T("Name"), _T("Aaaaa 3D")));
+		if (Mode == 2) {
+			Elem3->AppendAttribute(new StkObject(_T("Price"), _T(" 39000")));
+		} else {
+			Elem3->AppendAttribute(new StkObject(_T("Price"), _T("39000")));
+		}
+	}
 
 	StkObject* Elem4 = new StkObject(_T("ELEM_INT"), 123);
 	StkObject* Elem7 = new StkObject(_T("ELEM_FLOAT"), 456.7f);
@@ -100,32 +114,57 @@ StkObject* MakeTestData1()
 	return Elem1;
 }
 
-StkObject* MakeTestData2()
+StkObject* MakeTestData2(int Mode = 0)
 {
 	StkObject* Elem1 = new StkObject(_T("個人の財産"));
 
-	StkObject* Elem1_1 = new StkObject(_T("乗用車"));
-	StkObject* Elem1_1_1 = new StkObject(_T("カローラ"));
-	Elem1_1_1->AppendAttribute(new StkObject(_T("色"), _T("赤")));
-	Elem1_1_1->AppendAttribute(new StkObject(_T("メーカー"), _T("トヨタ")));
-	Elem1_1->AppendChildElement(Elem1_1_1);
-	StkObject* Elem1_1_2 = new StkObject(_T("ブルーバード"));
-	Elem1_1_2->AppendAttribute(new StkObject(_T("色"), _T("白")));
-	Elem1_1_2->AppendAttribute(new StkObject(_T("メーカー"), _T("日産")));
-	Elem1_1->AppendChildElement(Elem1_1_2);
-	Elem1->AppendChildElement(Elem1_1);
+	if (Mode == 1) {
+		StkObject* Elem1_3 = new StkObject(_T("現金"));
+		Elem1_3->AppendChildElement(new StkObject(_T("C銀行"), 7000000));
+		Elem1_3->AppendChildElement(new StkObject(_T("A銀行"), 5000000));
+		Elem1_3->AppendChildElement(new StkObject(_T("B銀行"), 10000000));
+		Elem1->AppendChildElement(Elem1_3);
 
-	StkObject* Elem1_2 = new StkObject(_T("時計"));
-	Elem1_2->AppendChildElement(new StkObject(_T("グランドセイコー"), _T("白")));
-	Elem1_2->AppendChildElement(new StkObject(_T("オメガ"), _T("黒")));
-	Elem1_2->AppendChildElement(new StkObject(_T("ロレックス"), _T("金")));
-	Elem1->AppendChildElement(Elem1_2);
+		StkObject* Elem1_2 = new StkObject(_T("時計"));
+		Elem1_2->AppendChildElement(new StkObject(_T("ロレックス"), _T("金")));
+		Elem1_2->AppendChildElement(new StkObject(_T("オメガ"), _T("黒")));
+		Elem1_2->AppendChildElement(new StkObject(_T("グランドセイコー"), _T("白")));
+		Elem1->AppendChildElement(Elem1_2);
 
-	StkObject* Elem1_3 = new StkObject(_T("現金"));
-	Elem1_3->AppendChildElement(new StkObject(_T("A銀行"), 5000000));
-	Elem1_3->AppendChildElement(new StkObject(_T("B銀行"), 10000000));
-	Elem1_3->AppendChildElement(new StkObject(_T("C銀行"), 7000000));
-	Elem1->AppendChildElement(Elem1_3);
+		StkObject* Elem1_1 = new StkObject(_T("乗用車"));
+		StkObject* Elem1_1_2 = new StkObject(_T("ブルーバード"));
+		Elem1_1_2->AppendAttribute(new StkObject(_T("メーカー"), _T("日産")));
+		Elem1_1_2->AppendAttribute(new StkObject(_T("色"), _T("白")));
+		Elem1_1->AppendChildElement(Elem1_1_2);
+		StkObject* Elem1_1_1 = new StkObject(_T("カローラ"));
+		Elem1_1_1->AppendAttribute(new StkObject(_T("メーカー"), _T("トヨタ")));
+		Elem1_1_1->AppendAttribute(new StkObject(_T("色"), _T("赤")));
+		Elem1_1->AppendChildElement(Elem1_1_1);
+		Elem1->AppendChildElement(Elem1_1);
+	} else {
+		StkObject* Elem1_1 = new StkObject(_T("乗用車"));
+		StkObject* Elem1_1_1 = new StkObject(_T("カローラ"));
+		Elem1_1_1->AppendAttribute(new StkObject(_T("色"), _T("赤")));
+		Elem1_1_1->AppendAttribute(new StkObject(_T("メーカー"), _T("トヨタ")));
+		Elem1_1->AppendChildElement(Elem1_1_1);
+		StkObject* Elem1_1_2 = new StkObject(_T("ブルーバード"));
+		Elem1_1_2->AppendAttribute(new StkObject(_T("色"), _T("白")));
+		Elem1_1_2->AppendAttribute(new StkObject(_T("メーカー"), _T("日産")));
+		Elem1_1->AppendChildElement(Elem1_1_2);
+		Elem1->AppendChildElement(Elem1_1);
+
+		StkObject* Elem1_2 = new StkObject(_T("時計"));
+		Elem1_2->AppendChildElement(new StkObject(_T("グランドセイコー"), _T("白")));
+		Elem1_2->AppendChildElement(new StkObject(_T("オメガ"), _T("黒")));
+		Elem1_2->AppendChildElement(new StkObject(_T("ロレックス"), _T("金")));
+		Elem1->AppendChildElement(Elem1_2);
+
+		StkObject* Elem1_3 = new StkObject(_T("現金"));
+		Elem1_3->AppendChildElement(new StkObject(_T("A銀行"), 5000000));
+		Elem1_3->AppendChildElement(new StkObject(_T("B銀行"), 10000000));
+		Elem1_3->AppendChildElement(new StkObject(_T("C銀行"), 7000000));
+		Elem1->AppendChildElement(Elem1_3);
+	}
 
 	StkObject* Elem1_4 = new StkObject(_T("証券"));
 	StkObject* Elem1_4_1 = new StkObject(_T("株"));
@@ -133,9 +172,19 @@ StkObject* MakeTestData2()
 	Elem1_4_1->AppendChildElement(new StkObject(_T("B社"), 500000));
 	Elem1_4->AppendChildElement(Elem1_4_1);
 	StkObject* Elem1_4_2 = new StkObject(_T("国債"));
-	Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 1000000));
-	Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 2000000));
-	Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 1500000));
+	if (Mode == 1) {
+		Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 1000000));
+		Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 2000000));
+		Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 1500000));
+	} else {
+		Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 2000000));
+		Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 1500000));
+		if (Mode == 2) {
+			Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 1000001));
+		} else {
+			Elem1_4_2->AppendChildElement(new StkObject(_T("債権"), 1000000));
+		}
+	}
 	Elem1_4->AppendChildElement(Elem1_4_2);
 	StkObject* Elem1_4_3 = new StkObject(_T("金券"));
 	Elem1_4_3->AppendChildElement(new StkObject(_T("VISA"), 200000));
@@ -258,7 +307,65 @@ void GeneralTestCase2(StkObject* Elem1, TCHAR* Name)
 		exit(0);
 	}
 	printf("OK\r\n");
+}
 
+void GeneralTestCase3()
+{
+	wprintf(_T("General Test #3 Equals 1st ..."));
+	StkObject* Origin1 = MakeTestData1();
+	StkObject* Normal1 = MakeTestData1(0);
+	StkObject* Order1 = MakeTestData1(1);
+	StkObject* Diff1 = MakeTestData1(2);
+
+	std::wstring XmlOrigin1;
+	std::wstring XmlNormal1;
+	std::wstring XmlOrder1;
+	std::wstring XmlDiff1;
+	Origin1->ToXml(&XmlOrigin1);
+	Normal1->ToXml(&XmlNormal1);
+	Order1->ToXml(&XmlOrder1);
+	Diff1->ToXml(&XmlDiff1);
+
+	BOOL Ch1 = Origin1->Equals(Normal1);
+	BOOL Ch2 = Origin1->Equals(Order1);
+	BOOL Ch3 = Origin1->Equals(Diff1);
+	if (!Ch1 || !Ch2 || Ch3) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	delete Origin1;
+	delete Normal1;
+	delete Order1;
+	delete Diff1;
+
+	wprintf(_T("General Test #3 Equals 2nd ..."));
+	StkObject* Origin2 = MakeTestData1();
+	StkObject* Normal2 = MakeTestData2(0);
+	StkObject* Order2 = MakeTestData2(1);
+	StkObject* Diff2 = MakeTestData2(2);
+
+	std::wstring XmlOrigin2;
+	std::wstring XmlNormal2;
+	std::wstring XmlOrder2;
+	std::wstring XmlDiff2;
+	Origin2->ToXml(&XmlOrigin2);
+	Normal2->ToXml(&XmlNormal2);
+	Order2->ToXml(&XmlOrder2);
+	Diff2->ToXml(&XmlDiff2);
+
+	BOOL Ci1 = Origin2->Equals(Normal2);
+	BOOL Ci2 = Origin2->Equals(Order2);
+	BOOL Ci3 = Origin2->Equals(Diff2);
+	if (!Ci1 || !Ci2 || Ci3) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	delete Origin2;
+	delete Normal2;
+	delete Order2;
+	delete Diff2;
 }
 
 void JsonEncodingTest1()
@@ -805,7 +912,7 @@ void CloneTest(StkObject* Obj)
 	NewObj2->ToXml(&Msg2);
 
 	printf("Clone Test#Validation of two clone's string...");
-	if (lstrcmp(Msg1.c_str(), Msg2.c_str()) == 0 && lstrcmp(Msg1.c_str(), OrgMsg.c_str()) == 0) {
+	if (lstrcmp(Msg1.c_str(), Msg2.c_str()) == 0 && lstrcmp(Msg1.c_str(), OrgMsg.c_str()) == 0 && NewObj1->Equals(NewObj2) && NewObj1->Equals(Obj)) {
 		printf("OK\r\n");
 	} else {
 		printf("NG\r\n");
@@ -1008,6 +1115,8 @@ void StkObjectTest()
 		StkObject* Elem2 = MakeTestData2();
 		GeneralTestCase2(Elem2, _T("GeneralCheck2"));
 		delete Elem2;
+
+		GeneralTestCase3();
 	}
 
 	// Clone check

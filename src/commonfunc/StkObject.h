@@ -51,6 +51,8 @@ public:
 	virtual ~StkObject();
 
 	StkObject* Clone();
+	BOOL Equals(StkObject*);
+	BOOL Contains(StkObject*);
 	int GetArrayLength();
 	int GetChildElementCount();
 	int GetAttributeCount();

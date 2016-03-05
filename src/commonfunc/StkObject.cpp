@@ -32,6 +32,9 @@ public:
 	static TCHAR* GetValue(TCHAR*, int*);
 	static void CleanupObjectsForXml(TCHAR*, StkObject*);
 	static void CleanupObjectsForJson(TCHAR*, StkObject*);
+
+	StkObject* ContainsInArray(StkObject*, StkObject*);
+	BOOL Equals(StkObject*, StkObject*);
 };
 
 void StkObject::Impl::ClearMember()
@@ -417,6 +420,105 @@ TCHAR* StkObject::Impl::GetValue(TCHAR* TgtValue, int* Len)
 	return RtnValue;
 }
 
+StkObject* StkObject::Impl::ContainsInArray(StkObject* Obj1, StkObject* Obj2)
+{
+	if (Obj1 == NULL || Obj2 == NULL) {
+		return FALSE;
+	}
+	do {
+		if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
+			continue;
+		}
+		int CurType = Obj1->GetType();
+		if (CurType != Obj2->GetType()) {
+			continue;
+		}
+		if (CurType == StkObject::STKOBJECT_ATTR_INT || CurType == StkObject::STKOBJECT_ELEM_INT) {
+			if (Obj1->GetIntValue() == Obj2->GetIntValue()) {
+				return Obj2;
+			}
+		} else if (CurType == StkObject::STKOBJECT_ATTR_FLOAT || CurType == StkObject::STKOBJECT_ELEM_FLOAT) {
+			if (Obj1->GetFloatValue() == Obj2->GetFloatValue()) {
+				return Obj2;
+			}
+		} else if (CurType == StkObject::STKOBJECT_ATTR_STRING || CurType == StkObject::STKOBJECT_ELEM_STRING) {
+			if (lstrcmp(Obj1->GetStringValue(), Obj2->GetStringValue()) == 0) {
+				return Obj2;
+			}
+		} else if (CurType == StkObject::STKOBJECT_ELEMENT) {
+			return Obj2;
+		} else {
+			continue;
+		}
+	} while (Obj2 = Obj2->GetNext());
+	return NULL;
+}
+
+BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
+{
+	if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
+		return FALSE;
+	}
+	if (Obj1->GetType() == StkObject::STKOBJECT_ELEMENT) {
+		if (Obj1->GetAttributeCount() != Obj2->GetAttributeCount()) {
+			return FALSE;
+		}
+		if (Obj1->GetChildElementCount() != Obj2->GetChildElementCount()) {
+			return FALSE;
+		}
+
+		StkObject* AttrObj1 = Obj1->GetFirstAttribute();
+		StkObject* AttrObj2 = Obj2->GetFirstAttribute();
+		if (AttrObj1 != NULL && AttrObj2 != NULL) {
+			BOOL FndAttrFlag = FALSE;
+			while (AttrObj1) {
+				if (ContainsInArray(AttrObj1, AttrObj2) != NULL) {
+					FndAttrFlag = TRUE;
+					break;
+				}
+				AttrObj1 = AttrObj1->GetNext();
+			}
+			if (FndAttrFlag == FALSE) {
+				return FALSE;
+			}
+		} else if (AttrObj1 != NULL || AttrObj2 != NULL) {
+			return FALSE;
+		}
+
+		StkObject* ElemObj1 = Obj1->GetFirstChildElement();
+		StkObject* ElemObj2 = Obj2->GetFirstChildElement();
+		if (ElemObj1 != NULL && ElemObj2 != NULL) {
+			BOOL FndElemFlag = FALSE;
+			while (ElemObj1) {
+				StkObject* AcquiredObj = ContainsInArray(ElemObj1, ElemObj2);
+				if (AcquiredObj != NULL) {
+					FndElemFlag = TRUE;
+				}
+				if (AcquiredObj->GetType() == StkObject::STKOBJECT_ELEMENT) {
+					BOOL Ret = Equals(ElemObj1, AcquiredObj);
+					if (Ret == FALSE) {
+						return Ret;
+					}
+					}
+				if (FndElemFlag == TRUE) {
+					break;
+				}
+				ElemObj1 = ElemObj1->GetNext();
+			}
+			if (FndElemFlag == FALSE) {
+				return FALSE;
+			}
+		} else if (ElemObj1 != NULL || ElemObj2 != NULL) {
+			return FALSE;
+		}
+	} else {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+
+
 
 
 
@@ -535,6 +637,16 @@ StkObject* StkObject::Clone()
 		}
 	}
 	return NewObj;
+}
+
+BOOL StkObject::Equals(StkObject* Obj)
+{
+	return pImpl->Equals(this, Obj);
+}
+
+BOOL StkObject::Contains(StkObject* Obj)
+{
+	return FALSE;
 }
 
 int StkObject::GetArrayLength()
