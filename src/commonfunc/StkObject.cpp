@@ -470,16 +470,11 @@ BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 		StkObject* AttrObj1 = Obj1->GetFirstAttribute();
 		StkObject* AttrObj2 = Obj2->GetFirstAttribute();
 		if (AttrObj1 != NULL && AttrObj2 != NULL) {
-			BOOL FndAttrFlag = FALSE;
 			while (AttrObj1) {
-				if (ContainsInArray(AttrObj1, AttrObj2) != NULL) {
-					FndAttrFlag = TRUE;
-					break;
+				if (ContainsInArray(AttrObj1, AttrObj2) == NULL) {
+					return FALSE;
 				}
 				AttrObj1 = AttrObj1->GetNext();
-			}
-			if (FndAttrFlag == FALSE) {
-				return FALSE;
 			}
 		} else if (AttrObj1 != NULL || AttrObj2 != NULL) {
 			return FALSE;
@@ -488,25 +483,25 @@ BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 		StkObject* ElemObj1 = Obj1->GetFirstChildElement();
 		StkObject* ElemObj2 = Obj2->GetFirstChildElement();
 		if (ElemObj1 != NULL && ElemObj2 != NULL) {
-			BOOL FndElemFlag = FALSE;
 			while (ElemObj1) {
-				StkObject* AcquiredObj = ContainsInArray(ElemObj1, ElemObj2);
-				if (AcquiredObj != NULL) {
-					FndElemFlag = TRUE;
-				}
-				if (AcquiredObj->GetType() == StkObject::STKOBJECT_ELEMENT) {
-					BOOL Ret = Equals(ElemObj1, AcquiredObj);
-					if (Ret == FALSE) {
-						return Ret;
+				if (ElemObj1->GetType() == StkObject::STKOBJECT_ELEMENT) {
+					StkObject* AcquiredObj = ElemObj2;
+					BOOL Ret = FALSE;
+					do {
+						AcquiredObj = ContainsInArray(ElemObj1, AcquiredObj);
+						if (AcquiredObj == NULL) {
+							return FALSE;
+						}
+						Ret = Equals(ElemObj1, AcquiredObj);
+						AcquiredObj = AcquiredObj->GetNext();
+					} while (!Ret);
+				} else {
+					StkObject* AcquiredObj = ContainsInArray(ElemObj1, ElemObj2);
+					if (AcquiredObj == NULL) {
+						return FALSE;
 					}
-					}
-				if (FndElemFlag == TRUE) {
-					break;
 				}
 				ElemObj1 = ElemObj1->GetNext();
-			}
-			if (FndElemFlag == FALSE) {
-				return FALSE;
 			}
 		} else if (ElemObj1 != NULL || ElemObj2 != NULL) {
 			return FALSE;

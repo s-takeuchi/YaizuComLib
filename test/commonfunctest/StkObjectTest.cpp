@@ -311,21 +311,11 @@ void GeneralTestCase2(StkObject* Elem1, TCHAR* Name)
 
 void GeneralTestCase3()
 {
-	wprintf(_T("General Test #3 Equals 1st ..."));
+	wprintf(_T("GeneralCheck3#Test of Equals 1st ..."));
 	StkObject* Origin1 = MakeTestData1();
 	StkObject* Normal1 = MakeTestData1(0);
 	StkObject* Order1 = MakeTestData1(1);
 	StkObject* Diff1 = MakeTestData1(2);
-
-	std::wstring XmlOrigin1;
-	std::wstring XmlNormal1;
-	std::wstring XmlOrder1;
-	std::wstring XmlDiff1;
-	Origin1->ToXml(&XmlOrigin1);
-	Normal1->ToXml(&XmlNormal1);
-	Order1->ToXml(&XmlOrder1);
-	Diff1->ToXml(&XmlDiff1);
-
 	BOOL Ch1 = Origin1->Equals(Normal1);
 	BOOL Ch2 = Origin1->Equals(Order1);
 	BOOL Ch3 = Origin1->Equals(Diff1);
@@ -339,21 +329,11 @@ void GeneralTestCase3()
 	delete Order1;
 	delete Diff1;
 
-	wprintf(_T("General Test #3 Equals 2nd ..."));
-	StkObject* Origin2 = MakeTestData1();
+	wprintf(_T("GeneralCheck3#Test of Equals 2nd ..."));
+	StkObject* Origin2 = MakeTestData2();
 	StkObject* Normal2 = MakeTestData2(0);
 	StkObject* Order2 = MakeTestData2(1);
 	StkObject* Diff2 = MakeTestData2(2);
-
-	std::wstring XmlOrigin2;
-	std::wstring XmlNormal2;
-	std::wstring XmlOrder2;
-	std::wstring XmlDiff2;
-	Origin2->ToXml(&XmlOrigin2);
-	Normal2->ToXml(&XmlNormal2);
-	Order2->ToXml(&XmlOrder2);
-	Diff2->ToXml(&XmlDiff2);
-
 	BOOL Ci1 = Origin2->Equals(Normal2);
 	BOOL Ci2 = Origin2->Equals(Order2);
 	BOOL Ci3 = Origin2->Equals(Diff2);
