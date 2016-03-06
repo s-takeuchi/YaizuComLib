@@ -35,6 +35,7 @@ public:
 
 	StkObject* ContainsInArray(StkObject*, StkObject*);
 	BOOL Equals(StkObject*, StkObject*);
+	BOOL Contains(StkObject*, StkObject*);
 };
 
 void StkObject::Impl::ClearMember()
@@ -459,6 +460,10 @@ BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 	if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
 		return FALSE;
 	}
+	int CurType = Obj1->GetType();
+	if (CurType != Obj2->GetType()) {
+		return FALSE;
+	}
 	if (Obj1->GetType() == StkObject::STKOBJECT_ELEMENT) {
 		if (Obj1->GetAttributeCount() != Obj2->GetAttributeCount()) {
 			return FALSE;
@@ -506,11 +511,27 @@ BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 		} else if (ElemObj1 != NULL || ElemObj2 != NULL) {
 			return FALSE;
 		}
-	} else {
-		return FALSE;
+	} else if (CurType == StkObject::STKOBJECT_ATTR_INT || CurType == StkObject::STKOBJECT_ELEM_INT || CurType == StkObject::STKOBJECT_UNKW_INT) {
+		if (Obj1->GetIntValue() != Obj2->GetIntValue()) {
+			return FALSE;
+		}
+	} else if (CurType == StkObject::STKOBJECT_ATTR_FLOAT || CurType == StkObject::STKOBJECT_ELEM_FLOAT || CurType == StkObject::STKOBJECT_UNKW_FLOAT) {
+		if (Obj1->GetFloatValue() != Obj2->GetFloatValue()) {
+			return FALSE;
+		}
+	} else if (CurType == StkObject::STKOBJECT_ATTR_STRING || CurType == StkObject::STKOBJECT_ELEM_STRING || CurType == StkObject::STKOBJECT_UNKW_STRING) {
+		if (lstrcmp(Obj1->GetStringValue(), Obj2->GetStringValue()) != 0) {
+			return FALSE;
+		}
 	}
 	return TRUE;
 }
+
+BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2)
+{
+	return TRUE;
+}
+
 
 
 

@@ -346,6 +346,72 @@ void GeneralTestCase3()
 	delete Normal2;
 	delete Order2;
 	delete Diff2;
+
+	wprintf(_T("GeneralCheck3#Test of Equals 3rd integer match ..."));
+	StkObject* Obj1a = new StkObject(_T("Shinya Takeuchi"), 123);
+	StkObject* Obj1b = new StkObject(_T("Shinya Takeuchi"), 123);
+	if (Obj1a->Equals(Obj1b) == FALSE) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	delete Obj1a;
+	delete Obj1b;
+
+	wprintf(_T("GeneralCheck3#Test of Equals 3rd integer unmatch ..."));
+	StkObject* Obj2a = new StkObject(_T("Shinya Takeuchi"), 123);
+	StkObject* Obj2b = new StkObject(_T("Shinya Takeuchi"), 321);
+	if (Obj2a->Equals(Obj2b) == TRUE) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	delete Obj2a;
+	delete Obj2b;
+
+	wprintf(_T("GeneralCheck3#Test of Equals 3rd float match ..."));
+	StkObject* Obj3a = new StkObject(_T("Shinya Takeuchi"), 123.45f);
+	StkObject* Obj3b = new StkObject(_T("Shinya Takeuchi"), 123.45f);
+	if (Obj3a->Equals(Obj3b) == FALSE) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	delete Obj3a;
+	delete Obj3b;
+
+	wprintf(_T("GeneralCheck3#Test of Equals 3rd float unmatch ..."));
+	StkObject* Obj4a = new StkObject(_T("Shinya Takeuchi"), 123.45f);
+	StkObject* Obj4b = new StkObject(_T("Shinya Takeuchi"), 123.46f);
+	if (Obj4a->Equals(Obj4b) == TRUE) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	delete Obj4a;
+	delete Obj4b;
+
+	wprintf(_T("GeneralCheck3#Test of Equals 3rd string match ..."));
+	StkObject* Obj5a = new StkObject(_T("Shinya Takeuchi"), _T("Hello, World!"));
+	StkObject* Obj5b = new StkObject(_T("Shinya Takeuchi"), _T("Hello, World!"));
+	if (Obj5a->Equals(Obj5b) == FALSE) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	delete Obj5a;
+	delete Obj5b;
+
+	wprintf(_T("GeneralCheck3#Test of Equals 3rd string unmatch ..."));
+	StkObject* Obj6a = new StkObject(_T("Shinya Takeuchi"), _T("Hello, World!"));
+	StkObject* Obj6b = new StkObject(_T("Shinya Takeuchi"), _T("Hello; World!"));
+	if (Obj6a->Equals(Obj6b) == TRUE) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+	delete Obj6a;
+	delete Obj6b;
 }
 
 void JsonEncodingTest1()
