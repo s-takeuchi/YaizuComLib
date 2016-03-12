@@ -35,7 +35,7 @@ public:
 
 	StkObject* ContainsInArray(StkObject*, StkObject*);
 	BOOL Equals(StkObject*, StkObject*);
-	BOOL Contains(StkObject*, StkObject*);
+	BOOL Contains(StkObject*, StkObject*, BOOL);
 };
 
 void StkObject::Impl::ClearMember()
@@ -457,6 +457,9 @@ StkObject* StkObject::Impl::ContainsInArray(StkObject* Obj1, StkObject* Obj2)
 
 BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 {
+	if (Obj1 == NULL || Obj2 == NULL) {
+		return FALSE;
+	}
 	if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
 		return FALSE;
 	}
@@ -472,6 +475,7 @@ BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 			return FALSE;
 		}
 
+		//For attribute
 		StkObject* AttrObj1 = Obj1->GetFirstAttribute();
 		StkObject* AttrObj2 = Obj2->GetFirstAttribute();
 		if (AttrObj1 != NULL && AttrObj2 != NULL) {
@@ -485,6 +489,7 @@ BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 			return FALSE;
 		}
 
+		//For Element
 		StkObject* ElemObj1 = Obj1->GetFirstChildElement();
 		StkObject* ElemObj2 = Obj2->GetFirstChildElement();
 		if (ElemObj1 != NULL && ElemObj2 != NULL) {
@@ -527,9 +532,166 @@ BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 	return TRUE;
 }
 
-BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2)
+BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, BOOL ParentMatched)
 {
-	return TRUE;
+	if (Obj1 == NULL || Obj2 == NULL) {
+		return FALSE;
+	}
+	if (Obj1->GetType() == StkObject::STKOBJECT_ELEMENT) {
+		BOOL Matched = TRUE;
+
+		if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
+			Matched = FALSE;
+		}
+		if (Obj1->GetType() != Obj2->GetType()) {
+			Matched = FALSE;
+		}
+		if (Obj1->GetAttributeCount() < Obj2->GetAttributeCount()) {
+			Matched = FALSE;
+		}
+		if (Obj1->GetChildElementCount() < Obj2->GetChildElementCount()) {
+			Matched = FALSE;
+		}
+		if (ParentMatched && !Matched) {
+			return FALSE;
+		}
+
+		//For attribute
+		if (Matched) {
+			StkObject* AttrObj1 = Obj1->GetFirstAttribute();
+			StkObject* AttrObj2 = Obj2->GetFirstAttribute();
+			if (AttrObj1 != NULL && AttrObj2 != NULL) {
+				BOOL FndFlag = TRUE;
+				while (AttrObj2) {
+					if (ContainsInArray(AttrObj2, AttrObj1) == NULL) {
+						FndFlag = FALSE;
+						break;
+					}
+					AttrObj2 = AttrObj2->GetNext();
+				}
+				if (FndFlag == FALSE) {
+					Matched = FALSE;
+				}
+			} else if (AttrObj1 == NULL && AttrObj2 != NULL) {
+				Matched = FALSE;
+			}
+		}
+		if (ParentMatched && !Matched) {
+			return FALSE;
+		}
+
+		//For Element
+		if (Matched) {
+			StkObject* ElemObj1 = Obj1->GetFirstChildElement();
+			StkObject* ElemObj2 = Obj2->GetFirstChildElement();
+			if (ElemObj1 != NULL && ElemObj2 != NULL) {
+				BOOL FndFlag = TRUE;
+				while (ElemObj2) {
+					if (ContainsInArray(ElemObj2, ElemObj1) == NULL) {
+						FndFlag = FALSE;
+						break;
+					}
+					if (ElemObj2->GetType() == StkObject::STKOBJECT_ELEMENT) {
+						if (!Contains(ElemObj1, ElemObj2, FALSE)) {
+							FndFlag = FALSE;
+							break;
+						}
+					}
+					ElemObj2 = ElemObj2->GetNext();
+				}
+				if (FndFlag == FALSE) {
+					Matched = FALSE;
+				}
+			} else if (ElemObj1 == NULL && ElemObj2 != NULL) {
+				Matched = FALSE;
+			}
+		}
+		if (ParentMatched && !Matched) {
+			return FALSE;
+		}
+		if (Matched) {
+			return TRUE;
+		}
+
+		// Not Matched case
+		StkObject* ElemObj1 = Obj1->GetFirstChildElement();
+		StkObject* ElemObj2 = Obj2;
+		if (ElemObj1 != NULL && ElemObj2 != NULL) {
+			while (ElemObj2) {
+				if (ContainsInArray(ElemObj2, ElemObj1) == NULL) {
+					return FALSE;
+				}
+				if (ElemObj2->GetType() == StkObject::STKOBJECT_ELEMENT) {
+					if (!Contains(ElemObj1, ElemObj2, TRUE)) {
+						return FALSE;
+					}
+				}
+				ElemObj2 = ElemObj2->GetNext();
+			}
+			return TRUE;
+		}
+		return FALSE;
+	} else {
+		if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
+			return FALSE;
+		}
+		if (Obj1->GetType() != Obj2->GetType()) {
+			return FALSE;
+		}
+		if (Obj1->GetType() == StkObject::STKOBJECT_ATTR_INT || Obj1->GetType() == StkObject::STKOBJECT_ELEM_INT || Obj1->GetType() == StkObject::STKOBJECT_UNKW_INT) {
+			if (Obj1->GetIntValue() == Obj2->GetIntValue()) {
+				return TRUE;
+			}
+		} else if (Obj1->GetType() == StkObject::STKOBJECT_ATTR_FLOAT || Obj1->GetType() == StkObject::STKOBJECT_ELEM_FLOAT || Obj1->GetType() == StkObject::STKOBJECT_UNKW_FLOAT) {
+			if (Obj1->GetFloatValue() == Obj2->GetFloatValue()) {
+				return TRUE;
+			}
+		} else if (Obj1->GetType() == StkObject::STKOBJECT_ATTR_STRING || Obj1->GetType() == StkObject::STKOBJECT_ELEM_STRING || Obj1->GetType() == StkObject::STKOBJECT_UNKW_STRING) {
+			if (lstrcmp(Obj1->GetStringValue(), Obj2->GetStringValue()) == 0) {
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+
+
+/*
+		StkObject* ElemObj1 = Obj1->GetFirstChildElement();
+		StkObject* ElemObj2 = NULL;
+		if (!Matched) {
+			ElemObj2 = Obj2;
+		} else {
+			ElemObj2 = Obj2->GetFirstChildElement();
+		}
+		if (ElemObj1 != NULL && ElemObj2 != NULL) {
+			BOOL FndFlag = TRUE;
+			while (ElemObj2) {
+				StkObject* CurObj = ContainsInArray(ElemObj2, ElemObj1);
+				if (CurObj == NULL) {
+					FndFlag = FALSE;
+				}
+				if (ElemObj1->GetType() == StkObject::STKOBJECT_ELEMENT) {
+					if (!Contains(ElemObj1, CurObj, !NotMatched)) {
+						FndFlag = FALSE;
+					}
+				}
+				ElemObj2 = ElemObj2->GetNext();
+			}
+			if (FndFlag == FALSE) {
+				NotMatched = TRUE;
+			} else {
+				NotMatched = FALSE;
+			}
+		} else if (ElemObj1 == NULL && ElemObj1 != NULL) {
+			NotMatched = TRUE;
+		}
+		if (NotMatched) {
+			return FALSE;
+		}
+	} else {
+		return FALSE;
+*/
+
 }
 
 
@@ -662,7 +824,7 @@ BOOL StkObject::Equals(StkObject* Obj)
 
 BOOL StkObject::Contains(StkObject* Obj)
 {
-	return FALSE;
+	return pImpl->Contains(this, Obj, FALSE);
 }
 
 int StkObject::GetArrayLength()

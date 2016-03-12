@@ -6,6 +6,15 @@
 
 #include "..\..\src\commonfunc\StkObject.h"
 
+void Abort(BOOL Cond)
+{
+	if (!Cond) {
+		printf("NG\r\n");
+		exit(0);
+	} else {
+		printf("OK\r\n");
+	}
+}
 
 void AbnormalCaseForJson(TCHAR* JsonTxt, int ErrorCode)
 {
@@ -412,6 +421,79 @@ void GeneralTestCase3()
 	printf("OK\r\n");
 	delete Obj6a;
 	delete Obj6b;
+}
+
+void GeneralTestCase4()
+{
+	{
+		wprintf(_T("GeneralCheck3#Test of Contains 1st ..."));
+		int ErrorCode;
+		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Last>Takeuchi</Last></Hello>"), &ErrorCode);
+		StkObject* Target = StkObject::CreateObjectFromXml(_T("<First>Shinya</First>"), &ErrorCode);
+		BOOL Ret = Origin->Contains(Target);
+		Abort(Ret);
+		delete Origin;
+		delete Target;
+	}
+	{
+		wprintf(_T("GeneralCheck3#Test of Contains 2nd ..."));
+		int ErrorCode;
+		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
+		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Last>Takeuchi</Last>"), &ErrorCode);
+		BOOL Ret = Origin->Contains(Target);
+		Abort(Ret);
+		delete Origin;
+		delete Target;
+	}
+	{
+		wprintf(_T("GeneralCheck3#Test of Contains 3rd ..."));
+		int ErrorCode;
+		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
+		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Last>Suzuki</Last>"), &ErrorCode);
+		BOOL Ret = Origin->Contains(Target);
+		Abort(!Ret);
+		delete Origin;
+		delete Target;
+	}
+	{
+		wprintf(_T("GeneralCheck3#Test of Contains 3rd ..."));
+		int ErrorCode;
+		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
+		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
+		BOOL Ret = Origin->Contains(Target);
+		Abort(!Ret);
+		delete Origin;
+		delete Target;
+	}
+	{
+		wprintf(_T("GeneralCheck3#Test of Contains 1st ..."));
+		StkObject* Origin = MakeTestData1();
+		StkObject* Target = MakeTestData1();
+		BOOL Ret = Origin->Contains(Target);
+		if (!Ret) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+		delete Origin;
+		delete Target;
+	}
+	{
+		wprintf(_T("GeneralCheck3#Test of Contains 2nd ..."));
+		StkObject* Origin = MakeTestData1();
+		StkObject* Target1 = new StkObject(_T("ELEM_INT"), 123);
+		StkObject* Target2 = new StkObject(_T("ELEM_INT"), 321);
+		BOOL Ret1 = Origin->Contains(Target1);
+		BOOL Ret2 = Origin->Contains(Target2);
+		if (!Ret1 || ! Ret2) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+		delete Origin;
+		delete Target1;
+		delete Target2;
+	}
 }
 
 void JsonEncodingTest1()
@@ -1163,6 +1245,7 @@ void StkObjectTest()
 		delete Elem2;
 
 		GeneralTestCase3();
+		GeneralTestCase4();
 	}
 
 	// Clone check
