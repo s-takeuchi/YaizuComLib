@@ -426,7 +426,7 @@ void GeneralTestCase3()
 void GeneralTestCase4()
 {
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 1st ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains 1 ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Last>Takeuchi</Last></Hello>"), &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(_T("<First>Shinya</First>"), &ErrorCode);
@@ -436,7 +436,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 2nd ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains 2 ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Last>Takeuchi</Last>"), &ErrorCode);
@@ -446,7 +446,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 3rd ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains 3 ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Last>Suzuki</Last>"), &ErrorCode);
@@ -456,25 +456,11 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 3rd ..."));
-		int ErrorCode;
-		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
-		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
-		BOOL Ret = Origin->Contains(Target);
-		Abort(!Ret);
-		delete Origin;
-		delete Target;
-	}
-	{
-		wprintf(_T("GeneralCheck3#Test of Contains 1st ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains 4 (Sample1) ..."));
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target = MakeTestData1();
 		BOOL Ret = Origin->Contains(Target);
-		if (!Ret) {
-			printf("NG\r\n");
-			exit(0);
-		}
-		printf("OK\r\n");
+		Abort(Ret);
 		delete Origin;
 		delete Target;
 	}
@@ -483,16 +469,18 @@ void GeneralTestCase4()
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target1 = new StkObject(_T("ELEM_INT"), 123);
 		StkObject* Target2 = new StkObject(_T("ELEM_INT"), 321);
+		StkObject* Target3 = new StkObject(_T("ELEM_FLOAT"), 456.7f);
+		StkObject* Target4 = new StkObject(_T("ELEM_FLOAT"), 765.4f);
 		BOOL Ret1 = Origin->Contains(Target1);
 		BOOL Ret2 = Origin->Contains(Target2);
-		if (!Ret1 || ! Ret2) {
-			printf("NG\r\n");
-			exit(0);
-		}
-		printf("OK\r\n");
+		BOOL Ret3 = Origin->Contains(Target3);
+		BOOL Ret4 = Origin->Contains(Target4);
+		Abort(Ret1 || !Ret2 || Ret3 || !Ret4);
 		delete Origin;
 		delete Target1;
 		delete Target2;
+		delete Target3;
+		delete Target4;
 	}
 }
 

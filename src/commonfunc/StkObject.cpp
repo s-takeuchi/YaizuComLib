@@ -592,7 +592,14 @@ BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, BOOL ParentMatc
 						break;
 					}
 					if (ElemObj2->GetType() == StkObject::STKOBJECT_ELEMENT) {
-						if (!Contains(ElemObj1, ElemObj2, FALSE)) {
+						BOOL FndFlag2 = FALSE;
+						for (StkObject* LoopObj = ElemObj1; LoopObj != NULL; LoopObj = LoopObj->GetNext()) {
+							if (LoopObj->GetType() == StkObject::STKOBJECT_ELEMENT && Contains(LoopObj, ElemObj2, TRUE)) {
+								FndFlag2 = TRUE;
+								break;
+							}
+						}
+						if (!FndFlag2) {
 							FndFlag = FALSE;
 							break;
 						}
@@ -622,7 +629,14 @@ BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, BOOL ParentMatc
 					return FALSE;
 				}
 				if (ElemObj2->GetType() == StkObject::STKOBJECT_ELEMENT) {
-					if (!Contains(ElemObj1, ElemObj2, TRUE)) {
+					BOOL FndFlag2 = FALSE;
+					for (StkObject* LoopObj = ElemObj1; LoopObj != NULL; LoopObj = LoopObj->GetNext()) {
+						if (LoopObj->GetType() == StkObject::STKOBJECT_ELEMENT && Contains(LoopObj, ElemObj2, FALSE)) {
+							FndFlag2 = TRUE;
+							break;
+						}
+					}
+					if (!FndFlag2) {
 						return FALSE;
 					}
 				}
