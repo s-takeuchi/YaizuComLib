@@ -465,7 +465,16 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 2nd ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains 5 (Sample2) ..."));
+		StkObject* Origin = MakeTestData2();
+		StkObject* Target = MakeTestData2();
+		BOOL Ret = Origin->Contains(Target);
+		Abort(Ret);
+		delete Origin;
+		delete Target;
+	}
+	{
+		wprintf(_T("GeneralCheck3#Test of Contains 6 (All type of element) ..."));
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target1 = new StkObject(_T("ELEM_INT"), 123);
 		StkObject* Target2 = new StkObject(_T("ELEM_INT"), 321);
@@ -1049,10 +1058,12 @@ int MemoryLeakChecking1(StkObject* PassedObj)
 			delete NewObj;
 		}
 		for (int Loop = 0; Loop < 50; Loop++) {
-			std::wstring Msg1;
-			PassedObj->ToXml(&Msg1);
-			std::wstring Msg2;
-			PassedObj->ToJson(&Msg2);
+			std::wstring *Msg1 = new std::wstring(_T(""));
+			PassedObj->ToXml(Msg1);
+			delete Msg1;
+			std::wstring *Msg2 = new std::wstring(_T(""));
+			PassedObj->ToJson(Msg2);
+			delete Msg2;
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}
@@ -1065,10 +1076,10 @@ int MemoryLeakChecking1(StkObject* PassedObj)
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("NG\r\n");
+		printf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 		exit(0);
 	}
-	printf("OK\r\n");
+	printf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
 }
 
@@ -1089,7 +1100,7 @@ int MemoryLeakChecking2()
 			NewObj1->AppendAttribute(new StkObject(_T("XmlApos"), _T("\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'")));
 			NewObj1->AppendChildElement(new StkObject(_T("XmlAmp"), _T("&&&&&&&&&&&&&&&&&&&&")));
 			NewObj1->AppendChildElement(new StkObject(_T("XmlQuot"), _T("\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"")));
-			StrVal = _T("");
+			StrVal.assign(_T(""));
 			NewObj1->ToXml(&StrVal);
 			delete NewObj1;
 
@@ -1102,12 +1113,12 @@ int MemoryLeakChecking2()
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\n\n\n\n\n\n\n\n\n\n")));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\r\r\r\r\r\r\r\r\r\r")));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\t\t\t\t\t\t\t\t\t\t")));
-			StrVal = _T("");
+			StrVal.assign(_T(""));
 			NewObj1->ToJson(&StrVal);
 			delete NewObj1;
 
 			NewObj2 = StkObject::CreateObjectFromXml(_T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Amp>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Amp><Quot>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Quot></Aaaa>"), &Offset);
-			StrVal = _T("");
+			StrVal.assign(_T(""));
 			NewObj2->ToXml(&StrVal);
 			delete NewObj2;
 
@@ -1127,10 +1138,10 @@ int MemoryLeakChecking2()
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("NG\r\n");
+		printf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 		exit(0);
 	}
-	printf("OK\r\n");
+	printf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
 }
 
@@ -1187,10 +1198,10 @@ int MemoryLeakChecking3()
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("NG\r\n");
+		printf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 		exit(0);
 	}
-	printf("OK\r\n");
+	printf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
 }
 
