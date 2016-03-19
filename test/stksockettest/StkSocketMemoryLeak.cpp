@@ -76,10 +76,10 @@ void StkSocketMemoryLeak::CheckLeakTcp()
 		MaxMem[48] < MaxMem[51] &&
 		MaxMem[51] < MaxMem[54] &&
 		MaxMem[54] < MaxMem[57]) {
-		printf("[NG]\r\n");
+		printf("[NG] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[30], MaxMem[33], MaxMem[36], MaxMem[39], MaxMem[42], MaxMem[45], MaxMem[48], MaxMem[51], MaxMem[54]);
 		exit(-1);
 	}
-	printf("[OK]\r\n");
+	printf("[OK] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[30], MaxMem[33], MaxMem[36], MaxMem[39], MaxMem[42], MaxMem[45], MaxMem[48], MaxMem[51], MaxMem[54]);
 	StkSocket_ClearLog();
 }
 
@@ -156,10 +156,10 @@ void StkSocketMemoryLeak::CheckLeakUdp()
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("[NG]\r\n");
+		printf("[NG] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 		exit(-1);
 	}
-	printf("[OK]\r\n");
+	printf("[OK] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 
 	StkSocket_ClearLog();
 }

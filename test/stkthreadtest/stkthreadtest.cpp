@@ -102,10 +102,10 @@ int MemoryLeakChecking1()
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("[NG]\r\n");
+		printf("[NG] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 		return -1;
 	}
-	printf("[OK]\r\n");
+	printf("[OK] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
 }
 
@@ -139,10 +139,10 @@ int MemoryLeakChecking2()
 		MaxMem[8] < MaxMem[12] &&
 		MaxMem[12] < MaxMem[16] &&
 		MaxMem[16] < MaxMem[20]) {
-		printf("[NG]\r\n");
+		printf("[NG] : %d %d %d %d %d \r\n", MaxMem[0], MaxMem[4], MaxMem[8], MaxMem[12], MaxMem[16]);
 		return -1;
 	}
-	printf("[OK]\r\n");
+	printf("[OK] : %d %d %d %d %d \r\n", MaxMem[0], MaxMem[4], MaxMem[8], MaxMem[12], MaxMem[16]);
 	return 0;
 }
 
