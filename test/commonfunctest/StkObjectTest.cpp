@@ -426,55 +426,61 @@ void GeneralTestCase3()
 void GeneralTestCase4()
 {
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains  (first elem match case) ..."));
+		wprintf(_T("GeneralCheck4#Test of Contains  (first elem match case) ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Last>Takeuchi</Last></Hello>"), &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(_T("<First>Shinya</First>"), &ErrorCode);
-		BOOL Ret = Origin->Contains(Target);
-		Abort(Ret);
+		StkObject* Ret = Origin->Contains(Target);
+		Abort(Ret != NULL &&
+			  lstrcmp(Ret->GetStringValue(), _T("Shinya")) == 0 &&
+			  lstrcmp(Ret->GetName(), _T("First")) == 0 &&
+			  lstrcmp(Ret->GetNext()->GetStringValue(), _T("Takeuchi")) == 0 &&
+			  lstrcmp(Ret->GetNext()->GetName(), _T("Last")) == 0);
 		delete Origin;
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains  (last elem match case) ..."));
+		wprintf(_T("GeneralCheck4#Test of Contains  (last elem match case) ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Last>Takeuchi</Last>"), &ErrorCode);
-		BOOL Ret = Origin->Contains(Target);
-		Abort(Ret);
+		StkObject* Ret = Origin->Contains(Target);
+		Abort(Ret != NULL &&
+			  lstrcmp(Ret->GetStringValue(), _T("Takeuchi")) == 0 &&
+			  lstrcmp(Ret->GetName(), _T("Last")) == 0);
 		delete Origin;
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains  (simple NG case) ..."));
+		wprintf(_T("GeneralCheck4#Test of Contains  (simple NG case) ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Last>Suzuki</Last>"), &ErrorCode);
-		BOOL Ret = Origin->Contains(Target);
-		Abort(!Ret);
+		StkObject* Ret = Origin->Contains(Target);
+		Abort(Ret == NULL);
 		delete Origin;
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains  (Common data 1) ..."));
+		wprintf(_T("GeneralCheck4#Test of Contains  (Common data 1) ..."));
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target = MakeTestData1();
-		BOOL Ret = Origin->Contains(Target);
-		Abort(Ret);
+		StkObject* Ret = Origin->Contains(Target);
+		Abort(Ret != NULL);
 		delete Origin;
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains  (Common data 2) ..."));
+		wprintf(_T("GeneralCheck4#Test of Contains  (Common data 2) ..."));
 		StkObject* Origin = MakeTestData2();
 		StkObject* Target = MakeTestData2();
-		BOOL Ret = Origin->Contains(Target);
-		Abort(Ret);
+		StkObject* Ret = Origin->Contains(Target);
+		Abort(Ret != NULL);
 		delete Origin;
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains  (All type of element) ..."));
+		wprintf(_T("GeneralCheck4#Test of Contains  (All type of element) ..."));
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target1 = new StkObject(_T("ELEM_INT"), 123);
 		StkObject* Target2 = new StkObject(_T("ELEM_INT"), 321);
@@ -482,13 +488,19 @@ void GeneralTestCase4()
 		StkObject* Target4 = new StkObject(_T("ELEM_FLOAT"), 765.4f);
 		StkObject* Target5 = new StkObject(_T("ELEM_STRING"), _T(" ABC FFF DDD EEE "));
 		StkObject* Target6 = new StkObject(_T("ELEM_STRING"), _T(" FFF DDD EEE ABC "));
-		BOOL Ret1 = Origin->Contains(Target1);
-		BOOL Ret2 = Origin->Contains(Target2);
-		BOOL Ret3 = Origin->Contains(Target3);
-		BOOL Ret4 = Origin->Contains(Target4);
-		BOOL Ret5 = Origin->Contains(Target5);
-		BOOL Ret6 = Origin->Contains(Target6);
-		Abort(Ret1 && !Ret2 && Ret3 && !Ret4 && Ret5 && !Ret6);
+		StkObject* Ret1 = Origin->Contains(Target1);
+		StkObject* Ret2 = Origin->Contains(Target2);
+		StkObject* Ret3 = Origin->Contains(Target3);
+		StkObject* Ret4 = Origin->Contains(Target4);
+		StkObject* Ret5 = Origin->Contains(Target5);
+		StkObject* Ret6 = Origin->Contains(Target6);
+		Abort(Ret1 != NULL && Ret2 == NULL && Ret3 != NULL && Ret4 == NULL && Ret5 != NULL && Ret6 == NULL &&
+			  lstrcmp(Ret1->GetName(), _T("ELEM_INT")) == 0 &&
+			  Ret1->GetIntValue() == 123 &&
+			  lstrcmp(Ret3->GetName(), _T("ELEM_FLOAT")) == 0 &&
+			  Ret3->GetFloatValue() == 456.7f &&
+			  lstrcmp(Ret5->GetName(), _T("ELEM_STRING")) == 0 &&
+			  lstrcmp(Ret5->GetStringValue(), _T(" ABC FFF DDD EEE ")) == 0);
 		delete Origin;
 		delete Target1;
 		delete Target2;
@@ -498,7 +510,7 @@ void GeneralTestCase4()
 		delete Target6;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains  (Hierarchy : normal) ..."));
+		wprintf(_T("GeneralCheck4#Test of Contains  (Hierarchy : normal) ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>èt</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>âƒ</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>èH</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
 		StkObject* Target1 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>âƒ</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
@@ -509,15 +521,18 @@ void GeneralTestCase4()
 		StkObject* Target6 = StkObject::CreateObjectFromXml(_T("<Ddd>ì~</Ddd>"), &ErrorCode);
 		StkObject* Target7 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>èt</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Winter\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
 		StkObject* Target8 = StkObject::CreateObjectFromXml(_T("<Ccc Name=\"Fall\"/>"), &ErrorCode);
-		BOOL Ret1 = Origin->Contains(Target1);
-		BOOL Ret2 = Origin->Contains(Target2);
-		BOOL Ret3 = Origin->Contains(Target3);
-		BOOL Ret4 = Origin->Contains(Target4);
-		BOOL Ret5 = Origin->Contains(Target5);
-		BOOL Ret6 = Origin->Contains(Target6);
-		BOOL Ret7 = Origin->Contains(Target7);
-		BOOL Ret8 = Origin->Contains(Target8);
-		Abort(Ret1 && Ret2 && Ret3 && Ret4 && Ret5 && Ret6 && Ret7 && Ret8);
+		StkObject* Ret1 = Origin->Contains(Target1);
+		StkObject* Ret2 = Origin->Contains(Target2);
+		StkObject* Ret3 = Origin->Contains(Target3);
+		StkObject* Ret4 = Origin->Contains(Target4);
+		StkObject* Ret5 = Origin->Contains(Target5);
+		StkObject* Ret6 = Origin->Contains(Target6);
+		StkObject* Ret7 = Origin->Contains(Target7);
+		StkObject* Ret8 = Origin->Contains(Target8);
+		Abort(Ret1 != NULL && Ret2 != NULL && Ret3 != NULL && Ret4 != NULL && Ret5 != NULL && Ret6 != NULL && Ret7 != NULL && Ret8 != NULL &&
+			  lstrcmp(Ret4->GetName(), _T("Bbb")) == 0 &&
+			  lstrcmp(Ret5->GetName(), _T("Ccc")) == 0 &&
+			  lstrcmp(Ret6->GetName(), _T("Ddd")) == 0);
 		delete Origin;
 		delete Target1;
 		delete Target2;
@@ -529,7 +544,7 @@ void GeneralTestCase4()
 		delete Target8;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains  (Hierarchy : abnormal) ..."));
+		wprintf(_T("GeneralCheck4#Test of Contains  (Hierarchy : abnormal) ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>èt</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>âƒ</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>èH</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
 		StkObject* Target1 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
@@ -540,15 +555,15 @@ void GeneralTestCase4()
 		StkObject* Target6 = StkObject::CreateObjectFromXml(_T("<Aaa>ì~</Aaa>"), &ErrorCode);
 		StkObject* Target7 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>èt</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
 		StkObject* Target8 = StkObject::CreateObjectFromXml(_T("<Aaa><Ccc Name=\"Fall\"/></Aaa>"), &ErrorCode);
-		BOOL Ret1 = Origin->Contains(Target1);
-		BOOL Ret2 = Origin->Contains(Target2);
-		BOOL Ret3 = Origin->Contains(Target3);
-		BOOL Ret4 = Origin->Contains(Target4);
-		BOOL Ret5 = Origin->Contains(Target5);
-		BOOL Ret6 = Origin->Contains(Target6);
-		BOOL Ret7 = Origin->Contains(Target7);
-		BOOL Ret8 = Origin->Contains(Target8);
-		Abort(!Ret1 && !Ret2 && !Ret3 && !Ret4 && !Ret5 && !Ret6 && !Ret7 && !Ret8);
+		StkObject* Ret1 = Origin->Contains(Target1);
+		StkObject* Ret2 = Origin->Contains(Target2);
+		StkObject* Ret3 = Origin->Contains(Target3);
+		StkObject* Ret4 = Origin->Contains(Target4);
+		StkObject* Ret5 = Origin->Contains(Target5);
+		StkObject* Ret6 = Origin->Contains(Target6);
+		StkObject* Ret7 = Origin->Contains(Target7);
+		StkObject* Ret8 = Origin->Contains(Target8);
+		Abort(Ret1 == NULL && Ret2 == NULL && Ret3 == NULL && Ret4 == NULL && Ret5 == NULL && Ret6 == NULL && Ret7 == NULL && Ret8 == NULL);
 		delete Origin;
 		delete Target1;
 		delete Target2;
@@ -558,6 +573,27 @@ void GeneralTestCase4()
 		delete Target6;
 		delete Target7;
 		delete Target8;
+	}
+	{
+		wprintf(_T("GeneralCheck4#Test of Contains  (Hierarchy : sequential check) ..."));
+		int ErrorCode;
+		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb Type=\"ï∂éö\"><Ccc Name=\"ãGêﬂ\"><Ddd>èt</Ddd><Ddd>âƒ</Ddd><Ddd>èH</Ddd><Ddd>ì~</Ddd></Ccc><Ccc Name=\"ï˚äp\"><Ddd>ìå</Ddd><Ddd>êº</Ddd><Ddd>ìÏ</Ddd><Ddd>ñk</Ddd></Ccc></Bbb><Bbb Type=\"éÅñº\"><Ccc Name=\"â∆ë∞\"><Ddd>í|ì‡êLñÁ</Ddd><Ddd>èÌå©éÈî¸</Ddd><Ddd>ñÿë∫óDéq</Ddd></Ccc><Ccc Name=\"âÔé–ÉÅÉìÉoÅ[\"><Ddd>éRìcëæòY</Ddd><Ddd>óÈñÿàÍòY</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
+		StkObject* Target1 = StkObject::CreateObjectFromXml(_T("<Bbb Type=\"ï∂éö\"/>"), &ErrorCode);
+		StkObject* Target2 = StkObject::CreateObjectFromXml(_T("<Ccc Name=\"ï˚äp\"/>"), &ErrorCode);
+		StkObject* Target3 = StkObject::CreateObjectFromXml(_T("<Ccc Name=\"ãGêﬂ\"/>"), &ErrorCode);
+		StkObject* Target4 = StkObject::CreateObjectFromXml(_T("<Ddd>ìÏ</Ddd>"), &ErrorCode);
+		StkObject* Target5 = StkObject::CreateObjectFromXml(_T("<Ddd>ì~</Ddd>"), &ErrorCode);
+		StkObject* Ret124 = Origin->Contains(Target1)->Contains(Target2)->Contains(Target4);
+		StkObject* Ret125 = Origin->Contains(Target1)->Contains(Target2)->Contains(Target5);
+		StkObject* Ret134 = Origin->Contains(Target1)->Contains(Target3)->Contains(Target4);
+		StkObject* Ret135 = Origin->Contains(Target1)->Contains(Target3)->Contains(Target5);
+		Abort(lstrcmp(Ret124->GetStringValue(), _T("ìÏ")) == 0 && Ret125 == NULL &&
+			  Ret134 == NULL && lstrcmp(Ret135->GetStringValue(), _T("ì~")) == 0);
+		delete Origin;
+		delete Target1;
+		delete Target2;
+		delete Target3;
+		delete Target4;
 	}
 }
 

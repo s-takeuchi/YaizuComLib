@@ -52,7 +52,7 @@ public:
 
 	StkObject* Clone();
 	BOOL Equals(StkObject*);
-	BOOL Contains(StkObject*);
+	StkObject* Contains(StkObject*);
 	int GetArrayLength();
 	int GetChildElementCount();
 	int GetAttributeCount();

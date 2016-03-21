@@ -35,7 +35,7 @@ public:
 
 	StkObject* ContainsInArray(StkObject*, StkObject*);
 	BOOL Equals(StkObject*, StkObject*);
-	BOOL Contains(StkObject*, StkObject*, BOOL);
+	StkObject* Contains(StkObject*, StkObject*, BOOL);
 };
 
 void StkObject::Impl::ClearMember()
@@ -535,7 +535,7 @@ BOOL StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 	return TRUE;
 }
 
-BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, BOOL ParentMatched)
+StkObject* StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, BOOL ParentMatched)
 {
 	if (Obj1 == NULL || Obj2 == NULL) {
 		return FALSE;
@@ -556,7 +556,7 @@ BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, BOOL ParentMatc
 			Matched = FALSE;
 		}
 		if (ParentMatched && !Matched) {
-			return FALSE;
+			return NULL;
 		}
 
 		//For attribute
@@ -580,7 +580,7 @@ BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, BOOL ParentMatc
 			}
 		}
 		if (ParentMatched && !Matched) {
-			return FALSE;
+			return NULL;
 		}
 
 		//For Element
@@ -617,53 +617,54 @@ BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, BOOL ParentMatc
 			}
 		}
 		if (ParentMatched && !Matched) {
-			return FALSE;
+			return NULL;
 		}
 		if (Matched) {
-			return TRUE;
+			return Obj1;
 		}
 
 		// Not Matched case
 		for (StkObject* LoopObj = ContainsInArray(Obj2, Obj1->GetFirstChildElement()); LoopObj != NULL; LoopObj = ContainsInArray(Obj2, LoopObj)) {
 			if (LoopObj->GetType() != StkObject::STKOBJECT_ELEMENT) {
-				return TRUE;
+				return LoopObj;
 			} else {
 				break;
 			}
 		}
 		BOOL FndFlag = FALSE;
+		StkObject* CldElm;
 		for (StkObject* LoopObj = Obj1->GetFirstChildElement(); LoopObj != NULL; LoopObj = LoopObj->GetNext()) {
-			if (LoopObj->GetType() == StkObject::STKOBJECT_ELEMENT && Contains(LoopObj, Obj2, FALSE)) {
+			if (LoopObj->GetType() == StkObject::STKOBJECT_ELEMENT && (CldElm = Contains(LoopObj, Obj2, FALSE)) != NULL) {
 				FndFlag = TRUE;
 				break;
 			}
 		}
 		if (FndFlag) {
-			return TRUE;
+			return CldElm;
 		}
-		return FALSE;
+		return NULL;
 	} else {
 		if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
-			return FALSE;
+			return NULL;
 		}
 		if (Obj1->GetType() != Obj2->GetType()) {
-			return FALSE;
+			return NULL;
 		}
 		if (Obj1->GetType() == StkObject::STKOBJECT_ATTR_INT || Obj1->GetType() == StkObject::STKOBJECT_ELEM_INT || Obj1->GetType() == StkObject::STKOBJECT_UNKW_INT) {
 			if (Obj1->GetIntValue() == Obj2->GetIntValue()) {
-				return TRUE;
+				return Obj1;
 			}
 		} else if (Obj1->GetType() == StkObject::STKOBJECT_ATTR_FLOAT || Obj1->GetType() == StkObject::STKOBJECT_ELEM_FLOAT || Obj1->GetType() == StkObject::STKOBJECT_UNKW_FLOAT) {
 			if (Obj1->GetFloatValue() == Obj2->GetFloatValue()) {
-				return TRUE;
+				return Obj1;
 			}
 		} else if (Obj1->GetType() == StkObject::STKOBJECT_ATTR_STRING || Obj1->GetType() == StkObject::STKOBJECT_ELEM_STRING || Obj1->GetType() == StkObject::STKOBJECT_UNKW_STRING) {
 			if (lstrcmp(Obj1->GetStringValue(), Obj2->GetStringValue()) == 0) {
-				return TRUE;
+				return Obj1;
 			}
 		}
 	}
-	return FALSE;
+	return NULL;
 }
 
 
@@ -794,7 +795,7 @@ BOOL StkObject::Equals(StkObject* Obj)
 	return pImpl->Equals(this, Obj);
 }
 
-BOOL StkObject::Contains(StkObject* Obj)
+StkObject* StkObject::Contains(StkObject* Obj)
 {
 	return pImpl->Contains(this, Obj, FALSE);
 }
