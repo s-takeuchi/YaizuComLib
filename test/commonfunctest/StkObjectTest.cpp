@@ -426,7 +426,7 @@ void GeneralTestCase3()
 void GeneralTestCase4()
 {
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 1 ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains  (first elem match case) ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Last>Takeuchi</Last></Hello>"), &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(_T("<First>Shinya</First>"), &ErrorCode);
@@ -436,7 +436,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 2 ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains  (last elem match case) ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Last>Takeuchi</Last>"), &ErrorCode);
@@ -446,7 +446,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 3 ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains  (simple NG case) ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(_T("<Last>Suzuki</Last>"), &ErrorCode);
@@ -456,7 +456,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 4 (Sample1) ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains  (Common data 1) ..."));
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target = MakeTestData1();
 		BOOL Ret = Origin->Contains(Target);
@@ -465,7 +465,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 5 (Sample2) ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains  (Common data 2) ..."));
 		StkObject* Origin = MakeTestData2();
 		StkObject* Target = MakeTestData2();
 		BOOL Ret = Origin->Contains(Target);
@@ -474,22 +474,90 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(_T("GeneralCheck3#Test of Contains 6 (All type of element) ..."));
+		wprintf(_T("GeneralCheck3#Test of Contains  (All type of element) ..."));
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target1 = new StkObject(_T("ELEM_INT"), 123);
 		StkObject* Target2 = new StkObject(_T("ELEM_INT"), 321);
 		StkObject* Target3 = new StkObject(_T("ELEM_FLOAT"), 456.7f);
 		StkObject* Target4 = new StkObject(_T("ELEM_FLOAT"), 765.4f);
+		StkObject* Target5 = new StkObject(_T("ELEM_STRING"), _T(" ABC FFF DDD EEE "));
+		StkObject* Target6 = new StkObject(_T("ELEM_STRING"), _T(" FFF DDD EEE ABC "));
 		BOOL Ret1 = Origin->Contains(Target1);
 		BOOL Ret2 = Origin->Contains(Target2);
 		BOOL Ret3 = Origin->Contains(Target3);
 		BOOL Ret4 = Origin->Contains(Target4);
-		Abort(Ret1 || !Ret2 || Ret3 || !Ret4);
+		BOOL Ret5 = Origin->Contains(Target5);
+		BOOL Ret6 = Origin->Contains(Target6);
+		Abort(Ret1 && !Ret2 && Ret3 && !Ret4 && Ret5 && !Ret6);
 		delete Origin;
 		delete Target1;
 		delete Target2;
 		delete Target3;
 		delete Target4;
+		delete Target5;
+		delete Target6;
+	}
+	{
+		wprintf(_T("GeneralCheck3#Test of Contains  (Hierarchy : normal) ..."));
+		int ErrorCode;
+		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>èt</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>âƒ</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>èH</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
+		StkObject* Target1 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>âƒ</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
+		StkObject* Target2 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Winter\"></Ccc></Bbb></Aaa>"), &ErrorCode);
+		StkObject* Target3 = StkObject::CreateObjectFromXml(_T("<Aaa></Aaa>"), &ErrorCode);
+		StkObject* Target4 = StkObject::CreateObjectFromXml(_T("<Bbb><Ccc Name=\"Fall\"><Ddd>èH</Ddd></Ccc></Bbb>"), &ErrorCode);
+		StkObject* Target5 = StkObject::CreateObjectFromXml(_T("<Ccc Name=\"Spring\"><Ddd>èt</Ddd></Ccc>"), &ErrorCode);
+		StkObject* Target6 = StkObject::CreateObjectFromXml(_T("<Ddd>ì~</Ddd>"), &ErrorCode);
+		StkObject* Target7 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>èt</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Winter\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
+		StkObject* Target8 = StkObject::CreateObjectFromXml(_T("<Ccc Name=\"Fall\"/>"), &ErrorCode);
+		BOOL Ret1 = Origin->Contains(Target1);
+		BOOL Ret2 = Origin->Contains(Target2);
+		BOOL Ret3 = Origin->Contains(Target3);
+		BOOL Ret4 = Origin->Contains(Target4);
+		BOOL Ret5 = Origin->Contains(Target5);
+		BOOL Ret6 = Origin->Contains(Target6);
+		BOOL Ret7 = Origin->Contains(Target7);
+		BOOL Ret8 = Origin->Contains(Target8);
+		Abort(Ret1 && Ret2 && Ret3 && Ret4 && Ret5 && Ret6 && Ret7 && Ret8);
+		delete Origin;
+		delete Target1;
+		delete Target2;
+		delete Target3;
+		delete Target4;
+		delete Target5;
+		delete Target6;
+		delete Target7;
+		delete Target8;
+	}
+	{
+		wprintf(_T("GeneralCheck3#Test of Contains  (Hierarchy : abnormal) ..."));
+		int ErrorCode;
+		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>èt</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>âƒ</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>èH</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
+		StkObject* Target1 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
+		StkObject* Target2 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ddd>âƒ</Ddd></Bbb></Aaa>"), &ErrorCode);
+		StkObject* Target3 = StkObject::CreateObjectFromXml(_T("<Aaa><Ccc Name=\"Winter\"><Ddd>ì~</Ddd></Ccc></Aaa>"), &ErrorCode);
+		StkObject* Target4 = StkObject::CreateObjectFromXml(_T("<Aaa><Ddd>âƒ</Ddd></Aaa>"), &ErrorCode);
+		StkObject* Target5 = StkObject::CreateObjectFromXml(_T("<Bbb><Ddd>âƒ</Ddd></Bbb>"), &ErrorCode);
+		StkObject* Target6 = StkObject::CreateObjectFromXml(_T("<Aaa>ì~</Aaa>"), &ErrorCode);
+		StkObject* Target7 = StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>èt</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>ì~</Ddd></Ccc></Bbb></Aaa>"), &ErrorCode);
+		StkObject* Target8 = StkObject::CreateObjectFromXml(_T("<Aaa><Ccc Name=\"Fall\"/></Aaa>"), &ErrorCode);
+		BOOL Ret1 = Origin->Contains(Target1);
+		BOOL Ret2 = Origin->Contains(Target2);
+		BOOL Ret3 = Origin->Contains(Target3);
+		BOOL Ret4 = Origin->Contains(Target4);
+		BOOL Ret5 = Origin->Contains(Target5);
+		BOOL Ret6 = Origin->Contains(Target6);
+		BOOL Ret7 = Origin->Contains(Target7);
+		BOOL Ret8 = Origin->Contains(Target8);
+		Abort(!Ret1 && !Ret2 && !Ret3 && !Ret4 && !Ret5 && !Ret6 && !Ret7 && !Ret8);
+		delete Origin;
+		delete Target1;
+		delete Target2;
+		delete Target3;
+		delete Target4;
+		delete Target5;
+		delete Target6;
+		delete Target7;
+		delete Target8;
 	}
 }
 

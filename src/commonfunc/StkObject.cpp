@@ -627,6 +627,8 @@ BOOL StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, BOOL ParentMatc
 		for (StkObject* LoopObj = ContainsInArray(Obj2, Obj1->GetFirstChildElement()); LoopObj != NULL; LoopObj = ContainsInArray(Obj2, LoopObj)) {
 			if (LoopObj->GetType() != StkObject::STKOBJECT_ELEMENT) {
 				return TRUE;
+			} else {
+				break;
 			}
 		}
 		BOOL FndFlag = FALSE;
