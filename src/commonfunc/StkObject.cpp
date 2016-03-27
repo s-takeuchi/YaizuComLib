@@ -4,8 +4,6 @@
 #include <shlwapi.h>
 #include "StkObject.h"
 
-int StkObject::Counter = 0;
-
 class StkObject::Impl
 {
 public:
@@ -687,7 +685,6 @@ StkObject::StkObject(TCHAR* TmpName)
 		pImpl->Name = new TCHAR[Len];
 		lstrcpy(pImpl->Name, TmpName);
 	}
-	StkObject::Counter++;
 }
 
 StkObject::StkObject(TCHAR* TmpName, int TmpValue)
@@ -701,7 +698,6 @@ StkObject::StkObject(TCHAR* TmpName, int TmpValue)
 		lstrcpy(pImpl->Name, TmpName);
 	}
 	pImpl->Value = new int(TmpValue);
-	StkObject::Counter++;
 }
 
 StkObject::StkObject(TCHAR* TmpName, float TmpValue)
@@ -715,7 +711,6 @@ StkObject::StkObject(TCHAR* TmpName, float TmpValue)
 		lstrcpy(pImpl->Name, TmpName);
 	}
 	pImpl->Value = new float(TmpValue);
-	StkObject::Counter++;
 }
 
 StkObject::StkObject(TCHAR* TmpName, TCHAR* TmpValue)
@@ -733,7 +728,6 @@ StkObject::StkObject(TCHAR* TmpName, TCHAR* TmpValue)
 		pImpl->Value = new TCHAR[Len];
 		lstrcpy((TCHAR*)pImpl->Value, TmpValue);
 	}
-	StkObject::Counter++;
 }
 
 StkObject::~StkObject()
@@ -768,7 +762,6 @@ StkObject::~StkObject()
 		}
 	}
 	delete pImpl;
-	StkObject::Counter--;
 }
 
 StkObject* StkObject::Clone()

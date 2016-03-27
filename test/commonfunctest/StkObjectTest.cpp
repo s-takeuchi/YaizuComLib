@@ -1381,11 +1381,8 @@ int MemoryLeakChecking4()
 	printf("Checks memory leak (large data)...");
 	long MaxMem[30];
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
-		printf("[start] Counter=%d\r\n", StkObject::Counter);
-		StkObject* NewObj = MakeTestData3(_T("Hello"), 5, 6);
-		printf("[proc] Counter=%d\r\n", StkObject::Counter);
+		StkObject* NewObj = MakeTestData3(_T("Hello"), 4, 6);
 		delete NewObj;
-		printf("[end] Counter=%d\r\n", StkObject::Counter);
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}
 	if (MaxMem[0] < MaxMem[3] &&
@@ -1459,7 +1456,6 @@ void StkObjectTest()
 
 	// Memory leak check
 	{
-		MemoryLeakChecking4();
 
 		StkObject* Elem1 = MakeTestData1();
 		MemoryLeakChecking1(Elem1);
@@ -1471,6 +1467,7 @@ void StkObjectTest()
 
 		MemoryLeakChecking2();
 		MemoryLeakChecking3();
+		MemoryLeakChecking4();
 	}
 
 	printf("StkObjectTest completed.\r\n\r\n\r\n");
