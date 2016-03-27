@@ -204,6 +204,24 @@ StkObject* MakeTestData2(int Mode = 0)
 	return Elem1;
 }
 
+StkObject* MakeTestData3(TCHAR Name[64], int Width, int Height, int CurrentLevel = 0)
+{
+	StkObject* Obj = new StkObject(Name);
+	if (CurrentLevel > Height) {
+		Obj->AppendChildElement(new StkObject(_T("Aaa"), 12345));
+		Obj->AppendChildElement(new StkObject(_T("Bbb"), 67890));
+		Obj->AppendChildElement(new StkObject(_T("Ccc"), 123.45f));
+		Obj->AppendChildElement(new StkObject(_T("Ddd"), 678.90f));
+	} else {
+		for (int Loop = 0; Loop < Width; Loop++) {
+			TCHAR Buf[25];
+			wsprintf(Buf, _T("Elem_%d:%d"), CurrentLevel, Loop);
+			Obj->AppendChildElement(MakeTestData3(Buf, Width, Height, CurrentLevel + 1));
+		}
+	}
+	return Obj;
+}
+
 void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 {
 	int Len1 = Elem1->GetFirstChildElement()->GetArrayLength();
@@ -452,6 +470,25 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
+		wprintf(_T("GeneralCheck4#Test of Contains  (simple int/float/string element) ..."));
+		StkObject* OriginInt = new StkObject(_T("ObjInt"), 345);
+		StkObject* TargetInt = new StkObject(_T("ObjInt"), 345);
+		StkObject* OriginFloat = new StkObject(_T("ObjFloat"), 345.6f);
+		StkObject* TargetFloat = new StkObject(_T("ObjFloat"), 345.6f);
+		StkObject* OriginStr = new StkObject(_T("ObjFloat"), _T("Hello, World!"));
+		StkObject* TargetStr = new StkObject(_T("ObjFloat"), _T("Hello, World!"));
+		StkObject* RetInt = OriginInt->Contains(TargetInt);
+		StkObject* RetFloat = OriginFloat->Contains(TargetFloat);
+		StkObject* RetStr = OriginStr->Contains(TargetStr);
+		Abort(RetInt == OriginInt && RetFloat == OriginFloat && RetStr == OriginStr);
+		delete OriginInt;
+		delete TargetInt;
+		delete OriginFloat;
+		delete TargetFloat;
+		delete OriginStr;
+		delete TargetStr;
+	}
+	{
 		wprintf(_T("GeneralCheck4#Test of Contains  (simple NG case) ..."));
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(_T("<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>"), &ErrorCode);
@@ -471,6 +508,23 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
+		wprintf(_T("GeneralCheck4#Test of Contains  (Common data 1 : advanced) ..."));
+		StkObject* Origin = MakeTestData1();
+
+		StkObject* Elem1 = new StkObject(_T("SoftwareCompany"));
+		StkObject* Elem8 = new StkObject(_T("ELEM_STRING"), _T(" ABC FFF DDD EEE "));
+		StkObject* Elem7 = new StkObject(_T("ELEM_FLOAT"), 456.7f);
+		StkObject* Elem4 = new StkObject(_T("ELEM_INT"), 123);
+		Elem1->AppendAttribute(new StkObject(_T("Employee"), _T("110")));
+		Elem1->AppendChildElement(Elem8);
+		Elem1->AppendChildElement(Elem7);
+		Elem1->AppendChildElement(Elem4);
+		StkObject* Ret = Origin->Contains(Elem1);
+		Abort(Ret == Origin);
+		delete Origin;
+		delete Elem1;
+	}
+	{
 		wprintf(_T("GeneralCheck4#Test of Contains  (Common data 2) ..."));
 		StkObject* Origin = MakeTestData2();
 		StkObject* Target = MakeTestData2();
@@ -478,6 +532,19 @@ void GeneralTestCase4()
 		Abort(Ret != NULL);
 		delete Origin;
 		delete Target;
+	}
+	{
+		wprintf(_T("GeneralCheck4#Test of Contains  (Common data 2 : advanced) ..."));
+		StkObject* Origin = MakeTestData2();
+		StkObject* Elem1_4 = new StkObject(_T("ØŒ”"));
+		StkObject* Elem1_4_1 = new StkObject(_T("Š”"));
+		Elem1_4_1->AppendChildElement(new StkObject(_T("BŽÐ"), 500000));
+		Elem1_4_1->AppendChildElement(new StkObject(_T("AŽÐ"), 2000000));
+		Elem1_4->AppendChildElement(Elem1_4_1);
+		StkObject* Ret = Origin->Contains(Elem1_4);
+		Abort(Ret != NULL && lstrcmp(Ret->GetName(), _T("ØŒ”")) == 0 && Ret->GetFirstChildElement()->GetFirstChildElement()->GetIntValue() == 2000000);
+		delete Origin;
+		delete Elem1_4;
 	}
 	{
 		wprintf(_T("GeneralCheck4#Test of Contains  (All type of element) ..."));
@@ -1309,6 +1376,34 @@ int MemoryLeakChecking3()
 	return 0;
 }
 
+int MemoryLeakChecking4()
+{
+	printf("Checks memory leak (large data)...");
+	long MaxMem[30];
+	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
+		printf("[start] Counter=%d\r\n", StkObject::Counter);
+		StkObject* NewObj = MakeTestData3(_T("Hello"), 5, 6);
+		printf("[proc] Counter=%d\r\n", StkObject::Counter);
+		delete NewObj;
+		printf("[end] Counter=%d\r\n", StkObject::Counter);
+		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
+	}
+	if (MaxMem[0] < MaxMem[3] &&
+		MaxMem[3] < MaxMem[6] &&
+		MaxMem[6] < MaxMem[9] &&
+		MaxMem[9] < MaxMem[12] &&
+		MaxMem[12] < MaxMem[15] &&
+		MaxMem[15] < MaxMem[18] &&
+		MaxMem[18] < MaxMem[21] &&
+		MaxMem[21] < MaxMem[24] &&
+		MaxMem[24] < MaxMem[27]) {
+		printf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+		exit(0);
+	}
+	printf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+	return 0;
+}
+
 void StkObjectTest()
 {
 	printf("StkObjectTest started.\r\n");
@@ -1364,6 +1459,8 @@ void StkObjectTest()
 
 	// Memory leak check
 	{
+		MemoryLeakChecking4();
+
 		StkObject* Elem1 = MakeTestData1();
 		MemoryLeakChecking1(Elem1);
 		delete Elem1;

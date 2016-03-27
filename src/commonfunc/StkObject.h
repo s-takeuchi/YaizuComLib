@@ -83,4 +83,6 @@ public:
 
 	static StkObject* CreateObjectFromXml(TCHAR*, int*);
 	static StkObject* CreateObjectFromJson(TCHAR*, int*, StkObject* Obj = NULL); // DO NOT SPECIFY 3RD PARAMETER.
+
+	static int Counter;
 };

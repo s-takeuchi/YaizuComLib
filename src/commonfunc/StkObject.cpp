@@ -4,6 +4,8 @@
 #include <shlwapi.h>
 #include "StkObject.h"
 
+int StkObject::Counter = 0;
+
 class StkObject::Impl
 {
 public:
@@ -685,6 +687,7 @@ StkObject::StkObject(TCHAR* TmpName)
 		pImpl->Name = new TCHAR[Len];
 		lstrcpy(pImpl->Name, TmpName);
 	}
+	StkObject::Counter++;
 }
 
 StkObject::StkObject(TCHAR* TmpName, int TmpValue)
@@ -698,6 +701,7 @@ StkObject::StkObject(TCHAR* TmpName, int TmpValue)
 		lstrcpy(pImpl->Name, TmpName);
 	}
 	pImpl->Value = new int(TmpValue);
+	StkObject::Counter++;
 }
 
 StkObject::StkObject(TCHAR* TmpName, float TmpValue)
@@ -711,6 +715,7 @@ StkObject::StkObject(TCHAR* TmpName, float TmpValue)
 		lstrcpy(pImpl->Name, TmpName);
 	}
 	pImpl->Value = new float(TmpValue);
+	StkObject::Counter++;
 }
 
 StkObject::StkObject(TCHAR* TmpName, TCHAR* TmpValue)
@@ -728,26 +733,42 @@ StkObject::StkObject(TCHAR* TmpName, TCHAR* TmpValue)
 		pImpl->Value = new TCHAR[Len];
 		lstrcpy((TCHAR*)pImpl->Value, TmpValue);
 	}
+	StkObject::Counter++;
 }
 
 StkObject::~StkObject()
 {
 	if (pImpl->Next != NULL) {
 		delete pImpl->Next;
+		pImpl->Next = NULL;
 	}
 	if (pImpl->FirstAttr != NULL) {
 		delete pImpl->FirstAttr;
+		pImpl->FirstAttr = NULL;
 	}
 	if (pImpl->FirstElem != NULL) {
 		delete pImpl->FirstElem;
+		pImpl->FirstElem = NULL;
 	}
 	if (pImpl->Name != NULL) {
-		delete pImpl->Name;
+		int Len = lstrlen((TCHAR*)pImpl->Name) + 1;
+		delete [Len] pImpl->Name;
 	}
+	TCHAR* ValStr = (TCHAR*)pImpl->Value;
+	int* ValInt = (int*)pImpl->Value;
+	float* ValFloat = (float*)pImpl->Value;
 	if (pImpl->Value != NULL) {
-		delete pImpl->Value;
+		if (pImpl->Type == StkObject::STKOBJECT_ATTR_INT || pImpl->Type == StkObject::STKOBJECT_ELEM_INT || pImpl->Type == StkObject::STKOBJECT_UNKW_INT) {
+			delete (int*)pImpl->Value;
+		} else if (pImpl->Type == StkObject::STKOBJECT_ATTR_FLOAT || pImpl->Type == StkObject::STKOBJECT_ELEM_FLOAT || pImpl->Type == StkObject::STKOBJECT_UNKW_FLOAT) {
+			delete (float*)pImpl->Value;
+		} else {
+			int Len = lstrlen((TCHAR*)pImpl->Value) + 1;
+			delete [Len] (TCHAR*)pImpl->Value;
+		}
 	}
 	delete pImpl;
+	StkObject::Counter--;
 }
 
 StkObject* StkObject::Clone()
