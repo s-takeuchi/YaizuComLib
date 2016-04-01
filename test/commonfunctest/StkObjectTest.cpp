@@ -1381,7 +1381,7 @@ int MemoryLeakChecking4()
 	printf("Checks memory leak (large data)...");
 	long MaxMem[30];
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
-		StkObject* NewObj = MakeTestData3(_T("Hello"), 4, 6);
+		StkObject* NewObj = MakeTestData3(_T("Hello"), 4, 5);
 		delete NewObj;
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}

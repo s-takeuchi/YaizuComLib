@@ -732,6 +732,22 @@ StkObject::StkObject(TCHAR* TmpName, TCHAR* TmpValue)
 
 StkObject::~StkObject()
 {
+	if (pImpl->Name != NULL) {
+		int Len = lstrlen((TCHAR*)pImpl->Name) + 1;
+		delete [Len] pImpl->Name;
+		pImpl->Name = NULL;
+	}
+	if (pImpl->Value != NULL) {
+		if (pImpl->Type == StkObject::STKOBJECT_ATTR_INT || pImpl->Type == StkObject::STKOBJECT_ELEM_INT || pImpl->Type == StkObject::STKOBJECT_UNKW_INT) {
+			delete (int*)pImpl->Value;
+		} else if (pImpl->Type == StkObject::STKOBJECT_ATTR_FLOAT || pImpl->Type == StkObject::STKOBJECT_ELEM_FLOAT || pImpl->Type == StkObject::STKOBJECT_UNKW_FLOAT) {
+			delete (float*)pImpl->Value;
+		} else {
+			int Len = lstrlen((TCHAR*)pImpl->Value) + 1;
+			delete [Len] (TCHAR*)pImpl->Value;
+		}
+		pImpl->Value = NULL;
+	}
 	if (pImpl->Next != NULL) {
 		delete pImpl->Next;
 		pImpl->Next = NULL;
@@ -743,23 +759,6 @@ StkObject::~StkObject()
 	if (pImpl->FirstElem != NULL) {
 		delete pImpl->FirstElem;
 		pImpl->FirstElem = NULL;
-	}
-	if (pImpl->Name != NULL) {
-		int Len = lstrlen((TCHAR*)pImpl->Name) + 1;
-		delete [Len] pImpl->Name;
-	}
-	TCHAR* ValStr = (TCHAR*)pImpl->Value;
-	int* ValInt = (int*)pImpl->Value;
-	float* ValFloat = (float*)pImpl->Value;
-	if (pImpl->Value != NULL) {
-		if (pImpl->Type == StkObject::STKOBJECT_ATTR_INT || pImpl->Type == StkObject::STKOBJECT_ELEM_INT || pImpl->Type == StkObject::STKOBJECT_UNKW_INT) {
-			delete (int*)pImpl->Value;
-		} else if (pImpl->Type == StkObject::STKOBJECT_ATTR_FLOAT || pImpl->Type == StkObject::STKOBJECT_ELEM_FLOAT || pImpl->Type == StkObject::STKOBJECT_UNKW_FLOAT) {
-			delete (float*)pImpl->Value;
-		} else {
-			int Len = lstrlen((TCHAR*)pImpl->Value) + 1;
-			delete [Len] (TCHAR*)pImpl->Value;
-		}
 	}
 	delete pImpl;
 }
@@ -844,7 +843,7 @@ int StkObject::GetAttributeCount()
 void StkObject::SetIntValue(int TmpValue)
 {
 	if (pImpl->Value != NULL) {
-		delete pImpl->Value;
+		delete (int*)pImpl->Value;
 	}
 	pImpl->Value = new int(TmpValue);
 }
@@ -852,7 +851,7 @@ void StkObject::SetIntValue(int TmpValue)
 void StkObject::SetFloatValue(float TmpValue)
 {
 	if (pImpl->Value != NULL) {
-		delete pImpl->Value;
+		delete (float*)pImpl->Value;
 	}
 	pImpl->Value = new float(TmpValue);
 }
@@ -860,7 +859,7 @@ void StkObject::SetFloatValue(float TmpValue)
 void StkObject::SetStringValue(TCHAR* TmpValue)
 {
 	if (pImpl->Value != NULL) {
-		delete pImpl->Value;
+		delete [] (TCHAR*)pImpl->Value;
 	}
 	int Len = lstrlen(TmpValue) + 1;
 	pImpl->Value = new TCHAR[Len];

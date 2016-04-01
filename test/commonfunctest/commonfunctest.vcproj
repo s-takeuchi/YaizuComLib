@@ -64,6 +64,8 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				HeapReserveSize="100000000"
+				HeapCommitSize="100000000"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -137,6 +139,8 @@
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				HeapReserveSize="100000000"
+				HeapCommitSize="100000000"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
