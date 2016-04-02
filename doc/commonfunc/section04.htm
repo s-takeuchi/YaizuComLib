@@ -10,7 +10,28 @@
 
 <H2 ID="4.1">4.1 StkObject概要</H2>
 <div class="topic">
-aaaaa<br>
+StkObjectは，XMLまたはJSON形式のデータを処理するAPIを提供します。<br>
+提供するAPIには，以下に示すものがあります。<br>
+<ul>
+<li>XMLまたはJSON形式のデータをStkObjectインスタンスの集合に変換するAPI</li>
+<li>StkObjectインスタンスの集合をXMLまたはJSON形式のデータに変換するAPI</li>
+</ul>
+<p>
+StkObjectインスタンスは，下図に示すように，属性保持領域(Attribute)および要素保持領域(Element)が子のStkObjectインスタンスを梱包する入れ子構造を成すことができます。<br/>
+<img src="stkobject-abst-s.jpg"/><br/>
+また，StkObjectインスタンスは，値（整数や単精度浮動小数点数，文字列）を保持することができます。<br/>
+StkObjectインスタンスには以下の型があります。<br/>
+<ul>
+<li>コンテナ型</li>
+コンテナ型のStkObjectインスタンスは，値を保持することはできませんが，属性保持領域および要素保持領域に子のStkObjectインスタンスを梱包することができます。
+<li>整数型</li>
+整数値を保持することができます。子のStkObjectインスタンスを梱包することはできません。
+<li>単精度浮動小数点数型</li>
+単精度浮動小数点数値を保持することができます。子のStkObjectインスタンスを梱包することはできません。
+<li>文字列型</li>
+文字列を保持することができます。子のStkObjectインスタンスを梱包することはできません。
+</ul>
+</p>
 </div><p>
 
 
@@ -28,13 +49,25 @@ StkObjectの機能を利用するために，クライアントプログラム�
 
 <H2 ID="4.3">4.3 API一覧</H2>
 <div class="topic">
-bbbbb<br>
+StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <table class="tblstyle">
-<tr><td>aaa()</td><td>aaa()</td></tr>
-<tr><td>aaa()</td><td>aaa()</td></tr>
-<tr><td>aaa()</td><td>aaa()</td></tr>
-<tr><td>aaa()</td><td>aaa()</td></tr>
-<tr><td>aaa()</td><td>aaa()</td></tr>
+<tr><td>StkObject(TCHAR*)</td><td>コンストラクタ。値を持たないインスタンスを生成する。</td></tr>
+<tr><td>StkObject(TCHAR*, int)</td><td>コンストラクタ。int型の値を持つインスタンスを生成する。</td></tr>
+<tr><td>StkObject(TCHAR*, float)</td><td>コンストラクタ。float型の値を持つインスタンスを生成する。</td></tr>
+<tr><td>StkObject(TCHAR*, TCHAR*)</td><td>コンストラクタ。文字列型の値を持つインスタンスを生成する。</td></tr>
+<tr><td>virtual ~StkObject()</td><td>デストラクタ。</td></tr>
+<tr><td>StkObject* Clone()</td><td>インスタンスのクローンを生成する。</td></tr>
+<tr><td>BOOL Equals(StkObject*)</td><td>指定したインスタンスとの同一性を確認する。</td></tr>
+<tr><td>StkObject* Contains(StkObject*)</td><td>指定したインスタンスが含まれるかどうかを確認する。</td></tr>
+<tr><td>int GetArrayLength()</td><td>同じ階層にある要素の数を返す。</td></tr>
+<tr><td>int GetChildElementCount()</td><td>ひとつ下の階層にある要素の数を返す。</td></tr>
+<tr><td>int GetAttributeCount()</td><td>属性として存在するStkObjectインスタンスの数を返す。</td></tr>
+<tr><td>TCHAR* GetName()</td><td>StkObjectインスタンスの名称を返す。</td></tr>
+<tr><td>int GetType()</td><td>StkObjectインスタンスの型を返す。</td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
 </table><p>
 </div><p>
 

@@ -59,7 +59,7 @@ public:
 
 	TCHAR* GetName();
 	int GetType();
-	void SetType(int);
+	void SetType(int); // DO NOT USE THIS API.
 
 	int GetIntValue();
 	float GetFloatValue();
