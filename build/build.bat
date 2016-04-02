@@ -64,6 +64,7 @@ pushd deployment\commonfunc
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm commonfunc01.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm commonfunc02.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section03.htm commonfunc03.pdf
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section04.htm commonfunc04.pdf
 %PDFTK% *.pdf output commonfunc.pdf
 copy commonfunc.pdf ..
 del *.pdf
