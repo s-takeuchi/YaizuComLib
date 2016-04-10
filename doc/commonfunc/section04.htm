@@ -64,10 +64,23 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <tr><td>int GetAttributeCount()</td><td>属性として存在するStkObjectインスタンスの数を返す。</td></tr>
 <tr><td>TCHAR* GetName()</td><td>StkObjectインスタンスの名称を返す。</td></tr>
 <tr><td>int GetType()</td><td>StkObjectインスタンスの型を返す。</td></tr>
-<tr><td></td><td></td></tr>
-<tr><td></td><td></td></tr>
-<tr><td></td><td></td></tr>
-<tr><td></td><td></td></tr>
+<tr><td>int GetIntValue()</td><td>整数型のStkObjectインスタンスの値を返す。</td></tr>
+<tr><td>float GetFloatValue()</td><td>単精度浮動小数点数型のStkObjectインスタンスの値を返す。</td></tr>
+<tr><td>TCHAR* GetStringValue()</td><td>文字列型のStkObjectインスタンスの値を返す。</td></tr>
+<tr><td>void SetIntValue(int)</td><td>整数型のStkObjectインスタンスに値を設定する。</td></tr>
+<tr><td>void SetFloatValue(float)</td><td>単精度浮動小数点数型のStkObjectインスタンスに値を設定する。</td></tr>
+<tr><td>void SetStringValue(TCHAR*)</td><td>文字列型のStkObjectインスタンスに値を設定する。</td></tr>
+<tr><td>StkObject* GetFirstChildElement()</td><td>子のStkObjectインスタンスのうち，一番先頭のインスタンスを返す。</td></tr>
+<tr><td>StkObject* GetLastChildElement()</td><td>子のStkObjectインスタンスのうち，一番最後のインスタンスを返す。</td></tr>
+<tr><td>StkObject* GetFirstAttribute()</td><td>属性であるStkObjectインスタンスのうち，一番先頭のインスタンスを返す。</td></tr>
+<tr><td>StkObject* GetLastAttribute()</td><td>属性であるStkObjectインスタンスのうち，一番最後のインスタンスを返す。</td></tr>
+<tr><td>StkObject* GetNext()</td><td>同じ階層に存在するStkObjectインスタンスのうち，次のインスタンスを返す。</td></tr>
+<tr><td>void AppendChildElement(StkObject*)</td><td>子にStkObjectインスタンスを追加する。</td></tr>
+<tr><td>void AppendAttribute(StkObject*)</td><td>属性としてStkObjectインスタンスを追加する。</td></tr>
+<tr><td>void ToXml(std::wstring*)</td><td>XMLを生成する。</td></tr>
+<tr><td>void ToJson(std::wstring*)</td><td>JSONを生成する。</td></tr>
+<tr><td>static StkObject* CreateObjectFromXml(TCHAR*, int*)</td><td>XMLから入れ子構造のStkObjectインスタンスを生成する。</td></tr>
+<tr><td>static StkObject* CreateObjectFromJson(TCHAR*, int*)</td><td>JSONから入れ子構造のStkObjectインスタンスを生成する。</td></tr>
 </table><p>
 </div><p>
 
