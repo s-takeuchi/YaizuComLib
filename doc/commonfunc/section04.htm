@@ -25,11 +25,11 @@ StkObjectインスタンスには以下の型があります。<br/>
 <li>コンテナ型</li>
 コンテナ型のStkObjectインスタンスは，値を保持することはできませんが，属性保持領域および要素保持領域に子のStkObjectインスタンスを梱包することができます。
 <li>整数型</li>
-整数値を保持することができます。子のStkObjectインスタンスを梱包することはできません。
+整数値を保持することができます。属性保持領域および要素保持領域に子のStkObjectインスタンスを梱包することはできません。
 <li>単精度浮動小数点数型</li>
-単精度浮動小数点数値を保持することができます。子のStkObjectインスタンスを梱包することはできません。
+単精度浮動小数点数値を保持することができます。属性保持領域および要素保持領域に子のStkObjectインスタンスを梱包することはできません。
 <li>文字列型</li>
-文字列を保持することができます。子のStkObjectインスタンスを梱包することはできません。
+文字列を保持することができます。属性保持領域および要素保持領域に子のStkObjectインスタンスを梱包することはできません。
 </ul>
 </p>
 </div><p>
@@ -51,47 +51,83 @@ StkObjectの機能を利用するために，クライアントプログラム�
 <div class="topic">
 StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <table class="tblstyle">
-<tr><td>StkObject(TCHAR*)</td><td>コンストラクタ。値を持たないインスタンスを生成する。</td></tr>
-<tr><td>StkObject(TCHAR*, int)</td><td>コンストラクタ。int型の値を持つインスタンスを生成する。</td></tr>
-<tr><td>StkObject(TCHAR*, float)</td><td>コンストラクタ。float型の値を持つインスタンスを生成する。</td></tr>
-<tr><td>StkObject(TCHAR*, TCHAR*)</td><td>コンストラクタ。文字列型の値を持つインスタンスを生成する。</td></tr>
+<tr><td>StkObject(TCHAR*)</td><td>コンストラクタ。コンテナ型インスタンス（値を持たないインスタンス）を生成します。</td></tr>
+<tr><td>StkObject(TCHAR*, int)</td><td>コンストラクタ。整数型インスタンス（int型の値を持つインスタンス）を生成します。</td></tr>
+<tr><td>StkObject(TCHAR*, float)</td><td>コンストラクタ。単精度浮動小数点数型インスタンス（float型の値を持つインスタンス）を生成します。</td></tr>
+<tr><td>StkObject(TCHAR*, TCHAR*)</td><td>コンストラクタ。文字列型インスタンス（文字列型の値を持つインスタンス）を生成します。</td></tr>
 <tr><td>virtual ~StkObject()</td><td>デストラクタ。</td></tr>
-<tr><td>StkObject* Clone()</td><td>インスタンスのクローンを生成する。</td></tr>
-<tr><td>BOOL Equals(StkObject*)</td><td>指定したインスタンスとの同一性を確認する。</td></tr>
-<tr><td>StkObject* Contains(StkObject*)</td><td>指定したインスタンスが含まれるかどうかを確認する。</td></tr>
-<tr><td>int GetArrayLength()</td><td>同じ階層にある要素の数を返す。</td></tr>
-<tr><td>int GetChildElementCount()</td><td>ひとつ下の階層にある要素の数を返す。</td></tr>
-<tr><td>int GetAttributeCount()</td><td>属性として存在するStkObjectインスタンスの数を返す。</td></tr>
-<tr><td>TCHAR* GetName()</td><td>StkObjectインスタンスの名称を返す。</td></tr>
-<tr><td>int GetType()</td><td>StkObjectインスタンスの型を返す。</td></tr>
-<tr><td>int GetIntValue()</td><td>整数型のStkObjectインスタンスの値を返す。</td></tr>
-<tr><td>float GetFloatValue()</td><td>単精度浮動小数点数型のStkObjectインスタンスの値を返す。</td></tr>
-<tr><td>TCHAR* GetStringValue()</td><td>文字列型のStkObjectインスタンスの値を返す。</td></tr>
-<tr><td>void SetIntValue(int)</td><td>整数型のStkObjectインスタンスに値を設定する。</td></tr>
-<tr><td>void SetFloatValue(float)</td><td>単精度浮動小数点数型のStkObjectインスタンスに値を設定する。</td></tr>
-<tr><td>void SetStringValue(TCHAR*)</td><td>文字列型のStkObjectインスタンスに値を設定する。</td></tr>
-<tr><td>StkObject* GetFirstChildElement()</td><td>子のStkObjectインスタンスのうち，一番先頭のインスタンスを返す。</td></tr>
-<tr><td>StkObject* GetLastChildElement()</td><td>子のStkObjectインスタンスのうち，一番最後のインスタンスを返す。</td></tr>
-<tr><td>StkObject* GetFirstAttribute()</td><td>属性であるStkObjectインスタンスのうち，一番先頭のインスタンスを返す。</td></tr>
-<tr><td>StkObject* GetLastAttribute()</td><td>属性であるStkObjectインスタンスのうち，一番最後のインスタンスを返す。</td></tr>
-<tr><td>StkObject* GetNext()</td><td>同じ階層に存在するStkObjectインスタンスのうち，次のインスタンスを返す。</td></tr>
-<tr><td>void AppendChildElement(StkObject*)</td><td>子にStkObjectインスタンスを追加する。</td></tr>
-<tr><td>void AppendAttribute(StkObject*)</td><td>属性としてStkObjectインスタンスを追加する。</td></tr>
-<tr><td>void ToXml(std::wstring*)</td><td>XMLを生成する。</td></tr>
-<tr><td>void ToJson(std::wstring*)</td><td>JSONを生成する。</td></tr>
-<tr><td>static StkObject* CreateObjectFromXml(TCHAR*, int*)</td><td>XMLから入れ子構造のStkObjectインスタンスを生成する。</td></tr>
-<tr><td>static StkObject* CreateObjectFromJson(TCHAR*, int*)</td><td>JSONから入れ子構造のStkObjectインスタンスを生成する。</td></tr>
+<tr><td>StkObject* Clone()</td><td>インスタンスのクローンを生成します。</td></tr>
+<tr><td>BOOL Equals(StkObject*)</td><td>指定したインスタンスとの同一性を確認します。</td></tr>
+<tr><td>StkObject* Contains(StkObject*)</td><td>指定したインスタンスが含まれるかどうかを確認します。</td></tr>
+<tr><td>int GetArrayLength()</td><td>同じ階層にある要素の数を返します。</td></tr>
+<tr><td>int GetChildElementCount()</td><td>ひとつ下の階層にある要素の数を返します。</td></tr>
+<tr><td>int GetAttributeCount()</td><td>属性として存在するStkObjectインスタンスの数を返します。</td></tr>
+<tr><td>TCHAR* GetName()</td><td>StkObjectインスタンスの名称を返します。</td></tr>
+<tr><td>int GetType()</td><td>StkObjectインスタンスの型を返します。</td></tr>
+<tr><td>int GetIntValue()</td><td>整数型のStkObjectインスタンスの値を返します。</td></tr>
+<tr><td>float GetFloatValue()</td><td>単精度浮動小数点数型のStkObjectインスタンスの値を返します。</td></tr>
+<tr><td>TCHAR* GetStringValue()</td><td>文字列型のStkObjectインスタンスの値を返します。</td></tr>
+<tr><td>void SetIntValue(int)</td><td>整数型のStkObjectインスタンスに値を設定します。</td></tr>
+<tr><td>void SetFloatValue(float)</td><td>単精度浮動小数点数型のStkObjectインスタンスに値を設定します。</td></tr>
+<tr><td>void SetStringValue(TCHAR*)</td><td>文字列型のStkObjectインスタンスに値を設定します。</td></tr>
+<tr><td>StkObject* GetFirstChildElement()</td><td>子のStkObjectインスタンスのうち，一番先頭のインスタンスを返します。</td></tr>
+<tr><td>StkObject* GetLastChildElement()</td><td>子のStkObjectインスタンスのうち，一番最後のインスタンスを返します。</td></tr>
+<tr><td>StkObject* GetFirstAttribute()</td><td>属性であるStkObjectインスタンスのうち，一番先頭のインスタンスを返します。</td></tr>
+<tr><td>StkObject* GetLastAttribute()</td><td>属性であるStkObjectインスタンスのうち，一番最後のインスタンスを返します。</td></tr>
+<tr><td>StkObject* GetNext()</td><td>同じ階層に存在するStkObjectインスタンスのうち，次のインスタンスを返します。</td></tr>
+<tr><td>void AppendChildElement(StkObject*)</td><td>子にStkObjectインスタンスを追加します。</td></tr>
+<tr><td>void AppendAttribute(StkObject*)</td><td>属性としてStkObjectインスタンスを追加します。</td></tr>
+<tr><td>void ToXml(std::wstring*)</td><td>XMLを生成します。</td></tr>
+<tr><td>void ToJson(std::wstring*)</td><td>JSONを生成します。</td></tr>
+<tr><td>static StkObject* CreateObjectFromXml(TCHAR*, int*)</td><td>XMLから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
+<tr><td>static StkObject* CreateObjectFromJson(TCHAR*, int*)</td><td>JSONから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
 </table><p>
 </div><p>
 
 
 
-<H2 ID="4.4">4.4 int Aaa(int* Value)</H2>
+<H2 ID="4.4">4.4 StkObject(TCHAR* Name)</H2>
 <div class="topic">
-ccccc<br>
+コンストラクタ。コンテナ型インスタンス（値を持たないインスタンス）を生成します。<br>
 <table class="tblstyle">
-<tr><td>Value[入力]</td><td>Value</td></tr>
-<tr><td>[戻り値]</td><td>xxx</td></tr>
+<tr><td>Name[入力]</td><td>StkObjectインスタンスの名称</td></tr>
+<tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.5">4.5 StkObject(TCHAR* Name, int IntValue)</H2>
+<div class="topic">
+コンストラクタ。整数型インスタンス（int型の値を持つインスタンス）を生成します。<br>
+<table class="tblstyle">
+<tr><td>Name[入力]</td><td>StkObjectインスタンスの名称</td></tr>
+<tr><td>IntValue[入力]</td><td>StkObjectインスタンスに設定する整数値</td></tr>
+<tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.6">4.6 StkObject(TCHAR* Name, float FloatValue)</H2>
+<div class="topic">
+コンストラクタ。単精度浮動小数点数型インスタンス（float型の値を持つインスタンス）を生成します。<br>
+<table class="tblstyle">
+<tr><td>Name[入力]</td><td>StkObjectインスタンスの名称</td></tr>
+<tr><td>FloatValue[入力]</td><td>StkObjectインスタンスに設定する単精度浮動小数点数値</td></tr>
+<tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.7">4.7 StkObject(TCHAR* Name, TCHAR* StringValue)</H2>
+<div class="topic">
+コンストラクタ。文字列型インスタンス（文字列型の値を持つインスタンス）を生成します。<br>
+<table class="tblstyle">
+<tr><td>Name[入力]</td><td>StkObjectインスタンスの名称</td></tr>
+<tr><td>StringValue[入力]</td><td>StkObjectインスタンスに設定する文字列</td></tr>
+<tr><td>[戻り値]</td><td>なし</td></tr>
 </table>
 </div><p>
 
