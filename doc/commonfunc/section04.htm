@@ -56,10 +56,10 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <tr><td>StkObject(TCHAR*, float)</td><td>コンストラクタ。単精度浮動小数点数型インスタンス（float型の値を持つインスタンス）を生成します。</td></tr>
 <tr><td>StkObject(TCHAR*, TCHAR*)</td><td>コンストラクタ。文字列型インスタンス（文字列型の値を持つインスタンス）を生成します。</td></tr>
 <tr><td>virtual ~StkObject()</td><td>デストラクタ。</td></tr>
-<tr><td>StkObject* Clone()</td><td>インスタンスのクローンを生成します。</td></tr>
+<tr><td>StkObject* Clone()</td><td>StkObjectインスタンスのクローンを生成します。</td></tr>
 <tr><td>BOOL Equals(StkObject*)</td><td>指定したインスタンスとの同一性を確認します。</td></tr>
 <tr><td>StkObject* Contains(StkObject*)</td><td>指定したインスタンスが含まれるかどうかを確認します。</td></tr>
-<tr><td>int GetArrayLength()</td><td>同じ階層にある要素の数を返します。</td></tr>
+<tr><td>int GetArrayLength()</td><td>同じ階層にある後続の属性または要素の数を返します。</td></tr>
 <tr><td>int GetChildElementCount()</td><td>ひとつ下の階層にある要素の数を返します。</td></tr>
 <tr><td>int GetAttributeCount()</td><td>属性として存在するStkObjectインスタンスの数を返します。</td></tr>
 <tr><td>TCHAR* GetName()</td><td>StkObjectインスタンスの名称を返します。</td></tr>
@@ -128,6 +128,69 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <tr><td>Name[入力]</td><td>StkObjectインスタンスの名称</td></tr>
 <tr><td>StringValue[入力]</td><td>StkObjectインスタンスに設定する文字列</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.8">4.8 ~StkObject()</H2>
+<div class="topic">
+デストラクタ。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.9">4.9 StkObject* Clone()</H2>
+<div class="topic">
+StkObjectインスタンスのクローンを生成します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>生成されたStkObjectインスタンスのポインタ</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.10">4.10 BOOL Equals(StkObject* StkObj)</H2>
+<div class="topic">
+指定したインスタンスとの同一性を確認します。<br>
+以下の条件のすべてが一致するとき，指定したインスタンスとAPI呼び出し先インスタンスには同一性があると判断されます。
+<ul>
+<li>指定したインスタンスおよびその子孫のインスタンスの構造（属性および要素の入れ子構造）が，API呼び出し先インスタンスのそれと一致する。
+<li>指定したインスタンスおよびその子孫のインスタンスの名称が，API呼び出し先インスタンスのそれと一致する。
+<li>指定したインスタンスおよびその子孫のインスタンスの値が，API呼び出し先インスタンスのそれと一致する。
+</ul><br>
+<table class="tblstyle">
+<tr><td>StkObj[入力]</td><td>比較するStkObjectインスタンス</td></tr>
+<tr><td>[戻り値]</td><td>TRUE:同一性がある, FALSE:同一性がない</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.11">4.11 StkObject* Contains(StkObject* StkObj)</H2>
+<div class="topic">
+指定したインスタンスが含まれるかどうかを確認します。<br>
+指定したインスタンスがAPI呼び出し先のインスタンスの一部を構成している場合，そのポインタを返します。<br>
+<table class="tblstyle">
+<tr><td>StkObj[入力]</td><td>確認対象となるStkObjectインスタンス</td></tr>
+<tr><td>[戻り値]</td><td>指定したインスタンスがAPI呼び出し先のインスタンスの一部を構成している場合，そのポインタが返る。そうでない場合，NULLが返る。</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.12">4.12 int GetArrayLength()</H2>
+<div class="topic">
+同じ階層にある後続の属性または要素の数を返します。<br>
+属性保持領域および要素保持領域は，Arrayとして子供のStkObjectインスタンスを保持します。<br>
+下図においてAPI呼び出し先のインスタンスがA-1の場合，A-1に加えてA-2, A-3が同じ階層にある後続の属性となるため，GetArrayLength()は3を返します。
+API呼び出し先のインスタンスがE-3の場合，E-3以外に同じ階層に後続の要素はないため，GetArrayLength()は1を返します。<br>
+<img src="stkobject-array-s.jpg"><br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>同じ階層にある後続の属性または要素の数</td></tr>
 </table>
 </div><p>
 
