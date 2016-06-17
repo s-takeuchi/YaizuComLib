@@ -21,8 +21,8 @@ StkThreadのユーザープログラム用APIの一覧を以下に示します�
 <tr><td>void SetProcAfterLastStkThreadStops(void* Proc)</td><td>コールバックメソッドProcAfterLastStkThreadStopsのポインタを設定します。</td></tr>
 <tr><td>int StartSpecifiedStkThreads(int Ids[MAX_NUM_OF_STKTHREADS], int NumOfIds)</td><td>指定されたIDのスレッドを開始します。</td></tr>
 <tr><td>int StopSpecifiedStkThreads(int Ids[MAX_NUM_OF_STKTHREADS], int NumOfIds)</td><td>指定されたIDのスレッドを停止します。</td></tr>
-<tr><td>int StartAllStkThreads()</td><td>登録されているすべてのスレッドを開始します。</td></tr>
-<tr><td>int StopAllStkThreads()</td><td>登録されているすべてのスレッドを停止します。</td></tr>
+<tr><td>int StartAllOfStkThreads()</td><td>登録されているすべてのスレッドを開始します。</td></tr>
+<tr><td>int StopAllOfStkThreads()</td><td>登録されているすべてのスレッドを停止します。</td></tr>
 <tr><td>void SetStkThreadInterval(int TargetId, int Millisec)</td><td>ElemStkThreadMainコールバックメソッドを定期的に呼び出す間隔をミリ秒単位で指定します。</td></tr>
 <tr><td>int GetStkThreadInterval(int TargetId)</td><td>ElemStkThreadMainコールバックメソッドを定期的に呼び出す間隔を取得します。</td></tr>
 <tr><td>int GetStkThreadIdByIndex(int Index)</td><td>指定した要素番号のIDを取得します。</td></tr>
@@ -144,7 +144,7 @@ ProcAfterLastStkThreadStops(コールバックメソッド)を設定します。
 </div><p>
 
 
-<H3 ID="3.2.9">3.2.9 int StartAllStkThreads()</H3>
+<H3 ID="3.2.9">3.2.9 int StartAllOfStkThreads()</H3>
 <div class="topic">
 登録されているすべてのスレッドを開始します。<br>
 このメソッドは最初に現在実行中のスレッドが存在するかどうかをチェックし，指定されたスレッドが最初の実行スレッドと判断した場合，ProcBeforeFirstStkThreadStartsをコールバックします。<br>
@@ -156,7 +156,7 @@ ProcAfterLastStkThreadStops(コールバックメソッド)を設定します。
 </div><p>
 
 
-<H3 ID="3.2.10">3.2.10 int StopAllStkThreads()</H3>
+<H3 ID="3.2.10">3.2.10 int StopAllOfStkThreads()</H3>
 <div class="topic">
 登録されているすべてのスレッドを停止します。<br>
 このメソッドはElemStkThreadStopおよびElemStkThreadFinalをコールバックしたあと，全てのスレッドが停止したかどうかをチェックし，全てのスレッドが停止したと判断した場合，ProcAfterLastStkThreadStopsをコールバックします。<br>

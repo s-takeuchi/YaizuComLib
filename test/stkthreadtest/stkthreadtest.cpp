@@ -222,7 +222,7 @@ int Create1000Threads()
 
 	//////////////////////////////
 	printf("Starts all threads...");
-	StartAllStkThreads();
+	StartAllOfStkThreads();
 	Sleep(2000);
 	if (GetNumOfRunStkThread() != 1000) {
 		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
@@ -232,7 +232,7 @@ int Create1000Threads()
 
 	//////////////////////////////
 	printf("Stops all threads...");
-	StopAllStkThreads();
+	StopAllOfStkThreads();
 	Sleep(2000);
 	if (GetNumOfRunStkThread() != 0) {
 		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());

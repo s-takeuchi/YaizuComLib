@@ -33,5 +33,5 @@ void SetProcBeforeFirstStkThreadStarts(void*);
 void SetProcAfterLastStkThreadStops(void*);
 int StartSpecifiedStkThreads(int[MAX_NUM_OF_STKTHREADS], int);
 int StopSpecifiedStkThreads(int[MAX_NUM_OF_STKTHREADS], int);
-int StartAllStkThreads();
-int StopAllStkThreads();
+int StartAllOfStkThreads();
+int StopAllOfStkThreads();

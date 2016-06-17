@@ -101,12 +101,12 @@ int StopSpecifiedStkThreads(int Ids[StkThreadManager::MAX_NUM_OF_STKTHREADS], in
 	return StkThreadManager::GetInstance()->StopSpecifiedStkThreads(Ids, NumOfIds);
 }
 
-int StartAllStkThreads()
+int StartAllOfStkThreads()
 {
 	return StkThreadManager::GetInstance()->StartAllStkThreads();
 }
 
-int StopAllStkThreads()
+int StopAllOfStkThreads()
 {
 	return StkThreadManager::GetInstance()->StopAllStkThreads();
 }
