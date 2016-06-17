@@ -196,5 +196,58 @@ API呼び出し先のインスタンスがE-3の場合，E-3以外に同じ階�
 
 
 
+<H2 ID="4.13">4.13 int GetChildElementCount()</H2>
+<div class="topic">
+ひとつ下の階層にある要素の数を返します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>ひとつ下の階層にある要素の数</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.14">4.14 int GetAttributeCount()</H2>
+<div class="topic">
+属性として存在するStkObjectインスタンスの数を返します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>属性として存在するStkObjectインスタンスの数</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.15">4.15 TCHAR* GetName()</H2>
+<div class="topic">
+StkObjectインスタンスの名称を返します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>StkObjectインスタンスの名称</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.16">4.16 int GetType()</H2>
+<div class="topic">
+StkObjectインスタンスの型を返します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>StkObjectインスタンスの型。以下のいづれか。<br>
+<ul>
+<li>STKOBJECT_UNKW_INT<br>コンテナ型StkObjectインスタンスに梱包されていない整数型StkObjectインスタンス</li>
+<li>STKOBJECT_UNKW_FLOAT<br>コンテナ型StkObjectインスタンスに梱包されていない単精度浮動小数点数型StkObjectインスタンス</li>
+<li>STKOBJECT_UNKW_STRING<br>コンテナ型StkObjectインスタンスに梱包されていない文字列型StkObjectインスタンス</li>
+<li>STKOBJECT_ATTR_INT<br>コンテナ型StkObjectインスタンスの属性保持領域に格納されている整数型StkObjectインスタンス</li>
+<li>STKOBJECT_ATTR_FLOAT<br>コンテナ型StkObjectインスタンスの属性保持領域に格納されている単精度浮動小数点数型StkObjectインスタンス</li>
+<li>STKOBJECT_ATTR_STRING<br>コンテナ型StkObjectインスタンスの属性保持領域に格納されている文字列型StkObjectインスタンス</li>
+<li>STKOBJECT_ELEMENT<br>コンテナ型StkObjectインスタンス</li>
+<li>STKOBJECT_ELEM_INT<br>コンテナ型StkObjectインスタンスの要素保持領域に格納されている整数型StkObjectインスタンス</li>
+<li>STKOBJECT_ELEM_FLOAT<br>コンテナ型StkObjectインスタンスの要素保持領域に格納されている単精度浮動小数点数型StkObjectインスタンス</li>
+<li>STKOBJECT_ELEM_STRING<br>コンテナ型StkObjectインスタンスの要素保持領域に格納されている文字列型StkObjectインスタンス</li>
+</ul> 
+</td></tr>
+</table>
+</div><p>
+
+
+
 </div>
 </BODY>
