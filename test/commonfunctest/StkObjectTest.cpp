@@ -664,6 +664,59 @@ void GeneralTestCase4()
 	}
 }
 
+void GeneralTestCase5()
+{
+	{
+		wprintf(_T("GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value ..."));
+		StkObject* Obj = new StkObject(_T("IntValue"), 123);
+		Abort(Obj->GetIntValue() == 123 && Obj->GetFloatValue() == 0.0f && Obj->GetStringValue() == NULL);
+
+		wprintf(_T("GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value (Child Element) ..."));
+		StkObject* ParentObj = new StkObject(_T("Parent"));
+		ParentObj->AppendChildElement(Obj);
+		ParentObj->GetFirstChildElement()->SetIntValue(321);
+		ParentObj->GetFirstChildElement()->SetFloatValue(999.9f);
+		ParentObj->GetFirstChildElement()->SetStringValue(_T("Hello"));
+		Abort(ParentObj->GetFirstChildElement()->GetIntValue() == 321 &&
+			ParentObj->GetFirstChildElement()->GetFloatValue() == 0.0f &&
+			ParentObj->GetFirstChildElement()->GetStringValue() == NULL);
+		delete ParentObj;
+	}
+	{
+		wprintf(_T("GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value ..."));
+		StkObject* Obj = new StkObject(_T("IntValue"), 123.4f);
+		Abort(Obj->GetIntValue() == 0 && Obj->GetFloatValue() == 123.4f && Obj->GetStringValue() == NULL);
+
+		wprintf(_T("GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value (Child Element) ..."));
+		StkObject* ParentObj = new StkObject(_T("Parent"));
+		ParentObj->AppendChildElement(Obj);
+		ParentObj->GetFirstChildElement()->SetIntValue(999);
+		ParentObj->GetFirstChildElement()->SetFloatValue(432.1f);
+		ParentObj->GetFirstChildElement()->SetStringValue(_T("Hello"));
+		Abort(ParentObj->GetFirstChildElement()->GetIntValue() == 0 &&
+			ParentObj->GetFirstChildElement()->GetFloatValue() == 432.1f &&
+			ParentObj->GetFirstChildElement()->GetStringValue() == NULL);
+		delete ParentObj;
+	}
+	{
+		wprintf(_T("GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value ..."));
+		StkObject* Obj = new StkObject(_T("IntValue"), _T("Test"));
+		Abort(Obj->GetIntValue() == 0 && Obj->GetFloatValue() == 0.0f && Obj->GetStringValue() != NULL);
+
+		wprintf(_T("GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value (Child Element) ..."));
+		StkObject* ParentObj = new StkObject(_T("Parent"));
+		ParentObj->AppendChildElement(Obj);
+		ParentObj->GetFirstChildElement()->SetIntValue(999);
+		ParentObj->GetFirstChildElement()->SetFloatValue(999.9f);
+		ParentObj->GetFirstChildElement()->SetStringValue(_T("Hello"));
+		Abort(ParentObj->GetFirstChildElement()->GetIntValue() == 0 &&
+			ParentObj->GetFirstChildElement()->GetFloatValue() == 0.0f &&
+			ParentObj->GetFirstChildElement()->GetStringValue() != NULL &&
+			lstrcmp(ParentObj->GetFirstChildElement()->GetStringValue(), _T("Hello")) == 0);
+		delete ParentObj;
+	}
+}
+
 void JsonEncodingTest1()
 {
 	StkObject* Obj = new StkObject(_T("EncodeTesting"));
@@ -1441,6 +1494,7 @@ void StkObjectTest()
 
 		GeneralTestCase3();
 		GeneralTestCase4();
+		GeneralTestCase5();
 	}
 
 	// Clone check

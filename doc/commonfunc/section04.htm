@@ -252,6 +252,7 @@ StkObjectインスタンスの型を返します。<br>
 <H2 ID="4.17">4.17 int GetIntValue()</H2>
 <div class="topic">
 整数型のStkObjectインスタンスの値を返します。<br>
+整数型ではないStkObjectインスタンスに対して本APIを呼び出した場合，0を返します。<br>
 <table class="tblstyle">
 <tr><td>[戻り値]</td><td>整数型のStkObjectインスタンスの値</td></tr>
 </table>
@@ -262,6 +263,7 @@ StkObjectインスタンスの型を返します。<br>
 <H2 ID="4.18">4.18 float GetFloatValue()</H2>
 <div class="topic">
 単精度浮動小数点数型のStkObjectインスタンスの値を返します。<br>
+単精度浮動小数点数型ではないStkObjectインスタンスに対して本APIを呼び出した場合，0.0fを返します。<br>
 <table class="tblstyle">
 <tr><td>[戻り値]</td><td>単精度浮動小数点数型のStkObjectインスタンスの値</td></tr>
 </table>
@@ -272,6 +274,7 @@ StkObjectインスタンスの型を返します。<br>
 <H2 ID="4.19">4.19 TCHAR* GetStringValue()</H2>
 <div class="topic">
 文字列型のStkObjectインスタンスの値を返します。<br>
+文字列型ではないStkObjectインスタンスに対して本APIを呼び出した場合，NULLを返します。<br>
 <table class="tblstyle">
 <tr><td>[戻り値]</td><td>文字列型のStkObjectインスタンスの値</td></tr>
 </table>
@@ -282,6 +285,7 @@ StkObjectインスタンスの型を返します。<br>
 <H2 ID="4.20">4.20 void SetIntValue(int IntValue)</H2>
 <div class="topic">
 整数型のStkObjectインスタンスに値を設定します。<br>
+整数型ではないStkObjectインスタンスに対して本APIを呼び出した場合，要求は無視されます。<br>
 <table class="tblstyle">
 <tr><td>IntValue[入力]</td><td>整数型のStkObjectインスタンスに値</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>
@@ -293,6 +297,7 @@ StkObjectインスタンスの型を返します。<br>
 <H2 ID="4.21">4.21 void SetFloatValue(float FloatValue)</H2>
 <div class="topic">
 単精度浮動小数点数型のStkObjectインスタンスに値を設定します。<br>
+単精度浮動小数点数型ではないStkObjectインスタンスに対して本APIを呼び出した場合，要求は無視されます。<br>
 <table class="tblstyle">
 <tr><td>FloatValue[入力]</td><td>単精度浮動小数点数型のStkObjectインスタンスに値</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>
@@ -304,6 +309,7 @@ StkObjectインスタンスの型を返します。<br>
 <H2 ID="4.22">4.22 void SetStringValue(TCHAR* StringValue)</H2>
 <div class="topic">
 文字列型のStkObjectインスタンスに値を設定します。<br>
+文字列型ではないStkObjectインスタンスに対して本APIを呼び出した場合，要求は無視されます。<br>
 <table class="tblstyle">
 <tr><td>StringValue[入力]</td><td>文字列型のStkObjectインスタンスに値</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>

@@ -842,6 +842,9 @@ int StkObject::GetAttributeCount()
 
 void StkObject::SetIntValue(int TmpValue)
 {
+	if (pImpl->Type != STKOBJECT_UNKW_INT && pImpl->Type != STKOBJECT_ATTR_INT && pImpl->Type != STKOBJECT_ELEM_INT) {
+		return;
+	}
 	if (pImpl->Value != NULL) {
 		delete (int*)pImpl->Value;
 	}
@@ -850,6 +853,9 @@ void StkObject::SetIntValue(int TmpValue)
 
 void StkObject::SetFloatValue(float TmpValue)
 {
+	if (pImpl->Type != STKOBJECT_UNKW_FLOAT && pImpl->Type != STKOBJECT_ATTR_FLOAT && pImpl->Type != STKOBJECT_ELEM_FLOAT) {
+		return;
+	}
 	if (pImpl->Value != NULL) {
 		delete (float*)pImpl->Value;
 	}
@@ -858,6 +864,9 @@ void StkObject::SetFloatValue(float TmpValue)
 
 void StkObject::SetStringValue(TCHAR* TmpValue)
 {
+	if (pImpl->Type != STKOBJECT_UNKW_STRING && pImpl->Type != STKOBJECT_ATTR_STRING && pImpl->Type != STKOBJECT_ELEM_STRING) {
+		return;
+	}
 	if (pImpl->Value != NULL) {
 		delete [] (TCHAR*)pImpl->Value;
 	}
@@ -883,18 +892,27 @@ void StkObject::SetType(int TmpType)
 
 int StkObject::GetIntValue()
 {
+	if (pImpl->Type != STKOBJECT_UNKW_INT && pImpl->Type != STKOBJECT_ATTR_INT && pImpl->Type != STKOBJECT_ELEM_INT) {
+		return 0;
+	}
 	int *Val = (int*)pImpl->Value;
 	return *Val;
 }
 
 float StkObject::GetFloatValue()
 {
+	if (pImpl->Type != STKOBJECT_UNKW_FLOAT && pImpl->Type != STKOBJECT_ATTR_FLOAT && pImpl->Type != STKOBJECT_ELEM_FLOAT) {
+		return 0.0f;
+	}
 	float *Val = (float*)pImpl->Value;
 	return *Val;
 }
 
 TCHAR* StkObject::GetStringValue()
 {
+	if (pImpl->Type != STKOBJECT_UNKW_STRING && pImpl->Type != STKOBJECT_ATTR_STRING && pImpl->Type != STKOBJECT_ELEM_STRING) {
+		return NULL;
+	}
 	return (TCHAR*)pImpl->Value;
 }
 
