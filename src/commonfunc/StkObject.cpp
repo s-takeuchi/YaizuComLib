@@ -950,6 +950,11 @@ void StkObject::AppendChildElement(StkObject* TmpObj)
 		TmpObj->SetType(STKOBJECT_ELEM_FLOAT);
 	} else if (TmpType == STKOBJECT_UNKW_STRING) {
 		TmpObj->SetType(STKOBJECT_ELEM_STRING);
+	} else if (TmpType == STKOBJECT_ELEMENT) {
+		// nothing to do
+	} else {
+		// Abnormal case
+		return;
 	}
 	if (pImpl->FirstElem == NULL) {
 		pImpl->FirstElem = TmpObj;
@@ -1722,7 +1727,7 @@ StkObject* StkObject::CreateObjectFromXml(TCHAR* Xml, int* Offset)
 			TCHAR* Value = Impl::GetValue(&Xml[Loop], &StrLen);
 			Loop = Loop + StrLen;
 			if (RetObj != NULL) {
-				RetObj->SetType(StkObject::STKOBJECT_ELEM_STRING);
+				RetObj->SetType(StkObject::STKOBJECT_UNKW_STRING);
 				RetObj->SetStringValue(Value);
 			}
 			delete Value;
