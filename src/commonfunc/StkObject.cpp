@@ -975,6 +975,9 @@ void StkObject::AppendAttribute(StkObject* TmpObj)
 		TmpObj->SetType(STKOBJECT_ATTR_FLOAT);
 	} else if (TmpType == STKOBJECT_UNKW_STRING) {
 		TmpObj->SetType(STKOBJECT_ATTR_STRING);
+	} else {
+		// Abnormal case
+		return;
 	}
 	if (pImpl->FirstAttr == NULL) {
 		pImpl->FirstAttr = TmpObj;
