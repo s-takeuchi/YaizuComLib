@@ -18,6 +18,7 @@ StkObjectは，XMLまたはJSON形式のデータを処理するAPIを提供し�
 </ul>
 <p>
 StkObjectインスタンスは，下図に示すように，属性保持領域(Attribute)および要素保持領域(Element)が子のStkObjectインスタンスを梱包する入れ子構造を成すことができます。<br/>
+すべてのStkObjectインスタンスは，最上位のノードとなるトップノードを除いて親のインスタンスと関連を持ちます。また，あるStkObjectインスタンスが異なる複数の親を持つことはできません。<br/>
 <img src="stkobject-abst-s.jpg"/><br/>
 また，StkObjectインスタンスは，値（整数や単精度浮動小数点数，文字列）を保持することができます。<br/>
 StkObjectインスタンスには以下の型があります。<br/>
@@ -30,7 +31,15 @@ StkObjectインスタンスには以下の型があります。<br/>
 単精度浮動小数点数値を保持することができます。属性保持領域および要素保持領域に子のStkObjectインスタンスを梱包することはできません。
 <li>文字列型</li>
 文字列を保持することができます。属性保持領域および要素保持領域に子のStkObjectインスタンスを梱包することはできません。
-</ul>
+</ul><br/>
+属性保持領域(Attribute)および要素保持領域(Element)に定義可能なStkObjectインスタンスの型は，下表のとおりとなります。<br/>
+<table class="tblstyle">
+<tr><td></td><td>属性保持領域(Attribute)</td><td>要素保持領域(Element)</td></tr>
+<tr><td>コンテナ型</td><td>不可</td><td>可</td></tr>
+<tr><td>整数型</td><td>可</td><td>可</td></tr>
+<tr><td>単精度浮動小数点数型</td><td>可</td><td>可</td></tr>
+<tr><td>文字列型</td><td>可</td><td>可</td></tr>
+</table>
 </p>
 </div><p>
 
@@ -75,10 +84,10 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <tr><td>StkObject* GetFirstAttribute()</td><td>属性であるStkObjectインスタンスのうち，一番先頭のインスタンスを返します。</td></tr>
 <tr><td>StkObject* GetLastAttribute()</td><td>属性であるStkObjectインスタンスのうち，一番最後のインスタンスを返します。</td></tr>
 <tr><td>StkObject* GetNext()</td><td>同じ階層に存在するStkObjectインスタンスのうち，次のインスタンスを返します。</td></tr>
-<tr><td>void AppendChildElement(StkObject*)</td><td>子にStkObjectインスタンスを追加します。</td></tr>
+<tr><td>void AppendChildElement(StkObject*)</td><td>要素保持領域に子のStkObjectインスタンスを追加します。</td></tr>
 <tr><td>void AppendAttribute(StkObject*)</td><td>属性としてStkObjectインスタンスを追加します。</td></tr>
-<tr><td>void ToXml(std::wstring*)</td><td>XMLを生成します。</td></tr>
-<tr><td>void ToJson(std::wstring*)</td><td>JSONを生成します。</td></tr>
+<tr><td>void ToXml(std::wstring*)</td><td>StkObjectインスタンスからXMLを生成します。</td></tr>
+<tr><td>void ToJson(std::wstring*)</td><td>StkObjectインスタンスからJSONを生成します。</td></tr>
 <tr><td>static StkObject* CreateObjectFromXml(TCHAR*, int*)</td><td>XMLから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
 <tr><td>static StkObject* CreateObjectFromJson(TCHAR*, int*)</td><td>JSONから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
 </table><p>
@@ -89,6 +98,7 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <H2 ID="4.4">4.4 StkObject(TCHAR* Name)</H2>
 <div class="topic">
 コンストラクタ。コンテナ型インスタンス（値を持たないインスタンス）を生成します。<br>
+StkObjectインスタンスの型は，STKOBJECT_ELEMENTとなります。<br>
 <table class="tblstyle">
 <tr><td>Name[入力]</td><td>StkObjectインスタンスの名称</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>
@@ -100,6 +110,7 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <H2 ID="4.5">4.5 StkObject(TCHAR* Name, int IntValue)</H2>
 <div class="topic">
 コンストラクタ。整数型インスタンス（int型の値を持つインスタンス）を生成します。<br>
+StkObjectインスタンスの型は，STKOBJECT_UNKW_INTとなります。<br>
 <table class="tblstyle">
 <tr><td>Name[入力]</td><td>StkObjectインスタンスの名称</td></tr>
 <tr><td>IntValue[入力]</td><td>StkObjectインスタンスに設定する整数値</td></tr>
@@ -112,6 +123,7 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <H2 ID="4.6">4.6 StkObject(TCHAR* Name, float FloatValue)</H2>
 <div class="topic">
 コンストラクタ。単精度浮動小数点数型インスタンス（float型の値を持つインスタンス）を生成します。<br>
+StkObjectインスタンスの型は，STKOBJECT_UNKW_FLOATとなります。<br>
 <table class="tblstyle">
 <tr><td>Name[入力]</td><td>StkObjectインスタンスの名称</td></tr>
 <tr><td>FloatValue[入力]</td><td>StkObjectインスタンスに設定する単精度浮動小数点数値</td></tr>
@@ -124,9 +136,10 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <H2 ID="4.7">4.7 StkObject(TCHAR* Name, TCHAR* StringValue)</H2>
 <div class="topic">
 コンストラクタ。文字列型インスタンス（文字列型の値を持つインスタンス）を生成します。<br>
+StkObjectインスタンスの型は，STKOBJECT_UNKW_STRINGとなります。<br>
 <table class="tblstyle">
 <tr><td>Name[入力]</td><td>StkObjectインスタンスの名称</td></tr>
-<tr><td>StringValue[入力]</td><td>StkObjectインスタンスに設定する文字列</td></tr>
+<tr><td>StringValue[入力]</td><td>StkObjectインスタンスに設定する文字列。本API内でStringValueのコピーが生成，設定されるため，API呼び出し後StringValueはdelete可能。</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>
 </table>
 </div><p>
@@ -136,6 +149,9 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <H2 ID="4.8">4.8 ~StkObject()</H2>
 <div class="topic">
 デストラクタ。<br>
+関連する（入れ子となっている）すべてのStkObjectインスタンスを削除します。<br>
+StkObjectインスタンスをdeleteするときは，必ずトップノードとなるStkObjectを削除しなければなりません。
+子のStkObjectインスタンスをdeleteした場合，内部的な親子の参照関係に矛盾が発生し，動作に不具合を生じさせます。<br>
 <table class="tblstyle">
 <tr><td>[戻り値]</td><td>なし</td></tr>
 </table>
@@ -287,7 +303,7 @@ StkObjectインスタンスの型を返します。<br>
 整数型のStkObjectインスタンスに値を設定します。<br>
 整数型ではないStkObjectインスタンスに対して本APIを呼び出した場合，要求は無視されます。<br>
 <table class="tblstyle">
-<tr><td>IntValue[入力]</td><td>整数型のStkObjectインスタンスに値</td></tr>
+<tr><td>IntValue[入力]</td><td>整数型のStkObjectインスタンスに設定する値</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>
 </table>
 </div><p>
@@ -299,7 +315,7 @@ StkObjectインスタンスの型を返します。<br>
 単精度浮動小数点数型のStkObjectインスタンスに値を設定します。<br>
 単精度浮動小数点数型ではないStkObjectインスタンスに対して本APIを呼び出した場合，要求は無視されます。<br>
 <table class="tblstyle">
-<tr><td>FloatValue[入力]</td><td>単精度浮動小数点数型のStkObjectインスタンスに値</td></tr>
+<tr><td>FloatValue[入力]</td><td>単精度浮動小数点数型のStkObjectインスタンスに設定する値</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>
 </table>
 </div><p>
@@ -311,8 +327,183 @@ StkObjectインスタンスの型を返します。<br>
 文字列型のStkObjectインスタンスに値を設定します。<br>
 文字列型ではないStkObjectインスタンスに対して本APIを呼び出した場合，要求は無視されます。<br>
 <table class="tblstyle">
-<tr><td>StringValue[入力]</td><td>文字列型のStkObjectインスタンスに値</td></tr>
+<tr><td>StringValue[入力]</td><td>文字列型のStkObjectインスタンスに設定する値。本API内でStringValueのコピーが生成，設定されるため，API呼び出し後StringValueはdelete可能。</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.23">4.23 StkObject* GetFirstChildElement()</H2>
+<div class="topic">
+子のStkObjectインスタンスのうち，一番先頭のインスタンスを返します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>子のStkObjectインスタンスのうち，一番先頭のインスタンスのポインタ</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.24">4.24 StkObject* GetLastChildElement()</H2>
+<div class="topic">
+子のStkObjectインスタンスのうち，一番最後のインスタンスを返します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>子のStkObjectインスタンスのうち，一番最後のインスタンスのポインタ</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.25">4.25 StkObject* GetFirstAttribute()</H2>
+<div class="topic">
+属性であるStkObjectインスタンスのうち，一番先頭のインスタンスを返します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>属性であるStkObjectインスタンスのうち，一番先頭のインスタンスのポインタ</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.26">4.26 StkObject* GetLastAttribute()</H2>
+<div class="topic">
+属性であるStkObjectインスタンスのうち，一番最後のインスタンスを返します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>属性であるStkObjectインスタンスのうち，一番最後のインスタンスのポインタ</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.27">4.27 StkObject* GetNext()</H2>
+<div class="topic">
+同じ階層に存在するStkObjectインスタンスのうち，次のインスタンスを返します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>同じ階層に存在するStkObjectインスタンスのうち，次のインスタンスのポインタ</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.28">4.28 void AppendChildElement(StkObject* ChildObj)</H2>
+<div class="topic">
+要素保持領域に子のStkObjectインスタンスを追加します。<br>
+追加するStkObjectインスタンスは，引数に指定したインスタンスそのものであり，コピーではありません。
+したがって，本API呼び出し後，ChildObjを個別にdeleteすることはできません。<br>
+ChildObjが示すStkObjectインスタンスの型が，STKOBJECT_UNKW_INT，STKOBJECT_UNKW_FLOAT，STKOBJECT_UNKW_STRINGの場合，本API呼び出し後，以下の何れの型に変更されます。<br>
+<ul>
+<li>STKOBJECT_ELEM_INT</li>
+<li>STKOBJECT_ELEM_FLOAT</li>
+<li>STKOBJECT_ELEM_STRING</li>
+</ul> 
+ChildObjが示すStkObjectインスタンスの型が，STKOBJECT_ELEMENT, STKOBJECT_UNKW_INT，STKOBJECT_UNKW_FLOAT，STKOBJECT_UNKW_STRINGの何れでもない場合，本APIは何も行わず，呼び出し元に戻ります。<br>
+<table class="tblstyle">
+<tr><td>ChildObj[入力]</td><td>要素保持領域に子として追加するStkObjectインスタンス</td></tr>
+<tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.29">4.29 void AppendAttribute(StkObject* AttrObj)</H2>
+<div class="topic">
+属性としてStkObjectインスタンスを追加します。<br>
+追加するStkObjectインスタンスは，引数に指定したインスタンスそのものであり，コピーではありません。
+したがって，本API呼び出し後，AttrObjを個別にdeleteすることはできません。<br>
+AttrObjが示すStkObjectインスタンスの型が，STKOBJECT_UNKW_INT，STKOBJECT_UNKW_FLOAT，STKOBJECT_UNKW_STRINGの場合，本API呼び出し後，以下の何れの型に変更されます。<br>
+<ul>
+<li>STKOBJECT_ATTR_INT</li>
+<li>STKOBJECT_ATTR_FLOAT</li>
+<li>STKOBJECT_ATTR_STRING</li>
+</ul> <table class="tblstyle">
+AttrObjが示すStkObjectインスタンスの型が，STKOBJECT_UNKW_INT，STKOBJECT_UNKW_FLOAT，STKOBJECT_UNKW_STRINGの何れでもない場合，本APIは何も行わず，呼び出し元に戻ります。<br>
+<tr><td>AttrObj[入力]</td><td>属性として追加するStkObjectインスタンス</td></tr>
+<tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.30">4.30 void ToXml(std::wstring* StrXml)</H2>
+<div class="topic">
+StkObjectインスタンスからXMLを生成します。<br>
+トップノードとなるStkObjectインスタンスに対して本APIを呼び出すことができます。トップノードでないStkObjectインスタンスに対して本APIを呼び出したときの動作は保証されていません。<br>
+文字列型StkObjectインスタンスからXMLを生成するとき，文字列を構成する値に応じて下記のようにエスケープされます。<br>
+&lt; → &amp;lt;<br>
+&gt; → &amp;gt;<br>
+&amp; → &amp;amd;<br>
+&quot; → &amp;quot;<br>
+&apos; → &amp;apos;<br>
+<table class="tblstyle">
+<tr><td>StrXml[出力]</td><td>XMLを格納するwstringインスタンスのポインタ。呼び出し元で予めインスタンスを生成しておく必要がある。</td></tr>
+<tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.31">4.31 void ToJson(std::wstring* StrJson)</H2>
+<div class="topic">
+StkObjectインスタンスからJSONを生成します。<br>
+トップノードとなるStkObjectインスタンスに対して本APIを呼び出すことができます。トップノードでないStkObjectインスタンスに対して本APIを呼び出したときの動作は保証されていません。<br>
+文字列型StkObjectインスタンスからJSONを生成するとき，文字列を構成する値に応じて下記のようにエスケープされます。<br>
+\\ → \\\\<br>
+\" → \\"<br>
+\f → \\f<br>
+\b → \\b<br>
+\n → \\n<br>
+\r → \\r<br>
+\t → \\t<br>
+<table class="tblstyle">
+<tr><td>StrJson[出力]</td><td>JSONを格納するwstringインスタンスのポインタ。呼び出し元で予めインスタンスを生成しておく必要がある。</td></tr>
+<tr><td>[戻り値]</td><td>なし</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.32">4.32 static StkObject* CreateObjectFromXml(TCHAR* StrXml, int* ErrorCode)</H2>
+<div class="topic">
+XMLから入れ子構造のStkObjectインスタンスを生成します。<br>
+<table class="tblstyle">
+<tr><td>StrXml[入力]</td><td>変換対象のXML</td></tr>
+<tr><td>ErrorCode[出力]</td><td>
+0以上の値 : 正常終了<br>
+-1以下の値 : エラーコード<br>
+ERROR_XML_ELEMENT_END_NOT_FOUND : 要素の終端が存在しない<br>
+ERROR_XML_EQUAL_FOUND_WITHOUT_ATTRIBUTE_NAME : イコール記号の前に属性名が存在しない<br>
+ERROR_XML_INVALID_ELEMENT_START_FOUND : 要素の開始が不正<br>
+ERROR_XML_INVALID_QUOT_FOUND : クォートの出現位置が不正<br>
+ERROR_XML_INVALID_ELEMENT_END_FOUND : 要素の終端が不正<br>
+ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT_END : スラッシュの後に要素の終端が存在しない<br>
+ERROR_XML_CANNOT_HANDLE : XMLの構造が不正<br>
+ERROR_XML_NO_ELEMENT_FOUND : 要素が存在しない<br>
+ERROR_XML_INVALID_SLASH_FOUND : スラッシュの出現位置が不正<br>
+ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT : スラッシュの前に要素が存在しない<br>
+</td></tr>
+<tr><td>[戻り値]</td><td>StrXmlをもとに生成したStkObjectインスタンス</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.33">4.33 static StkObject* CreateObjectFromJson(TCHAR* StrJson, int* ErrorCode)</H2>
+<div class="topic">
+JSONから入れ子構造のStkObjectインスタンスを生成します。<br>
+<table class="tblstyle">
+<tr><td>StrJson[入力]</td><td>変換対象のJSON</td></tr>
+<tr><td>ErrorCode[出力]</td><td>
+0以上の値 : 正常終了<br>
+-1以下の値 : エラーコード<br>
+ERROR_JSON_NO_ELEMENT_FOUND : 要素が存在しない<br>
+ERROR_JSON_INVALID_QUOT_FOUND : クォートの出現位置が不正<br>
+ERROR_JSON_INVALID_COLON_FOUND : コロンの出現位置が不正<br>
+ERROR_JSON_INVALID_STRUCTURE : JSONの構造が不正<br>
+ERROR_JSON_INVALID_COMMA : カンマの出現位置が不正<br>
+ERROR_JSON_CANNOT_HANDLE : JSONの構造が不正<br>
+ERROR_JSON_INVALID_ARRAY_STRUCTURE : 配列の構造が不正<br>
+ERROR_JSON_NO_ROOT_ELEMENT : トップノードが存在しない<br>
+</td></tr>
+<tr><td>[戻り値]</td><td>StrJsonをもとに生成したStkObjectインスタンス</td></tr>
 </table>
 </div><p>
 
