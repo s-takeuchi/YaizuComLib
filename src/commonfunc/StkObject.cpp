@@ -1323,6 +1323,24 @@ StkObject* StkObject::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObject* 
 	}
 
 	int Loop = 0;
+
+	if (Parent == NULL) {
+		for (; Json[Loop] != TCHAR('\0'); Loop++) {
+			// if blank is appeared...
+			if (Json[Loop] == TCHAR(' ') || Json[Loop] == TCHAR('\t') || Json[Loop] == TCHAR('\r') || Json[Loop] == TCHAR('\n')) {
+				continue;
+			} else if (Json[Loop] == TCHAR('{')) {
+				PrevName = new TCHAR[1];
+				lstrcpy(PrevName, _T(""));
+				PrevStatus = ELEMOBJ_START;
+				break;
+			} else {
+				Loop = 0;
+				break;
+			}
+		}
+	}
+
 	for (; Json[Loop] != TCHAR('\0'); Loop++) {
 
 		// If ArrayFlag is TRUE, mode needs to be changed.

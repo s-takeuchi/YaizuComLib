@@ -1130,6 +1130,7 @@ void XmlDecordingAbnormalTest1()
 	AbnormalCaseForXml(_T("<?xml?></?xml?>"), StkObject::ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT);
 	AbnormalCaseForXml(_T("<Aaa><Bbb><Cc"), StkObject::ERROR_XML_ELEMENT_END_NOT_FOUND);
 	AbnormalCaseForXml(_T("<Aaa>&"), StkObject::ERROR_XML_ELEMENT_END_NOT_FOUND);
+	AbnormalCaseForXml(_T("/<Aaa></Aaa>"), StkObject::ERROR_XML_INVALID_SLASH_FOUND);
 }
 
 void JsonDecodingTest1()
@@ -1187,6 +1188,31 @@ void JsonDecodingTest1()
 	}
 	delete RetObj;
 	printf("OK\r\n");
+	////////////////////////////////////////////////////
+	lstrcpy(Msg, _T("{ \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 999.9 }}"));
+	wprintf(_T("JSON Decoding : %s ..."), Msg);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
+	if (RetObj == NULL ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), _T("D1")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetStringValue(), _T("test")) != 0 ||
+		RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	delete RetObj;
+	printf("OK\r\n");
+	////////////////////////////////////////////////////
+	lstrcpy(Msg, _T("{\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}"));
+	wprintf(_T("JSON Decoding : %s ..."), Msg);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
+	if (RetObj == NULL ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetName(), _T("Aaa")) != 0 || RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetIntValue() != 456 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetName(), _T("Aaa")) != 0 || RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 222) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	delete RetObj;
+	printf("OK\r\n");
 }
 
 void JsonDecodingTest2()
@@ -1234,7 +1260,6 @@ void JsonDecordingAbnormalTest1()
 {
 	AbnormalCaseForJson(_T(""), StkObject::ERROR_JSON_NO_ELEMENT_FOUND);
 	AbnormalCaseForJson(NULL, StkObject::ERROR_JSON_NO_ELEMENT_FOUND);
-	AbnormalCaseForJson(_T("{ \"Aaa\" : \"Xxx\" }"), StkObject::ERROR_JSON_INVALID_STRUCTURE);
 	AbnormalCaseForJson(_T("[ \"Aaa\" : \"Xxx\" ]"), StkObject::ERROR_JSON_INVALID_ARRAY_STRUCTURE);
 	AbnormalCaseForJson(_T("\"Aaa\" : 123"), StkObject::ERROR_JSON_NO_ROOT_ELEMENT);
 	AbnormalCaseForJson(_T("\"Aaa\" : 999.9"), StkObject::ERROR_JSON_NO_ROOT_ELEMENT);
@@ -1245,6 +1270,7 @@ void JsonDecordingAbnormalTest1()
 	AbnormalCaseForJson(_T("\"Aaa\" : { \"Bbb\" : 123, Ccc : 456 }"), StkObject::ERROR_JSON_CANNOT_HANDLE);
 	AbnormalCaseForJson(_T("\"Aaa\" : { \"Bbb\" : 123, \"Ccc\" : 456, \"Ddd\" : 789 {"), StkObject::ERROR_JSON_INVALID_STRUCTURE);
 	AbnormalCaseForJson(_T("\"Aaa\" : {}"), StkObject::ERROR_JSON_INVALID_STRUCTURE);
+	AbnormalCaseForJson(_T(": { \"Aaa\" : \"Xxx\" }"), StkObject::ERROR_JSON_INVALID_COLON_FOUND);
 }
 
 void CloneTest(StkObject* Obj)
@@ -1395,11 +1421,11 @@ int MemoryLeakChecking3()
 			StkObject::CreateObjectFromXml(_T("<X><Y><Z><Aaaa Xxx=\"Xxx"), &Offset);
 			StkObject::CreateObjectFromXml(_T("<Aaa><Bbb><Cc"), &Offset);
 			StkObject::CreateObjectFromXml(_T("<Aaa>&"), &Offset);
+			StkObject::CreateObjectFromXml(_T("/<Aaa></Aaa>"), &Offset);
 
 			// For JSON
 			StkObject::CreateObjectFromJson(_T(""), &Offset);
 			StkObject::CreateObjectFromJson(NULL, &Offset);
-			StkObject::CreateObjectFromJson(_T("{ \"Aaa\" : \"Xxx\" }"), &Offset);
 			StkObject::CreateObjectFromJson(_T("[ \"Aaa\" : \"Xxx\" ]"), &Offset);
 			StkObject::CreateObjectFromJson(_T("\"Aaa\" : 123"), &Offset);
 			StkObject::CreateObjectFromJson(_T("\"Aaa\" : 999.9"), &Offset);
@@ -1410,6 +1436,7 @@ int MemoryLeakChecking3()
 			StkObject::CreateObjectFromJson(_T("\"Aaa\" : { \"Bbb\" : 123, Ccc : 456 }"), &Offset);
 			StkObject::CreateObjectFromJson(_T("\"Aaa\" : { \"Bbb\" : 123, \"Ccc\" : 456, \"Ddd\" : 789 {"), &Offset);
 			StkObject::CreateObjectFromJson(_T("\"Aaa\" : {}"), &Offset);
+			StkObject::CreateObjectFromJson(_T(": { \"Aaa\" : \"Xxx\" }"),  &Offset);
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}
