@@ -467,6 +467,7 @@ XMLから入れ子構造のStkObjectインスタンスを生成します。<br>
 <table class="tblstyle">
 <tr><td>StrXml[入力]</td><td>変換対象のXML</td></tr>
 <tr><td>ErrorCode[出力]</td><td>
+エラーコードを格納するint領域へのポインタ。<br>
 0以上の値 : 正常終了<br>
 -1以下の値 : エラーコード<br>
 ERROR_XML_ELEMENT_END_NOT_FOUND : 要素の終端が存在しない<br>
@@ -492,6 +493,7 @@ JSONから入れ子構造のStkObjectインスタンスを生成します。<br>
 <table class="tblstyle">
 <tr><td>StrJson[入力]</td><td>変換対象のJSON</td></tr>
 <tr><td>ErrorCode[出力]</td><td>
+エラーコードを格納するint領域へのポインタ。<br>
 0以上の値 : 正常終了<br>
 -1以下の値 : エラーコード<br>
 ERROR_JSON_NO_ELEMENT_FOUND : 要素が存在しない<br>
