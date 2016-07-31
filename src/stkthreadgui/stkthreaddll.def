@@ -1,7 +1,12 @@
 LIBRARY stkthreaddll
 
 EXPORTS
-	DllShowProperty
-	DllStkThreadInit
-	DllStkThreadMain
-	DllStkThreadFinal
+	StkThreadDll_AddProcessInfo
+	StkThreadDll_DeleteProcessInfo
+	StkThreadDll_GetProcessInfoCount
+	StkThreadDll_AddThreadInfo
+	StkThreadDll_DeleteThreadInfo
+
+SECTIONS
+ .mydata READ WRITE SHARED
+

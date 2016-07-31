@@ -176,6 +176,10 @@
 				RelativePath=".\stkthreaddll.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\stkthreaddll.def"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
