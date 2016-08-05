@@ -11,8 +11,8 @@ StkSocketMgr* StkSocketMgr::GetInstance()
 {
 	static int Init = 1;
 	if (Init == 1) {
-		ThisInstance = new StkSocketMgr();
 		Init = 0;
+		ThisInstance = new StkSocketMgr();
 	}
 	return ThisInstance;
 }
