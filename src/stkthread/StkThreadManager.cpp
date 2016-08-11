@@ -200,8 +200,8 @@ StkThreadManager* StkThreadManager::GetInstance()
 {
 	static int Init = 1;
 	if (Init == 1) {
-		ThisInstance = new StkThreadManager();
 		Init = 0;
+		ThisInstance = new StkThreadManager();
 	}
 	return ThisInstance;
 }
