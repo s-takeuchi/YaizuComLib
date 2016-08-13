@@ -4,6 +4,8 @@ EXPORTS
 	StkThreadDll_AddProcessInfo
 	StkThreadDll_DeleteProcessInfo
 	StkThreadDll_GetProcessInfoCount
+	StkThreadDll_GetProcessInfoByIndex
+	StkThreadDll_GetProcessInfoByProcId
 	StkThreadDll_AddThreadInfo
 	StkThreadDll_DeleteThreadInfo
 

@@ -3,6 +3,13 @@
 
 StkThreadManager* StkThreadManager::ThisInstance;
 
+DWORD (__stdcall *StkThreadDll_AddProcessInfo) (TCHAR[32]);
+void (__stdcall *StkThreadDll_DeleteProcessInfo) (DWORD);
+int (__stdcall *StkThreadDll_GetProcessInfoCount) ();
+BOOL (__stdcall *StkThreadDll_GetProcessInfoByIndex) (int, int*, TCHAR[32]);
+BOOL (__stdcall *StkThreadDll_GetProcessInfoByProcId) (int, TCHAR[32]);
+void (__stdcall *StkThreadDll_AddThreadInfo) (int, TCHAR[32], TCHAR[256]);
+void (__stdcall *StkThreadDll_DeleteThreadInfo) (int);
 
 DWORD WINAPI StkThreadManager::ThreadProc(LPVOID Param)
 {
@@ -183,16 +190,53 @@ void StkThreadManager::CheckAndExecProcAfterLastThreadStops(int Ids[MAX_NUM_OF_S
 	}
 }
 
+void StkThreadManager::ClearDllApis()
+{
+	StkThreadDll_AddProcessInfo = NULL;
+	StkThreadDll_DeleteProcessInfo = NULL;
+	StkThreadDll_GetProcessInfoCount = NULL;
+	StkThreadDll_GetProcessInfoByIndex = NULL;
+	StkThreadDll_GetProcessInfoByProcId = NULL;
+	StkThreadDll_AddThreadInfo = NULL;
+	StkThreadDll_DeleteThreadInfo = NULL;
+}
+
 StkThreadManager::StkThreadManager()
 {
 	StkThreadElementCount = 0;
 	ProcBeforeFirstThreadStarts = (void (*)(void))NULL;
 	ProcAfterLastThreadStops = (void (*)(void))NULL;
+
+	ClearDllApis();
+	DllModHndl = LoadLibrary(_T("stkthreaddll.dll"));
+	if (DllModHndl != NULL) {
+		StkThreadDll_AddProcessInfo = (DWORD (__stdcall *)(TCHAR[32]))GetProcAddress(DllModHndl, "StkThreadDll_AddProcessInfo");
+		StkThreadDll_DeleteProcessInfo = (void (__stdcall *)(DWORD))GetProcAddress(DllModHndl, "StkThreadDll_DeleteProcessInfo");
+		StkThreadDll_GetProcessInfoCount = (int (__stdcall *)())GetProcAddress(DllModHndl, "StkThreadDll_GetProcessInfoCount");
+		StkThreadDll_GetProcessInfoByIndex = (BOOL (__stdcall *)(int, int*, TCHAR[32]))GetProcAddress(DllModHndl, "StkThreadDll_GetProcessInfoByIndex");
+		StkThreadDll_GetProcessInfoByProcId = (BOOL (__stdcall *)(int, TCHAR[32]))GetProcAddress(DllModHndl, "StkThreadDll_GetProcessInfoByProcId");
+		StkThreadDll_AddThreadInfo = (void (__stdcall *)(int, TCHAR[32], TCHAR[256]))GetProcAddress(DllModHndl, "StkThreadDll_AddThreadInfo");
+		StkThreadDll_DeleteThreadInfo = (void (__stdcall *)(int))GetProcAddress(DllModHndl, "StkThreadDll_DeleteThreadInfo");
+
+		if (StkThreadDll_AddProcessInfo != NULL && StkThreadDll_DeleteProcessInfo != NULL && StkThreadDll_GetProcessInfoCount != NULL &&
+			StkThreadDll_GetProcessInfoByIndex != NULL && StkThreadDll_GetProcessInfoByProcId != NULL &&
+			StkThreadDll_AddThreadInfo != NULL && StkThreadDll_DeleteThreadInfo != NULL) {
+			// Nothing to do
+		} else {
+			FreeLibrary(DllModHndl);
+			DllModHndl = NULL;
+			ClearDllApis();
+		}
+	}
 }
 
 // Destructor
 StkThreadManager::~StkThreadManager()
 {
+	if (DllModHndl != NULL) {
+		FreeLibrary(DllModHndl);
+		DllModHndl = NULL;
+	}
 }
 
 // Get this instance

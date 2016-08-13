@@ -1,4 +1,6 @@
 #include <windows.h>
+#include <tchar.h>
+
 #define STKTHREADDLL_MAX_PROC_COUNT 20
 
 #pragma data_seg(".mydata")
@@ -25,7 +27,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
     return TRUE;
 }
 
-__declspec(dllexport) void __stdcall StkThreadDll_AddProcessInfo(TCHAR Name[32])
+// Add process information
+// Name [in] : Name of the process
+// Return : Process ID
+__declspec(dllexport) DWORD __stdcall StkThreadDll_AddProcessInfo(TCHAR Name[32])
 {
 	while (StkThreadDll_ProcessInfo_Lock) {
 		Sleep(1);
@@ -45,8 +50,11 @@ __declspec(dllexport) void __stdcall StkThreadDll_AddProcessInfo(TCHAR Name[32])
 		StkThreadDll_ProcessInfo_Count++;
 	}
 	StkThreadDll_ProcessInfo_Lock = FALSE;
+	return ProcId;
 }
 
+// Delete process information
+// ProcId [in] : Target process ID
 __declspec(dllexport) void __stdcall StkThreadDll_DeleteProcessInfo(DWORD ProcId)
 {
 	while (StkThreadDll_ProcessInfo_Lock) {
@@ -69,17 +77,50 @@ __declspec(dllexport) void __stdcall StkThreadDll_DeleteProcessInfo(DWORD ProcId
 	StkThreadDll_ProcessInfo_Lock = FALSE;
 }
 
+// Get number of process information
+// Return : Number of process information
 __declspec(dllexport) int __stdcall StkThreadDll_GetProcessInfoCount()
 {
 	return StkThreadDll_ProcessInfo_Count;
 }
 
-__declspec(dllexport) void __stdcall StkThreadDll_GetProcessInfo(int Index, int* Id, TCHAR Name[32])
+// Get process information from the specified index
+// Index [in] : Index where you want to acquire the information
+// Id [out] : Acquired process ID
+// Name [out] : Acquired process name
+// Return : If the information is acquired, TRUE is returned. Otherwize FALSE is returned.
+__declspec(dllexport) BOOL __stdcall StkThreadDll_GetProcessInfoByIndex(int Index, int* Id, TCHAR Name[32])
 {
+	if (Index >= StkThreadDll_ProcessInfo_Count) {
+		*Id = -1;
+		lstrcpy(Name, _T(""));
+		return FALSE;
+	}
 	*Id = StkThreadDll_ProcessInfo_Id[Index];
 	lstrcpy(Name, StkThreadDll_ProcessInfo_Name[Index]);
+	return TRUE;
 }
 
+// Get process information from the specified process ID
+// ProcId [in] : Process ID where you want to acquire the information
+// Name [out] : Acquired process name
+// Return : If the information is acquired, TRUE is returned. Otherwize FALSE is returned.
+__declspec(dllexport) BOOL __stdcall StkThreadDll_GetProcessInfoByProcId(int ProcId, TCHAR Name[32])
+{
+	for (int Loop = 0; Loop < StkThreadDll_ProcessInfo_Count; Loop++) {
+		if (StkThreadDll_ProcessInfo_Id[Loop] == ProcId) {
+			lstrcpy(Name, StkThreadDll_ProcessInfo_Name[Loop]);
+			return TRUE;
+		}
+	}
+	lstrcpy(Name, _T(""));
+	return FALSE;
+}
+
+// Add thread information regarding the current process which calls this API.
+// Id [in] : Thread ID (This ID can be decided by caller side of this API)
+// Name [in] : Name of the thread
+// Desc [in] : Description of the thread
 __declspec(dllexport) void __stdcall StkThreadDll_AddThreadInfo(int Id, TCHAR Name[32], TCHAR Desc[256])
 {
 	while (StkThreadDll_ThreadInfo_Lock) {
@@ -109,6 +150,8 @@ __declspec(dllexport) void __stdcall StkThreadDll_AddThreadInfo(int Id, TCHAR Na
 	StkThreadDll_ThreadInfo_Lock = FALSE;
 }
 
+// Delete thread information regarding the current process which calls this API.
+// Id [in] : Thread ID which you want to delete.
 __declspec(dllexport) void __stdcall StkThreadDll_DeleteThreadInfo(int Id)
 {
 	while (StkThreadDll_ThreadInfo_Lock) {

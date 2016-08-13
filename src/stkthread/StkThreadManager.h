@@ -22,6 +22,9 @@ private:
 	int StkThreadElementCount;
 	// Array of StkThreadElement
 	StkThreadElement* StkThreadArray[MAX_NUM_OF_STKTHREADS];
+
+	HMODULE DllModHndl;
+
 	// Call back function for CreateThread.
 	static DWORD WINAPI ThreadProc(LPVOID);
 
@@ -36,6 +39,8 @@ private:
 
 	BOOL GetStkThreadStartStopFlag(int);
 	BOOL GetStkThreadStartStopFlagByIndex(int);
+
+	void ClearDllApis();
 
 public:
 	// Get this instance
