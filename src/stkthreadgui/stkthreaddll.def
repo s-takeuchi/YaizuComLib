@@ -8,6 +8,7 @@ EXPORTS
 	StkThreadDll_GetProcessInfoByProcId
 	StkThreadDll_AddThreadInfo
 	StkThreadDll_DeleteThreadInfo
+	StkThreadDll_GetThreadInfoCount
 
 SECTIONS
  .mydata READ WRITE SHARED

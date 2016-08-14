@@ -3,6 +3,16 @@
 
 #define STKTHREADDLL_MAX_PROC_COUNT 20
 
+__declspec(dllexport) DWORD __stdcall StkThreadDll_AddProcessInfo(TCHAR[32]);
+__declspec(dllexport) void __stdcall StkThreadDll_DeleteProcessInfo(DWORD);
+__declspec(dllexport) int __stdcall StkThreadDll_GetProcessInfoCount();
+__declspec(dllexport) BOOL __stdcall StkThreadDll_GetProcessInfoByIndex(int, int*, TCHAR[32]);
+__declspec(dllexport) BOOL __stdcall StkThreadDll_GetProcessInfoByProcId(int, TCHAR[32]);
+__declspec(dllexport) void __stdcall StkThreadDll_AddThreadInfo(int, TCHAR[32], TCHAR[256]);
+__declspec(dllexport) void __stdcall StkThreadDll_DeleteThreadInfo(int);
+__declspec(dllexport) int __stdcall StkThreadDll_GetThreadInfoCount();
+
+
 #pragma data_seg(".mydata")
 
 	BOOL StkThreadDll_ProcessInfo_Lock = FALSE;
@@ -74,6 +84,11 @@ __declspec(dllexport) void __stdcall StkThreadDll_DeleteProcessInfo(DWORD ProcId
 		}
 		StkThreadDll_ProcessInfo_Count--;
 	}
+	for (int Loop2 = 0; Loop2 < StkThreadDll_ThreadInfo_Count - 1; Loop2++) {
+		if (StkThreadDll_ThreadInfo_ProcId[Loop] == ProcId) {
+			StkThreadDll_DeleteThreadInfo(StkThreadDll_ThreadInfo_Id[Loop]);
+		}
+	}
 	StkThreadDll_ProcessInfo_Lock = FALSE;
 }
 
@@ -117,7 +132,7 @@ __declspec(dllexport) BOOL __stdcall StkThreadDll_GetProcessInfoByProcId(int Pro
 	return FALSE;
 }
 
-// Add thread information regarding the current process which calls this API.
+// Add the thread information associates the current process which calls this API.
 // Id [in] : Thread ID (This ID can be decided by caller side of this API)
 // Name [in] : Name of the thread
 // Desc [in] : Description of the thread
@@ -141,6 +156,7 @@ __declspec(dllexport) void __stdcall StkThreadDll_AddThreadInfo(int Id, TCHAR Na
 		StkThreadDll_ThreadInfo_Status[Loop] = 0;
 		lstrcpy(StkThreadDll_ThreadInfo_Name[Loop], Name);
 		lstrcpy(StkThreadDll_ThreadInfo_Desc[Loop], Desc);
+		StkThreadDll_ThreadInfo_Count++;
 	}
 	for (int Loop2 = 0; Loop2 < StkThreadDll_ProcessInfo_Count; Loop2++) {
 		if (StkThreadDll_ProcessInfo_Id[Loop2] == ProcId) {
@@ -150,7 +166,7 @@ __declspec(dllexport) void __stdcall StkThreadDll_AddThreadInfo(int Id, TCHAR Na
 	StkThreadDll_ThreadInfo_Lock = FALSE;
 }
 
-// Delete thread information regarding the current process which calls this API.
+// Delete the thread information associates the current process which calls this API.
 // Id [in] : Thread ID which you want to delete.
 __declspec(dllexport) void __stdcall StkThreadDll_DeleteThreadInfo(int Id)
 {
@@ -177,4 +193,11 @@ __declspec(dllexport) void __stdcall StkThreadDll_DeleteThreadInfo(int Id)
 		StkThreadDll_ThreadInfo_Count--;
 	}
 	StkThreadDll_ThreadInfo_Lock = FALSE;
+}
+
+// Get number of thread information
+// Return : Number of thread information
+__declspec(dllexport) int __stdcall StkThreadDll_GetThreadInfoCount()
+{
+	return StkThreadDll_ThreadInfo_Count;
 }
