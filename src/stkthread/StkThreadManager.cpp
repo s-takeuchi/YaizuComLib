@@ -10,6 +10,7 @@ BOOL (__stdcall *StkThreadDll_GetProcessInfoByIndex) (int, int*, TCHAR[32]);
 BOOL (__stdcall *StkThreadDll_GetProcessInfoByProcId) (int, TCHAR[32]);
 void (__stdcall *StkThreadDll_AddThreadInfo) (int, TCHAR[32], TCHAR[256]);
 void (__stdcall *StkThreadDll_DeleteThreadInfo) (int);
+int (__stdcall *StkThreadDll_GetThreadInfoCount) ();
 
 DWORD WINAPI StkThreadManager::ThreadProc(LPVOID Param)
 {
@@ -199,6 +200,7 @@ void StkThreadManager::ClearDllApis()
 	StkThreadDll_GetProcessInfoByProcId = NULL;
 	StkThreadDll_AddThreadInfo = NULL;
 	StkThreadDll_DeleteThreadInfo = NULL;
+	StkThreadDll_GetThreadInfoCount = NULL;
 }
 
 StkThreadManager::StkThreadManager()
@@ -217,10 +219,12 @@ StkThreadManager::StkThreadManager()
 		StkThreadDll_GetProcessInfoByProcId = (BOOL (__stdcall *)(int, TCHAR[32]))GetProcAddress(DllModHndl, "StkThreadDll_GetProcessInfoByProcId");
 		StkThreadDll_AddThreadInfo = (void (__stdcall *)(int, TCHAR[32], TCHAR[256]))GetProcAddress(DllModHndl, "StkThreadDll_AddThreadInfo");
 		StkThreadDll_DeleteThreadInfo = (void (__stdcall *)(int))GetProcAddress(DllModHndl, "StkThreadDll_DeleteThreadInfo");
+		StkThreadDll_GetThreadInfoCount = (int (__stdcall *)())GetProcAddress(DllModHndl, "StkThreadDll_GetThreadInfoCount");
+
 
 		if (StkThreadDll_AddProcessInfo != NULL && StkThreadDll_DeleteProcessInfo != NULL && StkThreadDll_GetProcessInfoCount != NULL &&
 			StkThreadDll_GetProcessInfoByIndex != NULL && StkThreadDll_GetProcessInfoByProcId != NULL &&
-			StkThreadDll_AddThreadInfo != NULL && StkThreadDll_DeleteThreadInfo != NULL) {
+			StkThreadDll_AddThreadInfo != NULL && StkThreadDll_DeleteThreadInfo != NULL && StkThreadDll_GetThreadInfoCount != NULL) {
 			// Nothing to do
 		} else {
 			FreeLibrary(DllModHndl);

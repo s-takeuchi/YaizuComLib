@@ -11,6 +11,8 @@ __declspec(dllexport) BOOL __stdcall StkThreadDll_GetProcessInfoByProcId(int, TC
 __declspec(dllexport) void __stdcall StkThreadDll_AddThreadInfo(int, TCHAR[32], TCHAR[256]);
 __declspec(dllexport) void __stdcall StkThreadDll_DeleteThreadInfo(int);
 __declspec(dllexport) int __stdcall StkThreadDll_GetThreadInfoCount();
+__declspec(dllexport) BOOL __stdcall StkThreadDll_GetThreadInfoByIndex(int, DWORD*, int*, TCHAR[32], TCHAR[256]);
+__declspec(dllexport) BOOL __stdcall StkThreadDll_GetThreadInfoByThreadId(DWORD, int, TCHAR[32], TCHAR[256]);
 
 
 #pragma data_seg(".mydata")
@@ -200,4 +202,47 @@ __declspec(dllexport) void __stdcall StkThreadDll_DeleteThreadInfo(int Id)
 __declspec(dllexport) int __stdcall StkThreadDll_GetThreadInfoCount()
 {
 	return StkThreadDll_ThreadInfo_Count;
+}
+
+// Get thread information from the specified index
+// Index [in] : Index where you want to acquire the information
+// ProcId [out] : Acquired process ID
+// ThreadId [out] : Acquired thread ID
+// Name [out] : Acquired process name
+// Desc [out] : Acquired description
+// Return : If the information is acquired, TRUE is returned. Otherwize FALSE is returned.
+__declspec(dllexport) BOOL __stdcall StkThreadDll_GetThreadInfoByIndex(int Index, DWORD* ProcId, int* ThreadId, TCHAR Name[32], TCHAR Desc[256])
+{
+	if (Index >= StkThreadDll_ThreadInfo_Count) {
+		*ProcId = -1;
+		*ThreadId = -1;
+		lstrcpy(Name, _T(""));
+		lstrcpy(Desc, _T(""));
+		return FALSE;
+	}
+	*ProcId = StkThreadDll_ThreadInfo_ProcId[Index];
+	*ThreadId = StkThreadDll_ThreadInfo_Id[Index];
+	lstrcpy(Name, StkThreadDll_ThreadInfo_Name[Index]);
+	lstrcpy(Name, StkThreadDll_ThreadInfo_Desc[Index]);
+	return TRUE;
+}
+
+// Get thread information from the specified process ID and thread ID
+// ProcId [in] : Process ID where you want to acquire the information
+// ThreadId [in] : Thread ID where you want to acquire the information
+// Name [out] : Acquired process name
+// Desc [out] : Acquired description
+// Return : If the information is acquired, TRUE is returned. Otherwize FALSE is returned.
+__declspec(dllexport) BOOL __stdcall StkThreadDll_GetThreadInfoByhreadId(DWORD ProcId, int ThreadId, TCHAR Name[32], TCHAR Desc[256])
+{
+	for (int Loop = 0; Loop < StkThreadDll_ThreadInfo_Count; Loop++) {
+		if (StkThreadDll_ThreadInfo_ProcId[Loop] == ProcId && StkThreadDll_ThreadInfo_Id[Loop] == ThreadId) {
+			lstrcpy(Name, StkThreadDll_ThreadInfo_Name[Loop]);
+			lstrcpy(Desc, StkThreadDll_ThreadInfo_Desc[Loop]);
+			return TRUE;
+		}
+	}
+	lstrcpy(Name, _T(""));
+	lstrcpy(Desc, _T(""));
+	return FALSE;
 }
