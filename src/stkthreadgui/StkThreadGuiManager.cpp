@@ -463,8 +463,8 @@ StkThreadGuiManager* StkThreadGuiManager::GetInstance()
 {
 	static int Init = 1;
 	if (Init == 1) {
-		ThisInstance = new StkThreadGuiManager();
 		Init = 0;
+		ThisInstance = new StkThreadGuiManager();
 	}
 	return ThisInstance;
 }
