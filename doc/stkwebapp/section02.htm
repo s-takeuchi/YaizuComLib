@@ -13,9 +13,23 @@ yyyyyyyyyyyyyyyyyyyyyyyyyyyy<BR>
 
 
 
-<H2 ID="2.1">2.1 YYY</H2>
+<H2 ID="2.1">2.1 StkWebAppの構成</H2>
 <div class="topic">
-yyyyyyyyyyyyyyyyyyyyyyyyyyyy
+StkWebAppは，CGIコンポーネント，WebApp ServiceコンポーネントおよびJavaScript libraryで構成される。<br/>
+WebApp Serviceコンポーネントは，StkSocket，StkThread，StkDataを内部に梱包している。<br/>
+<img src="stkwebapp.gif"><br/>
+CGIコンポーネント，WebApp ServiceコンポーネントおよびJavaScript libraryの提供形態は下記のとおり。<br/>
+<table class="tblstyle">
+<tr><th>コンポーネント</th><th>提供形態</th><th>備考</th></tr>
+<tr><td>CGI</td><td>.exeファイル</td><td>HTTP ServerとWebApp Service間を中継する。</td></tr>
+<tr><td>WebApp Service</td><td>.libファイル</td>
+<td>StkSocket，StkThread，StkDataを内部に梱包したWebアプリケーションの制御に特化したライブラリ。
+WebApp Service固有の機能として，JSON/XMLと内部オブジェクトStkObjectを相互変換する機能（StkObjectConverter），
+リクエストを適切な処理オブジェクトにディスパッチする機能(StkReqHandler)を有する。
+</td>
+</tr>
+<tr><td>JavaScript library</td><td>.jsファイル</td><td>クライアント側のリクエスト／レスポンス処理ライブラリ。</td></tr>
+</table><br/>
 </div><p>
 
 
