@@ -1277,6 +1277,51 @@ void StkObject::ToJson(std::wstring* Msg, int Indent, BOOL ArrayFlag)
 	}
 }
 
+int StkObject::Analyze(TCHAR* Txt)
+{
+	static const int ELEM_UNKNOWN = 0;
+	static const int ELEM_XML_START = 10;
+	static const int ELEM_XML_END = 11;
+	static const int ELEM_JSON_START = 20;
+	static const int ELEM_JSON_END = 21;
+
+	int Status = ELEM_UNKNOWN;
+	int Loop = 0;
+	for (; Txt[Loop] != TCHAR('\0'); Loop++) {
+		// Skip brank character
+		if (Txt[Loop] == TCHAR(' ') || Txt[Loop] == TCHAR('\t') || Txt[Loop] == TCHAR('\r') || Txt[Loop] == TCHAR('\n')) {
+			continue;
+		}
+		if (Txt[Loop] == TCHAR('<') && Status == ELEM_UNKNOWN) {
+			Status = ELEM_XML_START;
+			continue;
+		}
+		if ((Txt[Loop] == TCHAR('{') || Txt[Loop] == TCHAR('\"')) && Status == ELEM_UNKNOWN) {
+			Status = ELEM_JSON_START;
+			continue;
+		}
+		if (Status == ELEM_UNKNOWN) {
+			return -1;
+		}
+	}
+	for (Loop--; Loop > 0; Loop--) {
+		// Skip brank character
+		if (Txt[Loop] == TCHAR(' ') || Txt[Loop] == TCHAR('\t') || Txt[Loop] == TCHAR('\r') || Txt[Loop] == TCHAR('\n')) {
+			continue;
+		}
+		if (Txt[Loop] == TCHAR('>') && Status == ELEM_XML_START) {
+			Status = ELEM_XML_END;
+			return 1;
+		}
+		if (Txt[Loop] == TCHAR('}') && Status == ELEM_JSON_START) {
+			Status = ELEM_JSON_END;
+			return 2;
+		}
+		return -1;
+	}
+	return -1;
+}
+
 //   " Aaa" : { " Bbb" : " Xxx" , " Ccc" : 123 , " Ddd" : [ 345, 678 ] }
 //  | |    | | | |    | | |    | | |    | |   | |        | |          | |
 //  | |    | | | |    | | |    | | |    | |   | |        | |          | ELEMOBJ_END

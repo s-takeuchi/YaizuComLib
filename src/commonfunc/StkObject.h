@@ -81,6 +81,7 @@ public:
 	void ToXml(std::wstring* Msg, int Indent = 0); // DO NOT SPECIFY 2ND PARAMETER.
 	void ToJson(std::wstring* Msg, int Indent = 0, BOOL ArrayFlag = FALSE); // DO NOT SPECIFY 2ND AND 3RD PARAMETERS.
 
+	static int Analyze(TCHAR*);
 	static StkObject* CreateObjectFromXml(TCHAR*, int*);
 	static StkObject* CreateObjectFromJson(TCHAR*, int*, StkObject* Obj = NULL); // DO NOT SPECIFY 3RD PARAMETER.
 };
