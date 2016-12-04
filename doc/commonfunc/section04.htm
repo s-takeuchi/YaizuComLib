@@ -90,6 +90,7 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <tr><td>void ToJson(std::wstring*)</td><td>StkObjectインスタンスからJSONを生成します。</td></tr>
 <tr><td>static StkObject* CreateObjectFromXml(TCHAR*, int*)</td><td>XMLから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
 <tr><td>static StkObject* CreateObjectFromJson(TCHAR*, int*)</td><td>JSONから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
+<tr><td>static int Analyze(TCHAR*)</td><td>指定した文字列がXMLかJSONかを判定します。</td></tr>
 </table><p>
 </div><p>
 
@@ -509,6 +510,17 @@ ERROR_JSON_INVALID_ARRAY_STRUCTURE : 配列の構造が不正<br>
 ERROR_JSON_NO_ROOT_ELEMENT : トップノードが存在しない<br>
 </td></tr>
 <tr><td>[戻り値]</td><td>StrJsonをもとに生成したStkObjectインスタンス</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="4.34">4.34 static int Analyze(TCHAR* Txt)</H2>
+<div class="topic">
+指定した文字列がXMLかJSONかを判定します。<br>
+<table class="tblstyle">
+<tr><td>Txt[入力]</td><td>判定の対象となる文字列</td></tr>
+<tr><td>[戻り値]</td><td>判定結果 (-1: TxtはXML,JSONの何れでもない, 1: TxtはXML, 2: TxtはJSON)</td></tr>
 </table>
 </div><p>
 
