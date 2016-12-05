@@ -1285,6 +1285,9 @@ int StkObject::Analyze(TCHAR* Txt)
 	static const int ELEM_JSON_START = 20;
 	static const int ELEM_JSON_END = 21;
 
+	if (Txt == NULL) {
+		return -1;
+	}
 	int Status = ELEM_UNKNOWN;
 	int Loop = 0;
 	for (; Txt[Loop] != TCHAR('\0'); Loop++) {

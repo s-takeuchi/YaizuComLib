@@ -719,37 +719,71 @@ void GeneralTestCase5()
 
 void GeneralTestCase6()
 {
-	wprintf(_T("GeneralCheck6#Identify the presented text is XML or JSON ..."));
+	{
+		wprintf(_T("GeneralCheck6#Identify the presented text is XML or JSON (Normal-1) ..."));
 
-	StkObject* Elem1 = MakeTestData1();
-	std::wstring Xml1;
-	std::wstring Json1;
-	Elem1->ToXml(&Xml1);
-	Elem1->ToJson(&Json1);
-	int RetXml1 = StkObject::Analyze((TCHAR*)Xml1.c_str());
-	int RetJson1 = StkObject::Analyze((TCHAR*)Json1.c_str());
+		StkObject* Elem1 = MakeTestData1();
+		std::wstring Xml1;
+		std::wstring Json1;
+		Elem1->ToXml(&Xml1);
+		Elem1->ToJson(&Json1);
+		int RetXml1 = StkObject::Analyze((TCHAR*)Xml1.c_str());
+		int RetJson1 = StkObject::Analyze((TCHAR*)Json1.c_str());
 
-	StkObject* Elem2 = MakeTestData2();
-	std::wstring Xml2;
-	std::wstring Json2;
-	Elem2->ToXml(&Xml2);
-	Elem2->ToJson(&Json2);
-	int RetXml2 = StkObject::Analyze((TCHAR*)Xml2.c_str());
-	int RetJson2 = StkObject::Analyze((TCHAR*)Json2.c_str());
+		StkObject* Elem2 = MakeTestData2();
+		std::wstring Xml2;
+		std::wstring Json2;
+		Elem2->ToXml(&Xml2);
+		Elem2->ToJson(&Json2);
+		int RetXml2 = StkObject::Analyze((TCHAR*)Xml2.c_str());
+		int RetJson2 = StkObject::Analyze((TCHAR*)Json2.c_str());
 
-	StkObject* Elem3 = MakeTestData3(_T("Hello"), 4, 5);
-	std::wstring Xml3;
-	std::wstring Json3;
-	Elem2->ToXml(&Xml3);
-	Elem2->ToJson(&Json3);
-	int RetXml3 = StkObject::Analyze((TCHAR*)Xml3.c_str());
-	int RetJson3 = StkObject::Analyze((TCHAR*)Json3.c_str());
+		StkObject* Elem3 = MakeTestData3(_T("Hello"), 4, 5);
+		std::wstring Xml3;
+		std::wstring Json3;
+		Elem2->ToXml(&Xml3);
+		Elem2->ToJson(&Json3);
+		int RetXml3 = StkObject::Analyze((TCHAR*)Xml3.c_str());
+		int RetJson3 = StkObject::Analyze((TCHAR*)Json3.c_str());
 
-	if (!(RetXml1 == 1 && RetJson1 == 2 && RetXml2 == 1 && RetJson2 == 2 && RetXml3 == 1 && RetJson3 == 2)) {
-		printf("NG\r\n");
-		exit(0);
+		if (!(RetXml1 == 1 && RetJson1 == 2 && RetXml2 == 1 && RetJson2 == 2 && RetXml3 == 1 && RetJson3 == 2)) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
 	}
-	printf("OK\r\n");
+
+	/////////////////////////////////////////////////////////////////
+	{
+		wprintf(_T("GeneralCheck6#Identify the presented text is XML or JSON (Normal-2) ..."));
+		int RetXml1 = StkObject::Analyze(_T("<>"));
+		int RetJson1 = StkObject::Analyze(_T("{}"));
+		int RetXml2 = StkObject::Analyze(_T("  \t\r\n<>  \t\r\n"));
+		int RetJson2 = StkObject::Analyze(_T("  \t\r\n{}  \t\r\n"));
+		int RetXml3 = StkObject::Analyze(_T("  \t\r\n<aaa>  \t\r\n"));
+		int RetJson3 = StkObject::Analyze(_T("  \t\r\n\"aaa\" : {}  \t\r\n"));
+		if (!(RetXml1 == 1 && RetJson1 == 2 && RetXml2 == 1 && RetJson2 == 2 && RetXml3 == 1 && RetJson3 == 2)) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
+
+	/////////////////////////////////////////////////////////////////
+	{
+		wprintf(_T("GeneralCheck6#Identify the presented text is XML or JSON (Abnormal) ..."));
+		int RetXml1 = StkObject::Analyze(_T("<"));
+		int RetJson1 = StkObject::Analyze(_T("{"));
+		int RetXml2 = StkObject::Analyze(_T(">"));
+		int RetJson2 = StkObject::Analyze(_T("}"));
+		int RetXml3 = StkObject::Analyze(_T(""));
+		int RetJson3 = StkObject::Analyze(NULL);
+		if (RetXml1 != -1 || RetJson1 != -1 || RetXml2 != -1 || RetJson2 != -1|| RetXml3 != -1 || RetJson3 != -1) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
 }
 
 void JsonEncodingTest1()
