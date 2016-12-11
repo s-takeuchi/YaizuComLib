@@ -1,4 +1,6 @@
 #include <windows.h>
+#include <tchar.h>
+#include <shlwapi.h>
 #include "..\stksocket\stksocket.h"
 #include "..\commonfunc\stkobject.h"
 #include "StkObjectConverter.h"
@@ -6,28 +8,55 @@
 class StkObjectConverter::Impl
 {
 public:
-	int DeleteHttpHeader(TCHAR*);
-	int Utf8ToWideCharSize(BYTE*);
-	void Utf8ToWideChar(BYTE*, TCHAR*, int);
+	TCHAR* SkipHttpHeader(TCHAR*);
+
+	TCHAR* Uft8ToWideChar(BYTE* Txt);
+	BYTE* WideCharToUtf8(TCHAR*);
 };
 
-// Delete the http header from the specified text.
-// Txt [out] : Header deleted data
-// Return : Result code [0: Normal, -1: No header/Abnormal
-int StkObjectConverter::Impl::DeleteHttpHeader(TCHAR* Txt)
+TCHAR* StkObjectConverter::Impl::SkipHttpHeader(TCHAR* Txt)
 {
-	// Search the header end
-	return 0;
+	TCHAR* Ptr = NULL;
+	Ptr = StrStr(Txt, _T("\r\n\r\n"));
+	if (Ptr != NULL) {
+		Ptr += 4;
+		return Ptr;
+	}
+	Ptr = StrStr(Txt, _T("\n\r\n\r"));
+	if (Ptr != NULL) {
+		Ptr += 4;
+		return Ptr;
+	}
+	Ptr = StrStr(Txt, _T("\n\n"));
+	if (Ptr != NULL) {
+		Ptr += 2;
+		return Ptr;
+	}
+	return Txt;
 }
 
-int StkObjectConverter::Impl::Utf8ToWideCharSize(BYTE* Txt)
+TCHAR* StkObjectConverter::Impl::Uft8ToWideChar(BYTE* Txt)
 {
-	return MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, NULL, NULL);
+	int WcSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, NULL, NULL);
+	if (WcSize > 0) {
+		TCHAR* WcTxt = new TCHAR[WcSize + 1];
+		WcSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, WcTxt, WcSize);
+		WcTxt[WcSize] = '\0';
+		return WcTxt;
+	}
+	return NULL;
 }
 
-void StkObjectConverter::Impl::Utf8ToWideChar(BYTE* Txt, TCHAR* WcTxt, int WcSize)
+BYTE* StkObjectConverter::Impl::WideCharToUtf8(TCHAR* Txt)
 {
-	MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, WcTxt, WcSize);
+	int Utf8Size = WideCharToMultiByte(CP_UTF8, 0, Txt, -1, NULL, 0, NULL, NULL);
+	if (Utf8Size > 0) {
+		BYTE* Utf8Txt = new BYTE[Utf8Size + 1];
+		Utf8Size = WideCharToMultiByte(CP_UTF8, 0, Txt, -1, (LPSTR)Utf8Txt, Utf8Size, NULL, NULL);
+		Utf8Txt[Utf8Size] = '\0';
+		return Utf8Txt;
+	}
+	return NULL;
 }
 
 StkObjectConverter::StkObjectConverter(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
@@ -65,16 +94,29 @@ StkObject* StkObjectConverter::RecvRequest(int TargetId, int* XmlJsonType)
 	}
 	BYTE Dat[10000000];
 	Ret = StkSocket_Receive(TargetId, TargetId, Dat, 10000000, 9999999, NULL, -1, FALSE);
+	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 	if (Ret == -1) {
 		return NULL;
 	}
-	int WcSize = pImpl->Utf8ToWideCharSize(Dat);
-	if (WcSize <= 0) {
-		TCHAR *DatWc = new TCHAR[WcSize + 1];
-		pImpl->Utf8ToWideChar(Dat, DatWc, WcSize + 1);
+	TCHAR *DatWc = pImpl->Uft8ToWideChar(Dat);
+	if (DatWc == NULL) {
+		return NULL;
 	}
-	//*XmlJsonType = StkObject::Analyze(
-	return NULL;
+	TCHAR* Req = pImpl->SkipHttpHeader(DatWc);
+	*XmlJsonType = StkObject::Analyze(Req);
+	if (*XmlJsonType == -1) {
+		delete DatWc;
+		return NULL;
+	}
+	int ErrorCode = 0;
+	StkObject* ReqObj = NULL;
+	if (*XmlJsonType == 1) {
+		ReqObj = StkObject::CreateObjectFromXml(Req, &ErrorCode);
+	} else if (*XmlJsonType == 2) {
+		ReqObj = StkObject::CreateObjectFromJson(Req, &ErrorCode);
+	}
+	delete DatWc;
+	return ReqObj;
 };
 
 void StkObjectConverter::SendResponse(StkObject* Obj, int TargetId, int* XmlJsonType)
