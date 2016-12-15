@@ -12,5 +12,5 @@ public:
 	virtual ~StkObjectConverter();
 	void AllClose(int*, int);
 	StkObject* RecvRequest(int, int*);
-	void SendResponse(StkObject*, int, int*);
+	void SendResponse(StkObject*, int, int);
 };

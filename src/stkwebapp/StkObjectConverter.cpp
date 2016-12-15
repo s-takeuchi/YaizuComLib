@@ -5,6 +5,8 @@
 #include "..\commonfunc\stkobject.h"
 #include "StkObjectConverter.h"
 
+#define DATA_LEN 10000000
+
 class StkObjectConverter::Impl
 {
 public:
@@ -92,8 +94,8 @@ StkObject* StkObjectConverter::RecvRequest(int TargetId, int* XmlJsonType)
 	if (Ret == -1) {
 		return NULL;
 	}
-	BYTE Dat[10000000];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, 10000000, 9999999, NULL, -1, FALSE);
+	BYTE Dat[DATA_LEN];
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, DATA_LEN - 1, NULL, -1, FALSE);
 	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 	if (Ret == -1) {
 		return NULL;
@@ -119,6 +121,23 @@ StkObject* StkObjectConverter::RecvRequest(int TargetId, int* XmlJsonType)
 	return ReqObj;
 };
 
-void StkObjectConverter::SendResponse(StkObject* Obj, int TargetId, int* XmlJsonType)
+void StkObjectConverter::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType)
 {
+	if (XmlJsonType != 1 && XmlJsonType != 2) {
+		return;
+	}
+	char ContType[64] = "";
+	BYTE* Dat;
+	std::wstring XmlOrJson;
+	if (XmlJsonType == 1) {
+		Obj->ToXml(&XmlOrJson);
+		strcpy_s(ContType, 64, "Content-Type: application/xml\r\n\r\n");
+	} else if (XmlJsonType == 2) {
+		Obj->ToJson(&XmlOrJson);
+		strcpy_s(ContType, 64, "Content-Type: application/json\r\n\r\n");
+	}
+	Dat = pImpl->WideCharToUtf8((TCHAR*)XmlOrJson.c_str());
+	int Ret1 = StkSocket_Send(TargetId, TargetId, (BYTE*)ContType, strlen(ContType));
+	int Ret2 = StkSocket_Send(TargetId, TargetId, Dat, strlen((char*)Dat));
+	delete Dat;
 };
