@@ -60,10 +60,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Debug\commonfunc.lib Debug\stkdata.lib Debug\stkthread.lib Debug\stksocket.lib Debug\stkwebapp.lib"
+				AdditionalDependencies="Ws2_32.lib Debug\commonfunc.lib Debug\stkdata.lib Debug\stkthread.lib Debug\stksocket.lib Debug\stkwebapp.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				HeapReserveSize="10000000"
+				HeapCommitSize="10000000"
+				StackReserveSize="10000000"
+				StackCommitSize="10000000"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -133,10 +137,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Release\commonfunc.lib Release\stkdata.lib Release\stkthread.lib Release\stksocket.lib Release\stkwebapp.lib"
+				AdditionalDependencies="Ws2_32.lib Release\commonfunc.lib Release\stkdata.lib Release\stkthread.lib Release\stksocket.lib Release\stkwebapp.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				HeapReserveSize="10000000"
+				HeapCommitSize="10000000"
+				StackReserveSize="10000000"
+				StackCommitSize="10000000"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
