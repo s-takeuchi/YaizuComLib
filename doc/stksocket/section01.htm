@@ -415,8 +415,9 @@ int StkSocket_Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int Finis
 </div><p>
 <u>戻り値</u>
 <div class="topic">
--1: データの受信に失敗<br>
--1以外: 受信したデータのサイズ(バイト数)
+-1: データの受信に失敗<br/>
+-2: データの受信に失敗(タイムアウトを検知したとき)<br/>
+-1および-2以外: 受信したデータのサイズ(バイト数)
 </div><p>
 </div><p>
 
@@ -471,8 +472,9 @@ int StkSocket_ReceiveUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
 </div><p>
 <u>戻り値</u>
 <div class="topic">
--1: データの受信に失敗<br>
--1以外: 受信したデータのサイズ(バイト数)
+-1: データの受信に失敗<br/>
+-2: データの受信に失敗(タイムアウトを検知したとき)<br/>
+-1および-2以外: 受信したデータのサイズ(バイト数)
 </div><p>
 </div><p>
 
