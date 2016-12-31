@@ -95,18 +95,20 @@ StkObject* StkObjectConverter::RecvRequest(int TargetId, int* XmlJsonType)
 		return NULL;
 	}
 	BYTE Dat[DATA_LEN];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, DATA_LEN - 1, NULL, -1, FALSE);
-	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 500, NULL, -1, FALSE);
 	if (Ret == -1) {
+		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
 	}
 	TCHAR *DatWc = pImpl->Uft8ToWideChar(Dat);
 	if (DatWc == NULL) {
+		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
 	}
 	TCHAR* Req = pImpl->SkipHttpHeader(DatWc);
 	*XmlJsonType = StkObject::Analyze(Req);
 	if (*XmlJsonType == -1) {
+		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		delete DatWc;
 		return NULL;
 	}
@@ -138,6 +140,7 @@ void StkObjectConverter::SendResponse(StkObject* Obj, int TargetId, int XmlJsonT
 	}
 	Dat = pImpl->WideCharToUtf8((TCHAR*)XmlOrJson.c_str());
 	int Ret1 = StkSocket_Send(TargetId, TargetId, (BYTE*)ContType, strlen(ContType));
-	int Ret2 = StkSocket_Send(TargetId, TargetId, Dat, strlen((char*)Dat));
+	int Ret2 = StkSocket_Send(TargetId, TargetId, Dat, strlen((char*)Dat) + 1);
 	delete Dat;
+	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 };
