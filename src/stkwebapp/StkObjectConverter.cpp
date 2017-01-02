@@ -96,7 +96,7 @@ StkObject* StkObjectConverter::RecvRequest(int TargetId, int* XmlJsonType)
 	}
 	BYTE Dat[DATA_LEN];
 	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 500, NULL, -1, FALSE);
-	if (Ret == -1) {
+	if (Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
 	}

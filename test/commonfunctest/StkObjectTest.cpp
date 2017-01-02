@@ -1406,23 +1406,23 @@ int MemoryLeakChecking2()
 {
 	printf("Checks memory leak (repeat encoding and decoding)...");
 	long MaxMem[30];
-	std::wstring StrVal;
 	int Offset = 0;
 	StkObject* NewObj1;
 	StkObject* NewObj2;
 
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		for (int Loop = 0; Loop < 250; Loop++) {
+			std::wstring StrVal1;
 			NewObj1 = new StkObject(_T("EncodeTesting"));
 			NewObj1->AppendAttribute(new StkObject(_T("XmlLt"), _T("<<<<<<<<<<<<<<<<<<<<")));
 			NewObj1->AppendAttribute(new StkObject(_T("XmlGt"), _T(">>>>>>>>>>>>>>>>>>>>")));
 			NewObj1->AppendAttribute(new StkObject(_T("XmlApos"), _T("\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'")));
 			NewObj1->AppendChildElement(new StkObject(_T("XmlAmp"), _T("&&&&&&&&&&&&&&&&&&&&")));
 			NewObj1->AppendChildElement(new StkObject(_T("XmlQuot"), _T("\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"")));
-			StrVal.assign(_T(""));
-			NewObj1->ToXml(&StrVal);
+			NewObj1->ToXml(&StrVal1);
 			delete NewObj1;
 
+			std::wstring StrVal2;
 			NewObj1 = new StkObject(_T("EncodeTesting"));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\"\"\"\"\"\"\"\"\"\"")));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\\\\\\\\\\\\\\\\\\\\")));
@@ -1432,18 +1432,17 @@ int MemoryLeakChecking2()
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\n\n\n\n\n\n\n\n\n\n")));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\r\r\r\r\r\r\r\r\r\r")));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\t\t\t\t\t\t\t\t\t\t")));
-			StrVal.assign(_T(""));
-			NewObj1->ToJson(&StrVal);
+			NewObj1->ToJson(&StrVal2);
 			delete NewObj1;
 
+			std::wstring StrVal3;
 			NewObj2 = StkObject::CreateObjectFromXml(_T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Amp>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Amp><Quot>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Quot></Aaaa>"), &Offset);
-			StrVal.assign(_T(""));
-			NewObj2->ToXml(&StrVal);
+			NewObj2->ToXml(&StrVal3);
 			delete NewObj2;
 
+			std::wstring StrVal4;
 			NewObj2 = StkObject::CreateObjectFromJson(_T("\"Aaaa\" : { \"Bbbb\" : \"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\", \"Bbbb\" : \"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", \"Bbbb\" : \"\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\", \"Bbbb\" : \"\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\", \"Bbbb\" : \"\\f\\f\\f\\f\\f\\f\\f\\f\\f\\f\", \"Bbbb\" : \"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\", \"Bbbb\" : \"\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\", \"Bbbb\" : \"\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\" }"), &Offset);
-			StrVal = _T("");
-			NewObj2->ToJson(&StrVal);
+			NewObj2->ToJson(&StrVal4);
 			delete NewObj2;
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
