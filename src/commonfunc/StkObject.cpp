@@ -996,6 +996,95 @@ void StkObject::SetNext(StkObject* TmpObj)
 	}
 }
 
+void StkObject::ToXml(TCHAR* Msg, int MsgLength, int Indent)
+{
+	if (pImpl->Name == NULL) {
+		return;
+	}
+	int Length = lstrlen(Msg);
+	if (pImpl->Type == STKOBJECT_ATTR_INT || pImpl->Type == STKOBJECT_ATTR_FLOAT || pImpl->Type == STKOBJECT_ATTR_STRING) {
+		if (pImpl->Type == STKOBJECT_ATTR_INT) {
+			int *Val = (int*)pImpl->Value;
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" %s=\"%d\""), pImpl->Name, *Val);
+		} else if (pImpl->Type == STKOBJECT_ATTR_FLOAT) {
+			float *Val = (float*)pImpl->Value;
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" %s=\"%f\""), pImpl->Name, *Val);
+		} else if (pImpl->Type == STKOBJECT_ATTR_STRING) {
+			int StrLen = pImpl->XmlEncodeSize((TCHAR*)pImpl->Value);
+			TCHAR* TmpStr = new TCHAR[StrLen + 1];
+			pImpl->XmlEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" %s=\"%s\""), pImpl->Name, TmpStr);
+			delete TmpStr;
+		}
+		if (pImpl->Next != NULL) {
+			StkObject* TmpObj = pImpl->Next;
+			TmpObj->ToXml(Msg, MsgLength, Indent);
+		}
+	} else if (pImpl->Type == STKOBJECT_ELEMENT) {
+		for (int Loop = 0; Loop < Indent; Loop++) {
+			if (Length + 1 < MsgLength) {
+				Msg[Length] = _T(' ');
+				Length++;
+			}
+		}
+		_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("<%s"), pImpl->Name);
+		Length += (lstrlen(pImpl->Name) + 1);
+		if (pImpl->FirstAttr != NULL) {
+			StkObject* TmpObj = pImpl->FirstAttr;
+			TmpObj->ToXml(Msg, MsgLength, Indent);
+			Length = lstrlen(Msg);
+		}
+		if (pImpl->FirstElem != NULL) {
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(">\r\n"));
+			Length += 3;
+			StkObject* TmpObj = pImpl->FirstElem;
+			TmpObj->ToXml(Msg, MsgLength, Indent + 2);
+			Length = lstrlen(Msg);
+			for (int Loop = 0; Loop < Indent; Loop++) {
+				if (Length + 1 < MsgLength) {
+					Msg[Length] = _T(' ');
+					Length++;
+				}
+			}
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("</%s>\r\n"), pImpl->Name);
+			Length += (lstrlen(pImpl->Name) + 5);
+		} else {
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("/>\r\n"));
+			Length += 4;
+		}
+		if (pImpl->Next != NULL) {
+			StkObject* TmpObj = pImpl->Next;
+			TmpObj->ToXml(Msg, MsgLength, Indent);
+			Length = lstrlen(Msg);
+		}
+	} else if (pImpl->Type == STKOBJECT_ELEM_INT || pImpl->Type == STKOBJECT_ELEM_FLOAT || pImpl->Type == STKOBJECT_ELEM_STRING) {
+		for (int Loop = 0; Loop < Indent; Loop++) {
+			if (Length + 1 < MsgLength) {
+				Msg[Length] = _T(' ');
+				Length++;
+			}
+		}
+		if (pImpl->Type == STKOBJECT_ELEM_INT) {
+			int *Val = (int*)pImpl->Value;
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("<%s>%d</%s>\r\n"), pImpl->Name, *Val, pImpl->Name);
+		} else if (pImpl->Type == STKOBJECT_ELEM_FLOAT) {
+			float *Val = (float*)pImpl->Value;
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("<%s>%f</%s>\r\n"), pImpl->Name, *Val, pImpl->Name);
+		} else if (pImpl->Type == STKOBJECT_ELEM_STRING) {
+			int StrLen = pImpl->XmlEncodeSize((TCHAR*)pImpl->Value);
+			TCHAR* TmpStr = new TCHAR[StrLen + 1];
+			pImpl->XmlEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("<%s>%s</%s>\r\n"), pImpl->Name, TmpStr, pImpl->Name);
+			delete TmpStr;
+		}
+		if (pImpl->Next != NULL) {
+			StkObject* TmpObj = pImpl->Next;
+			TmpObj->ToXml(Msg, MsgLength, Indent);
+		}
+	}
+	return;
+}
+
 void StkObject::ToXml(std::wstring* Msg, int Indent)
 {
 	if (pImpl->Name == NULL) {
