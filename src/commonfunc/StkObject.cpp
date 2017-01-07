@@ -195,7 +195,6 @@ BOOL StkObject::Impl::IsArrayExpression(StkObject* Obj)
 	return TRUE;
 }
 
-
 void StkObject::Impl::CleanupObjectsForXml(TCHAR* PrevAttrName, StkObject* RetObj)
 {
 	if (PrevAttrName != NULL) {
@@ -1022,10 +1021,8 @@ void StkObject::ToXml(TCHAR* Msg, int MsgLength, int Indent)
 		}
 	} else if (pImpl->Type == STKOBJECT_ELEMENT) {
 		for (int Loop = 0; Loop < Indent; Loop++) {
-			if (Length + 1 < MsgLength) {
-				Msg[Length] = _T(' ');
-				Length++;
-			}
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+			Length++;
 		}
 		_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("<%s"), pImpl->Name);
 		Length += (lstrlen(pImpl->Name) + 1);
@@ -1041,10 +1038,8 @@ void StkObject::ToXml(TCHAR* Msg, int MsgLength, int Indent)
 			TmpObj->ToXml(Msg, MsgLength, Indent + 2);
 			Length = lstrlen(Msg);
 			for (int Loop = 0; Loop < Indent; Loop++) {
-				if (Length + 1 < MsgLength) {
-					Msg[Length] = _T(' ');
-					Length++;
-				}
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+				Length++;
 			}
 			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("</%s>\r\n"), pImpl->Name);
 			Length += (lstrlen(pImpl->Name) + 5);
@@ -1194,6 +1189,165 @@ void StkObject::ToXml(std::wstring* Msg, int Indent)
 			StkObject* TmpObj = pImpl->Next;
 			TmpObj->ToXml(Msg, Indent);
 		}
+	}
+}
+
+void StkObject::ToJson(TCHAR* Msg, int MsgLength, int Indent, BOOL ArrayFlag)
+{
+	if (pImpl->Name == NULL) {
+		return;
+	}
+	int Length = lstrlen(Msg);
+	if (pImpl->Type == STKOBJECT_ATTR_INT || pImpl->Type == STKOBJECT_ATTR_FLOAT || pImpl->Type == STKOBJECT_ATTR_STRING) {
+		if (pImpl->Type == STKOBJECT_ATTR_INT) {
+			int *Val = (int*)pImpl->Value;
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : %d"), pImpl->Name, *Val);
+		} else if (pImpl->Type == STKOBJECT_ATTR_FLOAT) {
+			float *Val = (float*)pImpl->Value;
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : %f"), pImpl->Name, *Val);
+		} else if (pImpl->Type == STKOBJECT_ATTR_STRING) {
+			int StrLen = pImpl->JsonEncodeSize((TCHAR*)pImpl->Value);
+			TCHAR* TmpStr = new TCHAR[StrLen + 1];
+			pImpl->JsonEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : \"%s\""), pImpl->Name, TmpStr);
+			delete TmpStr;
+		}
+		if (pImpl->Next != NULL) {
+			lstrcat(Msg, _T(", "));
+			StkObject* TmpObj = pImpl->Next;
+			TmpObj->ToJson(Msg, MsgLength, Indent);
+		} else {
+			lstrcat(Msg, _T("\r\n"));
+		}
+		return;
+	} else if (pImpl->Type == STKOBJECT_ELEM_INT || pImpl->Type == STKOBJECT_ELEM_FLOAT || pImpl->Type == STKOBJECT_ELEM_STRING) {
+		for (int Loop = 0; Loop < Indent; Loop++) {
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+			Length++;
+		}
+		if (pImpl->Type == STKOBJECT_ELEM_INT) {
+			int *Val = (int*)pImpl->Value;
+			if (ArrayFlag == FALSE) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : %d"), pImpl->Name, *Val);
+			} else {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("%d"), *Val);
+			}
+		} else if (pImpl->Type == STKOBJECT_ELEM_FLOAT) {
+			float *Val = (float*)pImpl->Value;
+			if (ArrayFlag == FALSE) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : %f"), pImpl->Name, *Val);
+			} else {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("%f"), *Val);
+			}
+		} else if (pImpl->Type == STKOBJECT_ELEM_STRING) {
+			int StrLen = pImpl->JsonEncodeSize((TCHAR*)pImpl->Value);
+			TCHAR* TmpStr = new TCHAR[StrLen + 1];
+			pImpl->JsonEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
+			if (ArrayFlag == FALSE) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : \"%s\""), pImpl->Name, TmpStr);
+			} else {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\""), TmpStr);
+			}
+			delete TmpStr;
+		}
+		return;
+	}
+
+	if (pImpl->Type == STKOBJECT_ELEMENT) {
+		// For this element
+		for (int Loop = 0; Loop < Indent; Loop++) {
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+			Length++;
+		}
+		if (ArrayFlag == FALSE) {
+			if (pImpl->Type == STKOBJECT_ELEMENT || pImpl->FirstAttr != NULL) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : {\r\n"), pImpl->Name);
+				Length += (lstrlen(pImpl->Name) + 8);
+			}
+		} else {
+			if (pImpl->Type == STKOBJECT_ELEMENT || pImpl->FirstAttr != NULL) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("{\r\n"));
+				Length += 3;
+			}
+		}
+
+		// For attribute
+		if (pImpl->FirstAttr != NULL) {
+			for (int Loop = 0; Loop < Indent + 2; Loop++) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+				Length++;
+			}
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"@attributes\" : {\r\n"));
+			Length += 19;
+			for (int Loop = 0; Loop < Indent + 4; Loop++) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+				Length++;
+			}
+			StkObject* TmpObj = pImpl->FirstAttr;
+			TmpObj->ToJson(Msg, MsgLength, Indent);
+			Length = lstrlen(Msg);
+			for (int Loop = 0; Loop < Indent + 2; Loop++) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+				Length++;
+			}
+			if (pImpl->FirstElem == NULL) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("}\r\n"));
+				Length += 3;
+			} else {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("},\r\n"));
+				Length += 4;
+			}
+		}
+
+		if (pImpl->IsArrayExpression(this)) {
+			for (int Loop = 0; Loop < Indent + 2; Loop++) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+				Length++;
+			}
+			StkObject* TmpObj = GetFirstChildElement();
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : [\r\n"), pImpl->Name);
+			Length += (lstrlen(pImpl->Name) + 8);
+			while (TmpObj) {
+				TmpObj->ToJson(Msg, MsgLength, Indent + 4, TRUE);
+				Length = lstrlen(Msg);
+				if (TmpObj->GetNext()) {
+					_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(",\r\n"));
+					Length += 3;
+				} else {
+					_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\r\n"));
+					Length += 2;
+				}
+				TmpObj = TmpObj->GetNext();
+			}
+			for (int Loop = 0; Loop < Indent + 2; Loop++) {
+				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+				Length++;
+			}
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("]\r\n"));
+			Length += 3;
+		} else {
+			StkObject* TmpObj = GetFirstChildElement();
+			while (TmpObj) {
+				TmpObj->ToJson(Msg, MsgLength, Indent + 2);
+				Length = lstrlen(Msg);
+				if (TmpObj->GetNext()) {
+					_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(",\r\n"));
+					Length += 3;
+				} else {
+					_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\r\n"));
+					Length += 2;
+				}
+				TmpObj = TmpObj->GetNext();
+			}
+		}
+
+		for (int Loop = 0; Loop < Indent; Loop++) {
+			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T(" "));
+			Length++;
+		}
+		_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("}"));
+		Length++;
+		return;
 	}
 }
 

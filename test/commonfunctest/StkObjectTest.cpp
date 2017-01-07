@@ -723,28 +723,28 @@ void GeneralTestCase6()
 		wprintf(_T("GeneralCheck6#Identify the presented text is XML or JSON (Normal-1) ..."));
 
 		StkObject* Elem1 = MakeTestData1();
-		std::wstring Xml1;
-		std::wstring Json1;
-		Elem1->ToXml(&Xml1);
-		Elem1->ToJson(&Json1);
-		int RetXml1 = StkObject::Analyze((TCHAR*)Xml1.c_str());
-		int RetJson1 = StkObject::Analyze((TCHAR*)Json1.c_str());
+		TCHAR Xml1[8192] = _T("");
+		TCHAR Json1[8192] = _T("");
+		Elem1->ToXml(Xml1, 8192);
+		Elem1->ToJson(Json1, 8192);
+		int RetXml1 = StkObject::Analyze(Xml1);
+		int RetJson1 = StkObject::Analyze(Json1);
 
 		StkObject* Elem2 = MakeTestData2();
-		std::wstring Xml2;
-		std::wstring Json2;
-		Elem2->ToXml(&Xml2);
-		Elem2->ToJson(&Json2);
-		int RetXml2 = StkObject::Analyze((TCHAR*)Xml2.c_str());
-		int RetJson2 = StkObject::Analyze((TCHAR*)Json2.c_str());
+		TCHAR Xml2[8192] = _T("");
+		TCHAR Json2[8192] = _T("");
+		Elem2->ToXml(Xml2, 8192);
+		Elem2->ToJson(Json2, 8192);
+		int RetXml2 = StkObject::Analyze(Xml2);
+		int RetJson2 = StkObject::Analyze(Json2);
 
-		StkObject* Elem3 = MakeTestData3(_T("Hello"), 4, 5);
-		std::wstring Xml3;
-		std::wstring Json3;
-		Elem2->ToXml(&Xml3);
-		Elem2->ToJson(&Json3);
-		int RetXml3 = StkObject::Analyze((TCHAR*)Xml3.c_str());
-		int RetJson3 = StkObject::Analyze((TCHAR*)Json3.c_str());
+		StkObject* Elem3 = MakeTestData3(_T("Hello"), 2, 3);
+		TCHAR Xml3[8192] = _T("");
+		TCHAR Json3[8192] = _T("");
+		Elem3->ToXml(Xml3, 8192);
+		Elem3->ToJson(Json3, 8192);
+		int RetXml3 = StkObject::Analyze(Xml3);
+		int RetJson3 = StkObject::Analyze(Json3);
 
 		if (!(RetXml1 == 1 && RetJson1 == 2 && RetXml2 == 1 && RetJson2 == 2 && RetXml3 == 1 && RetJson3 == 2)) {
 			printf("NG\r\n");
@@ -1412,17 +1412,17 @@ int MemoryLeakChecking2()
 
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		for (int Loop = 0; Loop < 250; Loop++) {
-			std::wstring StrVal1;
+			TCHAR StrVal1[4096] = _T("");
 			NewObj1 = new StkObject(_T("EncodeTesting"));
 			NewObj1->AppendAttribute(new StkObject(_T("XmlLt"), _T("<<<<<<<<<<<<<<<<<<<<")));
 			NewObj1->AppendAttribute(new StkObject(_T("XmlGt"), _T(">>>>>>>>>>>>>>>>>>>>")));
 			NewObj1->AppendAttribute(new StkObject(_T("XmlApos"), _T("\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'")));
 			NewObj1->AppendChildElement(new StkObject(_T("XmlAmp"), _T("&&&&&&&&&&&&&&&&&&&&")));
 			NewObj1->AppendChildElement(new StkObject(_T("XmlQuot"), _T("\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"")));
-			NewObj1->ToXml(&StrVal1);
+			NewObj1->ToXml(StrVal1, 4096);
 			delete NewObj1;
 
-			std::wstring StrVal2;
+			TCHAR StrVal2[4096] = _T("");
 			NewObj1 = new StkObject(_T("EncodeTesting"));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\"\"\"\"\"\"\"\"\"\"")));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\\\\\\\\\\\\\\\\\\\\")));
@@ -1432,17 +1432,17 @@ int MemoryLeakChecking2()
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\n\n\n\n\n\n\n\n\n\n")));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\r\r\r\r\r\r\r\r\r\r")));
 			NewObj1->AppendChildElement(new StkObject(_T("Bbbb"), _T("\t\t\t\t\t\t\t\t\t\t")));
-			NewObj1->ToJson(&StrVal2);
+			NewObj1->ToJson(StrVal2, 4096);
 			delete NewObj1;
 
-			std::wstring StrVal3;
+			TCHAR StrVal3[4096] = _T("");
 			NewObj2 = StkObject::CreateObjectFromXml(_T("<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Amp>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Amp><Quot>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Quot></Aaaa>"), &Offset);
-			NewObj2->ToXml(&StrVal3);
+			NewObj2->ToXml(StrVal3, 4096);
 			delete NewObj2;
 
-			std::wstring StrVal4;
+			TCHAR StrVal4[4096] = _T("");
 			NewObj2 = StkObject::CreateObjectFromJson(_T("\"Aaaa\" : { \"Bbbb\" : \"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\", \"Bbbb\" : \"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", \"Bbbb\" : \"\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\", \"Bbbb\" : \"\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\", \"Bbbb\" : \"\\f\\f\\f\\f\\f\\f\\f\\f\\f\\f\", \"Bbbb\" : \"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\", \"Bbbb\" : \"\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\", \"Bbbb\" : \"\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\" }"), &Offset);
-			NewObj2->ToJson(&StrVal4);
+			NewObj2->ToJson(StrVal4, 4096);
 			delete NewObj2;
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();

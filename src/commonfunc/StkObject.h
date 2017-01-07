@@ -81,6 +81,7 @@ public:
 	void ToXml(std::wstring*, int Indent = 0); // DO NOT SPECIFY 2ND PARAMETER.
 	void ToXml(TCHAR*, int, int Indent = 0); // DO NOT SPECIFY 3RD PARAMETER.
 	void ToJson(std::wstring*, int Indent = 0, BOOL ArrayFlag = FALSE); // DO NOT SPECIFY 2ND AND 3RD PARAMETERS.
+	void ToJson(TCHAR*, int, int Indent = 0, BOOL ArrayFlag = FALSE); // DO NOT SPECIFY 3RD AND 4TH PARAMETERS.
 
 	static int Analyze(TCHAR*);
 	static StkObject* CreateObjectFromXml(TCHAR*, int*);
