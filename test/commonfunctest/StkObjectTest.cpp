@@ -3,6 +3,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <Psapi.h>
+#include <shlwapi.h>
 
 #include "..\..\src\commonfunc\StkObject.h"
 
@@ -797,17 +798,17 @@ void JsonEncodingTest1()
 	Obj->AppendChildElement(new StkObject(_T("Element6"), _T("Hello-\r\r\r\r\r-World!!")));
 	Obj->AppendChildElement(new StkObject(_T("Element7"), _T("Hello-\n\n\n\n\n-World!!")));
 	Obj->AppendChildElement(new StkObject(_T("Element8"), _T("Hello-\t\t\t\t\t-World!!")));
-	std::wstring JsonTxt;
-	Obj->ToJson(&JsonTxt);
+	TCHAR JsonTxt[2048] = _T("");
+	Obj->ToJson(JsonTxt, 2048);
 	wprintf(_T("JSON Encoding#Escape ... "));
-	if (JsonTxt.find(_T("\"Element1\" : \"Hello-\\\\\\\\\\\\\\\\\\\\-World!!\"")) == std::wstring::npos ||
-		JsonTxt.find(_T("\"Element2\" : \"Hello-\\\"\\\"\\\"\\\"\\\"-World!!\"")) == std::wstring::npos ||
-		JsonTxt.find(_T("\"Element3\" : \"Hello-\\/\\/\\/\\/\\/-World!!\"")) == std::wstring::npos ||
-		JsonTxt.find(_T("\"Element4\" : \"Hello-\\b\\b\\b\\b\\b-World!!\"")) == std::wstring::npos ||
-		JsonTxt.find(_T("\"Element5\" : \"Hello-\\f\\f\\f\\f\\f-World!!\"")) == std::wstring::npos ||
-		JsonTxt.find(_T("\"Element6\" : \"Hello-\\r\\r\\r\\r\\r-World!!\"")) == std::wstring::npos ||
-		JsonTxt.find(_T("\"Element7\" : \"Hello-\\n\\n\\n\\n\\n-World!!\"")) == std::wstring::npos ||
-		JsonTxt.find(_T("\"Element8\" : \"Hello-\\t\\t\\t\\t\\t-World!!\"")) == std::wstring::npos) {
+	if (StrStr(JsonTxt, _T("\"Element1\" : \"Hello-\\\\\\\\\\\\\\\\\\\\-World!!\"")) == 0 ||
+		StrStr(JsonTxt, _T("\"Element2\" : \"Hello-\\\"\\\"\\\"\\\"\\\"-World!!\"")) == 0 ||
+		StrStr(JsonTxt, _T("\"Element3\" : \"Hello-\\/\\/\\/\\/\\/-World!!\"")) == 0 ||
+		StrStr(JsonTxt, _T("\"Element4\" : \"Hello-\\b\\b\\b\\b\\b-World!!\"")) == 0 ||
+		StrStr(JsonTxt, _T("\"Element5\" : \"Hello-\\f\\f\\f\\f\\f-World!!\"")) == 0 ||
+		StrStr(JsonTxt, _T("\"Element6\" : \"Hello-\\r\\r\\r\\r\\r-World!!\"")) == 0 ||
+		StrStr(JsonTxt, _T("\"Element7\" : \"Hello-\\n\\n\\n\\n\\n-World!!\"")) == 0 ||
+		StrStr(JsonTxt, _T("\"Element8\" : \"Hello-\\t\\t\\t\\t\\t-World!!\"")) == 0) {
 		printf("NG\r\n");
 		exit(0);
 	} else {
@@ -831,14 +832,14 @@ void XmlEncodingTest2()
 	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("\'")));
 
 	StkObject* Attr1 = Xml2->GetFirstAttribute();
-	std::wstring Attr1Val;
-	Attr1->ToXml(&Attr1Val);
+	TCHAR Attr1Val[2048] = _T("");
+	Attr1->ToXml(Attr1Val, 2048);
 	wprintf(_T("XmlEncoding(Single)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... "));
-	if (Attr1Val.find(_T("Lt=\"&lt;\"")) == std::wstring::npos ||
-		Attr1Val.find(_T("Gt=\"&gt;\"")) == std::wstring::npos ||
-		Attr1Val.find(_T("Amp=\"&amp;\"")) == std::wstring::npos ||
-		Attr1Val.find(_T("Quot=\"&quot;\"")) == std::wstring::npos ||
-		Attr1Val.find(_T("Apos=\"&apos;\"")) == std::wstring::npos) {
+	if (StrStr(Attr1Val, _T("Lt=\"&lt;\"")) == 0 ||
+		StrStr(Attr1Val, _T("Gt=\"&gt;\"")) == 0 ||
+		StrStr(Attr1Val, _T("Amp=\"&amp;\"")) == 0 ||
+		StrStr(Attr1Val, _T("Quot=\"&quot;\"")) == 0 ||
+		StrStr(Attr1Val, _T("Apos=\"&apos;\"")) == 0) {
 		printf("NG\r\n");
 		exit(0);
 	} else {
@@ -846,14 +847,14 @@ void XmlEncodingTest2()
 	}
 
 	StkObject* Elem1 = Xml2->GetFirstChildElement();
-	std::wstring Elem1Val;
-	Elem1->ToXml(&Elem1Val);
+	TCHAR Elem1Val[2048] = _T("");;
+	Elem1->ToXml(Elem1Val, 2048);
 	wprintf(_T("XmlEncoding(Single)#Element value '<', '>', '&', '\"' and '\'' are escaped ... "));
-	if (Elem1Val.find(_T(">&lt;<")) == std::wstring::npos ||
-		Elem1Val.find(_T(">&gt;<")) == std::wstring::npos ||
-		Elem1Val.find(_T(">&amp;<")) == std::wstring::npos ||
-		Elem1Val.find(_T(">&quot;<")) == std::wstring::npos ||
-		Elem1Val.find(_T(">&apos;<")) == std::wstring::npos) {
+	if (StrStr(Elem1Val, _T(">&lt;<")) == 0 ||
+		StrStr(Elem1Val, _T(">&gt;<")) == 0 ||
+		StrStr(Elem1Val, _T(">&amp;<")) == 0 ||
+		StrStr(Elem1Val, _T(">&quot;<")) == 0 ||
+		StrStr(Elem1Val, _T(">&apos;<")) == 0) {
 		printf("NG\r\n");
 		exit(0);
 	} else {
@@ -877,14 +878,14 @@ void XmlEncodingTest3()
 	Xml2->AppendChildElement(new StkObject(_T("Element"), _T("\'\'\'\'\'\'\'\'\'\'")));
 
 	StkObject* Attr1 = Xml2->GetFirstAttribute();
-	std::wstring Attr1Val;
-	Attr1->ToXml(&Attr1Val);
+	TCHAR Attr1Val[4096] = _T("");
+	Attr1->ToXml(Attr1Val, 4096);
 	wprintf(_T("XmlEncoding(Multi)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... "));
-	if (Attr1Val.find(_T("Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\"")) == std::wstring::npos ||
-		Attr1Val.find(_T("Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\"")) == std::wstring::npos ||
-		Attr1Val.find(_T("Amp=\"&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;\"")) == std::wstring::npos ||
-		Attr1Val.find(_T("Quot=\"&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;\"")) == std::wstring::npos ||
-		Attr1Val.find(_T("Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"")) == std::wstring::npos) {
+	if (StrStr(Attr1Val, _T("Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\"")) == 0 ||
+		StrStr(Attr1Val, _T("Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\"")) == 0 ||
+		StrStr(Attr1Val, _T("Amp=\"&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;\"")) == 0 ||
+		StrStr(Attr1Val, _T("Quot=\"&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;\"")) == 0 ||
+		StrStr(Attr1Val, _T("Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"")) == 0) {
 		printf("NG\r\n");
 		exit(0);
 	} else {
@@ -892,14 +893,14 @@ void XmlEncodingTest3()
 	}
 
 	StkObject* Elem1 = Xml2->GetFirstChildElement();
-	std::wstring Elem1Val;
-	Elem1->ToXml(&Elem1Val);
+	TCHAR Elem1Val[4096] = _T("");
+	Elem1->ToXml(Elem1Val, 4096);
 	wprintf(_T("XmlEncoding(Multi)#Element value '<', '>', '&', '\"' and '\'' are escaped ... "));
-	if (Elem1Val.find(_T(">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<")) == std::wstring::npos ||
-		Elem1Val.find(_T(">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;<")) == std::wstring::npos ||
-		Elem1Val.find(_T(">&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;<")) == std::wstring::npos ||
-		Elem1Val.find(_T(">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;<")) == std::wstring::npos ||
-		Elem1Val.find(_T(">&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;<")) == std::wstring::npos) {
+	if (StrStr(Elem1Val, _T(">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<")) == 0 ||
+		StrStr(Elem1Val, _T(">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;<")) == 0 ||
+		StrStr(Elem1Val, _T(">&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;<")) == 0 ||
+		StrStr(Elem1Val, _T(">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;<")) == 0 ||
+		StrStr(Elem1Val, _T(">&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;<")) == 0) {
 		printf("NG\r\n");
 		exit(0);
 	} else {
@@ -944,29 +945,31 @@ void XmlJsonEncodingTest1()
 	TopElem->AppendChildElement(ChildElem1);
 	TopElem->AppendChildElement(ChildElem2);
 
-	std::wstring XmlTxt;
-	std::wstring JsonTxt;
-	TopElem->ToXml(&XmlTxt);
-	TopElem->ToJson(&JsonTxt);
+	TCHAR XmlTxt[8192] = _T("");
+	TCHAR JsonTxt[8192] = _T("");
+	TopElem->ToXml(XmlTxt, 8192);
+	TopElem->ToJson(JsonTxt, 8192);
 
 	int Offset;
-	StkObject* ObjFromXml  = StkObject::CreateObjectFromXml((TCHAR*)XmlTxt.c_str(), &Offset);
-	StkObject* ObjFromJson = StkObject::CreateObjectFromJson((TCHAR*)JsonTxt.c_str(), &Offset);
-	std::wstring Temp1;
-	std::wstring Temp2;
+	StkObject* ObjFromXml  = StkObject::CreateObjectFromXml(XmlTxt, &Offset);
+	StkObject* ObjFromJson = StkObject::CreateObjectFromJson(JsonTxt, &Offset);
+	TCHAR Temp1[8192] = _T("");
+	TCHAR Temp2[8192] = _T("");
 	printf("[Obj--->XML--->Obj--->JSON] and [Obj--->JSON--->Obj--->JSON] bring the same result...");
-	ObjFromXml->ToJson(&Temp1);
-	ObjFromJson->ToJson(&Temp2);
-	if (lstrcmp(Temp1.c_str(), Temp2.c_str()) != 0) {
+	ObjFromXml->ToJson(Temp1, 8192);
+	ObjFromJson->ToJson(Temp2, 8192);
+	if (lstrcmp(Temp1, Temp2) != 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
 	printf("OK\r\n");
 
 	printf("[Obj--->XML--->Obj--->XML] and [Obj--->JSON--->Obj--->XML] bring the same result...");
-	ObjFromXml->ToXml(&Temp1);
-	ObjFromJson->ToXml(&Temp2);
-	if (lstrcmp(Temp1.c_str(), Temp2.c_str()) != 0) {
+	lstrcpy(Temp1, _T(""));
+	lstrcpy(Temp2, _T(""));
+	ObjFromXml->ToXml(Temp1, 8192);
+	ObjFromJson->ToXml(Temp2, 8192);
+	if (lstrcmp(Temp1, Temp2) != 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
@@ -977,8 +980,8 @@ void XmlJsonEncodingTest1()
 
 void XmlJsonEncodingTest2()
 {
-	std::wstring Temp1;
-	std::wstring Temp2;
+	TCHAR Temp1[2048] = _T("");
+	TCHAR Temp2[2048] = _T("");
 
 	StkObject* TopElem = new StkObject(_T("Japan"));
 	TopElem->AppendAttribute(new StkObject(_T(""), _T("")));
@@ -988,16 +991,16 @@ void XmlJsonEncodingTest2()
 	ChildElem->AppendChildElement(new StkObject(_T(""), _T("")));
 	ChildElem->AppendChildElement(new StkObject(_T("A"), _T("B")));
 	TopElem->AppendChildElement(ChildElem);
-	TopElem->ToXml(&Temp1);
-	TopElem->ToJson(&Temp2);
+	TopElem->ToXml(Temp1, 2048);
+	TopElem->ToJson(Temp2, 2048);
 	printf("XML encoding with no name and no value...");
-	if (Temp1.find(_T("<Japan =\"\" A=\"B\">\r\n  <>\r\n    </>\r\n    <></>\r\n    <A>B</A>\r\n  </>\r\n</Japan>")) == std::wstring::npos) {
+	if (StrStr(Temp1, _T("<Japan =\"\" A=\"B\">\r\n  <>\r\n    </>\r\n    <></>\r\n    <A>B</A>\r\n  </>\r\n</Japan>")) == 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
 	printf("OK\r\n");
 	printf("JSON encoding with no name and no value...");
-	if (Temp2.find(_T("\"Japan\" : {\r\n  \"@attributes\" : {\r\n    \"\" : \"\", \"A\" : \"B\"\r\n  },\r\n  \"\" : {\r\n    \"\" : {\r\n    },\r\n    \"\" : \"\",\r\n    \"A\" : \"B\"\r\n  }\r\n}")) == std::wstring::npos) {
+	if (StrStr(Temp2, _T("\"Japan\" : {\r\n  \"@attributes\" : {\r\n    \"\" : \"\", \"A\" : \"B\"\r\n  },\r\n  \"\" : {\r\n    \"\" : {\r\n    },\r\n    \"\" : \"\",\r\n    \"A\" : \"B\"\r\n  }\r\n}")) == 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
@@ -1021,17 +1024,17 @@ void XmlDecodingTest1()
 	StkObject* RetObj4 = StkObject::CreateObjectFromXml(Xml4, &Offset);
 	StkObject* RetObj5 = StkObject::CreateObjectFromXml(Xml5, &Offset);
 
-	std::wstring Msg1;
-	std::wstring Msg2;
-	std::wstring Msg3;
-	std::wstring Msg4;
-	std::wstring Msg5;
+	TCHAR Msg1[1024] = _T("");
+	TCHAR Msg2[1024] = _T("");
+	TCHAR Msg3[1024] = _T("");
+	TCHAR Msg4[1024] = _T("");
+	TCHAR Msg5[1024] = _T("");
 
-	RetObj1->ToXml(&Msg1);
-	RetObj2->ToXml(&Msg2);
-	RetObj3->ToXml(&Msg3);
-	RetObj4->ToXml(&Msg4);
-	RetObj5->ToXml(&Msg5);
+	RetObj1->ToXml(Msg1, 1024);
+	RetObj2->ToXml(Msg2, 1024);
+	RetObj3->ToXml(Msg3, 1024);
+	RetObj4->ToXml(Msg4, 1024);
+	RetObj5->ToXml(Msg5, 1024);
 
 	printf("Decoding variation test (sampling check)...");
 	if (lstrcmp(RetObj1->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), _T("c1")) != 0 ||
@@ -1046,7 +1049,7 @@ void XmlDecodingTest1()
 	}
 
 	printf("Decoding variation test (ToXml check)...");
-	if (Msg1.compare(Msg2.c_str()) != 0 || Msg1.compare(Msg3.c_str()) != 0 || Msg1.compare(Msg4.c_str()) != 0 || Msg1.compare(Msg5.c_str()) != 0) {
+	if (lstrcmp(Msg1, Msg2) != 0 || lstrcmp(Msg1, Msg3) != 0 || lstrcmp(Msg1, Msg4) != 0 || lstrcmp(Msg1, Msg5) != 0) {
 		printf("NG\r\n");
 		exit(0);
 	} else {
@@ -1294,10 +1297,10 @@ void JsonDecodingTest2()
 	StkObject* RetObj2;
 	StkObject* RetObj3;
 	StkObject* RetObj4;
-	std::wstring Str1;
-	std::wstring Str2;
-	std::wstring Str3;
-	std::wstring Str4;
+	TCHAR Str1[1024] = _T("");
+	TCHAR Str2[1024] = _T("");
+	TCHAR Str3[1024] = _T("");
+	TCHAR Str4[1024] = _T("");
 	int Offset;
 
 	////////////////////////////////////////////////////
@@ -1309,12 +1312,12 @@ void JsonDecodingTest2()
 	RetObj2 = StkObject::CreateObjectFromJson(Msg2, &Offset);
 	RetObj3 = StkObject::CreateObjectFromJson(Msg3, &Offset);
 	RetObj4 = StkObject::CreateObjectFromJson(Msg4, &Offset);
-	RetObj1->ToJson(&Str1);
-	RetObj2->ToJson(&Str2);
-	RetObj3->ToJson(&Str3);
-	RetObj4->ToJson(&Str4);
+	RetObj1->ToJson(Str1, 1024);
+	RetObj2->ToJson(Str2, 1024);
+	RetObj3->ToJson(Str3, 1024);
+	RetObj4->ToJson(Str4, 1024);
 	printf("JSON Decoding (empty charactor)...");
-	if (lstrcmp(Str1.c_str(), Str2.c_str()) != 0 || lstrcmp(Str2.c_str(), Str3.c_str()) != 0 || lstrcmp(Str3.c_str(), Str4.c_str()) != 0) {
+	if (lstrcmp(Str1, Str2) != 0 || lstrcmp(Str2, Str3) != 0 || lstrcmp(Str3, Str4) != 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
@@ -1344,19 +1347,19 @@ void JsonDecordingAbnormalTest1()
 
 void CloneTest(StkObject* Obj)
 {
-	std::wstring OrgMsg;
-	Obj->ToXml(&OrgMsg);
+	TCHAR OrgMsg[8192] = _T("");
+	Obj->ToXml(OrgMsg, 8192);
 
 	StkObject* NewObj1 = Obj->Clone();
 	StkObject* NewObj2 = NewObj1->Clone();
 
-	std::wstring Msg1;
-	std::wstring Msg2;
-	NewObj1->ToXml(&Msg1);
-	NewObj2->ToXml(&Msg2);
+	TCHAR Msg1[8192] = _T("");
+	TCHAR Msg2[8192] = _T("");
+	NewObj1->ToXml(Msg1, 8192);
+	NewObj2->ToXml(Msg2, 8192);
 
 	printf("Clone Test#Validation of two clone's string...");
-	if (lstrcmp(Msg1.c_str(), Msg2.c_str()) == 0 && lstrcmp(Msg1.c_str(), OrgMsg.c_str()) == 0 && NewObj1->Equals(NewObj2) && NewObj1->Equals(Obj)) {
+	if (lstrcmp(Msg1, Msg2) == 0 && lstrcmp(Msg1, OrgMsg) == 0 && NewObj1->Equals(NewObj2) && NewObj1->Equals(Obj)) {
 		printf("OK\r\n");
 	} else {
 		printf("NG\r\n");
@@ -1377,12 +1380,10 @@ int MemoryLeakChecking1(StkObject* PassedObj)
 			delete NewObj;
 		}
 		for (int Loop = 0; Loop < 50; Loop++) {
-			std::wstring *Msg1 = new std::wstring(_T(""));
-			PassedObj->ToXml(Msg1);
-			delete Msg1;
-			std::wstring *Msg2 = new std::wstring(_T(""));
-			PassedObj->ToJson(Msg2);
-			delete Msg2;
+			TCHAR Msg1[8192] = _T("");
+			PassedObj->ToXml(Msg1, 8192);
+			TCHAR Msg2[8192] = _T("");
+			PassedObj->ToJson(Msg2, 8192);
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}
