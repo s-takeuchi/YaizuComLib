@@ -1008,6 +1008,40 @@ void XmlJsonEncodingTest2()
 	delete TopElem;
 }
 
+void XmlJsonEncodingTest3()
+{
+	TCHAR Buf[4096];
+	TCHAR Tmp[4096];
+
+	StkObject* Dat = MakeTestData1();
+
+	printf("Encoded XML data is stored into unsufficient buffer...");
+	lstrcpy(Tmp, _T(""));
+	Dat->ToXml(Tmp, 4096);
+	for (int Len = 4096; Len > 1; Len--) {
+		lstrcpy(Buf, _T(""));
+		Dat->ToXml(Buf, Len);
+		if (StrStr(Tmp, Buf) == 0) {
+			printf("NG\r\n");
+			exit(0);
+		}
+	}
+	printf("OK\r\n");
+
+	printf("Encoded JSON data is stored into unsufficient buffer...");
+	lstrcpy(Tmp, _T(""));
+	Dat->ToJson(Tmp, 4096);
+	for (int Len = 4096; Len > 1; Len--) {
+		lstrcpy(Buf, _T(""));
+		Dat->ToJson(Buf, Len);
+		if (StrStr(Tmp, Buf) == 0) {
+			printf("NG\r\n");
+			exit(0);
+		}
+	}
+	printf("OK\r\n");
+}
+
 void XmlDecodingTest1()
 {
 	int Offset = 0;
@@ -1529,6 +1563,10 @@ int MemoryLeakChecking4()
 {
 	printf("Checks memory leak (large data)...");
 	long MaxMem[30];
+	for (int CreationLoop = 0; CreationLoop < 10; CreationLoop++) {
+		StkObject* NewObj = MakeTestData3(_T("Hello"), 4, 5);
+		delete NewObj;
+	}
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		StkObject* NewObj = MakeTestData3(_T("Hello"), 4, 5);
 		delete NewObj;
@@ -1561,6 +1599,7 @@ void StkObjectTest()
 		XmlEncodingTest3();
 		XmlJsonEncodingTest1();
 		XmlJsonEncodingTest2();
+		XmlJsonEncodingTest3();
 	}
 
 	// Decode check
