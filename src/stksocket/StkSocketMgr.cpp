@@ -369,15 +369,16 @@ int StkSocketMgr::ConnectSocket(int Id)
 				}
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 				PutLog(LOG_SUCCESSCSC, Id, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+				freeaddrinfo(ResAddr);
 				break;
 			} else {
 				int Yes = 1;
 				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_BROADCAST, (char *)&Yes, sizeof(Yes));
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 				PutLog(LOG_SUCCESSCS, Id, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+				freeaddrinfo(ResAddr);
 				break;
 			}
-			freeaddrinfo(ResAddr);
 		}
 	}
 	return 0;
