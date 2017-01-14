@@ -130,15 +130,15 @@ void StkObjectConverter::SendResponse(StkObject* Obj, int TargetId, int XmlJsonT
 	}
 	char ContType[64] = "";
 	BYTE* Dat;
-	std::wstring XmlOrJson;
+	TCHAR XmlOrJson[1000000] = _T("");
 	if (XmlJsonType == 1) {
-		Obj->ToXml(&XmlOrJson);
+		Obj->ToXml(XmlOrJson, 1000000);
 		strcpy_s(ContType, 64, "Content-Type: application/xml\r\n\r\n");
 	} else if (XmlJsonType == 2) {
-		Obj->ToJson(&XmlOrJson);
+		Obj->ToJson(XmlOrJson, 1000000);
 		strcpy_s(ContType, 64, "Content-Type: application/json\r\n\r\n");
 	}
-	Dat = pImpl->WideCharToUtf8((TCHAR*)XmlOrJson.c_str());
+	Dat = pImpl->WideCharToUtf8(XmlOrJson);
 	int Ret1 = StkSocket_Send(TargetId, TargetId, (BYTE*)ContType, strlen(ContType));
 	int Ret2 = StkSocket_Send(TargetId, TargetId, Dat, strlen((char*)Dat) + 1);
 	delete Dat;

@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <shlwapi.h>
 #include <stdio.h>
+#include <Psapi.h>
 #include "..\..\src\stkthread\stkthread.h"
 #include "..\..\src\stkwebapp\StkObjectConverter.h"
 #include "..\..\src\commonfunc\StkObject.h"
@@ -10,7 +11,23 @@
 StkObjectConverter* Soc = NULL;
 BOOL SendTestDataFailed = FALSE;
 
-int ElemStkThreadMain(int Id)
+int GetUsedMemorySizeOfCurrentProcess()
+{
+	DWORD dwProcessID = GetCurrentProcessId();
+	HANDLE hProcess;
+	PROCESS_MEMORY_COUNTERS pmc = { 0 };
+
+	long Size;
+	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dwProcessID)) != NULL) {
+		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
+			Size = pmc.WorkingSetSize;
+		}
+	}
+	CloseHandle(hProcess);
+	return Size;
+}
+
+int ElemStkThreadMainRecv(int Id)
 {
 	int XmlJsonType;
 	StkObject* StkObj = Soc->RecvRequest(Id, &XmlJsonType);
@@ -19,6 +36,11 @@ int ElemStkThreadMain(int Id)
 		Soc->SendResponse(StkObj, Id, XmlJsonType);
 		delete StkObj;
 	}
+
+	/////
+	printf("Thread ID=%d, UsedMem=%d\r\n", Id, GetUsedMemorySizeOfCurrentProcess());
+	/////
+
 	return 0;
 }
 
@@ -89,7 +111,7 @@ BOOL SendTestData(int Id, char* Dat)
 	}
 	StkSocket_Disconnect(Id, Id, TRUE);
 	if (RetR <= 0) {
-		return TRUE;
+		return FALSE;
 	}
 	BOOL RetC = CompObjs((BYTE*)Dat, (BYTE*)RecvDat);
 	if (RetC == FALSE) {
@@ -117,6 +139,7 @@ int ElemStkThreadMainSend(int Id)
 int main(int Argc, char* Argv[])
 {
 	printf("Test StkObjectConverter ... ");
+	printf("\r\n"); // To be deleted
 
 	int Ids[3] = {11, 12, 13};
 	int SendIds[3] = {31, 32, 33};
@@ -126,7 +149,7 @@ int main(int Argc, char* Argv[])
 	for (int Loop = 0; Loop < 3; Loop++) {
 		wsprintf(Name, _T("Recv-%d"), Loop);
 		wsprintf(Desc, _T("Description-%d"), Loop);
-		AddStkThread(Ids[Loop], Name, Desc, NULL, NULL, ElemStkThreadMain, NULL, NULL);
+		AddStkThread(Ids[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainRecv, NULL, NULL);
 	}
 	Soc = new StkObjectConverter(Ids, 3, _T("localhost"), 8080);
 
@@ -142,7 +165,7 @@ int main(int Argc, char* Argv[])
 	while (GetNumOfRunStkThread() != GetNumOfStkThread()) {
 		Sleep(100);
 	}
-	Sleep(5000);
+	Sleep(60000);
 	StopAllOfStkThreads();
 	while (GetNumOfRunStkThread() != 0) {
 		Sleep(100);
