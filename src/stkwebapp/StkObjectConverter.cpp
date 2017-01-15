@@ -2,18 +2,29 @@
 #include <tchar.h>
 #include <shlwapi.h>
 #include "..\stksocket\stksocket.h"
+#include "..\..\src\stkthread\stkthread.h"
 #include "..\commonfunc\stkobject.h"
 #include "StkObjectConverter.h"
 
-#define DATA_LEN 10000000
+#define DATA_LEN 1000000
+#define MAX_THREAD_COUNT 64
 
 class StkObjectConverter::Impl
 {
 public:
-	TCHAR* SkipHttpHeader(TCHAR*);
+	int WebThreadIds[MAX_THREAD_COUNT];
+	int WebThreadCount;
 
-	TCHAR* Uft8ToWideChar(BYTE* Txt);
-	BYTE* WideCharToUtf8(TCHAR*);
+public:
+	static TCHAR* SkipHttpHeader(TCHAR*);
+
+	static TCHAR* Uft8ToWideChar(BYTE* Txt);
+	static BYTE* WideCharToUtf8(TCHAR*);
+
+	static StkObject* RecvRequest(int, int*);
+	static void SendResponse(StkObject*, int, int);
+
+	static int ElemStkThreadMainRecv(int);
 };
 
 TCHAR* StkObjectConverter::Impl::SkipHttpHeader(TCHAR* Txt)
@@ -61,34 +72,7 @@ BYTE* StkObjectConverter::Impl::WideCharToUtf8(TCHAR* Txt)
 	return NULL;
 }
 
-StkObjectConverter::StkObjectConverter(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
-{
-	pImpl = new Impl;
-
-	if (Count >= 1) {
-		StkSocket_AddInfo(TargetIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, HostName, TargetPort);
-		for (int Loop = 1; Loop < Count; Loop++) {
-			StkSocket_CopyInfo(TargetIds[Loop], TargetIds[0]);
-		}
-		StkSocket_Open(TargetIds[0]);
-	}
-};
-
-StkObjectConverter::~StkObjectConverter()
-{
-	delete pImpl;
-};
-
-void StkObjectConverter::AllClose(int* TargetIds, int Count)
-{
-	if (Count >= 1) {
-		for (int Loop = 0; Loop < Count; Loop++) {
-			StkSocket_Close(TargetIds[Loop], TRUE);
-		}
-	}
-};
-
-StkObject* StkObjectConverter::RecvRequest(int TargetId, int* XmlJsonType)
+StkObject* StkObjectConverter::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 {
 	int Ret = StkSocket_Accept(TargetId);
 	if (Ret == -1) {
@@ -100,12 +84,12 @@ StkObject* StkObjectConverter::RecvRequest(int TargetId, int* XmlJsonType)
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
 	}
-	TCHAR *DatWc = pImpl->Uft8ToWideChar(Dat);
+	TCHAR *DatWc = Uft8ToWideChar(Dat);
 	if (DatWc == NULL) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
 	}
-	TCHAR* Req = pImpl->SkipHttpHeader(DatWc);
+	TCHAR* Req = SkipHttpHeader(DatWc);
 	*XmlJsonType = StkObject::Analyze(Req);
 	if (*XmlJsonType == -1) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
@@ -123,24 +107,92 @@ StkObject* StkObjectConverter::RecvRequest(int TargetId, int* XmlJsonType)
 	return ReqObj;
 };
 
-void StkObjectConverter::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType)
+void StkObjectConverter::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType)
 {
 	if (XmlJsonType != 1 && XmlJsonType != 2) {
 		return;
 	}
 	char ContType[64] = "";
 	BYTE* Dat;
-	TCHAR XmlOrJson[1000000] = _T("");
+	TCHAR XmlOrJson[DATA_LEN] = _T("");
 	if (XmlJsonType == 1) {
-		Obj->ToXml(XmlOrJson, 1000000);
+		Obj->ToXml(XmlOrJson, DATA_LEN);
 		strcpy_s(ContType, 64, "Content-Type: application/xml\r\n\r\n");
 	} else if (XmlJsonType == 2) {
-		Obj->ToJson(XmlOrJson, 1000000);
+		Obj->ToJson(XmlOrJson, DATA_LEN);
 		strcpy_s(ContType, 64, "Content-Type: application/json\r\n\r\n");
 	}
-	Dat = pImpl->WideCharToUtf8(XmlOrJson);
+	Dat = WideCharToUtf8(XmlOrJson);
 	int Ret1 = StkSocket_Send(TargetId, TargetId, (BYTE*)ContType, strlen(ContType));
 	int Ret2 = StkSocket_Send(TargetId, TargetId, Dat, strlen((char*)Dat) + 1);
 	delete Dat;
 	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
+};
+
+int StkObjectConverter::Impl::ElemStkThreadMainRecv(int Id)
+{
+	int XmlJsonType;
+	StkObject* StkObj = RecvRequest(Id, &XmlJsonType);
+	if (StkObj == NULL) {
+	} else {
+		SendResponse(StkObj, Id, XmlJsonType);
+		delete StkObj;
+	}
+	return 0;
+}
+
+StkObjectConverter::StkObjectConverter(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
+{
+	pImpl = new Impl;
+
+	// Init thread ID and count
+	if (Count > MAX_THREAD_COUNT) {
+		pImpl->WebThreadCount = MAX_THREAD_COUNT;
+	} else {
+		pImpl->WebThreadCount = Count;
+	}
+	for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
+		pImpl->WebThreadIds[Loop] = TargetIds[Loop];
+	}
+
+	// Open socket
+	if (pImpl->WebThreadCount >= 1) {
+		StkSocket_AddInfo(pImpl->WebThreadIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, HostName, TargetPort);
+		for (int Loop = 1; Loop < pImpl->WebThreadCount; Loop++) {
+			StkSocket_CopyInfo(pImpl->WebThreadIds[Loop], pImpl->WebThreadIds[0]);
+		}
+		StkSocket_Open(pImpl->WebThreadIds[0]);
+	}
+
+	// Add threads
+	TCHAR Name[32];
+	TCHAR Desc[32];
+	for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
+		wsprintf(Name, _T("Recv-%d"), Loop);
+		wsprintf(Desc, _T("Worker thread"), Loop);
+		AddStkThread(pImpl->WebThreadIds[Loop], Name, Desc, NULL, NULL, Impl::ElemStkThreadMainRecv, NULL, NULL);
+	}
+
+	// Start threads
+	StartSpecifiedStkThreads(pImpl->WebThreadIds, pImpl->WebThreadCount);
+}
+
+StkObjectConverter::~StkObjectConverter()
+{
+	// Stop threads
+	StopSpecifiedStkThreads(pImpl->WebThreadIds, pImpl->WebThreadCount);
+
+	// Delete threads
+	for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
+		DeleteStkThread(pImpl->WebThreadIds[Loop]);
+	}
+
+	// Close socket
+	if (pImpl->WebThreadCount >= 1) {
+		for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
+			StkSocket_Close(pImpl->WebThreadIds[Loop], TRUE);
+		}
+	}
+
+	delete pImpl;
 };

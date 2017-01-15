@@ -8,7 +8,6 @@
 #include "..\..\src\commonfunc\StkObject.h"
 #include "..\..\src\stksocket\stksocket.h"
 
-StkObjectConverter* Soc = NULL;
 BOOL SendTestDataFailed = FALSE;
 
 int GetUsedMemorySizeOfCurrentProcess()
@@ -25,23 +24,6 @@ int GetUsedMemorySizeOfCurrentProcess()
 	}
 	CloseHandle(hProcess);
 	return Size;
-}
-
-int ElemStkThreadMainRecv(int Id)
-{
-	int XmlJsonType;
-	StkObject* StkObj = Soc->RecvRequest(Id, &XmlJsonType);
-	if (StkObj == NULL) {
-	} else {
-		Soc->SendResponse(StkObj, Id, XmlJsonType);
-		delete StkObj;
-	}
-
-	/////
-	printf("Thread ID=%d, UsedMem=%d\r\n", Id, GetUsedMemorySizeOfCurrentProcess());
-	/////
-
-	return 0;
 }
 
 TCHAR* FindNewLine(TCHAR* Dat)
@@ -133,6 +115,11 @@ int ElemStkThreadMainSend(int Id)
 	if (Ret == FALSE) {
 		SendTestDataFailed = TRUE;
 	}
+
+	/////
+	printf("Thread ID=%d, UsedMem=%d\r\n", Id, GetUsedMemorySizeOfCurrentProcess());
+	/////
+
 	return 0;
 }
 
@@ -146,12 +133,7 @@ int main(int Argc, char* Argv[])
 	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
 	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
-	for (int Loop = 0; Loop < 3; Loop++) {
-		wsprintf(Name, _T("Recv-%d"), Loop);
-		wsprintf(Desc, _T("Description-%d"), Loop);
-		AddStkThread(Ids[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainRecv, NULL, NULL);
-	}
-	Soc = new StkObjectConverter(Ids, 3, _T("localhost"), 8080);
+	StkObjectConverter* Soc = new StkObjectConverter(Ids, 3, _T("localhost"), 8080);
 
 	for (int Loop = 0; Loop < 3; Loop++) {
 		wsprintf(Name, _T("Send-%d"), Loop);
@@ -161,23 +143,22 @@ int main(int Argc, char* Argv[])
 	}
 
 	////////// Main logic starts
-	StartAllOfStkThreads();
+	StartSpecifiedStkThreads(SendIds, 3);
 	while (GetNumOfRunStkThread() != GetNumOfStkThread()) {
 		Sleep(100);
 	}
-	Sleep(60000);
-	StopAllOfStkThreads();
-	while (GetNumOfRunStkThread() != 0) {
+	Sleep(10000);
+	StopSpecifiedStkThreads(SendIds, 3);
+	while (GetNumOfRunStkThread() != 3) {
 		Sleep(100);
 	}
 	////////// Main logic ends
 
-	Soc->AllClose(Ids, 3);
-	delete Soc;
-
 	for (int Loop = 0; Loop < 3; Loop++) {
-		DeleteStkThread(Ids[Loop]);
+		DeleteStkThread(SendIds[Loop]);
 	}
+
+	delete Soc;
 
 	if (SendTestDataFailed == TRUE) {
 		printf("NG\r\n");
