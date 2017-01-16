@@ -149,27 +149,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\StkObjectConverter.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\StkObjectConverter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\StkReqHandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\StkReqHandler.h"
-				>
-			</File>
-			<File
 				RelativePath=".\StkWebApp.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\StkWebApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StkWebAppExec.h"
 				>
 			</File>
 		</Filter>

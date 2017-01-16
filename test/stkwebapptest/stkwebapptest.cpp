@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <Psapi.h>
 #include "..\..\src\stkthread\stkthread.h"
-#include "..\..\src\stkwebapp\StkObjectConverter.h"
+#include "..\..\src\stkwebapp\StkWebApp.h"
 #include "..\..\src\commonfunc\StkObject.h"
 #include "..\..\src\stksocket\stksocket.h"
 
@@ -125,7 +125,7 @@ int ElemStkThreadMainSend(int Id)
 
 int main(int Argc, char* Argv[])
 {
-	printf("Test StkObjectConverter ... ");
+	printf("Test StkWebApp ... ");
 	printf("\r\n"); // To be deleted
 
 	int Ids[3] = {11, 12, 13};
@@ -140,7 +140,7 @@ int main(int Argc, char* Argv[])
 		StkSocket_AddInfo(SendIds[Loop], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
 	}
 
-	StkObjectConverter* Soc = new StkObjectConverter(Ids, 3, _T("localhost"), 8080);
+	StkWebApp* Soc = new StkWebApp(Ids, 3, _T("localhost"), 8080);
 
 	////////// Main logic starts
 	StartSpecifiedStkThreads(SendIds, 3);
