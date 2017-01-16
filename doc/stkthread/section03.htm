@@ -70,7 +70,9 @@ AddStkThreadメソッドおよびDeleteStkThreadメソッドを用いて実施�
 <li>すでに最大数のスレッドが登録されている場合
 <li>指定されたNameおよびDescriptionの文字長が最大長を超えている場合
 <li>指定されたIdと同じIDをもつスレッドがすでに登録されている場合
-</ul>
+</ul><br/>
+他のスレッドが実行しているときに本メソッドの呼び出しを行ったときの挙動は保証されていません。<br/>
+すべてのスレッドが停止しているときに本メソッドを呼び出してください。<br/>
 <table class="tblstyle">
 <tr><td>Id[入力]</td><td>StkThread ID (StkThreadが内部的に管理するスレッドのIDであり一般的なスレッドIDではない)</td></tr>
 <tr><td>Name[入力]</td><td>スレッドの名前</td></tr>
@@ -90,6 +92,8 @@ AddStkThreadメソッドおよびDeleteStkThreadメソッドを用いて実施�
 登録されているスレッドを削除します。<br>
 スレッドを削除するにあたり，本メソッドは内部的にStopSpecifiedStkThreadsメソッドを呼び出し，実行中のスレッドの停止処理を行います。<br>
 指定したIDのスレッドが存在しない場合，要求は無視され処理は呼び出し元に戻ります。<br>
+他のスレッドが実行しているときに本メソッドの呼び出しを行ったときの挙動は保証されていません。<br/>
+すべてのスレッドが停止しているときに本メソッドを呼び出してください。<br/>
 <table class="tblstyle">
 <tr><td>Id[入力]</td><td>StkThread ID (StkThreadが内部的に管理するスレッドのIDであり一般的なスレッドIDではない)</td></tr>
 <tr><td>[戻り値]</td><td>なし</td></tr>

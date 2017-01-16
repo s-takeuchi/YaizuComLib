@@ -133,14 +133,14 @@ int main(int Argc, char* Argv[])
 	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
 	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
-	StkObjectConverter* Soc = new StkObjectConverter(Ids, 3, _T("localhost"), 8080);
-
 	for (int Loop = 0; Loop < 3; Loop++) {
 		wsprintf(Name, _T("Send-%d"), Loop);
 		wsprintf(Desc, _T("Description-%d"), Loop);
 		AddStkThread(SendIds[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainSend, NULL, NULL);
 		StkSocket_AddInfo(SendIds[Loop], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
 	}
+
+	StkObjectConverter* Soc = new StkObjectConverter(Ids, 3, _T("localhost"), 8080);
 
 	////////// Main logic starts
 	StartSpecifiedStkThreads(SendIds, 3);
@@ -154,11 +154,11 @@ int main(int Argc, char* Argv[])
 	}
 	////////// Main logic ends
 
+	delete Soc;
+
 	for (int Loop = 0; Loop < 3; Loop++) {
 		DeleteStkThread(SendIds[Loop]);
 	}
-
-	delete Soc;
 
 	if (SendTestDataFailed == TRUE) {
 		printf("NG\r\n");
