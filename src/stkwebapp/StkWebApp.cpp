@@ -9,23 +9,38 @@
 
 #define DATA_LEN 1000000
 #define MAX_THREAD_COUNT 64
+#define MAX_REQHANDLER_COUNT 1024
+#define MAX_IMPL_COUNT 8
+
+int StkWebAppCount;
+StkWebApp* StkWebAppArray[MAX_IMPL_COUNT];
 
 class StkWebApp::Impl
 {
 public:
-	int WebThreadIds[MAX_THREAD_COUNT];
+	CRITICAL_SECTION ReqHandlerCs;
+
 	int WebThreadCount;
+	int WebThreadIds[MAX_THREAD_COUNT];
+
+	int ReqHandlerCount;
+	StkObject* Req[MAX_REQHANDLER_COUNT];
+	StkWebAppExec* Handler[MAX_REQHANDLER_COUNT];
 
 public:
-	static TCHAR* SkipHttpHeader(TCHAR*);
+	TCHAR* SkipHttpHeader(TCHAR*);
 
-	static TCHAR* Uft8ToWideChar(BYTE* Txt);
-	static BYTE* WideCharToUtf8(TCHAR*);
+	TCHAR* Uft8ToWideChar(BYTE* Txt);
+	BYTE* WideCharToUtf8(TCHAR*);
 
-	static StkObject* RecvRequest(int, int*);
-	static void SendResponse(StkObject*, int, int);
+	StkObject* RecvRequest(int, int*);
+	void SendResponse(StkObject*, int, int);
 
 	static int ElemStkThreadMainRecv(int);
+
+	StkWebAppExec* GetReqHandler(StkObject*);
+	int AddReqHandler(StkObject*, StkWebAppExec*);
+	int DeleteReqHandler(StkObject*);
 };
 
 TCHAR* StkWebApp::Impl::SkipHttpHeader(TCHAR* Txt)
@@ -132,19 +147,109 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 
 int StkWebApp::Impl::ElemStkThreadMainRecv(int Id)
 {
+	StkWebApp* Obj = StkWebApp::GetStkWebAppByThreadId(Id);
+	if (Obj == NULL) {
+		return 0;
+	}
+	return Obj->ThreadLoop(Id);
+}
+
+StkWebAppExec* StkWebApp::Impl::GetReqHandler(StkObject* ReqObj)
+{
+	if (ReqObj == NULL) {
+		return NULL;
+	}
+	EnterCriticalSection(&ReqHandlerCs);
+	for (int Loop = 0; Loop < ReqHandlerCount; Loop++) {
+		if (ReqObj->Equals(Req[Loop]) == TRUE) {
+			LeaveCriticalSection(&ReqHandlerCs);
+			return Handler[Loop];
+		}
+	}
+	LeaveCriticalSection(&ReqHandlerCs);
+	return NULL;
+}
+
+int StkWebApp::Impl::AddReqHandler(StkObject* ReqObj, StkWebAppExec* HandlerObj)
+{
+	if (GetReqHandler(ReqObj) != NULL) {
+		return -1;
+	}
+	EnterCriticalSection(&ReqHandlerCs);
+	Req[ReqHandlerCount] = ReqObj;
+	Handler[ReqHandlerCount] = HandlerObj;
+	ReqHandlerCount++;
+	LeaveCriticalSection(&ReqHandlerCs);
+	return ReqHandlerCount;
+}
+
+int StkWebApp::Impl::DeleteReqHandler(StkObject* ReqObj)
+{
+	EnterCriticalSection(&ReqHandlerCs);
+	for (int Loop = 0; Loop < ReqHandlerCount; Loop++) {
+		if (Req[Loop] != ReqObj) {
+			continue;
+		}
+		for (int Loop2 = Loop; Loop2 < ReqHandlerCount - 1; Loop2++) {
+			delete Req[Loop2];
+			delete Handler[Loop2];
+			Req[Loop2] = Req[Loop2 + 1];
+			Handler[Loop2] = Handler[Loop2 + 1];
+		}
+		break;
+	}
+	ReqHandlerCount--;
+	LeaveCriticalSection(&ReqHandlerCs);
+	return 0;
+}
+
+BOOL StkWebApp::Contains(int ThreadId)
+{
+	for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
+		if (pImpl->WebThreadIds[Loop] == ThreadId) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+int StkWebApp::ThreadLoop(int ThreadId)
+{
 	int XmlJsonType;
-	StkObject* StkObj = RecvRequest(Id, &XmlJsonType);
+	StkObject* StkObj = pImpl->RecvRequest(ThreadId, &XmlJsonType);
 	if (StkObj == NULL) {
 	} else {
-		SendResponse(StkObj, Id, XmlJsonType);
+		for (int Loop = 0; Loop < pImpl->ReqHandlerCount; Loop++) {
+			if (StkObj->Contains(pImpl->Req[Loop]) != NULL) {
+				pImpl->Handler[Loop]->Execute(StkObj, StkObj);
+			}
+		}
+		pImpl->SendResponse(StkObj, ThreadId, XmlJsonType);
 		delete StkObj;
 	}
 	return 0;
 }
 
+StkWebApp* StkWebApp::GetStkWebAppByThreadId(int ThreadId)
+{
+	for (int Loop = 0; Loop < StkWebAppCount; Loop++) {
+		if (StkWebAppArray[Loop]->Contains(ThreadId) == TRUE) {
+			return StkWebAppArray[Loop];
+		}
+	}
+	return NULL;
+}
+
 StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 {
 	pImpl = new Impl;
+	InitializeCriticalSection(&pImpl->ReqHandlerCs);
+
+	// Update array of StkWebApp
+	if (StkWebAppCount < MAX_IMPL_COUNT) {
+		StkWebAppArray[StkWebAppCount] = this;
+		StkWebAppCount++;
+	}
 
 	// Init thread ID and count
 	if (Count > MAX_THREAD_COUNT) {
@@ -215,5 +320,27 @@ StkWebApp::~StkWebApp()
 		}
 	}
 
+	// Update array of StkWebApp
+	for (int Loop = 0; Loop < StkWebAppCount; Loop++) {
+		if (StkWebAppArray[Loop] != this) {
+			continue;
+		}
+		for (int Loop2 = Loop; Loop2 < StkWebAppCount - 1; Loop2++) {
+			StkWebAppArray[Loop2] = StkWebAppArray[Loop2 + 1];
+		}
+		break;
+	}
+	StkWebAppCount--;
+
 	delete pImpl;
 };
+
+int StkWebApp::AddReqHandler(StkObject* ReqObj, StkWebAppExec* HandlerObj)
+{
+	return pImpl->AddReqHandler(ReqObj, HandlerObj);
+}
+
+int StkWebApp::DeleteReqHandler(StkObject* ReqObj)
+{
+	return pImpl->DeleteReqHandler(ReqObj);
+}
