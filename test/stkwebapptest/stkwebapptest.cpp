@@ -80,7 +80,6 @@ BOOL SendTestData(int Id, char* Dat)
 	StkSocket_Connect(Id);
 	int RetS = StkSocket_Send(Id, Id, (BYTE*)Dat, strlen(Dat) + 1);
 	if (RetS <= 0) {
-		printf("(Failed in sending data.)");
 		return FALSE;
 	}
 	int RetR;
@@ -95,11 +94,7 @@ BOOL SendTestData(int Id, char* Dat)
 	if (RetR <= 0) {
 		return FALSE;
 	}
-	BOOL RetC = CompObjs((BYTE*)Dat, (BYTE*)RecvDat);
-	if (RetC == FALSE) {
-		printf("(Failed in comparing data.)");
-	}
-	return RetC;
+	return CompObjs((BYTE*)Dat, (BYTE*)RecvDat);
 }
 
 int ElemStkThreadMainSend(int Id)
@@ -116,17 +111,12 @@ int ElemStkThreadMainSend(int Id)
 		SendTestDataFailed = TRUE;
 	}
 
-	/////
-	printf("Thread ID=%d, UsedMem=%d\r\n", Id, GetUsedMemorySizeOfCurrentProcess());
-	/////
-
 	return 0;
 }
 
-int main(int Argc, char* Argv[])
+void StkWebAppTest1()
 {
-	printf("Test StkWebApp ... ");
-	printf("\r\n"); // To be deleted
+	printf("StkWebAppTest1 ");
 
 	int Ids[3] = {11, 12, 13};
 	int SendIds[3] = {31, 32, 33};
@@ -148,6 +138,12 @@ int main(int Argc, char* Argv[])
 		Sleep(100);
 	}
 	Sleep(10000);
+	int MemChk[6];
+	for (int Loop = 0; Loop < 6; Loop++) {
+		Sleep(5000);
+		MemChk[Loop] = GetUsedMemorySizeOfCurrentProcess();
+		printf("%d,", MemChk[Loop]);
+	}
 	StopSpecifiedStkThreads(SendIds, 3);
 	while (GetNumOfRunStkThread() != 3) {
 		Sleep(100);
@@ -161,10 +157,90 @@ int main(int Argc, char* Argv[])
 	}
 
 	if (SendTestDataFailed == TRUE) {
-		printf("NG\r\n");
+		printf("... NG\r\n");
+		exit(0);
+	} else if (MemChk[0] < MemChk[1] && MemChk[1] < MemChk[2] && MemChk[2] < MemChk[3] &&
+				MemChk[3] < MemChk[4] && MemChk[4] < MemChk[5]) {
+		printf("... NG\r\n");
+		exit(0);
 	} else {
+		printf("... OK\r\n");
+	}
+}
+
+void GeneralTest1()
+{
+	{
+		printf("Search StkWebApp which contains specified ID (No StkWebApp exists) ... ");
+		if (StkWebApp::GetStkWebAppByThreadId(1) != NULL) {
+			printf("NG\r\n");
+			exit(0);
+		}
 		printf("OK\r\n");
 	}
+
+	{
+		printf("Search StkWebApp which contains specified ID (Normal case) ... ");
+		int TmpIds1[3] = {11, 12, 13};
+		int TmpIds2[4] = {21, 22, 23, 24};
+		int TmpIds3[1] = {31};
+		StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, _T("localhost"), 8081);
+		StkWebApp* TmpApp2 = new StkWebApp(TmpIds2, 4, _T("localhost"), 8082);
+		StkWebApp* TmpApp3 = new StkWebApp(TmpIds3, 1, _T("localhost"), 8083);
+		if (StkWebApp::GetStkWebAppByThreadId(11) == NULL ||
+			StkWebApp::GetStkWebAppByThreadId(13) == NULL ||
+			StkWebApp::GetStkWebAppByThreadId(21) == NULL ||
+			StkWebApp::GetStkWebAppByThreadId(24) == NULL ||
+			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+
+		printf("Search StkWebApp which contains specified ID (Abnormal case) ... ");
+		if (StkWebApp::GetStkWebAppByThreadId(41) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(1) != NULL) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+
+		printf("Search StkWebApp which contains specified ID (Search deleted StkWebApp) ... ");
+		delete TmpApp2;
+		if (StkWebApp::GetStkWebAppByThreadId(11) == NULL ||
+			StkWebApp::GetStkWebAppByThreadId(13) == NULL ||
+			StkWebApp::GetStkWebAppByThreadId(21) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(24) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		delete TmpApp1;
+		if (StkWebApp::GetStkWebAppByThreadId(11) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(13) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(21) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(24) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		delete TmpApp3;
+		if (StkWebApp::GetStkWebAppByThreadId(11) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(13) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(21) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(24) != NULL ||
+			StkWebApp::GetStkWebAppByThreadId(31) != NULL) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
+}
+
+int main(int Argc, char* Argv[])
+{
+	GeneralTest1();
+	StkWebAppTest1();
 
 	return 0;
 }

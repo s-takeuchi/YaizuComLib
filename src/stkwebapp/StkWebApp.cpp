@@ -261,7 +261,7 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 		pImpl->WebThreadIds[Loop] = TargetIds[Loop];
 	}
 
-	// Open socket
+	// Add and open socket
 	if (pImpl->WebThreadCount >= 1) {
 		StkSocket_AddInfo(pImpl->WebThreadIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, HostName, TargetPort);
 		for (int Loop = 1; Loop < pImpl->WebThreadCount; Loop++) {
@@ -313,10 +313,11 @@ StkWebApp::~StkWebApp()
 		DeleteStkThread(pImpl->WebThreadIds[Loop]);
 	}
 
-	// Close socket
+	// Close and delete socket
 	if (pImpl->WebThreadCount >= 1) {
 		for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
 			StkSocket_Close(pImpl->WebThreadIds[Loop], TRUE);
+			StkSocket_DeleteInfo(pImpl->WebThreadIds[Loop]);
 		}
 	}
 
