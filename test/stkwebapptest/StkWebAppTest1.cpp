@@ -1,6 +1,6 @@
 #include "StkWebAppTest1.h"
 
-int StkWebAppTest1::Execute(StkObject* ReqObj, StkObject* ResObj)
+StkObject* StkWebAppTest1::Execute(StkObject* ReqObj)
 {
-	return 0;
+	return NULL;
 }

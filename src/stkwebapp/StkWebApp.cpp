@@ -12,7 +12,7 @@
 #define MAX_REQHANDLER_COUNT 1024
 #define MAX_IMPL_COUNT 8
 
-int StkWebAppCount;
+int StkWebAppCount = 0;
 StkWebApp* StkWebAppArray[MAX_IMPL_COUNT];
 
 class StkWebApp::Impl
@@ -38,7 +38,6 @@ public:
 
 	static int ElemStkThreadMainRecv(int);
 
-	StkWebAppExec* GetReqHandler(StkObject*);
 	int AddReqHandler(StkObject*, StkWebAppExec*);
 	int DeleteReqHandler(StkObject*);
 };
@@ -154,28 +153,15 @@ int StkWebApp::Impl::ElemStkThreadMainRecv(int Id)
 	return Obj->ThreadLoop(Id);
 }
 
-StkWebAppExec* StkWebApp::Impl::GetReqHandler(StkObject* ReqObj)
+int StkWebApp::Impl::AddReqHandler(StkObject* ReqObj, StkWebAppExec* HandlerObj)
 {
-	if (ReqObj == NULL) {
-		return NULL;
-	}
 	EnterCriticalSection(&ReqHandlerCs);
 	for (int Loop = 0; Loop < ReqHandlerCount; Loop++) {
 		if (ReqObj->Equals(Req[Loop]) == TRUE) {
 			LeaveCriticalSection(&ReqHandlerCs);
-			return Handler[Loop];
+			return -1;
 		}
 	}
-	LeaveCriticalSection(&ReqHandlerCs);
-	return NULL;
-}
-
-int StkWebApp::Impl::AddReqHandler(StkObject* ReqObj, StkWebAppExec* HandlerObj)
-{
-	if (GetReqHandler(ReqObj) != NULL) {
-		return -1;
-	}
-	EnterCriticalSection(&ReqHandlerCs);
 	Req[ReqHandlerCount] = ReqObj;
 	Handler[ReqHandlerCount] = HandlerObj;
 	ReqHandlerCount++;
@@ -196,9 +182,9 @@ int StkWebApp::Impl::DeleteReqHandler(StkObject* ReqObj)
 			Req[Loop2] = Req[Loop2 + 1];
 			Handler[Loop2] = Handler[Loop2 + 1];
 		}
+		ReqHandlerCount--;
 		break;
 	}
-	ReqHandlerCount--;
 	LeaveCriticalSection(&ReqHandlerCs);
 	return 0;
 }
@@ -216,16 +202,18 @@ BOOL StkWebApp::Contains(int ThreadId)
 int StkWebApp::ThreadLoop(int ThreadId)
 {
 	int XmlJsonType;
-	StkObject* StkObj = pImpl->RecvRequest(ThreadId, &XmlJsonType);
-	if (StkObj == NULL) {
+	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType);
+	if (StkObjReq == NULL) {
 	} else {
+		StkObject* StkObjRes = NULL;
 		for (int Loop = 0; Loop < pImpl->ReqHandlerCount; Loop++) {
-			if (StkObj->Contains(pImpl->Req[Loop]) != NULL) {
-				pImpl->Handler[Loop]->Execute(StkObj, StkObj);
+			if (StkObjReq->Contains(pImpl->Req[Loop]) != NULL) {
+				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq);
 			}
 		}
-		pImpl->SendResponse(StkObj, ThreadId, XmlJsonType);
-		delete StkObj;
+		pImpl->SendResponse(StkObjReq, ThreadId, XmlJsonType);
+		delete StkObjReq;
+		delete StkObjRes;
 	}
 	return 0;
 }
@@ -244,6 +232,8 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 {
 	pImpl = new Impl;
 	InitializeCriticalSection(&pImpl->ReqHandlerCs);
+	pImpl->WebThreadCount = 0;
+	pImpl->ReqHandlerCount = 0;
 
 	// Update array of StkWebApp
 	if (StkWebAppCount < MAX_IMPL_COUNT) {
@@ -329,9 +319,9 @@ StkWebApp::~StkWebApp()
 		for (int Loop2 = Loop; Loop2 < StkWebAppCount - 1; Loop2++) {
 			StkWebAppArray[Loop2] = StkWebAppArray[Loop2 + 1];
 		}
+		StkWebAppCount--;
 		break;
 	}
-	StkWebAppCount--;
 
 	delete pImpl;
 };

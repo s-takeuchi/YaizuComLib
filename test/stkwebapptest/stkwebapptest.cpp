@@ -117,7 +117,7 @@ int ElemStkThreadMainSend(int Id)
 	return 0;
 }
 
-void StkWebAppTest1()
+void ReqResTest1()
 {
 	printf("StkWebAppTest1 ");
 
@@ -136,9 +136,9 @@ void StkWebAppTest1()
 	StkWebApp* Soc = new StkWebApp(Ids, 3, _T("localhost"), 8080);
 
 	int ErrorCode;
-	//StkObject* Test1Req = StkObject::CreateObjectFromXml(_T("<Ddd>Natsu</Ddd>"), &ErrorCode);
-	//StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
-	//Soc->AddReqHandler(Test1Req, Test1Hndl);
+	StkObject* Test1Req = StkObject::CreateObjectFromXml(_T("<Ddd>Natsu</Ddd>"), &ErrorCode);
+	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
+	Soc->AddReqHandler(Test1Req, (StkWebAppExec*)Test1Hndl);
 
 	////////// Main logic starts
 	StartSpecifiedStkThreads(SendIds, 3);
@@ -157,6 +157,8 @@ void StkWebAppTest1()
 		Sleep(100);
 	}
 	////////// Main logic ends
+
+	Soc->DeleteReqHandler(Test1Req);
 
 	delete Soc;
 
@@ -254,7 +256,7 @@ void GeneralTest1()
 int main(int Argc, char* Argv[])
 {
 	GeneralTest1();
-	StkWebAppTest1();
+	ReqResTest1();
 
 	return 0;
 }

@@ -4,5 +4,5 @@
 class StkWebAppExec
 {
 public:
-	virtual int Execute(StkObject*, StkObject*) = 0;
+	virtual StkObject* Execute(StkObject*) = 0;
 };
