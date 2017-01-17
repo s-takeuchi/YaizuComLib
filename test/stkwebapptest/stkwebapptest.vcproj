@@ -184,6 +184,30 @@
 				RelativePath=".\stkwebapptest.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\StkWebAppTest1.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkWebAppTest1.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StkWebAppTest2.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkWebAppTest2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StkWebAppTest3.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkWebAppTest3.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

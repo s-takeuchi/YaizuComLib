@@ -4,9 +4,12 @@
 #include <stdio.h>
 #include <Psapi.h>
 #include "..\..\src\stkthread\stkthread.h"
-#include "..\..\src\stkwebapp\StkWebApp.h"
 #include "..\..\src\commonfunc\StkObject.h"
 #include "..\..\src\stksocket\stksocket.h"
+#include "..\..\src\stkwebapp\StkWebApp.h"
+#include "StkWebAppTest1.h"
+#include "StkWebAppTest2.h"
+#include "StkWebAppTest3.h"
 
 BOOL SendTestDataFailed = FALSE;
 
@@ -132,6 +135,11 @@ void StkWebAppTest1()
 
 	StkWebApp* Soc = new StkWebApp(Ids, 3, _T("localhost"), 8080);
 
+	int ErrorCode;
+	//StkObject* Test1Req = StkObject::CreateObjectFromXml(_T("<Ddd>Natsu</Ddd>"), &ErrorCode);
+	//StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
+	//Soc->AddReqHandler(Test1Req, Test1Hndl);
+
 	////////// Main logic starts
 	StartSpecifiedStkThreads(SendIds, 3);
 	while (GetNumOfRunStkThread() != GetNumOfStkThread()) {
@@ -192,6 +200,12 @@ void GeneralTest1()
 			StkWebApp::GetStkWebAppByThreadId(21) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(24) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		StkWebApp* AcquiredApp2 = StkWebApp::GetStkWebAppByThreadId(23);
+		if (AcquiredApp2 == NULL ||
+			AcquiredApp2->Contains(22) == FALSE || AcquiredApp2->Contains(11) == TRUE || AcquiredApp2->Contains(25) == TRUE) {
 			printf("NG\r\n");
 			exit(0);
 		}
