@@ -176,9 +176,9 @@ int StkWebApp::Impl::DeleteReqHandler(StkObject* ReqObj)
 		if (Req[Loop] != ReqObj) {
 			continue;
 		}
+		delete Req[Loop];
+		delete Handler[Loop];
 		for (int Loop2 = Loop; Loop2 < ReqHandlerCount - 1; Loop2++) {
-			delete Req[Loop2];
-			delete Handler[Loop2];
 			Req[Loop2] = Req[Loop2 + 1];
 			Handler[Loop2] = Handler[Loop2 + 1];
 		}

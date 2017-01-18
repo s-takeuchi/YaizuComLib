@@ -139,6 +139,12 @@ void ReqResTest1()
 	StkObject* Test1Req = StkObject::CreateObjectFromXml(_T("<Ddd>Natsu</Ddd>"), &ErrorCode);
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
 	Soc->AddReqHandler(Test1Req, (StkWebAppExec*)Test1Hndl);
+	StkObject* Test2Req = StkObject::CreateObjectFromXml(_T("<First>Shinya</First>"), &ErrorCode);
+	StkWebAppTest2* Test2Hndl = new StkWebAppTest2();
+	Soc->AddReqHandler(Test2Req, (StkWebAppExec*)Test2Hndl);
+	StkObject* Test3Req = StkObject::CreateObjectFromJson(_T("\"D2\" : {\"D3a\" : \"test\"}"), &ErrorCode);
+	StkWebAppTest3* Test3Hndl = new StkWebAppTest3();
+	Soc->AddReqHandler(Test3Req, (StkWebAppExec*)Test3Hndl);
 
 	////////// Main logic starts
 	StartSpecifiedStkThreads(SendIds, 3);
@@ -159,6 +165,8 @@ void ReqResTest1()
 	////////// Main logic ends
 
 	Soc->DeleteReqHandler(Test1Req);
+	Soc->DeleteReqHandler(Test2Req);
+	Soc->DeleteReqHandler(Test3Req);
 
 	delete Soc;
 
