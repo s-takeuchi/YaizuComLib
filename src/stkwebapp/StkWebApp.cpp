@@ -209,9 +209,13 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		for (int Loop = 0; Loop < pImpl->ReqHandlerCount; Loop++) {
 			if (StkObjReq->Contains(pImpl->Req[Loop]) != NULL) {
 				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq);
+				break;
 			}
 		}
-		pImpl->SendResponse(StkObjReq, ThreadId, XmlJsonType);
+		if (StkObjRes == NULL) {
+			StkObjRes = new StkObject(_T(""));
+		}
+		pImpl->SendResponse(StkObjRes, ThreadId, XmlJsonType);
 		delete StkObjReq;
 		delete StkObjRes;
 	}

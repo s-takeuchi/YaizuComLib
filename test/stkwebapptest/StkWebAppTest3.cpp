@@ -2,5 +2,5 @@
 
 StkObject* StkWebAppTest3::Execute(StkObject* ReqObj)
 {
-	return NULL;
+	return ReqObj->Clone();
 }

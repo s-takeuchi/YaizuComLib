@@ -142,7 +142,7 @@ void ReqResTest1()
 	StkObject* Test2Req = StkObject::CreateObjectFromXml(_T("<First>Shinya</First>"), &ErrorCode);
 	StkWebAppTest2* Test2Hndl = new StkWebAppTest2();
 	Soc->AddReqHandler(Test2Req, (StkWebAppExec*)Test2Hndl);
-	StkObject* Test3Req = StkObject::CreateObjectFromJson(_T("\"D2\" : {\"D3a\" : \"test\"}"), &ErrorCode);
+	StkObject* Test3Req = new StkObject(_T("D3a"), _T("test"));
 	StkWebAppTest3* Test3Hndl = new StkWebAppTest3();
 	Soc->AddReqHandler(Test3Req, (StkWebAppExec*)Test3Hndl);
 
@@ -154,7 +154,7 @@ void ReqResTest1()
 	Sleep(10000);
 	int MemChk[6];
 	for (int Loop = 0; Loop < 6; Loop++) {
-		Sleep(5000);
+		Sleep(10000);
 		MemChk[Loop] = GetUsedMemorySizeOfCurrentProcess();
 		printf("%d,", MemChk[Loop]);
 	}
