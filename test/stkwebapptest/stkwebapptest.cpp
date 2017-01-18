@@ -138,23 +138,23 @@ void ReqResTest1()
 	int ErrorCode;
 	StkObject* Test1Req = StkObject::CreateObjectFromXml(_T("<Ddd>Natsu</Ddd>"), &ErrorCode);
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
-	Soc->AddReqHandler(Test1Req, (StkWebAppExec*)Test1Hndl);
+	int Add1 = Soc->AddReqHandler(Test1Req, (StkWebAppExec*)Test1Hndl);
 	StkObject* Test2Req = StkObject::CreateObjectFromXml(_T("<First>Shinya</First>"), &ErrorCode);
 	StkWebAppTest2* Test2Hndl = new StkWebAppTest2();
-	Soc->AddReqHandler(Test2Req, (StkWebAppExec*)Test2Hndl);
+	int Add2 = Soc->AddReqHandler(Test2Req, (StkWebAppExec*)Test2Hndl);
 	StkObject* Test3Req = new StkObject(_T("D3a"), _T("test"));
 	StkWebAppTest3* Test3Hndl = new StkWebAppTest3();
-	Soc->AddReqHandler(Test3Req, (StkWebAppExec*)Test3Hndl);
+	int Add3 = Soc->AddReqHandler(Test3Req, (StkWebAppExec*)Test3Hndl);
 
 	////////// Main logic starts
 	StartSpecifiedStkThreads(SendIds, 3);
 	while (GetNumOfRunStkThread() != GetNumOfStkThread()) {
 		Sleep(100);
 	}
-	Sleep(10000);
+	Sleep(20000);
 	int MemChk[6];
 	for (int Loop = 0; Loop < 6; Loop++) {
-		Sleep(10000);
+		Sleep(5000);
 		MemChk[Loop] = GetUsedMemorySizeOfCurrentProcess();
 		printf("%d,", MemChk[Loop]);
 	}
@@ -164,9 +164,9 @@ void ReqResTest1()
 	}
 	////////// Main logic ends
 
-	Soc->DeleteReqHandler(Test1Req);
-	Soc->DeleteReqHandler(Test2Req);
-	Soc->DeleteReqHandler(Test3Req);
+	int Del1 = Soc->DeleteReqHandler(Test1Req);
+	int Del2 = Soc->DeleteReqHandler(Test2Req);
+	int Del3 = Soc->DeleteReqHandler(Test3Req);
 
 	delete Soc;
 
@@ -181,12 +181,15 @@ void ReqResTest1()
 				MemChk[3] < MemChk[4] && MemChk[4] < MemChk[5]) {
 		printf("... NG\r\n");
 		exit(0);
-	} else {
+	} else if (Add1 != 1 || Add2 != 2 || Add3 != 3 || Del1 != 2 || Del2 != 1 || Del3 != 0) {
+		printf("... NG\r\n");
+		exit(0);
+	}else {
 		printf("... OK\r\n");
 	}
 }
 
-void GeneralTest1()
+void AddDeleteStkWebAppTest()
 {
 	{
 		printf("Search StkWebApp which contains specified ID (No StkWebApp exists) ... ");
@@ -261,9 +264,46 @@ void GeneralTest1()
 	}
 }
 
+void AddDeleteReqHandlerTest()
+{
+	printf("Add / Delete ReqHandler ... ");
+	int TmpIds1[3] = {11, 12, 13};
+	int TmpIds2[3] = {21, 22, 23};
+	StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, _T("localhost"), 8081);
+	StkWebApp* TmpApp2 = new StkWebApp(TmpIds2, 3, _T("localhost"), 8082);
+
+	StkObject* Test1Req = new StkObject(_T("Test"), _T("Test"));
+	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
+	int Add1 = TmpApp1->AddReqHandler(Test1Req, (StkWebAppExec*)Test1Hndl);
+
+	StkObject* Test2Req = new StkObject(_T("Test"), _T("Test"));
+	StkWebAppTest2* Test2Hndl = new StkWebAppTest2();
+	int Add2 = TmpApp1->AddReqHandler(Test2Req, (StkWebAppExec*)Test2Hndl);
+
+	StkObject* Test3Req = new StkObject(_T("Test"), _T("Test"));
+	StkWebAppTest3* Test3Hndl = new StkWebAppTest3();
+	int Add3 = TmpApp2->AddReqHandler(Test3Req, (StkWebAppExec*)Test3Hndl);
+
+	int Del1 = TmpApp1->DeleteReqHandler(Test1Req);
+	int Del2 = TmpApp1->DeleteReqHandler(Test2Req);
+	delete Test2Req;
+	delete Test2Hndl;
+	int Del3 = TmpApp2->DeleteReqHandler(Test3Req);
+
+	delete TmpApp1;
+	delete TmpApp2;
+
+	if (Add1 != 1 || Add2 != -1 || Add3 != 1 || Del1 != 0 || Del2 != -1 || Del3 != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+}
+
 int main(int Argc, char* Argv[])
 {
-	GeneralTest1();
+	AddDeleteStkWebAppTest();
+	AddDeleteReqHandlerTest();
 	ReqResTest1();
 
 	return 0;

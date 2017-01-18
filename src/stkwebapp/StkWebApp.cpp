@@ -183,10 +183,11 @@ int StkWebApp::Impl::DeleteReqHandler(StkObject* ReqObj)
 			Handler[Loop2] = Handler[Loop2 + 1];
 		}
 		ReqHandlerCount--;
-		break;
+		LeaveCriticalSection(&ReqHandlerCs);
+		return ReqHandlerCount;
 	}
 	LeaveCriticalSection(&ReqHandlerCs);
-	return 0;
+	return -1;
 }
 
 BOOL StkWebApp::Contains(int ThreadId)
