@@ -94,7 +94,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 		return NULL;
 	}
 	BYTE Dat[DATA_LEN];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 500, NULL, -1, FALSE);
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 9999998, NULL, -1, FALSE);
 	if (Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
@@ -127,19 +127,24 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 	if (XmlJsonType != 1 && XmlJsonType != 2) {
 		return;
 	}
+	char RespLine[64] = "HTTP/1.1 200 OK\n";
 	char ContType[64] = "";
+	char ContLen[64] = "";
 	BYTE* Dat;
 	TCHAR XmlOrJson[DATA_LEN] = _T("");
 	if (XmlJsonType == 1) {
 		Obj->ToXml(XmlOrJson, DATA_LEN);
-		strcpy_s(ContType, 64, "Content-Type: application/xml\r\n\r\n");
+		strcpy_s(ContType, 64, "Content-Type: application/xml\n");
 	} else if (XmlJsonType == 2) {
 		Obj->ToJson(XmlOrJson, DATA_LEN);
-		strcpy_s(ContType, 64, "Content-Type: application/json\r\n\r\n");
+		strcpy_s(ContType, 64, "Content-Type: application/json\n");
 	}
 	Dat = WideCharToUtf8(XmlOrJson);
+	sprintf_s(ContLen, 64, "Content-Length: %d\n\n", strlen((char*)Dat) + 1);
+	int Ret0 = StkSocket_Send(TargetId, TargetId, (BYTE*)RespLine, strlen(RespLine));
 	int Ret1 = StkSocket_Send(TargetId, TargetId, (BYTE*)ContType, strlen(ContType));
-	int Ret2 = StkSocket_Send(TargetId, TargetId, Dat, strlen((char*)Dat) + 1);
+	int Ret2 = StkSocket_Send(TargetId, TargetId, (BYTE*)ContLen, strlen(ContLen));
+	int Ret3 = StkSocket_Send(TargetId, TargetId, Dat, strlen((char*)Dat) + 1);
 	delete Dat;
 	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 };

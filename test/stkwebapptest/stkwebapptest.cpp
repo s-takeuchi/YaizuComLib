@@ -12,6 +12,7 @@
 #include "StkWebAppTest3.h"
 
 BOOL SendTestDataFailed = FALSE;
+int SendTestDataCount = 0;
 
 int GetUsedMemorySizeOfCurrentProcess()
 {
@@ -81,13 +82,19 @@ BOOL SendTestData(int Id, char* Dat)
 {
 	BYTE RecvDat[4096];
 	StkSocket_Connect(Id);
-	int RetS = StkSocket_Send(Id, Id, (BYTE*)Dat, strlen(Dat) + 1);
-	if (RetS <= 0) {
+
+	char TmpHeader[256];
+	sprintf_s(TmpHeader, 256, "POST / HTTP/1.1\nContent-Length: %d\nContent-Type: Content-Type: application/xml\n\n", strlen(Dat) + 1);
+
+	if (StkSocket_Send(Id, Id, (BYTE*)TmpHeader, strlen((char*)TmpHeader)) <= 0) {
+		return FALSE;
+	}
+	if (StkSocket_Send(Id, Id, (BYTE*)Dat, strlen(Dat) + 1) <= 0) {
 		return FALSE;
 	}
 	int RetR;
 	for (int Loop = 0; Loop < 10; Loop++) {
-		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, 100, NULL, -1, FALSE);
+		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, 9999998, NULL, -1, FALSE);
 		if (RetR > 0) {
 			break;
 		}
@@ -113,6 +120,7 @@ int ElemStkThreadMainSend(int Id)
 	if (Ret == FALSE) {
 		SendTestDataFailed = TRUE;
 	}
+	SendTestDataCount++;
 
 	return 0;
 }
@@ -146,18 +154,20 @@ void ReqResTest1()
 	StkWebAppTest3* Test3Hndl = new StkWebAppTest3();
 	int Add3 = Soc->AddReqHandler(Test3Req, (StkWebAppExec*)Test3Hndl);
 
+	SendTestDataCount = 0;
 	////////// Main logic starts
 	StartSpecifiedStkThreads(SendIds, 3);
 	while (GetNumOfRunStkThread() != GetNumOfStkThread()) {
 		Sleep(100);
 	}
-	Sleep(20000);
+	Sleep(30000);
 	int MemChk[6];
 	for (int Loop = 0; Loop < 6; Loop++) {
 		Sleep(5000);
 		MemChk[Loop] = GetUsedMemorySizeOfCurrentProcess();
 		printf("%d,", MemChk[Loop]);
 	}
+	printf("(Repeat=%d)", SendTestDataCount);
 	StopSpecifiedStkThreads(SendIds, 3);
 	while (GetNumOfRunStkThread() != 3) {
 		Sleep(100);
