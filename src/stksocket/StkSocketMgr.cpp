@@ -727,7 +727,15 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				}
 				continue;
 			}
-			int Ret = recv(TmpSock, (char*)Buffer + Offset, BufferSize - Offset, 0);
+			int FetchSize;
+			if (FinishCondition == 9999998) {
+				// if HTTP termination rule is selected...
+				FetchSize = 1;
+			} else {
+				// Otherwise
+				FetchSize = BufferSize - Offset;
+			}
+			int Ret = recv(TmpSock, (char*)Buffer + Offset, FetchSize, 0);
 			CurrWaitTime = GetTickCount();
 			if (Ret == SOCKET_ERROR) {
 				PutLog(LOG_RECVERROR, LogId, _T(""), _T(""), 0, WSAGetLastError());
@@ -758,6 +766,44 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				// If the finish condition is set as unconditionally...
 				PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
 				return Offset;
+			}
+			if (FinishCondition == 9999998) {
+				// if HTTP termination rule is selected...
+				if ((Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\n') ||
+					(Buffer[Offset - 4] == '\r' && Buffer[Offset - 3] == '\n' && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') ||
+					(Buffer[Offset - 4] == '\n' && Buffer[Offset - 3] == '\r' && Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\r')) {
+					// If double new-line-code was detected...
+					Buffer[Offset] = '\0';
+					BYTE* ContLenPtr = (BYTE*)strstr((char*)Buffer, "Content-Length:");
+					if (ContLenPtr == NULL) {
+						// Overwrite FinishCondition with 0 if Content-Length is not presented.
+						FinishCondition = 0;
+					} else {
+						ContLenPtr += 15;
+						BYTE* ContLenEndPtr;
+						if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\r\n")) == NULL) {
+							if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\n\r")) == NULL) {
+								if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\n")) == NULL) {
+									// Overwrite FinishCondition with 0 if new-line-code is not found.
+									FinishCondition = 0;
+									continue;
+								}
+							}
+						}
+						if (ContLenEndPtr != NULL && ContLenEndPtr - ContLenPtr <= 99) {
+							char TmpBuf[100];
+							strncpy_s(TmpBuf, 100, (char*)ContLenPtr, (int)(ContLenEndPtr - ContLenPtr + 1));
+							int ContLen = atoi(TmpBuf);
+							if (ContLen == 0) {
+								// Overwrite FinishCondition with 0 if appropriate value is not set.
+								FinishCondition = 0;
+							} else {
+								FinishCondition = 10000000 + ContLen + Offset;
+							}
+						}
+					}
+					continue;
+				}
 			}
 			if (Ret > 0 && FinishCondition == 9999999) {
 				// If the finish condition is set as socket close detection...

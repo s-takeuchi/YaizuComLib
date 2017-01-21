@@ -8,6 +8,7 @@
 #include "StkSocketTestGetSockInfo.h"
 #include "StkSocketIPv6.h"
 #include "StkSocketMemoryLeak.h"
+#include "StkSocketTestHttp.h"
 
 BOOL FinishFlag = FALSE;
 int FindFlagCounter = 0;
@@ -1174,6 +1175,9 @@ int main(int Argc, char* Argv[])
 	//AddExceptionForFilewall();
 
 	printf("Test started\r\n");
+
+	StkSocketTestHttp TestHttpObj;
+	TestHttpObj.TestHttpTermination();
 
 	if (ConnectDisconnectTcpPort() != 0) {
 		return -1;

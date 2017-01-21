@@ -207,6 +207,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StkSocketTestHttp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkSocketTestHttp.h"
+				>
+			</File>
+			<File
 				RelativePath=".\StkSocketTestMa.cpp"
 				>
 			</File>
