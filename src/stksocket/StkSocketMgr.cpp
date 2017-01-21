@@ -715,8 +715,9 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 					// There was a stopping thread request.
 					return 0;
 				}
-				if (FinishCondition >= 0 && FinishCondition <= 180000) {
-					if ((int)(GetTickCount() - CurrWaitTime) > FinishCondition) {
+				if ((FinishCondition >= 0 && FinishCondition <= 180000) || FinishCondition == 9999998) {
+					int Expire = (FinishCondition == 9999998)? 10000 : FinishCondition;
+					if ((int)(GetTickCount() - CurrWaitTime) > Expire) {
 						if (Offset == 0) {
 							return -2;
 						} else {
@@ -776,16 +777,14 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 					Buffer[Offset] = '\0';
 					BYTE* ContLenPtr = (BYTE*)strstr((char*)Buffer, "Content-Length:");
 					if (ContLenPtr == NULL) {
-						// Overwrite FinishCondition with 0 if Content-Length is not presented.
-						FinishCondition = 0;
+						// If Content-Length is not presented.
 					} else {
 						ContLenPtr += 15;
 						BYTE* ContLenEndPtr;
 						if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\r\n")) == NULL) {
 							if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\n\r")) == NULL) {
 								if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\n")) == NULL) {
-									// Overwrite FinishCondition with 0 if new-line-code is not found.
-									FinishCondition = 0;
+									// If new-line-code after Content-Length is not found.
 									continue;
 								}
 							}
@@ -795,8 +794,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 							strncpy_s(TmpBuf, 100, (char*)ContLenPtr, (int)(ContLenEndPtr - ContLenPtr + 1));
 							int ContLen = atoi(TmpBuf);
 							if (ContLen == 0) {
-								// Overwrite FinishCondition with 0 if appropriate value is not set.
-								FinishCondition = 0;
+								// If appropriate value is not set.
 							} else {
 								FinishCondition = 10000000 + ContLen + Offset;
 							}
