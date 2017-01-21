@@ -1176,9 +1176,6 @@ int main(int Argc, char* Argv[])
 
 	printf("Test started\r\n");
 
-	StkSocketTestHttp TestHttpObj;
-	TestHttpObj.TestHttpTermination();
-
 	if (ConnectDisconnectTcpPort() != 0) {
 		return -1;
 	}
@@ -1241,6 +1238,9 @@ int main(int Argc, char* Argv[])
 	StkSocketMemoryLeak objStkSocketMemoryLeak;
 	objStkSocketMemoryLeak.CheckLeakTcp();
 	objStkSocketMemoryLeak.CheckLeakUdp();
+
+	StkSocketTestHttp TestHttpObj;
+	TestHttpObj.TestHttpTermination();
 
 	printf("Test completed\r\n");
 

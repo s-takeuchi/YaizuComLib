@@ -100,6 +100,10 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 			printf("NG\r\n");
 			exit(0);
 		}
+		if (strstr((char*)Dat, "TestTestTest\0") == NULL) {
+			printf("NG\r\n");
+			exit(0);
+		}
 		StkSocket_CloseAccept(100, 100, TRUE);
 		break;
 	}
@@ -113,6 +117,57 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 	BYTE Dat[1024];
 
 	strcpy_s((char*)Dat, 1024, "TestTestTest");
+
+	Sleep(3000);
+	StkSocket_Connect(101);
+	int RetS = StkSocket_Send(101, 101, (BYTE*)Dat, strlen((char*)Dat) + 1);
+	if (RetS <= 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	StkSocket_Disconnect(101, 101, TRUE);
+
+	FinishSendTest = TRUE;
+	return 0;
+}
+
+DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination3(LPVOID Param)
+{
+	BYTE Dat[1024];
+
+	while (TRUE) {
+		Sleep(10);
+		int Ret = StkSocket_Accept(100);
+		if (Ret == -1) {
+			continue;
+		}
+		Ret = StkSocket_Receive(100, 100, Dat, 1024, 9999998, NULL, -1, FALSE);
+		if (Ret == -1 || Ret == -2) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		if (strstr((char*)Dat, "a123456789") == NULL) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		StkSocket_CloseAccept(100, 100, TRUE);
+		break;
+	}
+
+	FinishRecvTest = TRUE;
+	return 0;
+}
+
+DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination3(LPVOID Param)
+{
+	BYTE Dat[1024];
+
+	strcpy_s((char*)Dat, 1024, "");
+	strcat_s((char*)Dat, 1024, "POST / HTTP/1.1\n");
+	strcat_s((char*)Dat, 1024, "Content-Type: text/html\n");
+	strcat_s((char*)Dat, 1024, "Content-Length: 51\n");
+	strcat_s((char*)Dat, 1024, "\n");
+	strcat_s((char*)Dat, 1024, "a123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
 
 	Sleep(3000);
 	StkSocket_Connect(101);
@@ -145,11 +200,21 @@ void StkSocketTestHttp::TestHttpTermination()
 	}
 	printf("OK\r\n");
 
-	printf("[StkSocketTestHttp]:Abnormal case ... ");
+	printf("[StkSocketTestHttp]:Abnormal case 1 ... ");
 	FinishRecvTest = FALSE;
 	FinishSendTest = FALSE;
 	CreateThread(NULL, 0, &TestRecvHttpTermination2, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestSendHttpTermination2, NULL, 0, &TmpId);
+	while (FinishRecvTest != TRUE || FinishSendTest != TRUE) {
+		Sleep(100);
+	}
+	printf("OK\r\n");
+
+	printf("[StkSocketTestHttp]:Abnormal case 2 ... ");
+	FinishRecvTest = FALSE;
+	FinishSendTest = FALSE;
+	CreateThread(NULL, 0, &TestRecvHttpTermination3, NULL, 0, &TmpId);
+	CreateThread(NULL, 0, &TestSendHttpTermination3, NULL, 0, &TmpId);
 	while (FinishRecvTest != TRUE || FinishSendTest != TRUE) {
 		Sleep(100);
 	}
