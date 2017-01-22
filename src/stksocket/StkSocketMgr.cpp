@@ -789,12 +789,14 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 								}
 							}
 						}
-						if (ContLenEndPtr != NULL && ContLenEndPtr - ContLenPtr <= 99) {
+						if (ContLenEndPtr != NULL && ContLenEndPtr - ContLenPtr <= 10) {
 							char TmpBuf[100];
 							strncpy_s(TmpBuf, 100, (char*)ContLenPtr, (int)(ContLenEndPtr - ContLenPtr + 1));
 							int ContLen = atoi(TmpBuf);
 							if (ContLen == 0) {
-								// If appropriate value is not set.
+								// If inappropriate value or zero is set.
+								PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
+								return Offset;
 							} else {
 								FinishCondition = 10000000 + ContLen + Offset;
 							}

@@ -16,7 +16,7 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination1(LPVOID Param)
 		if (Ret == -1) {
 			continue;
 		}
-		Ret = StkSocket_Receive(100, 100, Dat, 1024, 205000, NULL, -1, FALSE);
+		Ret = StkSocket_Receive(100, 100, Dat, 1024, 203000, NULL, -1, FALSE);
 		if (Ret == -1 || Ret == -2) {
 			printf("NG\r\n");
 			exit(0);
@@ -65,7 +65,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 	}
 	int RetR;
 	for (int Loop = 0; Loop < 10; Loop++) {
-		RetR = StkSocket_Receive(101, 101, Dat, 1024, 205000, NULL, -1, FALSE);
+		RetR = StkSocket_Receive(101, 101, Dat, 1024, 203000, NULL, -1, FALSE);
 		if (RetR > 0) {
 			break;
 		}
@@ -88,28 +88,40 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 {
 	BYTE Dat[1024];
-	BYTE TestData[6][256] = {
+	BYTE TestData[8][256] = {
 		"TestTestTest\0",
 		"POST / HTTP/1.1\nContent-Type: text/html\n\nTestTestTest",
-		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:\n\nTestTestTest",
-		"Content-Length:",
+		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:\n\n",
+		"Content-Length:\n\n",
+		"POST / HTTP/1.1\nContent-Length: 0\nContent-Type: text/html\n\n",
 		"\n\nContent-Length: 3\n\naa",
-		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:TestTestTest\n\n"
+		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length: 4\n\nTestTestTestTestTest",
+		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:TestTestTestTestTest\n\n"
 	};
 
-	for (int Loop = 0; Loop < 6; Loop++) {
+	for (int Loop = 0; Loop < 8; Loop++) {
 		while (TRUE) {
 			Sleep(10);
+			int TcB = GetTickCount();
 			int Ret = StkSocket_Accept(100);
 			if (Ret == -1) {
 				continue;
 			}
-			Ret = StkSocket_Receive(100, 100, Dat, 1024, 205000, NULL, -1, FALSE);
+			Ret = StkSocket_Receive(100, 100, Dat, 1024, 203000, NULL, -1, FALSE);
 			if (Ret == -1 || Ret == -2) {
 				printf("NG\r\n");
 				exit(0);
 			}
 			if (strstr((char*)Dat, (char*)TestData[Loop]) == NULL) {
+				printf("NG\r\n");
+				exit(0);
+			}
+			int TcE = GetTickCount();
+			int Tc = (TcE - TcB) / 1000;
+			printf("<%d> ", Tc);
+			if ((Loop == 0 && Tc != 3) || (Loop == 1 && Tc != 3) || (Loop == 2 && Tc != 0) ||
+				(Loop == 3 && Tc != 0) || (Loop == 4 && Tc != 0) || (Loop == 5 && Tc != 0) ||
+				(Loop == 6 && Tc != 0) || (Loop == 7 && Tc != 3)) {
 				printf("NG\r\n");
 				exit(0);
 			}
@@ -137,16 +149,18 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 {
 	BYTE Dat[1024];
-	BYTE TestData[6][256] = {
+	BYTE TestData[8][256] = {
 		"TestTestTest\0",
 		"POST / HTTP/1.1\nContent-Type: text/html\n\nTestTestTest",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:\n\nTestTestTest",
-		"Content-Length:",
+		"Content-Length:\n\n",
+		"POST / HTTP/1.1\nContent-Length: 0\nContent-Type: text/html\n\n",
 		"\n\nContent-Length: 3\n\naa",
-		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:TestTestTest\n\n"
+		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length: 4\n\nTestTestTestTestTest",
+		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:TestTestTestTestTest\n\n"
 	};
 
-	for (int Loop = 0; Loop < 6; Loop++) {
+	for (int Loop = 0; Loop < 8; Loop++) {
 		strcpy_s((char*)Dat, 1024, (char*)TestData[Loop]);
 
 		Sleep(3000);
@@ -158,7 +172,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 		}
 		int RetR;
 		for (int Loop = 0; Loop < 10; Loop++) {
-			RetR = StkSocket_Receive(101, 101, Dat, 1024, 205000, NULL, -1, FALSE);
+			RetR = StkSocket_Receive(101, 101, Dat, 1024, 203000, NULL, -1, FALSE);
 			if (RetR > 0) {
 				break;
 			}
