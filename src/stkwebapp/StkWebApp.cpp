@@ -94,7 +94,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 		return NULL;
 	}
 	BYTE Dat[DATA_LEN];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 9999998, NULL, -1, FALSE);
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 205000, NULL, -1, FALSE);
 	if (Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;

@@ -715,8 +715,8 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 					// There was a stopping thread request.
 					return 0;
 				}
-				if ((FinishCondition >= 0 && FinishCondition <= 180000) || FinishCondition == 9999998) {
-					int Expire = (FinishCondition == 9999998)? 10000 : FinishCondition;
+				if ((FinishCondition >= 0 && FinishCondition <= 180000) || (FinishCondition >= 200001 && FinishCondition <= 380000)) {
+					int Expire = (FinishCondition >= 200001 && FinishCondition <= 380000)? FinishCondition - 200000 : FinishCondition;
 					if ((int)(GetTickCount() - CurrWaitTime) > Expire) {
 						if (Offset == 0) {
 							return -2;
@@ -729,7 +729,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				continue;
 			}
 			int FetchSize;
-			if (FinishCondition == 9999998) {
+			if (FinishCondition >= 200001 && FinishCondition <= 380000) {
 				// if HTTP termination rule is selected...
 				FetchSize = 1;
 			} else {
@@ -768,7 +768,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
 				return Offset;
 			}
-			if (FinishCondition == 9999998) {
+			if (FinishCondition >= 200001 && FinishCondition <= 380000) {
 				// if HTTP termination rule is selected...
 				if ((Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\n') ||
 					(Buffer[Offset - 4] == '\r' && Buffer[Offset - 3] == '\n' && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') ||
@@ -784,7 +784,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 						if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\r\n")) == NULL) {
 							if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\n\r")) == NULL) {
 								if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\n")) == NULL) {
-									// If new-line-code after Content-Length is not found.
+									// If new-line-code after Content-Length is not found. (It may be an impossible situation.)
 									continue;
 								}
 							}

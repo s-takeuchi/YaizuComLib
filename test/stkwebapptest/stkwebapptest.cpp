@@ -94,7 +94,7 @@ BOOL SendTestData(int Id, char* Dat)
 	}
 	int RetR;
 	for (int Loop = 0; Loop < 10; Loop++) {
-		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, 9999998, NULL, -1, FALSE);
+		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, 205000, NULL, -1, FALSE);
 		if (RetR > 0) {
 			break;
 		}

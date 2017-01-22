@@ -16,7 +16,7 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination1(LPVOID Param)
 		if (Ret == -1) {
 			continue;
 		}
-		Ret = StkSocket_Receive(100, 100, Dat, 1024, 9999998, NULL, -1, FALSE);
+		Ret = StkSocket_Receive(100, 100, Dat, 1024, 205000, NULL, -1, FALSE);
 		if (Ret == -1 || Ret == -2) {
 			printf("NG\r\n");
 			exit(0);
@@ -65,7 +65,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 	}
 	int RetR;
 	for (int Loop = 0; Loop < 10; Loop++) {
-		RetR = StkSocket_Receive(101, 101, Dat, 1024, 9999998, NULL, -1, FALSE);
+		RetR = StkSocket_Receive(101, 101, Dat, 1024, 205000, NULL, -1, FALSE);
 		if (RetR > 0) {
 			break;
 		}
@@ -104,7 +104,7 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 			if (Ret == -1) {
 				continue;
 			}
-			Ret = StkSocket_Receive(100, 100, Dat, 1024, 9999998, NULL, -1, FALSE);
+			Ret = StkSocket_Receive(100, 100, Dat, 1024, 205000, NULL, -1, FALSE);
 			if (Ret == -1 || Ret == -2) {
 				printf("NG\r\n");
 				exit(0);
@@ -158,7 +158,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 		}
 		int RetR;
 		for (int Loop = 0; Loop < 10; Loop++) {
-			RetR = StkSocket_Receive(101, 101, Dat, 1024, 9999998, NULL, -1, FALSE);
+			RetR = StkSocket_Receive(101, 101, Dat, 1024, 205000, NULL, -1, FALSE);
 			if (RetR > 0) {
 				break;
 			}
