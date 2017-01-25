@@ -1321,6 +1321,9 @@ void StkObject::ToJson(TCHAR* Msg, int MsgLength, int Indent, BOOL ArrayFlag)
 	}
 }
 
+// Check the presented string whether which is composed of XML or JSON.
+// Txt [in] : Checking target (null-terminated TCHAR string)
+// Result : Result of the checking (0: Empty string of NULL, 1: XML, 2: JSON)
 int StkObject::Analyze(TCHAR* Txt)
 {
 	static const int ELEM_UNKNOWN = 0;
@@ -1329,8 +1332,8 @@ int StkObject::Analyze(TCHAR* Txt)
 	static const int ELEM_JSON_START = 20;
 	static const int ELEM_JSON_END = 21;
 
-	if (Txt == NULL) {
-		return -1;
+	if (Txt == NULL || Txt[0] == TCHAR('\0')) {
+		return 0;
 	}
 	int Status = ELEM_UNKNOWN;
 	int Loop = 0;
@@ -1350,6 +1353,9 @@ int StkObject::Analyze(TCHAR* Txt)
 		if (Status == ELEM_UNKNOWN) {
 			return -1;
 		}
+	}
+	if (Status == ELEM_UNKNOWN) {
+		return 0;
 	}
 	for (Loop--; Loop > 0; Loop--) {
 		// Skip brank character
