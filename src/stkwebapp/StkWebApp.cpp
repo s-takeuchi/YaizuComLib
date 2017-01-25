@@ -94,7 +94,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 		return NULL;
 	}
 	BYTE Dat[DATA_LEN];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 205000, NULL, -1, FALSE);
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 200500, NULL, -1, FALSE);
 	if (Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
@@ -111,12 +111,14 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 		delete DatWc;
 		return NULL;
 	}
+	
 	int ErrorCode = 0;
 	StkObject* ReqObj = NULL;
 	if (*XmlJsonType == 1) {
 		ReqObj = StkObject::CreateObjectFromXml(Req, &ErrorCode);
 	} else if (*XmlJsonType == 2) {
 		ReqObj = StkObject::CreateObjectFromJson(Req, &ErrorCode);
+	} else if (*XmlJsonType == 0) {
 	}
 	delete DatWc;
 	return ReqObj;
@@ -210,6 +212,12 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	int XmlJsonType;
 	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType);
 	if (StkObjReq == NULL) {
+		if (XmlJsonType == 0) {
+			int ErrorCode;
+			StkObject* TmpObj = StkObject::CreateObjectFromXml(_T("<body><h1>Hello, World</h1></body>"), &ErrorCode);
+			pImpl->SendResponse(TmpObj, ThreadId, 1);
+			delete TmpObj;
+		}
 	} else {
 		StkObject* StkObjRes = NULL;
 		for (int Loop = 0; Loop < pImpl->ReqHandlerCount; Loop++) {
