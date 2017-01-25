@@ -777,9 +777,10 @@ void GeneralTestCase6()
 		int RetJson1 = StkObject::Analyze(_T("{"));
 		int RetXml2 = StkObject::Analyze(_T(">"));
 		int RetJson2 = StkObject::Analyze(_T("}"));
-		int RetXml3 = StkObject::Analyze(_T(""));
-		int RetJson3 = StkObject::Analyze(NULL);
-		if (RetXml1 != -1 || RetJson1 != -1 || RetXml2 != -1 || RetJson2 != -1|| RetXml3 != -1 || RetJson3 != -1) {
+		int RetEmpty1 = StkObject::Analyze(_T(""));
+		int RetEmpty2 = StkObject::Analyze(NULL);
+		int RetEmpty3 = StkObject::Analyze(_T(" \t \r\n \t \r\n "));
+		if (RetXml1 != -1 || RetJson1 != -1 || RetXml2 != -1 || RetJson2 != -1|| RetEmpty1 != 0 || RetEmpty2 != 0 || RetEmpty3 != 0) {
 			printf("NG\r\n");
 			exit(0);
 		}
