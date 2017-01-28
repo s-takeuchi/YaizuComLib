@@ -33,6 +33,7 @@ public:
 	TCHAR* Uft8ToWideChar(BYTE* Txt);
 	BYTE* WideCharToUtf8(TCHAR*);
 
+	BYTE* MakeHttpHeader(int, int, int);
 	StkObject* RecvRequest(int, int*);
 	void SendResponse(StkObject*, int, int);
 
@@ -87,6 +88,43 @@ BYTE* StkWebApp::Impl::WideCharToUtf8(TCHAR* Txt)
 	return NULL;
 }
 
+BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJsonType)
+{
+	char* HeaderData = new char[1024];
+	strcpy_s(HeaderData, 1024, "");
+
+	char RespLine[64] = "";
+	char ContType[64] = "";
+	char ContLen[64] = "";
+	char Connection[64] = "";
+	char CacheCont[64] = "";
+	char Date[64] = "";
+
+	sprintf_s(RespLine, "HTTP/1.1 %d OK\r\n", ResultCode);
+	if (XmlJsonType == 1) {
+		strcpy_s(ContType, 64, "Content-Type: application/xml\r\n");
+	} else if (XmlJsonType == 2) {
+		strcpy_s(ContType, 64, "Content-Type: application/json\r\n");
+	} else if (XmlJsonType == 0) {
+		strcpy_s(ContType, 64, "Content-Type: text/html\r\n");
+	}
+	sprintf_s(ContLen, 64, "Content-Length: %d\r\n", DataLength);
+	sprintf_s(Connection, 64, "Connection: close\r\n");
+	sprintf_s(CacheCont, 64, "Cache-Control: no-cache\r\n");
+	sprintf_s(Date, 64, "Date: Sat, 28 Jan 2017 10:58:23 JST\r\n");
+
+	strcat_s(HeaderData, 1024, RespLine);
+	strcat_s(HeaderData, 1024, ContType);
+	strcat_s(HeaderData, 1024, ContLen);
+	strcat_s(HeaderData, 1024, Connection);
+	strcat_s(HeaderData, 1024, CacheCont);
+	strcat_s(HeaderData, 1024, Date);
+
+	strcat_s(HeaderData, 1024, "\r\n");
+
+	return (BYTE*)HeaderData;
+}
+
 StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 {
 	int Ret = StkSocket_Accept(TargetId);
@@ -126,28 +164,37 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 
 void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType)
 {
-	if (XmlJsonType != 1 && XmlJsonType != 2) {
+	if (XmlJsonType != 0 &&XmlJsonType != 1 && XmlJsonType != 2) {
+		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return;
 	}
-	char RespLine[64] = "HTTP/1.1 200 OK\n";
-	char ContType[64] = "";
-	char ContLen[64] = "";
-	BYTE* Dat;
+
 	TCHAR XmlOrJson[DATA_LEN] = _T("");
 	if (XmlJsonType == 1) {
 		Obj->ToXml(XmlOrJson, DATA_LEN);
-		strcpy_s(ContType, 64, "Content-Type: application/xml\n");
 	} else if (XmlJsonType == 2) {
 		Obj->ToJson(XmlOrJson, DATA_LEN);
-		strcpy_s(ContType, 64, "Content-Type: application/json\n");
+	} else if (XmlJsonType == 0) {
+		Obj->ToXml(XmlOrJson, DATA_LEN);
 	}
-	Dat = WideCharToUtf8(XmlOrJson);
-	sprintf_s(ContLen, 64, "Content-Length: %d\n\n", strlen((char*)Dat) + 1);
-	int Ret0 = StkSocket_Send(TargetId, TargetId, (BYTE*)RespLine, strlen(RespLine));
-	int Ret1 = StkSocket_Send(TargetId, TargetId, (BYTE*)ContType, strlen(ContType));
-	int Ret2 = StkSocket_Send(TargetId, TargetId, (BYTE*)ContLen, strlen(ContLen));
-	int Ret3 = StkSocket_Send(TargetId, TargetId, Dat, strlen((char*)Dat) + 1);
+	BYTE* Dat = WideCharToUtf8(XmlOrJson);
+	int DatLength = strlen((char*)Dat);
+
+	BYTE* HeaderDat = MakeHttpHeader(200, strlen((char*)Dat), XmlJsonType);
+	int HeaderDatLength = strlen((char*)HeaderDat);
+
+	int RespDatLength = DatLength + HeaderDatLength;
+	BYTE* RespDat = new BYTE[RespDatLength + 1];
+
+	strcpy_s((char*)RespDat, RespDatLength + 1, "");
+	strcat_s((char*)RespDat, RespDatLength + 1, (char*)HeaderDat);
+	strcat_s((char*)RespDat, RespDatLength + 1, (char*)Dat);
+
+	int RetD = StkSocket_Send(TargetId, TargetId, RespDat, RespDatLength);
+
 	delete Dat;
+	delete HeaderDat;
+	delete RespDat;
 	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 };
 
@@ -215,7 +262,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		if (XmlJsonType == 0) {
 			int ErrorCode;
 			StkObject* TmpObj = StkObject::CreateObjectFromXml(_T("<body><h1>Hello, World</h1></body>"), &ErrorCode);
-			pImpl->SendResponse(TmpObj, ThreadId, 1);
+			pImpl->SendResponse(TmpObj, ThreadId, XmlJsonType);
 			delete TmpObj;
 		}
 	} else {
