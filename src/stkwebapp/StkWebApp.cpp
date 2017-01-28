@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <shlwapi.h>
+#include <time.h>
 #include "..\stksocket\stksocket.h"
 #include "..\..\src\stkthread\stkthread.h"
 #include "..\commonfunc\stkobject.h"
@@ -111,7 +112,22 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	sprintf_s(ContLen, 64, "Content-Length: %d\r\n", DataLength);
 	sprintf_s(Connection, 64, "Connection: close\r\n");
 	sprintf_s(CacheCont, 64, "Cache-Control: no-cache\r\n");
-	sprintf_s(Date, 64, "Date: Sat, 28 Jan 2017 10:58:23 JST\r\n");
+	// Make time string begin
+	struct tm GmtTime;
+	__int64 Ltime;
+	_time64(&Ltime);
+	_gmtime64_s(&GmtTime, &Ltime);
+	char MonStr[12][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+	char WdayStr[7][4] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+	sprintf_s(Date, 64, "%s, %02d %s %d %02d:%02d:%02d GMT\r\n",
+		WdayStr[GmtTime.tm_wday],
+		GmtTime.tm_mday,
+		MonStr[GmtTime.tm_mon],
+		GmtTime.tm_year + 1900,
+		GmtTime.tm_hour,
+		GmtTime.tm_min,
+		GmtTime.tm_sec);
+	// Make time string end
 
 	strcat_s(HeaderData, 1024, RespLine);
 	strcat_s(HeaderData, 1024, ContType);
@@ -132,7 +148,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 		return NULL;
 	}
 	BYTE Dat[DATA_LEN];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 200500, NULL, -1, FALSE);
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 200001, NULL, -1, FALSE);
 	if (Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
@@ -195,6 +211,7 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 	delete Dat;
 	delete HeaderDat;
 	delete RespDat;
+	Sleep(1000); // In order to avoid closure while client receives data, wait for 1 sec.
 	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 };
 
