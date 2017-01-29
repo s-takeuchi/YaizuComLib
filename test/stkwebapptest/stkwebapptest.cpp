@@ -11,6 +11,8 @@
 #include "StkWebAppTest2.h"
 #include "StkWebAppTest3.h"
 
+#define THREADNUM 7
+
 BOOL SendTestDataFailed = FALSE;
 int SendTestDataCount = 0;
 
@@ -84,7 +86,7 @@ BOOL SendTestData(int Id, char* Dat)
 	StkSocket_Connect(Id);
 
 	char TmpHeader[256];
-	sprintf_s(TmpHeader, 256, "POST / HTTP/1.1\nContent-Length: %d\nContent-Type: Content-Type: application/xml\n\n", strlen(Dat) + 1);
+	sprintf_s(TmpHeader, 256, "POST / HTTP/1.1\nContent-Length: %d\nContent-Type: application/xml\n\n", strlen(Dat) + 1);
 
 	if (StkSocket_Send(Id, Id, (BYTE*)TmpHeader, strlen((char*)TmpHeader)) <= 0) {
 		return FALSE;
@@ -99,7 +101,6 @@ BOOL SendTestData(int Id, char* Dat)
 			RecvDat[RetR] = '\0';
 			break;
 		}
-		Sleep(100);
 	}
 	StkSocket_Disconnect(Id, Id, TRUE);
 	if (RetR <= 0) {
@@ -130,19 +131,19 @@ void ReqResTest1()
 {
 	printf("StkWebAppTest1 ");
 
-	int Ids[3] = {11, 12, 13};
-	int SendIds[3] = {31, 32, 33};
+	int Ids[7] = {11, 12, 13, 14, 15, 16, 17};
+	int SendIds[7] = {31, 32, 33, 34, 35, 36, 37};
 	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
 	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
-	for (int Loop = 0; Loop < 3; Loop++) {
+	for (int Loop = 0; Loop < THREADNUM; Loop++) {
 		wsprintf(Name, _T("Send-%d"), Loop);
 		wsprintf(Desc, _T("Description-%d"), Loop);
 		AddStkThread(SendIds[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainSend, NULL, NULL);
 		StkSocket_AddInfo(SendIds[Loop], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
 	}
 
-	StkWebApp* Soc = new StkWebApp(Ids, 3, _T("localhost"), 8080);
+	StkWebApp* Soc = new StkWebApp(Ids, THREADNUM, _T("localhost"), 8080);
 
 	int ErrorCode;
 	StkObject* Test1Req = StkObject::CreateObjectFromXml(_T("<Ddd>Natsu</Ddd>"), &ErrorCode);
@@ -157,7 +158,7 @@ void ReqResTest1()
 
 	SendTestDataCount = 0;
 	////////// Main logic starts
-	StartSpecifiedStkThreads(SendIds, 3);
+	StartSpecifiedStkThreads(SendIds, THREADNUM);
 	while (GetNumOfRunStkThread() != GetNumOfStkThread()) {
 		Sleep(100);
 	}
@@ -169,8 +170,8 @@ void ReqResTest1()
 		printf("%d,", MemChk[Loop]);
 	}
 	printf("(Repeat=%d)", SendTestDataCount);
-	StopSpecifiedStkThreads(SendIds, 3);
-	while (GetNumOfRunStkThread() != 3) {
+	StopSpecifiedStkThreads(SendIds, THREADNUM);
+	while (GetNumOfRunStkThread() != THREADNUM) {
 		Sleep(100);
 	}
 	////////// Main logic ends
@@ -181,19 +182,19 @@ void ReqResTest1()
 
 	delete Soc;
 
-	for (int Loop = 0; Loop < 3; Loop++) {
+	for (int Loop = 0; Loop < THREADNUM; Loop++) {
 		DeleteStkThread(SendIds[Loop]);
 	}
 
 	if (SendTestDataFailed == TRUE) {
-		printf("... NG\r\n");
+		printf("... NG(1)\r\n");
 		exit(0);
 	} else if (MemChk[0] < MemChk[1] && MemChk[1] < MemChk[2] && MemChk[2] < MemChk[3] &&
 				MemChk[3] < MemChk[4] && MemChk[4] < MemChk[5]) {
-		printf("... NG\r\n");
+		printf("... NG(2)\r\n");
 		exit(0);
 	} else if (Add1 != 1 || Add2 != 2 || Add3 != 3 || Del1 != 2 || Del2 != 1 || Del3 != 0) {
-		printf("... NG\r\n");
+		printf("... NG(3)\r\n");
 		exit(0);
 	}else {
 		printf("... OK\r\n");

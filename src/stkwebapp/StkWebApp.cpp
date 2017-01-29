@@ -148,7 +148,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 		return NULL;
 	}
 	BYTE Dat[DATA_LEN];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 200001, NULL, -1, FALSE);
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 200030, NULL, -1, FALSE);
 	if (Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
@@ -211,7 +211,6 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 	delete Dat;
 	delete HeaderDat;
 	delete RespDat;
-	Sleep(1000); // In order to avoid closure while client receives data, wait for 1 sec.
 	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 };
 
