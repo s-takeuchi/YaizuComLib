@@ -677,7 +677,7 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
 int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int FinishCondition, BYTE* VarDat, int VarDatSize, BOOL ForceStop)
 {
 	// Select—pFDSì¬
-	DWORD CurrWaitTime = GetTickCount();
+	DWORD CurrWaitTime = 0;
 	timeval Timeout;
 	Timeout.tv_sec = 0;
 	Timeout.tv_usec = 0;
@@ -717,7 +717,8 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				}
 				if ((FinishCondition >= 0 && FinishCondition <= 180000) || (FinishCondition >= 200001 && FinishCondition <= 380000)) {
 					int Expire = (FinishCondition >= 200001 && FinishCondition <= 380000)? FinishCondition - 200000 : FinishCondition;
-					if ((int)(GetTickCount() - CurrWaitTime) > Expire) {
+					DWORD CurrTime = GetTickCount();
+					if ((int)(CurrTime - CurrWaitTime) > Expire && CurrWaitTime != 0) {
 						if (Offset == 0) {
 							return -2;
 						} else {
@@ -794,7 +795,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 							strncpy_s(TmpBuf, 100, (char*)ContLenPtr, (int)(ContLenEndPtr - ContLenPtr + 1));
 							int ContLen = atoi(TmpBuf);
 							if (ContLen == 0) {
-								// If inappropriate value or zero is set.
+								// If inappropriate value or zero is set for Content-Length.
 								PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
 								return Offset;
 							} else {

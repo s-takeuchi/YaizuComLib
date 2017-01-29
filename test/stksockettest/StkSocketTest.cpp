@@ -439,7 +439,7 @@ int GenerateLogs()
 
 	printf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each...");
 	for (int Loop = 0; Loop < 40; Loop++) {
-		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), Loop + 2000);
+		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), Loop + 3000);
 		StkSocket_Open(Loop);
 	}
 	for (int Loop = 0; Loop < 40; Loop++) {
