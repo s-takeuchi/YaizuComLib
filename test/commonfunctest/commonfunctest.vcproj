@@ -192,6 +192,10 @@
 				RelativePath=".\StkPropertiesTest.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\StkStringParserTest.cpp"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

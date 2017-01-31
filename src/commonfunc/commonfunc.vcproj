@@ -194,6 +194,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="StkStringParser"
+			>
+			<File
+				RelativePath=".\StkStringParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkStringParser.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
