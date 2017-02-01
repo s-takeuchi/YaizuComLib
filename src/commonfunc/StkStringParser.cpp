@@ -60,7 +60,7 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 	SearchPtr[SearchPtrIndex] = FormatWk;
 	SearchPtrIndex++;
 	int Loop;
-	for (Loop = 0; Loop < FormatLen; Loop++) {
+	for (Loop = 0; Loop < lstrlen(FormatWk); Loop++) {
 		if (FormatWk[Loop] == Target) {
 			SearchPtr[SearchPtrIndex] = &FormatWk[Loop] + 1;
 			SearchEndPtr[SearchPtrIndex - 1] = &FormatWk[Loop];
