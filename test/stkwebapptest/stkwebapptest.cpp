@@ -11,7 +11,7 @@
 #include "StkWebAppTest2.h"
 #include "StkWebAppTest3.h"
 
-#define THREADNUM 7
+#define THREADNUM 10
 
 BOOL SendTestDataFailed = FALSE;
 int SendTestDataCount = 0;
@@ -131,8 +131,8 @@ void ReqResTest1()
 {
 	printf("StkWebAppTest1 ");
 
-	int Ids[7] = {11, 12, 13, 14, 15, 16, 17};
-	int SendIds[7] = {31, 32, 33, 34, 35, 36, 37};
+	int Ids[10] = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+	int SendIds[10] = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40};
 	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
 	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
