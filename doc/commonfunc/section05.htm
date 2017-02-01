@@ -1,0 +1,58 @@
+﻿<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+<link rel="stylesheet" href="./style.css" type="text/css">
+</HEAD>
+
+<BODY>
+<div id="container">
+<H1>5. StkStringParser</H1>
+
+<H2 ID="5.1">5.1 StkStringParser概要</H2>
+<div class="topic">
+与えられた文字列を構文解析し，最大4個の文字列を取得します。<br>
+</div><p>
+
+
+
+<H2 ID="5.2">5.2 StkStringParserの使用方法</H2>
+<div class="topic">
+StkStringParserの機能を利用するために，クライアントプログラムは，
+以下の.hファイル，.libファイルを事前に参照可能な状態にしておく必要があります。<p>
+<table class="tblstyle">
+<tr><td>.hファイル</td><td>StkStringParser.h</td></tr>
+<tr><td>.libファイル</td><td>commonfunc.lib</td></tr>
+</table><p>
+</div><p>
+
+
+
+<H2 ID="5.3">5.3 API一覧</H2>
+<div class="topic">
+StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
+<table class="tblstyle">
+<tr><td>static int ParseInto4Params(TCHAR*, TCHAR*, TCHAR, TCHAR[512], TCHAR[512], TCHAR[512], TCHAR[512])</td><td>与えられた文字列を構文解析し，最大4個の文字列を取得します。</td></tr>
+</table><p>
+</div><p>
+
+
+
+<H2 ID="5.4">5.4 int ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512], TCHAR OutStr3[512], TCHAR OutStr4[512])</H2>
+<div class="topic">
+与えられた文字列を構文解析し，最大4個の文字列を取得します。<br>
+<table class="tblstyle">
+<tr><td>OriginStr[入力]</td><td>構文解析を行う対象の文字列。</td></tr>
+<tr><td>Format[入力]</td><td>OriginStrを検索するための文字列。Targetに示す文字を1個から最大4個まで含んでいる必要がある。</td></tr>
+<tr><td>Target[入力]</td><td>OriginStrを検索し文字列を取得するためにFormat中に存在する文字。</td></tr>
+<tr><td>OutStr1[出力]</td><td>Format内に存在する1番目のTargetと対応する文字列を取得する。</td></tr>
+<tr><td>OutStr2[出力]</td><td>Format内に存在する2番目のTargetと対応する文字列を取得する。</td></tr>
+<tr><td>OutStr3[出力]</td><td>Format内に存在する3番目のTargetと対応する文字列を取得する。</td></tr>
+<tr><td>OutStr4[出力]</td><td>Format内に存在する4番目のTargetと対応する文字列を取得する。</td></tr>
+<tr><td>[戻り値]</td><td>Result code (0:正常終了, -1:異常終了 (OriginStrがNULL, FormatがNULL, またはFormatがOriginStrよりも長い文字列となっている)</td></tr>
+</table>
+</div><p>
+
+
+
+</div>
+</BODY>
