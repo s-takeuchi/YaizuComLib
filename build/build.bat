@@ -65,6 +65,7 @@ pushd deployment\commonfunc
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm commonfunc02.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section03.htm commonfunc03.pdf
 %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section04.htm commonfunc04.pdf
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section05.htm commonfunc05.pdf
 %PDFTK% *.pdf output commonfunc.pdf
 copy commonfunc.pdf ..
 del *.pdf
@@ -148,12 +149,14 @@ copy "..\src\commonfunc\msgproc.h" deployment
 copy "..\src\commonfunc\StkGeneric.h" deployment
 copy "..\src\commonfunc\StkProperties.h" deployment
 copy "..\src\commonfunc\StkObject.h" deployment
+copy "..\src\commonfunc\StkStringParser.h" deployment
 copy "..\src\commonfunc\Release\commonfunc.lib" deployment
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\commonfunc.lib
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\msgproc.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkGeneric.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkProperties.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkObject.h
+%SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkStringParser.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\commonfunc.pdf
 %SEVENZIP% a ..\build\deployment\commonfunc.zip buildver.txt
 del ..\build\deployment\commonfunc.lib
@@ -161,6 +164,7 @@ del ..\build\deployment\msgproc.h
 del ..\build\deployment\StkGeneric.h
 del ..\build\deployment\StkProperties.h
 del ..\build\deployment\StkObject.h
+del ..\build\deployment\StkStringParser.h
 del ..\build\deployment\commonfunc.pdf
 
 echo Building stkthread.sln...
