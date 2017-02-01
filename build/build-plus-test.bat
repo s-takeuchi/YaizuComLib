@@ -17,6 +17,8 @@ echo Building stkthreadtest.sln...
 %DEVENV% "..\test\stkthreadtest\stkthreadtest.sln" /rebuild Release
 echo Building commonfunctest.sln...
 %DEVENV% "..\test\commonfunctest\commonfunctest.sln" /rebuild Release
+echo Building stkwebapptest.sln...
+%DEVENV% "..\test\stkwebapptest\stkwebapptest.sln" /rebuild Release
 
 echo ---------------------------------------
 echo stksockettest.exe --- stksockettest.txt
@@ -30,6 +32,9 @@ echo stkthreadtest.exe --- stkthreadtest.txt
 echo ---------------------------------------
 echo commonfunctest.exe --- commonfunctest.txt
 ..\test\commonfunctest\release\commonfunctest.exe > commonfunctest.txt
+echo ---------------------------------------
+echo stkwebapptest.exe --- stkwebapptest.txt
+..\test\stkwebapptest\release\stkwebapptest.exe > stkwebapptest.txt
 
 
 echo;
