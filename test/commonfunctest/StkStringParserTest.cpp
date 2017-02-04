@@ -60,10 +60,7 @@ int StkStringParserTest()
 		TCHAR Target[100] = _T("abcdefg012345+-*/xyz6789QWERTYUIO@@@****!!!!");
 		TCHAR Format[100] = _T("#012345+-*/xyz6789QWERTYUIO@@@****!!!!");
 		TCHAR OutStr1[256];
-		TCHAR OutStr2[256];
-		TCHAR OutStr3[256];
-		TCHAR OutStr4[256];
-		StkStringParser::ParseInto4Params(Target, Format, _T('#'), OutStr1, OutStr2, OutStr3, OutStr4);
+		StkStringParser::ParseInto1Param(Target, Format, _T('#'), OutStr1);
 		if (lstrcmp(OutStr1, _T("abcdefg")) != 0) {
 			printf("NG\r\n");
 			exit(0);
@@ -75,10 +72,7 @@ int StkStringParserTest()
 		TCHAR Target[100] = _T("abcdefg012345+-*/xyz6789QWERTYUIO@@@****!!!!");
 		TCHAR Format[100] = _T("abcdefg012345+-*/xyz6789QWERTYUIO@@@****#");
 		TCHAR OutStr1[256];
-		TCHAR OutStr2[256];
-		TCHAR OutStr3[256];
-		TCHAR OutStr4[256];
-		StkStringParser::ParseInto4Params(Target, Format, _T('#'), OutStr1, OutStr2, OutStr3, OutStr4);
+		StkStringParser::ParseInto1Param(Target, Format, _T('#'), OutStr1);
 		if (lstrcmp(OutStr1, _T("!!!!")) != 0) {
 			printf("NG\r\n");
 			exit(0);
@@ -186,7 +180,7 @@ int StkStringParserTest()
 		TCHAR Format[100] = _T("ìåêºòVé·%íjèóê‘ê¬%îíçïÇPÇX");
 		TCHAR OutStr1[256];
 		TCHAR OutStr2[256];
-		StkStringParser::ParseInto4Params(Target, Format, _T('%'), OutStr1, OutStr2, NULL, NULL);
+		StkStringParser::ParseInto2Params(Target, Format, _T('%'), OutStr1, OutStr2);
 		if (lstrcmp(OutStr1, _T("")) != 0 || lstrcmp(OutStr2, _T("")) != 0) {
 			printf("NG\r\n");
 			exit(0);

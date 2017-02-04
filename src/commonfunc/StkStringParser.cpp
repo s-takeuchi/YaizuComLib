@@ -3,6 +3,21 @@
 #include <shlwapi.h>
 #include "StkStringParser.h"
 
+int StkStringParser::ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512])
+{
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, NULL, NULL, NULL);
+}
+
+int StkStringParser::ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512])
+{
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr2, NULL, NULL);
+}
+
+int StkStringParser::ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512], TCHAR OutStr3[512])
+{
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr2, OutStr3, NULL);
+}
+
 // OutputStr1 [out] : 1st Parameter acquired (512 bytes as max)
 // OutputStr2 [out] : 2nd Parameter acquired (512 bytes as max)
 // OutputStr3 [out] : 3rd Parameter acquired (512 bytes as max)

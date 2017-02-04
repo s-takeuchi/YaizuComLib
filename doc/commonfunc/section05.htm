@@ -31,13 +31,40 @@ StkStringParserの機能を利用するために，クライアントプログ�
 <div class="topic">
 StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 <table class="tblstyle">
+<tr><td>static int ParseInto1Param(TCHAR*, TCHAR*, TCHAR, TCHAR[512])</td><td>与えられた文字列を構文解析し，最大1個の文字列を取得します。</td></tr>
+<tr><td>static int ParseInto2Params(TCHAR*, TCHAR*, TCHAR, TCHAR[512], TCHAR[512])</td><td>与えられた文字列を構文解析し，最大2個の文字列を取得します。</td></tr>
+<tr><td>static int ParseInto3Params(TCHAR*, TCHAR*, TCHAR, TCHAR[512], TCHAR[512], TCHAR[512])</td><td>与えられた文字列を構文解析し，最大3個の文字列を取得します。</td></tr>
 <tr><td>static int ParseInto4Params(TCHAR*, TCHAR*, TCHAR, TCHAR[512], TCHAR[512], TCHAR[512], TCHAR[512])</td><td>与えられた文字列を構文解析し，最大4個の文字列を取得します。</td></tr>
 </table><p>
 </div><p>
 
 
 
-<H2 ID="5.4">5.4 int ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512], TCHAR OutStr3[512], TCHAR OutStr4[512])</H2>
+<H2 ID="5.4">5.4 int ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512]</H2>
+<div class="topic">
+内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, NULL, NULL, NULL) を呼び出す。<br>
+詳細は，ParseInto4Paramsを参照のこと。
+</div><p>
+
+
+
+<H2 ID="5.5">5.5 int ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512]</H2>
+<div class="topic">
+内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr2, NULL, NULL) を呼び出す。<br>
+詳細は，ParseInto4Paramsを参照のこと。
+</div><p>
+
+
+
+<H2 ID="5.6">5.6 int ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512], TCHAR OutStr3[512]</H2>
+<div class="topic">
+内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr2, OutStr3, NULL) を呼び出す。<br>
+詳細は，ParseInto4Paramsを参照のこと。
+</div><p>
+
+
+
+<H2 ID="5.7">5.7 int ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512], TCHAR OutStr3[512], TCHAR OutStr4[512])</H2>
 <div class="topic">
 与えられた文字列を構文解析し，最大4個の文字列を取得します。<br>
 <table class="tblstyle">
