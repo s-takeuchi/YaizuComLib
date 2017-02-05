@@ -3,8 +3,9 @@
 #include <shlwapi.h>
 #include <time.h>
 #include "..\stksocket\stksocket.h"
-#include "..\..\src\stkthread\stkthread.h"
+#include "..\stkthread\stkthread.h"
 #include "..\commonfunc\stkobject.h"
+#include "..\commonfunc\StkStringParser.h"
 #include "StkWebApp.h"
 #include "StkWebAppExec.h"
 
@@ -26,6 +27,8 @@ public:
 
 	int ReqHandlerCount;
 	StkObject* Req[MAX_REQHANDLER_COUNT];
+	int HandlerMethod[MAX_REQHANDLER_COUNT];
+	TCHAR HanderUrlPath[MAX_REQHANDLER_COUNT][128];
 	StkWebAppExec* Handler[MAX_REQHANDLER_COUNT];
 
 public:
@@ -35,13 +38,15 @@ public:
 	BYTE* WideCharToUtf8(TCHAR*);
 
 	BYTE* MakeHttpHeader(int, int, int);
-	StkObject* RecvRequest(int, int*);
+	StkObject* RecvRequest(int, int*, int*, TCHAR[512]);
 	void SendResponse(StkObject*, int, int);
 
 	static int ElemStkThreadMainRecv(int);
 
 	int AddReqHandler(StkObject*, StkWebAppExec*);
 	int DeleteReqHandler(StkObject*);
+	int AddReqHandler(int, TCHAR[128], StkWebAppExec*);
+	int DeleteReqHandler(int, TCHAR[128]);
 };
 
 TCHAR* StkWebApp::Impl::SkipHttpHeader(TCHAR* Txt)
@@ -141,8 +146,12 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	return (BYTE*)HeaderData;
 }
 
-StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
+StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, TCHAR UrlPath[512])
 {
+	*XmlJsonType = -1;
+	*Method = STKWEBAPP_METHOD_UNDEFINED;
+	lstrcpy(UrlPath, _T(""));
+
 	int Ret = StkSocket_Accept(TargetId);
 	if (Ret == -1) {
 		return NULL;
@@ -158,6 +167,24 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType)
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
 	}
+
+	//// Acquire METHOD and URL path begin ////
+	*Method = STKWEBAPP_METHOD_UNDEFINED;
+	TCHAR MethodStr[512];
+	StkStringParser::ParseInto2Params(DatWc, _T("# # HTTP"), _T('#'), MethodStr, UrlPath);
+	if (lstrcmp(MethodStr, _T("GET")) == 0) {
+		*Method = STKWEBAPP_METHOD_GET;
+	} else if (lstrcmp(MethodStr, _T("HEAD")) == 0) {
+		*Method = STKWEBAPP_METHOD_HEAD;
+	} else if (lstrcmp(MethodStr, _T("POST")) == 0) {
+		*Method = STKWEBAPP_METHOD_POST;
+	} else if (lstrcmp(MethodStr, _T("PUT")) == 0) {
+		*Method = STKWEBAPP_METHOD_PUT;
+	} else if (lstrcmp(MethodStr, _T("DELETE")) == 0) {
+		*Method = STKWEBAPP_METHOD_DELETE;
+	}
+	//// Acquire METHOD and URL path end ////
+
 	TCHAR* Req = SkipHttpHeader(DatWc);
 	*XmlJsonType = StkObject::Analyze(Req);
 	if (*XmlJsonType == -1) {
@@ -239,6 +266,11 @@ int StkWebApp::Impl::AddReqHandler(StkObject* ReqObj, StkWebAppExec* HandlerObj)
 	return ReqHandlerCount;
 }
 
+int StkWebApp::Impl::AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)
+{
+	return ReqHandlerCount;
+}
+
 int StkWebApp::Impl::DeleteReqHandler(StkObject* ReqObj)
 {
 	EnterCriticalSection(&ReqHandlerCs);
@@ -260,6 +292,11 @@ int StkWebApp::Impl::DeleteReqHandler(StkObject* ReqObj)
 	return -1;
 }
 
+int StkWebApp::Impl::DeleteReqHandler(int Method, TCHAR UrlPath[128])
+{
+	return ReqHandlerCount;
+}
+
 BOOL StkWebApp::Contains(int ThreadId)
 {
 	for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
@@ -273,7 +310,9 @@ BOOL StkWebApp::Contains(int ThreadId)
 int StkWebApp::ThreadLoop(int ThreadId)
 {
 	int XmlJsonType;
-	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType);
+	int Method;
+	TCHAR UrlPath[512];
+	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath);
 	if (StkObjReq == NULL) {
 		if (XmlJsonType == 0) {
 			int ErrorCode;
@@ -412,7 +451,17 @@ int StkWebApp::AddReqHandler(StkObject* ReqObj, StkWebAppExec* HandlerObj)
 	return pImpl->AddReqHandler(ReqObj, HandlerObj);
 }
 
+int StkWebApp::AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)
+{
+	return pImpl->AddReqHandler(Method, UrlPath, HandlerObj);
+}
+
 int StkWebApp::DeleteReqHandler(StkObject* ReqObj)
 {
 	return pImpl->DeleteReqHandler(ReqObj);
+}
+
+int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[128])
+{
+	return pImpl->DeleteReqHandler(Method, UrlPath);
 }
