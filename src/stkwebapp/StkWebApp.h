@@ -11,12 +11,12 @@ private:
 	Impl* pImpl;
 
 public:
-	static const int STKWEBAPP_METHOD_UNDEFINED = -1;
-	static const int STKWEBAPP_METHOD_GET = 0;
-	static const int STKWEBAPP_METHOD_HEAD = 1;
-	static const int STKWEBAPP_METHOD_POST = 2;
-	static const int STKWEBAPP_METHOD_PUT = 3;
-	static const int STKWEBAPP_METHOD_DELETE = 4;
+	static const unsigned char STKWEBAPP_METHOD_UNDEFINED = 0x00;
+	static const unsigned char STKWEBAPP_METHOD_GET       = 0x01;
+	static const unsigned char STKWEBAPP_METHOD_HEAD      = 0x02;
+	static const unsigned char STKWEBAPP_METHOD_POST      = 0x04;
+	static const unsigned char STKWEBAPP_METHOD_PUT       = 0x08;
+	static const unsigned char STKWEBAPP_METHOD_DELETE    = 0x10;
 
 public:
 	StkWebApp(int*, int, TCHAR*, int);
@@ -28,8 +28,6 @@ public:
 
 	int ThreadLoop(int);
 
-	int AddReqHandler(StkObject*, StkWebAppExec*);
 	int AddReqHandler(int, TCHAR[128], StkWebAppExec*);
-	int DeleteReqHandler(StkObject*);
 	int DeleteReqHandler(int, TCHAR[128]);
 };

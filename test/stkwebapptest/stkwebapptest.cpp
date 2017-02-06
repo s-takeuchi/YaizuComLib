@@ -86,7 +86,15 @@ BOOL SendTestData(int Id, char* Dat)
 	StkSocket_Connect(Id);
 
 	char TmpHeader[256];
-	sprintf_s(TmpHeader, 256, "POST / HTTP/1.1\nContent-Length: %d\nContent-Type: application/xml\n\n", strlen(Dat) + 1);
+	char UrlPath[128];
+	if (Id % 3 == 0) {
+		strcpy_s(UrlPath, 128, "/aaa/bbb/");
+	} else if (Id % 3 == 1) {
+		strcpy_s(UrlPath, 128, "/aaa/ccc/");
+	} else {
+		strcpy_s(UrlPath, 128, "/aaa/ddd/");
+	}
+	sprintf_s(TmpHeader, 256, "POST %s HTTP/1.1\nContent-Length: %d\nContent-Type: application/xml\n\n", UrlPath, strlen(Dat) + 1);
 
 	if (StkSocket_Send(Id, Id, (BYTE*)TmpHeader, strlen((char*)TmpHeader)) <= 0) {
 		return FALSE;
@@ -145,16 +153,12 @@ void ReqResTest1()
 
 	StkWebApp* Soc = new StkWebApp(Ids, THREADNUM, _T("localhost"), 8080);
 
-	int ErrorCode;
-	StkObject* Test1Req = StkObject::CreateObjectFromXml(_T("<Ddd>Natsu</Ddd>"), &ErrorCode);
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
-	int Add1 = Soc->AddReqHandler(Test1Req, (StkWebAppExec*)Test1Hndl);
-	StkObject* Test2Req = StkObject::CreateObjectFromXml(_T("<First>Shinya</First>"), &ErrorCode);
+	int Add1 = Soc->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/bbb/"), (StkWebAppExec*)Test1Hndl);
 	StkWebAppTest2* Test2Hndl = new StkWebAppTest2();
-	int Add2 = Soc->AddReqHandler(Test2Req, (StkWebAppExec*)Test2Hndl);
-	StkObject* Test3Req = new StkObject(_T("D3a"), _T("test"));
+	int Add2 = Soc->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/ccc/"), (StkWebAppExec*)Test2Hndl);
 	StkWebAppTest3* Test3Hndl = new StkWebAppTest3();
-	int Add3 = Soc->AddReqHandler(Test3Req, (StkWebAppExec*)Test3Hndl);
+	int Add3 = Soc->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/ddd/"), (StkWebAppExec*)Test3Hndl);
 
 	SendTestDataCount = 0;
 	////////// Main logic starts
@@ -176,9 +180,9 @@ void ReqResTest1()
 	}
 	////////// Main logic ends
 
-	int Del1 = Soc->DeleteReqHandler(Test1Req);
-	int Del2 = Soc->DeleteReqHandler(Test2Req);
-	int Del3 = Soc->DeleteReqHandler(Test3Req);
+	int Del1 = Soc->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/bbb/"));
+	int Del2 = Soc->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/ccc/"));
+	int Del3 = Soc->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/ddd/"));
 
 	delete Soc;
 
@@ -284,23 +288,19 @@ void AddDeleteReqHandlerTest()
 	StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, _T("localhost"), 8081);
 	StkWebApp* TmpApp2 = new StkWebApp(TmpIds2, 3, _T("localhost"), 8082);
 
-	StkObject* Test1Req = new StkObject(_T("Test"), _T("Test"));
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
-	int Add1 = TmpApp1->AddReqHandler(Test1Req, (StkWebAppExec*)Test1Hndl);
+	int Add1 = TmpApp1->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"), (StkWebAppExec*)Test1Hndl);
 
-	StkObject* Test2Req = new StkObject(_T("Test"), _T("Test"));
 	StkWebAppTest2* Test2Hndl = new StkWebAppTest2();
-	int Add2 = TmpApp1->AddReqHandler(Test2Req, (StkWebAppExec*)Test2Hndl);
+	int Add2 = TmpApp1->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"), (StkWebAppExec*)Test2Hndl);
 
-	StkObject* Test3Req = new StkObject(_T("Test"), _T("Test"));
 	StkWebAppTest3* Test3Hndl = new StkWebAppTest3();
-	int Add3 = TmpApp2->AddReqHandler(Test3Req, (StkWebAppExec*)Test3Hndl);
+	int Add3 = TmpApp2->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"), (StkWebAppExec*)Test3Hndl);
 
-	int Del1 = TmpApp1->DeleteReqHandler(Test1Req);
-	int Del2 = TmpApp1->DeleteReqHandler(Test2Req);
-	delete Test2Req;
+	int Del1 = TmpApp1->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"));
+	int Del2 = TmpApp1->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"));
 	delete Test2Hndl;
-	int Del3 = TmpApp2->DeleteReqHandler(Test3Req);
+	int Del3 = TmpApp2->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"));
 
 	delete TmpApp1;
 	delete TmpApp2;

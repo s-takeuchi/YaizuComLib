@@ -3,5 +3,5 @@
 
 class StkWebAppTest1 : StkWebAppExec
 {
-	StkObject* Execute(StkObject*);
+	StkObject* Execute(StkObject*, int, TCHAR[128], int*);
 };

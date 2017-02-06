@@ -25,10 +25,9 @@ public:
 	int WebThreadCount;
 	int WebThreadIds[MAX_THREAD_COUNT];
 
-	int ReqHandlerCount;
-	StkObject* Req[MAX_REQHANDLER_COUNT];
+	int HandlerCount;
 	int HandlerMethod[MAX_REQHANDLER_COUNT];
-	TCHAR HanderUrlPath[MAX_REQHANDLER_COUNT][128];
+	TCHAR HandlerUrlPath[MAX_REQHANDLER_COUNT][128];
 	StkWebAppExec* Handler[MAX_REQHANDLER_COUNT];
 
 public:
@@ -43,8 +42,6 @@ public:
 
 	static int ElemStkThreadMainRecv(int);
 
-	int AddReqHandler(StkObject*, StkWebAppExec*);
-	int DeleteReqHandler(StkObject*);
 	int AddReqHandler(int, TCHAR[128], StkWebAppExec*);
 	int DeleteReqHandler(int, TCHAR[128]);
 };
@@ -250,51 +247,44 @@ int StkWebApp::Impl::ElemStkThreadMainRecv(int Id)
 	return Obj->ThreadLoop(Id);
 }
 
-int StkWebApp::Impl::AddReqHandler(StkObject* ReqObj, StkWebAppExec* HandlerObj)
+int StkWebApp::Impl::AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)
 {
 	EnterCriticalSection(&ReqHandlerCs);
-	for (int Loop = 0; Loop < ReqHandlerCount; Loop++) {
-		if (ReqObj->Equals(Req[Loop]) == TRUE) {
+	for (int Loop = 0; Loop < HandlerCount; Loop++) {
+		if (Method == HandlerMethod[Loop] && lstrcmp(UrlPath, HandlerUrlPath[Loop]) == 0) {
 			LeaveCriticalSection(&ReqHandlerCs);
 			return -1;
 		}
 	}
-	Req[ReqHandlerCount] = ReqObj;
-	Handler[ReqHandlerCount] = HandlerObj;
-	ReqHandlerCount++;
+	HandlerMethod[HandlerCount] = Method;
+	lstrcpy(HandlerUrlPath[HandlerCount], UrlPath);
+	Handler[HandlerCount] = HandlerObj;
+	HandlerCount++;
 	LeaveCriticalSection(&ReqHandlerCs);
-	return ReqHandlerCount;
-}
-
-int StkWebApp::Impl::AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)
-{
-	return ReqHandlerCount;
-}
-
-int StkWebApp::Impl::DeleteReqHandler(StkObject* ReqObj)
-{
-	EnterCriticalSection(&ReqHandlerCs);
-	for (int Loop = 0; Loop < ReqHandlerCount; Loop++) {
-		if (Req[Loop] != ReqObj) {
-			continue;
-		}
-		delete Req[Loop];
-		delete Handler[Loop];
-		for (int Loop2 = Loop; Loop2 < ReqHandlerCount - 1; Loop2++) {
-			Req[Loop2] = Req[Loop2 + 1];
-			Handler[Loop2] = Handler[Loop2 + 1];
-		}
-		ReqHandlerCount--;
-		LeaveCriticalSection(&ReqHandlerCs);
-		return ReqHandlerCount;
-	}
-	LeaveCriticalSection(&ReqHandlerCs);
-	return -1;
+	return HandlerCount;
 }
 
 int StkWebApp::Impl::DeleteReqHandler(int Method, TCHAR UrlPath[128])
 {
-	return ReqHandlerCount;
+	EnterCriticalSection(&ReqHandlerCs);
+	for (int Loop = 0; Loop < HandlerCount; Loop++) {
+		if (Method != HandlerMethod[Loop] || lstrcmp(UrlPath, HandlerUrlPath[Loop]) != 0) {
+			continue;
+		}
+		HandlerMethod[Loop] = STKWEBAPP_METHOD_UNDEFINED;
+		lstrcpy(HandlerUrlPath[Loop], _T(""));
+		delete Handler[Loop];
+		for (int Loop2 = Loop; Loop2 < HandlerCount - 1; Loop2++) {
+			HandlerMethod[Loop2] = HandlerMethod[Loop2 + 1];
+			lstrcpy(HandlerUrlPath[Loop2], HandlerUrlPath[Loop2 + 1]);
+			Handler[Loop2] = Handler[Loop2 + 1];
+		}
+		HandlerCount--;
+		LeaveCriticalSection(&ReqHandlerCs);
+		return HandlerCount;
+	}
+	LeaveCriticalSection(&ReqHandlerCs);
+	return -1;
 }
 
 BOOL StkWebApp::Contains(int ThreadId)
@@ -312,29 +302,32 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	int XmlJsonType;
 	int Method;
 	TCHAR UrlPath[512];
+	int ResultCode;
+
 	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath);
-	if (StkObjReq == NULL) {
-		if (XmlJsonType == 0) {
-			int ErrorCode;
-			StkObject* TmpObj = StkObject::CreateObjectFromXml(_T("<body><h1>Hello, World</h1></body>"), &ErrorCode);
-			pImpl->SendResponse(TmpObj, ThreadId, XmlJsonType);
-			delete TmpObj;
-		}
-	} else {
-		StkObject* StkObjRes = NULL;
-		for (int Loop = 0; Loop < pImpl->ReqHandlerCount; Loop++) {
-			if (StkObjReq->Contains(pImpl->Req[Loop]) != NULL) {
-				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq);
-				break;
-			}
-		}
-		if (StkObjRes == NULL) {
-			StkObjRes = new StkObject(_T(""));
-		}
-		pImpl->SendResponse(StkObjRes, ThreadId, XmlJsonType);
-		delete StkObjReq;
-		delete StkObjRes;
+	if (StkObjReq == NULL && Method == StkWebApp::STKWEBAPP_METHOD_UNDEFINED && XmlJsonType == -1) {
+		return 0;
 	}
+
+	StkObject* StkObjRes = NULL;
+	BOOL FndFlag = FALSE;
+	for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
+		if (Method & pImpl->HandlerMethod[Loop] && lstrcmp(UrlPath, pImpl->HandlerUrlPath[Loop]) == 0) {
+			StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode);
+			FndFlag = TRUE;
+			break;
+		}
+	}
+	if (FndFlag == FALSE) {
+		int ErrorCode;
+		StkObjRes = StkObject::CreateObjectFromXml(_T("<body><h1>Hello, World!!</h1></body>"), &ErrorCode);
+	}
+	pImpl->SendResponse(StkObjRes, ThreadId, XmlJsonType);
+	delete StkObjRes;
+	if (StkObjReq != NULL) {
+		delete StkObjReq;
+	}
+
 	return 0;
 }
 
@@ -353,7 +346,7 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	pImpl = new Impl;
 	InitializeCriticalSection(&pImpl->ReqHandlerCs);
 	pImpl->WebThreadCount = 0;
-	pImpl->ReqHandlerCount = 0;
+	pImpl->HandlerCount = 0;
 
 	// Update array of StkWebApp
 	if (StkWebAppCount < MAX_IMPL_COUNT) {
@@ -446,19 +439,9 @@ StkWebApp::~StkWebApp()
 	delete pImpl;
 };
 
-int StkWebApp::AddReqHandler(StkObject* ReqObj, StkWebAppExec* HandlerObj)
-{
-	return pImpl->AddReqHandler(ReqObj, HandlerObj);
-}
-
 int StkWebApp::AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)
 {
 	return pImpl->AddReqHandler(Method, UrlPath, HandlerObj);
-}
-
-int StkWebApp::DeleteReqHandler(StkObject* ReqObj)
-{
-	return pImpl->DeleteReqHandler(ReqObj);
 }
 
 int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[128])
