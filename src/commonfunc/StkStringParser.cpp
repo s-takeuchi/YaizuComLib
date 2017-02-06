@@ -3,17 +3,17 @@
 #include <shlwapi.h>
 #include "StkStringParser.h"
 
-int StkStringParser::ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512])
+int StkStringParser::ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, NULL, NULL, NULL);
 }
 
-int StkStringParser::ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512])
+int StkStringParser::ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr2, NULL, NULL);
 }
 
-int StkStringParser::ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512], TCHAR OutStr3[512])
+int StkStringParser::ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr2, OutStr3, NULL);
 }
@@ -23,7 +23,7 @@ int StkStringParser::ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 // OutputStr3 [out] : 3rd Parameter acquired (512 bytes as max)
 // OutputStr4 [out] : 4th Parameter acquired (512 bytes as max)
 // Return: Result code (0: Ended normaly, -1: Invalid OriginStrWk or FormatWk was presented)
-int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR OutStr1[512], TCHAR OutStr2[512], TCHAR OutStr3[512], TCHAR OutStr4[512])
+int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3, TCHAR* OutStr4)
 {
 	// Check the presented input parameters
 	if (OriginStr == NULL || *OriginStr == '\0' ||

@@ -162,10 +162,10 @@ int StkStringParserTest()
 		printf("[StkStringParser] normal: For multi bytes characters ...");
 		TCHAR Target[100] = _T("“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~");
 		TCHAR Format[100] = _T("%é³–£é±é²%˜Vá’j—%‚P‚Xˆê‹ã%");
-		TCHAR OutStr1[256];
-		TCHAR OutStr2[256];
-		TCHAR OutStr3[256];
-		TCHAR OutStr4[256];
+		TCHAR OutStr1[32];
+		TCHAR OutStr2[32];
+		TCHAR OutStr3[32];
+		TCHAR OutStr4[32];
 		StkStringParser::ParseInto4Params(Target, Format, _T('%'), OutStr1, OutStr2, OutStr3, OutStr4);
 		if (lstrcmp(OutStr1, _T("“Œ¼“ì–k")) != 0 || lstrcmp(OutStr2, _T("ŒÃ¡“Œ¼")) != 0 ||
 			lstrcmp(OutStr3, _T("ÔÂ”’•")) != 0 || lstrcmp(OutStr4, _T("t‰ÄH“~")) != 0) {
@@ -178,8 +178,8 @@ int StkStringParserTest()
 		printf("[StkStringParser] abnormal: Fetching empty ...");
 		TCHAR Target[100] = _T("“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~");
 		TCHAR Format[100] = _T("“Œ¼˜Vá%’j—ÔÂ%”’•‚P‚X");
-		TCHAR OutStr1[256];
-		TCHAR OutStr2[256];
+		TCHAR OutStr1[64];
+		TCHAR OutStr2[64];
 		StkStringParser::ParseInto2Params(Target, Format, _T('%'), OutStr1, OutStr2);
 		if (lstrcmp(OutStr1, _T("")) != 0 || lstrcmp(OutStr2, _T("")) != 0) {
 			printf("NG\r\n");
@@ -215,9 +215,9 @@ int StkStringParserTest()
 		printf("[StkStringParser] abnormal: Sequential tripple targets are specified ...");
 		TCHAR Target[100] = _T("“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~");
 		TCHAR Format[100] = _T("é³–£é±é²%%%˜Vá’j—");
-		TCHAR OutStr1[256];
-		TCHAR OutStr2[256];
-		TCHAR OutStr3[256];
+		TCHAR OutStr1[64];
+		TCHAR OutStr2[64];
+		TCHAR OutStr3[64];
 		StkStringParser::ParseInto4Params(Target, Format, _T('%'), OutStr1, OutStr2, OutStr3, NULL);
 		if (lstrcmp(OutStr1, _T("")) != 0 || lstrcmp(OutStr2, _T("")) != 00 || lstrcmp(OutStr3, _T("")) != 0) {
 			printf("NG\r\n");
