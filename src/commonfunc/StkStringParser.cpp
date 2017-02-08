@@ -18,11 +18,13 @@ int StkStringParser::ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr2, OutStr3, NULL);
 }
 
-// OutputStr1 [out] : 1st Parameter acquired (512 bytes as max)
-// OutputStr2 [out] : 2nd Parameter acquired (512 bytes as max)
-// OutputStr3 [out] : 3rd Parameter acquired (512 bytes as max)
-// OutputStr4 [out] : 4th Parameter acquired (512 bytes as max)
-// Return: Result code (0: Ended normaly, -1: Invalid OriginStrWk or FormatWk was presented)
+// OutputStr1 [out] : 1st Parameter acquired
+// OutputStr2 [out] : 2nd Parameter acquired
+// OutputStr3 [out] : 3rd Parameter acquired
+// OutputStr4 [out] : 4th Parameter acquired
+// Return: Result code (0: Number of parameters to be set differs from the number of targets,
+//                      1: Number of parameters to be set is same as the number of targets,
+//                     -1: Invalid OriginStrWk or FormatWk was presented)
 int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3, TCHAR* OutStr4)
 {
 	// Check the presented input parameters
@@ -34,6 +36,14 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 	int OriginStrLen = lstrlen(OriginStr);
 	if (FormatLen <= 0 || FormatLen > OriginStrLen) {
 		return -1;
+	}
+
+	// Get the number of target existence in the presented string
+	int NumberOfTargets = 0;
+	for (int Loop = 0; Format[Loop] != '\0'; Loop++) {
+		if (Format[Loop] == Target) {
+			NumberOfTargets++;
+		}
 	}
 
 	// Make work variables and configure them
@@ -99,6 +109,7 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 	TCHAR* OutputBegin[4];
 	TCHAR* OutputEnd[4];
 	TCHAR* CurrStr;
+	int NumberOfParamSet = 0;
 	for (Loop = 0; Loop < 4; Loop++) {
 		if (Loop == 0) {
 			CurrStr = OriginStrWk;
@@ -117,18 +128,26 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 		}
 		if (Loop == 0 && OutStr1 != NULL && OutputEnd[0] != NULL) {
 			lstrcpyn(OutStr1, OutputBegin[0], OutputEnd[0] - OutputBegin[0] + 1);
+			NumberOfParamSet++;
 		}
 		if (Loop == 1 && OutStr2 != NULL && OutputEnd[1] != NULL) {
 			lstrcpyn(OutStr2, OutputBegin[1], OutputEnd[1] - OutputBegin[1] + 1);
+			NumberOfParamSet++;
 		}
 		if (Loop == 2 && OutStr3 != NULL && OutputEnd[2] != NULL) {
 			lstrcpyn(OutStr3, OutputBegin[2], OutputEnd[2] - OutputBegin[2] + 1);
+			NumberOfParamSet++;
 		}
 		if (Loop == 3 && OutStr4 != NULL && OutputEnd[3] != NULL) {
 			lstrcpyn(OutStr4, OutputBegin[3], OutputEnd[3] - OutputBegin[3] + 1);
+			NumberOfParamSet++;
 		}
 	}
 	delete OriginStrWk;
 	delete FormatWk;
+
+	if (NumberOfTargets == NumberOfParamSet) {
+		return 1;
+	}
 	return 0;
 }

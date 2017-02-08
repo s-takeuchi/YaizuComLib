@@ -75,7 +75,9 @@ StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 <tr><td>OutStr2[出力]</td><td>Format内に存在する2番目のTargetと対応する文字列を取得する。</td></tr>
 <tr><td>OutStr3[出力]</td><td>Format内に存在する3番目のTargetと対応する文字列を取得する。</td></tr>
 <tr><td>OutStr4[出力]</td><td>Format内に存在する4番目のTargetと対応する文字列を取得する。</td></tr>
-<tr><td>[戻り値]</td><td>Result code (0:正常終了, -1:異常終了 (OriginStrがNULL, FormatがNULL, またはFormatがOriginStrよりも長い文字列となっている)</td></tr>
+<tr><td>[戻り値]</td><td>Result code<br/>0:Format内に存在するTargetの数と取得できたOutStrの数が一致しない,<br/>
+-1:異常終了 (OriginStrがNULL, FormatがNULL, またはFormatがOriginStrよりも長い文字列となっている),<br/>
+1:Format内に存在するTargetの数と取得できたOutStrの数が一致する</td></tr>
 </table>
 </div><p>
 
