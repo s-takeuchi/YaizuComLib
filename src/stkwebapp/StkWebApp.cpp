@@ -37,7 +37,7 @@ public:
 	BYTE* WideCharToUtf8(TCHAR*);
 
 	BYTE* MakeHttpHeader(int, int, int);
-	StkObject* RecvRequest(int, int*, int*, TCHAR[512]);
+	StkObject* RecvRequest(int, int*, int*, TCHAR[128]);
 	void SendResponse(StkObject*, int, int);
 
 	static int ElemStkThreadMainRecv(int);
@@ -143,7 +143,7 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	return (BYTE*)HeaderData;
 }
 
-StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, TCHAR UrlPath[512])
+StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, TCHAR UrlPath[128])
 {
 	*XmlJsonType = -1;
 	*Method = STKWEBAPP_METHOD_UNDEFINED;
@@ -167,7 +167,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 
 	//// Acquire METHOD and URL path begin ////
 	*Method = STKWEBAPP_METHOD_UNDEFINED;
-	TCHAR MethodStr[512];
+	TCHAR MethodStr[16];
 	StkStringParser::ParseInto2Params(DatWc, _T("# # HTTP"), _T('#'), MethodStr, UrlPath);
 	if (lstrcmp(MethodStr, _T("GET")) == 0) {
 		*Method = STKWEBAPP_METHOD_GET;
@@ -301,7 +301,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 {
 	int XmlJsonType;
 	int Method;
-	TCHAR UrlPath[512];
+	TCHAR UrlPath[128];
 	int ResultCode;
 
 	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath);
@@ -312,7 +312,9 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	StkObject* StkObjRes = NULL;
 	BOOL FndFlag = FALSE;
 	for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
-		if (Method & pImpl->HandlerMethod[Loop] && lstrcmp(UrlPath, pImpl->HandlerUrlPath[Loop]) == 0) {
+		TCHAR Param[4][128] = {_T(""), _T(""), _T(""), _T("")};
+		if (Method & pImpl->HandlerMethod[Loop] &&
+			StkStringParser::ParseInto4Params(UrlPath, pImpl->HandlerUrlPath[Loop], _T('$'), Param[0], Param[1], Param[2], Param[3]) == 1) {
 			StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode);
 			FndFlag = TRUE;
 			break;
