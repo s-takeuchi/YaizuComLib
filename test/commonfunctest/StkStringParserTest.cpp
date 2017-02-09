@@ -237,6 +237,21 @@ int StkStringParserTest()
 		printf("OK\r\n");
 	}
 	{
+		printf("[StkStringParser] abnormal: Unmatch scenario (3) ...");
+		TCHAR Target[100] = _T("“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~");
+		TCHAR Format[100] = _T("‚ ‚¢‚¤‚¦‚¨‚©‚«‚­‚¯‚±‚³‚µ‚·‚¹‚»‚½‚¿‚Â‚Ä‚Æ");
+		TCHAR OutStr1[16];
+		TCHAR OutStr2[16];
+		TCHAR OutStr3[16];
+		TCHAR OutStr4[16];
+		int Ret = StkStringParser::ParseInto4Params(Target, Format, _T('$'), OutStr1, OutStr2, OutStr3, OutStr4);
+		if (OutStr1[0] != '\0' || OutStr2[0] != '\0' || OutStr3[0] != '\0' || OutStr4[0] != '\0' || Ret != 0) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
+	{
 		printf("[StkStringParser] abnormal: Specify all NULLs ...");
 		TCHAR Target[100] = _T("“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~");
 		TCHAR Format[100] = _T("%é³–£é±é²%˜Vá’j—%‚P‚Xˆê‹ã%");
