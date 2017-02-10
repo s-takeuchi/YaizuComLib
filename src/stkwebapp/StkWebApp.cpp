@@ -168,7 +168,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	//// Acquire METHOD and URL path begin ////
 	*Method = STKWEBAPP_METHOD_UNDEFINED;
 	TCHAR MethodStr[16];
-	StkStringParser::ParseInto2Params(DatWc, _T("# # HTTP"), _T('#'), MethodStr, UrlPath);
+	StkStringParser::ParseInto3Params(DatWc, _T("# # HTTP#"), _T('#'), MethodStr, UrlPath, NULL);
 	if (lstrcmp(MethodStr, _T("GET")) == 0) {
 		*Method = STKWEBAPP_METHOD_GET;
 	} else if (lstrcmp(MethodStr, _T("HEAD")) == 0) {
@@ -382,6 +382,7 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 		wsprintf(Name, _T("Recv-%d"), Loop);
 		wsprintf(Desc, _T("Worker thread"), Loop);
 		AddStkThread(pImpl->WebThreadIds[Loop], Name, Desc, NULL, NULL, Impl::ElemStkThreadMainRecv, NULL, NULL);
+		SetStkThreadInterval(pImpl->WebThreadIds[Loop], 1);
 	}
 
 	// Start threads
