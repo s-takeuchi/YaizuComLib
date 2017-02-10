@@ -400,6 +400,14 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 
 StkWebApp::~StkWebApp()
 {
+	// Close and delete socket
+	if (pImpl->WebThreadCount >= 1) {
+		for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
+			StkSocket_Close(pImpl->WebThreadIds[Loop], TRUE);
+			StkSocket_DeleteInfo(pImpl->WebThreadIds[Loop]);
+		}
+	}
+
 	// Stop threads
 	StopSpecifiedStkThreads(pImpl->WebThreadIds, pImpl->WebThreadCount);
 	BOOL ThreadsStopped = FALSE;
@@ -416,14 +424,6 @@ StkWebApp::~StkWebApp()
 	// Delete threads
 	for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
 		DeleteStkThread(pImpl->WebThreadIds[Loop]);
-	}
-
-	// Close and delete socket
-	if (pImpl->WebThreadCount >= 1) {
-		for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
-			StkSocket_Close(pImpl->WebThreadIds[Loop], TRUE);
-			StkSocket_DeleteInfo(pImpl->WebThreadIds[Loop]);
-		}
 	}
 
 	// Update array of StkWebApp
