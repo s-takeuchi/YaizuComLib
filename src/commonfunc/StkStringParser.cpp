@@ -59,7 +59,7 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 		}
 	}
 	if (NumberOfTargets == 0) {
-		if (StrStr(OriginStr, Format) != 0) {
+		if (lstrcmp(OriginStr, Format) == 0) {
 			return 1;
 		} else {
 			return 0;
@@ -70,20 +70,16 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 	TCHAR* OriginStrWk = new TCHAR[OriginStrLen + 3];
 	TCHAR* FormatWk = new TCHAR[FormatLen + 3];
 	int Offset = 0;
-	if (Format[0] == Target) {
-		Offset++;
-		FormatWk[0] = (Target != _T('#'))? _T('#') : _T('$');
-		OriginStrWk[0] = (Target != _T('#'))? _T('#') : _T('$');
-	}
+	Offset++;
+	FormatWk[0] = (Target != _T('#'))? _T('#') : _T('$');
+	OriginStrWk[0] = (Target != _T('#'))? _T('#') : _T('$');
 	lstrcpy(&OriginStrWk[Offset], OriginStr);
 	lstrcpy(&FormatWk[Offset], Format);
-	if (Format[FormatLen - 1] == Target) {
-		Offset++;
-		FormatWk[FormatLen - 1 + Offset] = (Target != _T('#'))? _T('#') : _T('$');
-		OriginStrWk[OriginStrLen - 1 + Offset] = (Target != _T('#'))? _T('#') : _T('$');
-		FormatWk[FormatLen + Offset] = _T('\0');
-		OriginStrWk[OriginStrLen + Offset] = _T('\0');
-	}
+	Offset++;
+	FormatWk[FormatLen - 1 + Offset] = (Target != _T('#'))? _T('#') : _T('$');
+	OriginStrWk[OriginStrLen - 1 + Offset] = (Target != _T('#'))? _T('#') : _T('$');
+	FormatWk[FormatLen + Offset] = _T('\0');
+	OriginStrWk[OriginStrLen + Offset] = _T('\0');
 
 	// Configure SearchPtr and SearchEndPtr
 	TCHAR* SearchPtr[5] = {NULL, NULL, NULL, NULL, NULL};

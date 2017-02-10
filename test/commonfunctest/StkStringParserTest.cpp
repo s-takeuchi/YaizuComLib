@@ -89,7 +89,7 @@ int StkStringParserTest()
 		TCHAR OutStr3[256];
 		TCHAR OutStr4[256];
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, _T('&'), OutStr1, OutStr2, OutStr3, OutStr4);
-		if (lstrcmp(OutStr1, _T("45+-*/xyz6789QW")) != 0 || Ret != 1) {
+		if (lstrcmp(OutStr1, _T("")) != 0 || lstrcmp(OutStr2, _T("")) != 0 || Ret != 0) {
 			printf("NG\r\n");
 			exit(0);
 		}
@@ -187,11 +187,11 @@ int StkStringParserTest()
 		printf("OK\r\n");
 	}
 	{
-		printf("[StkStringParser] normal: Partial without targets is presented ...");
+		printf("[StkStringParser] normal: Partial string without targets is presented ...");
 		TCHAR Target[100] = _T("“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~");
 		TCHAR Format[100] = _T("é³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ã");
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, _T('%'), NULL, NULL, NULL, NULL);
-		if (Ret != 1) {
+		if (Ret != 0) {
 			printf("NG\r\n");
 			exit(0);
 		}
