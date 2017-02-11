@@ -66,6 +66,8 @@
 				SubSystem="1"
 				HeapReserveSize="100000000"
 				HeapCommitSize="100000000"
+				StackReserveSize="100000000"
+				StackCommitSize="100000000"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -141,6 +143,8 @@
 				SubSystem="1"
 				HeapReserveSize="100000000"
 				HeapCommitSize="100000000"
+				StackReserveSize="100000000"
+				StackCommitSize="100000000"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"

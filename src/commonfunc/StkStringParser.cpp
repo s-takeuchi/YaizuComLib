@@ -67,19 +67,17 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 	}
 
 	// Make work variables and configure them
+	// Note that 0xFF20 of UTF-16 is internally used as delimiter code.
 	TCHAR* OriginStrWk = new TCHAR[OriginStrLen + 3];
 	TCHAR* FormatWk = new TCHAR[FormatLen + 3];
-	int Offset = 0;
-	Offset++;
-	FormatWk[0] = (Target != _T('#'))? _T('#') : _T('$');
-	OriginStrWk[0] = (Target != _T('#'))? _T('#') : _T('$');
-	lstrcpy(&OriginStrWk[Offset], OriginStr);
-	lstrcpy(&FormatWk[Offset], Format);
-	Offset++;
-	FormatWk[FormatLen - 1 + Offset] = (Target != _T('#'))? _T('#') : _T('$');
-	OriginStrWk[OriginStrLen - 1 + Offset] = (Target != _T('#'))? _T('#') : _T('$');
-	FormatWk[FormatLen + Offset] = _T('\0');
-	OriginStrWk[OriginStrLen + Offset] = _T('\0');
+	FormatWk[0] = 0xff20;
+	OriginStrWk[0] = 0xff20;
+	lstrcpy(&OriginStrWk[1], OriginStr);
+	lstrcpy(&FormatWk[1], Format);
+	FormatWk[FormatLen + 1] = 0xff20;
+	OriginStrWk[OriginStrLen + 1] = 0xff20;
+	FormatWk[FormatLen + 2] = _T('\0');
+	OriginStrWk[OriginStrLen + 2] = _T('\0');
 
 	// Configure SearchPtr and SearchEndPtr
 	TCHAR* SearchPtr[5] = {NULL, NULL, NULL, NULL, NULL};
@@ -101,10 +99,13 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 	SearchEndPtr[SearchPtrIndex - 1] = &FormatWk[Loop];
 
 	// Make SearchString from SearchPtr and SearchEndPtr
-	TCHAR SearchString[5][1024] = {_T(""), _T(""), _T(""), _T(""), _T("")};
+	TCHAR* SearchString[5];
 	for (Loop = 0; Loop < 5; Loop++) {
+		SearchString[Loop] = new TCHAR[SearchEndPtr[Loop] - SearchPtr[Loop] + 2];
 		if (SearchPtr[Loop] != NULL && SearchEndPtr[Loop] != NULL) {
 			lstrcpyn(SearchString[Loop], SearchPtr[Loop], SearchEndPtr[Loop] - SearchPtr[Loop] + 1);
+		} else {
+			lstrcpy(SearchString[Loop], _T(""));
 		}
 	}
 
@@ -130,21 +131,30 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 			OutputEnd[Loop] = NULL;
 		}
 		if (Loop == 0 && OutStr1 != NULL && OutputBegin[0] != NULL && OutputEnd[0] != NULL) {
-			lstrcpyn(OutStr1, OutputBegin[0], OutputEnd[0] - OutputBegin[0] + 1);
+			int TmpLen = OutputEnd[0] - OutputBegin[0] + 1;
+			lstrcpyn(OutStr1, OutputBegin[0], TmpLen);
 			NumberOfParamSet++;
 		}
 		if (Loop == 1 && OutStr2 != NULL && OutputBegin[1] != NULL && OutputEnd[1] != NULL) {
-			lstrcpyn(OutStr2, OutputBegin[1], OutputEnd[1] - OutputBegin[1] + 1);
+			int TmpLen = OutputEnd[1] - OutputBegin[1] + 1;
+			lstrcpyn(OutStr2, OutputBegin[1], TmpLen);
 			NumberOfParamSet++;
 		}
 		if (Loop == 2 && OutStr3 != NULL && OutputBegin[2] != NULL && OutputEnd[2] != NULL) {
-			lstrcpyn(OutStr3, OutputBegin[2], OutputEnd[2] - OutputBegin[2] + 1);
+			int TmpLen = OutputEnd[2] - OutputBegin[2] + 1;
+			lstrcpyn(OutStr3, OutputBegin[2], TmpLen);
 			NumberOfParamSet++;
 		}
 		if (Loop == 3 && OutStr4 != NULL && OutputBegin[3] != NULL && OutputEnd[3] != NULL) {
-			lstrcpyn(OutStr4, OutputBegin[3], OutputEnd[3] - OutputBegin[3] + 1);
+			int TmpLen = OutputEnd[3] - OutputBegin[3] + 1;
+			lstrcpyn(OutStr4, OutputBegin[3], TmpLen);
 			NumberOfParamSet++;
 		}
+	}
+
+	// Release the allocated memory
+	for (Loop = 0; Loop < 5; Loop++) {
+		delete SearchString[Loop];
 	}
 	delete OriginStrWk;
 	delete FormatWk;

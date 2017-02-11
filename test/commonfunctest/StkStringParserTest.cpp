@@ -198,6 +198,56 @@ int StkStringParserTest()
 		printf("OK\r\n");
 	}
 	{
+		printf("[StkStringParser] normal: Large data processing ...");
+		TCHAR Target[100000] = _T("");
+		TCHAR Format[100000] = _T("");
+		TCHAR TargetPart1[20000];
+		TCHAR TargetPart2[20000];
+		TCHAR TargetPart3[20000];
+		TCHAR TargetPart4[20000];
+		TCHAR TargetPart5[20000];
+		TCHAR OutStr1[20001];
+		TCHAR OutStr2[20001];
+		TCHAR OutStr3[20001];
+		TCHAR Abc[20] = {_T('a'), _T('b'), _T('c'), _T('d'), _T('e'), 
+						_T('1'), _T('2'), _T('3'), _T('4'), _T('5'), 
+						_T('•—'), _T('—Ñ'), _T('‰Î'), _T('ŽR'), _T('x'), 
+						_T('y'), _T('é³'), _T('–£'), _T('é±'), _T('é²')
+		};
+
+		for (int Loop = 0; Loop < 19999; Loop++) {
+			TargetPart1[Loop] = Abc[rand() % 20];
+			TargetPart2[Loop] = Abc[rand() % 20];
+			TargetPart3[Loop] = Abc[rand() % 20];
+			TargetPart4[Loop] = Abc[rand() % 20];
+			TargetPart5[Loop] = Abc[rand() % 20];
+		}
+		TargetPart1[19999] = _T('\0');
+		TargetPart2[19999] = _T('\0');
+		TargetPart3[19999] = _T('\0');
+		TargetPart4[19999] = _T('\0');
+		TargetPart5[19999] = _T('\0');
+
+		lstrcat(Target, TargetPart1);
+		lstrcat(Target, TargetPart2);
+		lstrcat(Target, TargetPart3);
+		lstrcat(Target, TargetPart4);
+		lstrcat(Target, TargetPart5);
+
+		lstrcat(Format, _T("!"));
+		lstrcat(Format, TargetPart2);
+		lstrcat(Format, _T("!"));
+		lstrcat(Format, TargetPart4);
+		lstrcat(Format, _T("!"));
+
+		int Ret = StkStringParser::ParseInto3Params(Target, Format, _T('!'), OutStr1, OutStr2, OutStr3);
+		if (Ret != 1 || lstrcmp(OutStr1, TargetPart1) != 0 || lstrcmp(OutStr2, TargetPart3) != 0 || lstrcmp(OutStr3, TargetPart5) != 0) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
+	{
 		printf("[StkStringParser] abnormal: Fetching empty ...");
 		TCHAR Target[100] = _T("“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜VŽá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~");
 		TCHAR Format[100] = _T("“Œ¼˜VŽá%’j—ÔÂ%”’•‚P‚X");
