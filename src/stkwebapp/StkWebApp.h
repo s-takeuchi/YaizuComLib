@@ -1,7 +1,6 @@
 #pragma once
 
 #include <windows.h>
-#include "..\commonfunc\StkObject.h"
 #include "StkWebAppExec.h"
 
 class StkWebApp
