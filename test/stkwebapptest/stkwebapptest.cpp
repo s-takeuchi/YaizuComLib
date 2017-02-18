@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <shlwapi.h>
 #include <stdio.h>
+#include <string.h>
 #include <Psapi.h>
 #include "..\..\src\stkthread\stkthread.h"
 #include "..\..\src\commonfunc\StkObject.h"
@@ -112,6 +113,9 @@ BOOL SendTestData(int Id, char* Dat)
 	}
 	StkSocket_Disconnect(Id, Id, TRUE);
 	if (RetR <= 0) {
+		return FALSE;
+	}
+	if (strstr((char*)RecvDat, "200 OK") == 0) {
 		return FALSE;
 	}
 	return CompObjs((BYTE*)Dat, (BYTE*)RecvDat);

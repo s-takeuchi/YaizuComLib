@@ -21,12 +21,11 @@ public:
 	StkWebApp(int*, int, TCHAR*, int);
 	virtual ~StkWebApp();
 
-	static StkWebApp* GetStkWebAppByThreadId(int);
-
-	BOOL Contains(int);
-
-	int ThreadLoop(int);
-
 	int AddReqHandler(int, TCHAR[128], StkWebAppExec*);
 	int DeleteReqHandler(int, TCHAR[128]);
+
+	// Do not call APIs shown below. These are only internal use.
+	static StkWebApp* GetStkWebAppByThreadId(int);
+	BOOL Contains(int);
+	int ThreadLoop(int);
 };

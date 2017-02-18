@@ -38,7 +38,7 @@ public:
 
 	BYTE* MakeHttpHeader(int, int, int);
 	StkObject* RecvRequest(int, int*, int*, TCHAR[128]);
-	void SendResponse(StkObject*, int, int);
+	void SendResponse(StkObject*, int, int, int);
 
 	static int ElemStkThreadMainRecv(int);
 
@@ -96,6 +96,7 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	char* HeaderData = new char[1024];
 	strcpy_s(HeaderData, 1024, "");
 
+	char Status[32] = "";
 	char RespLine[64] = "";
 	char ContType[64] = "";
 	char ContLen[64] = "";
@@ -103,7 +104,21 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	char CacheCont[64] = "";
 	char Date[64] = "";
 
-	sprintf_s(RespLine, "HTTP/1.1 %d OK\r\n", ResultCode);
+	/***** Make response status begin *****/
+	switch (ResultCode) {
+	case 200:
+		strcpy_s(Status, 32, "OK");
+		break;
+	case 404:
+		strcpy_s(Status, 32, "Not Found");
+		break;
+	default:
+		strcpy_s(Status, 32, "Internal Server Error");
+		break;
+	};
+	sprintf_s(RespLine, "HTTP/1.1 %d %s\r\n", ResultCode, Status);
+	/***** Make response status end *****/
+
 	if (XmlJsonType == 1) {
 		strcpy_s(ContType, 64, "Content-Type: application/xml\r\n");
 	} else if (XmlJsonType == 2) {
@@ -114,14 +129,15 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	sprintf_s(ContLen, 64, "Content-Length: %d\r\n", DataLength);
 	sprintf_s(Connection, 64, "Connection: close\r\n");
 	sprintf_s(CacheCont, 64, "Cache-Control: no-cache\r\n");
-	// Make time string begin
+
+	/***** Make time string begin *****/
 	struct tm GmtTime;
 	__int64 Ltime;
 	_time64(&Ltime);
 	_gmtime64_s(&GmtTime, &Ltime);
 	char MonStr[12][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	char WdayStr[7][4] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-	sprintf_s(Date, 64, "%s, %02d %s %d %02d:%02d:%02d GMT\r\n",
+	sprintf_s(Date, 64, "Date: %s, %02d %s %d %02d:%02d:%02d GMT\r\n",
 		WdayStr[GmtTime.tm_wday],
 		GmtTime.tm_mday,
 		MonStr[GmtTime.tm_mon],
@@ -129,7 +145,7 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 		GmtTime.tm_hour,
 		GmtTime.tm_min,
 		GmtTime.tm_sec);
-	// Make time string end
+	/***** Make time string end *****/
 
 	strcat_s(HeaderData, 1024, RespLine);
 	strcat_s(HeaderData, 1024, ContType);
@@ -202,25 +218,29 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	return ReqObj;
 };
 
-void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType)
+void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType, int ResultCode)
 {
-	if (XmlJsonType != 0 &&XmlJsonType != 1 && XmlJsonType != 2) {
-		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
-		return;
-	}
-
+	BYTE* Dat = NULL;
+	int DatLength = 0;
 	TCHAR XmlOrJson[DATA_LEN] = _T("");
-	if (XmlJsonType == 1) {
-		Obj->ToXml(XmlOrJson, DATA_LEN);
-	} else if (XmlJsonType == 2) {
-		Obj->ToJson(XmlOrJson, DATA_LEN);
-	} else if (XmlJsonType == 0) {
-		Obj->ToXml(XmlOrJson, DATA_LEN);
-	}
-	BYTE* Dat = WideCharToUtf8(XmlOrJson);
-	int DatLength = strlen((char*)Dat);
 
-	BYTE* HeaderDat = MakeHttpHeader(200, strlen((char*)Dat), XmlJsonType);
+	if (XmlJsonType != 0 && XmlJsonType != 1 && XmlJsonType != 2) {
+		ResultCode = 500;
+	} else if ((XmlJsonType == 1 && Obj == NULL) || (XmlJsonType == 2 && Obj == NULL)) {
+		ResultCode = 500;
+	} else {
+		if (XmlJsonType == 1 && Obj != NULL) {
+			Obj->ToXml(XmlOrJson, DATA_LEN);
+		} else if (XmlJsonType == 2 && Obj != NULL) {
+			Obj->ToJson(XmlOrJson, DATA_LEN);
+		} else if (XmlJsonType == 0 && Obj != NULL) {
+			Obj->ToXml(XmlOrJson, DATA_LEN);
+		}
+		Dat = WideCharToUtf8(XmlOrJson);
+		DatLength = strlen((char*)Dat);
+	}
+
+	BYTE* HeaderDat = MakeHttpHeader(ResultCode, DatLength, XmlJsonType);
 	int HeaderDatLength = strlen((char*)HeaderDat);
 
 	int RespDatLength = DatLength + HeaderDatLength;
@@ -228,11 +248,15 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 
 	strcpy_s((char*)RespDat, RespDatLength + 1, "");
 	strcat_s((char*)RespDat, RespDatLength + 1, (char*)HeaderDat);
-	strcat_s((char*)RespDat, RespDatLength + 1, (char*)Dat);
+	if (Dat != NULL) {
+		strcat_s((char*)RespDat, RespDatLength + 1, (char*)Dat);
+	}
 
 	int RetD = StkSocket_Send(TargetId, TargetId, RespDat, RespDatLength);
 
-	delete Dat;
+	if (Dat != NULL) {
+		delete Dat;
+	}
 	delete HeaderDat;
 	delete RespDat;
 	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
@@ -305,6 +329,8 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	int ResultCode;
 
 	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath);
+
+	// If no request is received, return from this method.
 	if (StkObjReq == NULL && Method == StkWebApp::STKWEBAPP_METHOD_UNDEFINED && XmlJsonType == -1) {
 		return 0;
 	}
@@ -321,10 +347,12 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		}
 	}
 	if (FndFlag == FALSE) {
-		int ErrorCode;
-		StkObjRes = StkObject::CreateObjectFromXml(_T("<body><h1>Hello, World!!</h1></body>"), &ErrorCode);
+		ResultCode = 404;
 	}
-	pImpl->SendResponse(StkObjRes, ThreadId, XmlJsonType);
+	if (StkObjRes == NULL) {
+		XmlJsonType = 0;
+	}
+	pImpl->SendResponse(StkObjRes, ThreadId, XmlJsonType, ResultCode);
 	delete StkObjRes;
 	if (StkObjReq != NULL) {
 		delete StkObjReq;
