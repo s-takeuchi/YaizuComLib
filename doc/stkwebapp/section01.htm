@@ -6,23 +6,33 @@
 
 <BODY>
 <div id="container">
-<H1>1. XXX</H1>
-
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx<BR>
+<H1>1. StkWebAppCmd</H1>
 <P>
 
 
 
-<H2 ID="1.1">1.1 XXX</H2>
+<H2 ID="1.1">1.1 StkWebAppCmd概要</H2>
 <div class="topic">
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+StkWebAppCmdは，nginxおよびStkWebAppライブラリを利用するユーザープログラムを前提とした，
+Webアプリケーションの登録／削除／起動／停止を行うCLIです。主に以下の機能を提供します。<br/>
+<ul>
+<li>REST APIの動作のために，nginxおよびユーザーアプリケーションのConfigファイルを書き換える。</li>
+<li>nginxおよびユーザープログラムのConfigファイル，ユーザープログラムのリポジトリファイルのアクセス権限を緩和する。</li>
+<li>nginxをファイアウォールの例外として登録する。</li>
+<li>StkWebAppCmdをサービスとして登録する。</li>
+<li>StkWebAppCmdがサービスとして起動したときに，nginxおよびユーザープログラムのプロセスを起動する。</li>
+<li>StkWebAppCmdがサービスとして停止したときに，nginxおよびユーザープログラムのプロセスを停止する。</li>
+<li>StkWebAppCmdのサービスを削除する。</li>
+<li>nginxをファイアウォールの例外から削除する。</li>
+</ul>
 </div><p>
 
 
 
-<H2 ID="1.2">1.2 XXX</H2>
+<H2 ID="1.2">1.2 StkWebAppCmdの要件</H2>
 <div class="topic">
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+<img src="stkwebappcmd.gif"><br/>
 </div><p>
 
 
