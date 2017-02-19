@@ -6,10 +6,8 @@
 
 <BODY>
 <div id="container">
-<H1>1. YYY</H1>
-
-yyyyyyyyyyyyyyyyyyyyyyyyyyyy<BR>
-<P>
+<H1>1. StkWebApp</H1>
+<p/>
 
 
 
@@ -107,7 +105,7 @@ StkWebApp::STKWEBAPP_METHOD_DELETE<br/>
 <hr/><p/>
 
 int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[128])<p/>
-登録済のハンドラを削除する<br/>
+登録済のハンドラを削除します。<br/>
 <table class="tblstyle">
 <tr><td>Method[入力]</td><td>削除するハンドラを登録したときに指定したメソッドおよびその論理積<br/></td></tr>
 <tr><td>UrlPath[入力]</td><td>削除するハンドラを登録したときに指定したURL</td></tr>
@@ -116,7 +114,23 @@ int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[128])<p/>
 </table>
 <hr/><p/>
 
+</div><p>
 
+
+
+<H2 ID="2.5">2.5 StkWebAppExecクラス</H2>
+<div class="topic">
+virtual StkObject* Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[128], int* ResultCode) = 0<p/>
+StkWebAppExecクラスの派生クラスが実装するメソッドです。純粋仮想関数として定義されています。<br/>
+<table class="tblstyle">
+<tr><td>ReqObj[入力]</td><td>クライアントがリクエストとして与えたXMLおよびJSON形式のデータをStkObjectに変換したもの<br/></td></tr>
+<tr><td>Method[入力]</td><td>クライアントがリクエストとして与えたメソッド</td></tr>
+<tr><td>UrlPath[入力]</td><td>クライアントがリクエストとして与えたURL</td></tr>
+<tr><td>ResultCode[出力]</td><td>クライアントに返すステータスコード</td></tr>
+<tr><td>戻り値</td><td>クライアントに返すデータ。最終的にXMLまたはJSON形式のデータに変換される</td></tr>
+</td></tr>
+</table>
+<hr/><p/>
 </div><p>
 
 
