@@ -19,7 +19,8 @@ SERVICE_TABLE_ENTRY ServiceTable[] = {
 BOOL g_bRun = TRUE;
 BOOL g_bService = TRUE;
 SERVICE_STATUS_HANDLE g_hServiceStatus = NULL;
-PROCESS_INFORMATION pi;
+PROCESS_INFORMATION pi_wapp;
+PROCESS_INFORMATION pi_nginx;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,27 +39,42 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 
 void StartProcesses()
 {
-	STARTUPINFO si;
 	TCHAR Buf[256];
+	TCHAR CmdLine[512];
 	GetModuleFileName(NULL, Buf, 255);
 	LPTSTR Addr = StrStr(Buf, _T("\\stkwebappcmd.exe"));
 	lstrcpy(Addr, _T(""));
+	TCHAR SystemDir[MAX_PATH];
+	GetSystemDirectory(SystemDir, MAX_PATH);
 
-	ZeroMemory(&si,sizeof(si));
-	si.cb=sizeof(si);
-	TCHAR CmdLine[512];
+	STARTUPINFO si_wapp;
+	ZeroMemory(&si_wapp, sizeof(si_wapp));
+	si_wapp.cb = sizeof(si_wapp);
 	wsprintf(CmdLine, _T("%s\\stkwebapp.exe"), Buf);
-	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_wapp, &pi_wapp);
+
+	STARTUPINFO si_nginx;
+	ZeroMemory(&si_nginx, sizeof(si_nginx));
+	si_nginx.cb = sizeof(si_nginx);
+	wsprintf(CmdLine, _T("%s\\cmd.exe /c \"start %s\\nginx.exe\""), SystemDir, Buf);
+	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginx);
 }
 
 void StopProcesses()
 {
-	EnumWindows(EnumWindowsProc, (LPARAM)&pi);
-	if (WaitForSingleObject(pi.hProcess, 5000) == WAIT_TIMEOUT) {
-		TerminateProcess(pi.hProcess, 0);
+	EnumWindows(EnumWindowsProc, (LPARAM)&pi_wapp);
+	if (WaitForSingleObject(pi_wapp.hProcess, 5000) == WAIT_TIMEOUT) {
+		TerminateProcess(pi_wapp.hProcess, 0);
 	}
-	CloseHandle(pi.hThread);
-	CloseHandle(pi.hProcess);
+	CloseHandle(pi_wapp.hThread);
+	CloseHandle(pi_wapp.hProcess);
+
+	EnumWindows(EnumWindowsProc, (LPARAM)&pi_nginx);
+	if (WaitForSingleObject(pi_nginx.hProcess, 5000) == WAIT_TIMEOUT) {
+		TerminateProcess(pi_nginx.hProcess, 0);
+	}
+	CloseHandle(pi_nginx.hThread);
+	CloseHandle(pi_nginx.hProcess);
 }
 
 DWORD WINAPI HandlerEx (DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext)
@@ -221,14 +237,23 @@ int main(int argc, char* argv[])
 	TCHAR SystemDir[MAX_PATH];
 	GetSystemDirectory(SystemDir, MAX_PATH);
 
+	/////////////////////////////////////////////////////////////
+	// If no command is specified, service info is configured. //
+	/////////////////////////////////////////////////////////////
+
+	if (argc == 1) {
+		BOOL bRet = StartServiceCtrlDispatcher(ServiceTable);
+		return 0;
+	}
+
 	///////////////////////////////////
 	// Commands for installation     //
 	///////////////////////////////////
 
-	if (strcmp(argv[1], "modconfig") == 0) {
+	if (strcmp(argv[1], "modright") == 0) {
 		return 0;
 	}
-	if (strcmp(argv[1], "modright") == 0) {
+	if (strcmp(argv[1], "modconfig") == 0) {
 		return 0;
 	}
 	if (strcmp(argv[1], "fwadd") == 0) {
@@ -295,13 +320,4 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	/////////////////////////////////////////////////////////////
-	// If no command is specified, service info is configured. //
-	/////////////////////////////////////////////////////////////
-
-	if (argc == 0) {
-		BOOL bRet = StartServiceCtrlDispatcher(ServiceTable);
-	}
-
-	return 0;
 }
