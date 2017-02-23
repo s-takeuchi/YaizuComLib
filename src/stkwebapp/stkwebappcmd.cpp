@@ -221,7 +221,9 @@ int main(int argc, char* argv[])
 	TCHAR SystemDir[MAX_PATH];
 	GetSystemDirectory(SystemDir, MAX_PATH);
 
-	BOOL bRet = StartServiceCtrlDispatcher(ServiceTable);
+	///////////////////////////////////
+	// Commands for installation     //
+	///////////////////////////////////
 
 	if (strcmp(argv[1], "modconfig") == 0) {
 		return 0;
@@ -232,9 +234,6 @@ int main(int argc, char* argv[])
 	if (strcmp(argv[1], "fwadd") == 0) {
 		return 0;
 	}
-	if (strcmp(argv[1], "fwdel") == 0) {
-		return 0;
-	}
 	if (strcmp(argv[1], "srvadd") == 0) {
 		// Add service
 		printf("Add service...\r\n");
@@ -242,19 +241,6 @@ int main(int argc, char* argv[])
 		si.cb=sizeof(si);
 		TCHAR CmdLineForService[512];
 		wsprintf(CmdLineForService, _T("\"%s\\sc.exe\" create StkWebAppCmd binPath= \"%s\" start= auto displayname= \"StkWebAppCmd\""), SystemDir, ThisCmdPath);
-		printf("%S\r\n", CmdLineForService);
-		CreateProcess(NULL, CmdLineForService, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
-		WaitForSingleObject(pi.hProcess, INFINITE);
-		CloseHandle(pi.hProcess);
-		return 0;
-	}
-	if (strcmp(argv[1], "srvdel") == 0) {
-		// Delete service
-		printf("Delete service...\r\n");
-		ZeroMemory(&si,sizeof(si));
-		si.cb=sizeof(si);
-		TCHAR CmdLineForService[512];
-		wsprintf(CmdLineForService, _T("\"%s\\sc.exe\" delete StkWebAppCmd"), SystemDir);
 		printf("%S\r\n", CmdLineForService);
 		CreateProcess(NULL, CmdLineForService, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
@@ -274,6 +260,11 @@ int main(int argc, char* argv[])
 		CloseHandle(pi.hProcess);
 		return 0;
 	}
+
+	///////////////////////////////////
+	// Commands for uninstallation   //
+	///////////////////////////////////
+
 	if (strcmp(argv[1], "stop") == 0) {
 		// Stop service
 		printf("Stop service...\r\n");
@@ -287,5 +278,30 @@ int main(int argc, char* argv[])
 		CloseHandle(pi.hProcess);
 		return 0;
 	}
+	if (strcmp(argv[1], "srvdel") == 0) {
+		// Delete service
+		printf("Delete service...\r\n");
+		ZeroMemory(&si,sizeof(si));
+		si.cb=sizeof(si);
+		TCHAR CmdLineForService[512];
+		wsprintf(CmdLineForService, _T("\"%s\\sc.exe\" delete StkWebAppCmd"), SystemDir);
+		printf("%S\r\n", CmdLineForService);
+		CreateProcess(NULL, CmdLineForService, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
+		return 0;
+	}
+	if (strcmp(argv[1], "fwdel") == 0) {
+		return 0;
+	}
+
+	/////////////////////////////////////////////////////////////
+	// If no command is specified, service info is configured. //
+	/////////////////////////////////////////////////////////////
+
+	if (argc == 0) {
+		BOOL bRet = StartServiceCtrlDispatcher(ServiceTable);
+	}
+
 	return 0;
 }
