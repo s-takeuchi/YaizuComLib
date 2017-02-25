@@ -47,6 +47,8 @@ void StartProcesses()
 	TCHAR SystemDir[MAX_PATH];
 	GetSystemDirectory(SystemDir, MAX_PATH);
 
+	SetCurrentDirectory(Buf);
+
 	STARTUPINFO si_wapp;
 	ZeroMemory(&si_wapp, sizeof(si_wapp));
 	si_wapp.cb = sizeof(si_wapp);
@@ -56,7 +58,7 @@ void StartProcesses()
 	STARTUPINFO si_nginx;
 	ZeroMemory(&si_nginx, sizeof(si_nginx));
 	si_nginx.cb = sizeof(si_nginx);
-	wsprintf(CmdLine, _T("%s\\cmd.exe /c \"start %s\\nginx.exe\""), SystemDir, Buf);
+	wsprintf(CmdLine, _T("\"%s\\nginx.exe\""), Buf); /* instead of  [cmd.exe /c "start \nginx.exe"] */
 	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginx);
 }
 
@@ -69,12 +71,22 @@ void StopProcesses()
 	CloseHandle(pi_wapp.hThread);
 	CloseHandle(pi_wapp.hProcess);
 
-	EnumWindows(EnumWindowsProc, (LPARAM)&pi_nginx);
-	if (WaitForSingleObject(pi_nginx.hProcess, 5000) == WAIT_TIMEOUT) {
-		TerminateProcess(pi_nginx.hProcess, 0);
-	}
-	CloseHandle(pi_nginx.hThread);
-	CloseHandle(pi_nginx.hProcess);
+	TCHAR Buf[256];
+	TCHAR CmdLine[512];
+	GetModuleFileName(NULL, Buf, 255);
+	LPTSTR Addr = StrStr(Buf, _T("\\stkwebappcmd.exe"));
+	lstrcpy(Addr, _T(""));
+	TCHAR SystemDir[MAX_PATH];
+	GetSystemDirectory(SystemDir, MAX_PATH);
+
+	SetCurrentDirectory(Buf);
+
+	PROCESS_INFORMATION pi_nginxstop;
+	STARTUPINFO si_nginx;
+	ZeroMemory(&si_nginx, sizeof(si_nginx));
+	si_nginx.cb = sizeof(si_nginx);
+	wsprintf(CmdLine, _T("\"%s\\nginx.exe\" -s stop"), Buf);
+	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginxstop);
 }
 
 DWORD WINAPI HandlerEx (DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext)
