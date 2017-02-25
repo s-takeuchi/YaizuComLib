@@ -246,6 +246,11 @@ int main(int argc, char* argv[])
 	TCHAR ThisCmdPath[256];
 	GetModuleFileName(NULL, ThisCmdPath, 255);
 
+	TCHAR WorkPath[256];
+	lstrcpy(WorkPath, ThisCmdPath);
+	LPTSTR Addr = StrStr(WorkPath, _T("\\stkwebappcmd.exe"));
+	lstrcpy(Addr, _T(""));
+
 	TCHAR SystemDir[MAX_PATH];
 	GetSystemDirectory(SystemDir, MAX_PATH);
 
@@ -262,10 +267,57 @@ int main(int argc, char* argv[])
 	// Commands for installation     //
 	///////////////////////////////////
 
-	if (strcmp(argv[1], "modright") == 0) {
+	if (strcmp(argv[1], "modperm") == 0) {
+		TCHAR CmdLineForIcacls[512];
+
+		// Grant modify permission to nginx.conf
+		ZeroMemory(&si,sizeof(si));
+		si.cb=sizeof(si);
+		wsprintf(CmdLineForIcacls, _T("\"%s\\icacls.exe\" \"%s\\conf\\nginx.conf\" /grant Users:M"), SystemDir, WorkPath);
+		printf("%S\r\n", CmdLineForIcacls);
+		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
+
+		// Grant modify permission to stkwebapp.conf
+		ZeroMemory(&si,sizeof(si));
+		si.cb=sizeof(si);
+		wsprintf(CmdLineForIcacls, _T("\"%s\\icacls.exe\" \"%s\\stkwebapp.conf\" /grant Users:M"), SystemDir, WorkPath);
+		printf("%S\r\n", CmdLineForIcacls);
+		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
+
+		// Grant modify permission to stkwebapp.dat
+		ZeroMemory(&si,sizeof(si));
+		si.cb=sizeof(si);
+		wsprintf(CmdLineForIcacls, _T("\"%s\\icacls.exe\" \"%s\\stkwebapp.dat\" /grant Users:M"), SystemDir, WorkPath);
+		printf("%S\r\n", CmdLineForIcacls);
+		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
+
 		return 0;
 	}
 	if (strcmp(argv[1], "modconfig") == 0) {
+		HANDLE FileHndl;
+
+		TCHAR NginxConfPath[MAX_PATH];
+		swprintf(NginxConfPath, MAX_PATH, _T("%s\\conf\\nginx.conf"), WorkPath);
+		FileHndl = CreateFile(NginxConfPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (FileHndl != INVALID_HANDLE_VALUE) {
+			char ConfStr1[4096] = "worker_processes 1;\r\nevents {\r\n  worker_connections 1024;\r\n}\r\n";
+			char ConfStr2[4096] = "http {\r\n  include mime.types;\r\n  default_type application/octet-stream;\r\n  sendfile on;\r\n  keepalive_timeout 65;\r\n  server {\r\n";
+			char ConfStr3[4096] = "    listen 80;\r\n    server_name localhost;\r\n    location / {\r\n      root html;\r\n      index index.html index.htm;\r\n    }\r\n";
+			char ConfStr4[4096] = "    location /api/ {\r\n      proxy_pass http://127.0.0.1:8081;\r\n    }\r\n    error_page 500 502 503 504  /50x.html;\r\n    location = /50x.html {\r\n      root html;\r\n    }\r\n  }\r\n}\r\n";
+			DWORD NumOfByteWrite;
+			WriteFile(FileHndl, ConfStr1, strlen(ConfStr1), &NumOfByteWrite, NULL);
+			WriteFile(FileHndl, ConfStr2, strlen(ConfStr2), &NumOfByteWrite, NULL);
+			WriteFile(FileHndl, ConfStr3, strlen(ConfStr3), &NumOfByteWrite, NULL);
+			WriteFile(FileHndl, ConfStr4, strlen(ConfStr4), &NumOfByteWrite, NULL);
+			CloseHandle(FileHndl);
+		};
+
 		return 0;
 	}
 	if (strcmp(argv[1], "fwadd") == 0) {
