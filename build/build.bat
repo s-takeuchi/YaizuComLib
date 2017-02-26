@@ -120,6 +120,24 @@ copy stkdata.pdf ..
 del *.pdf
 popd
 
+xcopy /y /q /s /i "..\doc\stkdatagui" deployment\stkdatagui
+pushd deployment\stkdatagui
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale stkdatagui.htm stkdatagui01.pdf
+%PDFTK% *.pdf output stkdatagui.pdf
+copy stkdatagui.pdf ..
+del *.pdf
+popd
+
+xcopy /y /q /s /i "..\doc\stkwebapp" deployment\stkwebapp
+pushd deployment\stkwebapp
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm stkwebapp01.pdf
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm stkwebapp02.pdf
+%WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm stkwebapp03.pdf
+%PDFTK% *.pdf output stkwebapp.pdf
+copy stkwebapp.pdf ..
+del *.pdf
+popd
+
 
 rem ########## Make libraries ##########
 echo;
@@ -191,20 +209,39 @@ del ..\build\deployment\stkthreadgui.lib
 del ..\build\deployment\stkthreadgui.h
 del ..\build\deployment\stkthreadgui.pdf
 
-echo Building stkdata.sln...
-%DEVENV% "..\src\stkdata\stkdata.sln" /rebuild Release 
+echo Building stkdata.sln and stkdatagui.sln...
+%DEVENV% "..\src\stkdata\stkdata.sln" /rebuild Release
+copy "..\src\stkdata\Release\stkdata.lib" deployment
+%DEVENV% "..\src\stkdatagui\stkdatagui.sln" /rebuild Release
+copy "..\src\stkdatagui\Release\stkdatagui.exe" deployment
 copy "..\src\stkdata\stkdata.h" deployment
 copy "..\src\stkdata\stkdataapi.h" deployment
-copy "..\src\stkdata\Release\stkdata.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.lib
+%SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdatagui.exe
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdataapi.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.pdf
+%SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdatagui.pdf
 %SEVENZIP% a ..\build\deployment\stkdata.zip buildver.txt
 del ..\build\deployment\stkdata.lib
+del ..\build\deployment\stkdatagui.exe
 del ..\build\deployment\stkdata.h
 del ..\build\deployment\stkdataapi.h
 del ..\build\deployment\stkdata.pdf
+del ..\build\deployment\stkdatagui.pdf
+
+echo Building stkwebapp.sln and stkwebappcmd.sln...
+%DEVENV% "..\src\stkwebapp\stkwebapp.sln" /rebuild Release
+copy "..\src\stkwebapp\Release\stkwebapp.lib" deployment
+%DEVENV% "..\src\stkwebapp\stkwebappcmd.sln" /rebuild Release
+copy "..\src\stkwebapp\Release\stkwebappcmd.exe" deployment
+%SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebapp.lib
+%SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebappcmd.exe
+%SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebapp.pdf
+%SEVENZIP% a ..\build\deployment\stkwebapp.zip buildver.txt
+del ..\build\deployment\stkwebapp.lib
+del ..\build\deployment\stkwebappcmd.exe
+del ..\build\deployment\stkwebapp.pdf
 
 
 echo;

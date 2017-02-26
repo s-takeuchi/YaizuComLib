@@ -1,6 +1,6 @@
-<HEAD>
-<TITLE>�f�[�^�A�N�Z�XGUI</TITLE>
-<meta http-equiv="Content-Type" content="text/html; charset=shift_jis">
+﻿<HEAD>
+<TITLE>データアクセスGUI</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="content-style-type" content="text/css">
 <link rel="stylesheet" href="./style.css" type="text/css">
 </HEAD>
@@ -13,119 +13,119 @@
 </style>
 
 <div id="container">
-<H1>1. �f�[�^�A�N�Z�XGUI</H1>
+<H1>1. データアクセスGUI</H1>
 
-<h2>1.1 �T�v</h2>
-�f�[�^�A�N�Z�XGUI�́CStkData���p�v���O�����̂P�ŁCStkData���Ǘ�����f�[�^�ɑ΂��鑀���GUI�Œ񋟂��܂��B
+<h2>1.1 概要</h2>
+データアクセスGUIは，StkData利用プログラムの１つで，StkDataが管理するデータに対する操作をGUIで提供します。
 <P>
 
-<h2>1.2 �v��</h2>
-�f�[�^�A�N�Z�XGUI�͈ȉ��̊��œ��삵�܂��B<BR>
+<h2>1.2 要件</h2>
+データアクセスGUIは以下の環境で動作します。<BR>
 <ul>
-<LI>����ɕK�v��CPU:<BR>
-1GHz�ȏ�̃N���b�N���g���œ��삷��CPU<BR>
+<LI>動作に必要なCPU:<BR>
+1GHz以上のクロック周波数で動作するCPU<BR>
 <P>
-<LI>����ɕK�v�ȃ������e��:<BR>
-512MBytes�ȏ�<BR>
+<LI>動作に必要なメモリ容量:<BR>
+512MBytes以上<BR>
 <P>
-<LI>�����ɕK�v�ȋ󂫃f�B�X�N�e��:<BR>
-10MBytes�ȏ�<BR>
+<LI>導入に必要な空きディスク容量:<BR>
+10MBytes以上<BR>
 <P>
-<LI>�T�|�[�g����I�y���[�e�B���O�V�X�e��:<BR>
+<LI>サポートするオペレーティングシステム:<BR>
 Windows:<BR>
 <div class=spc>
 Windows 2000 Professional SP4<BR>
 Windows XP Professional SP2/SP3<BR>
 Windows XP Professional x64 SP2<BR>
-Windows Vista Business/Ultimate SP�Ȃ�/SP1/SP2<BR>
-Windows 7 Professional/Ultimate SP�Ȃ�<BR>
-Windows Server 2003 Standard SP�Ȃ�/SP1/SP2<BR>
-Windows Server 2008 Standard SP�Ȃ�/SP2<BR>
+Windows Vista Business/Ultimate SPなし/SP1/SP2<BR>
+Windows 7 Professional/Ultimate SPなし<BR>
+Windows Server 2003 Standard SPなし/SP1/SP2<BR>
+Windows Server 2008 Standard SPなし/SP2<BR>
 </div><p>
 </ul>
 
-<h2>1.3 ��ʎd�l</h2>
+<h2>1.3 画面仕様</h2>
 <IMG SRC="stkdatagui.gif"><P>
 
-�f�[�^�A�N�Z�XGUI�̃E�B���h�E�͑I�������e�[�u���̃��R�[�h�ꗗ��\�����܂��B
-�t�B���^�����O�������w�肵�Ă���ꍇ�́C�i�荞�񂾌��ʂ����R�[�h�ꗗ�ɕ\�����܂��B<P>
-�f�[�^�A�N�Z�XGUI���񋟂���@�\�����L�Ɏ����܂��B<P>
+データアクセスGUIのウィンドウは選択したテーブルのレコード一覧を表示します。
+フィルタリング条件が指定してある場合は，絞り込んだ結果をレコード一覧に表示します。<P>
+データアクセスGUIが提供する機能を下記に示します。<P>
 
-[File]���j���[�Ɋ֘A����@�\<BR>
+[File]メニューに関連する機能<BR>
 <div class=spc>
 (1) Save As<BR>
 <div class=spc>
-StkData���Ǘ�����f�[�^�i�e�[�u�����^���R�[�h���j���t�@�C���ɏ������݂܂��B<br/>
-�t�@�C�����̓_�C�A���O�Ŏw��ł��܂��B
+StkDataが管理するデータ（テーブル情報／レコード情報）をファイルに書き込みます。<br/>
+ファイル名はダイアログで指定できます。
 </div>
 (2) Save<BR>
 <div class=spc>
-StkData���Ǘ�����f�[�^�i�e�[�u�����^���R�[�h���j�����ݕҏW���̃t�@�C���ɏ������݂܂��B
+StkDataが管理するデータ（テーブル情報／レコード情報）を現在編集中のファイルに書き込みます。
 </div>
 (3) Open<BR>
 <div class=spc>
-�t�@�C������f�[�^��Ǎ��݂܂��B
+ファイルからデータを読込みます。
 </div>
 (4) Exit<BR>
 <div class=spc>
-�f�[�^�A�N�Z�XGUI���I�����܂��B
+データアクセスGUIを終了します。
 </div>
 </div><P>
 
-[Table]���j���[�Ɋ֘A����@�\<BR>
+[Table]メニューに関連する機能<BR>
 <div class=spc>
-�e�[�u����I�����܂��B�e�[�u����1�����݂��Ȃ��ꍇ�C[�e�[�u��]���j���[�ȉ��Ƀe�[�u���ꗗ���\������܂���B
+テーブルを選択します。テーブルが1つも存在しない場合，[テーブル]メニュー以下にテーブル一覧が表示されません。
 </div><P>
 
-[Operation]���j���[�Ɋ֘A����@�\<BR>
+[Operation]メニューに関連する機能<BR>
 <div class=spc>
 (1) Filtering<BR>
 <div class=spc>
-�w�肵���t�B���^�����O�����ŕ\�����郌�R�[�h���i�荞�݂܂��B<BR>
-�ő��5�̏����𓯎��Ɏw�肷�邱�Ƃ��ł��܂��B
+指定したフィルタリング条件で表示するレコードを絞り込みます。<BR>
+最大で5つの条件を同時に指定することができます。
 </div>
 (2) Insert<BR>
 <div class=spc>
-���R�[�h��ǉ����܂��B<BR>�o�C�i���^�J�����������S�ẴJ�����ɒl����͂���K�v������܂��i�o�C�i���^�J�����ɂ�
-�l����͂��邱�Ƃ��ł��܂���j�B
-������^�J�����C���C�h������^�J�����ɋ󕶎����w�肷�邱�Ƃ͂ł��܂���B���ɒl�����܂��Ă��Ȃ�
-������^�J�����C���C�h������^�J�����ɂ̓_�~�[������i��F�󔒕����j���w�肵�Ă��������B<BR>
-���l�ɐ����^�J�����ɋ󕶎�����w�肷�邱�Ƃ͂ł��܂���B���ɒl�����܂��Ă��Ȃ�
-�����^�J�����ɂ̓_�~�[�l�i��F0�j���w�肵�Ă��������B
+レコードを追加します。<BR>バイナリ型カラムを除く全てのカラムに値を入力する必要があります（バイナリ型カラムには
+値を入力することができません）。
+文字列型カラム，ワイド文字列型カラムに空文字を指定することはできません。特に値が決まっていない
+文字列型カラム，ワイド文字列型カラムにはダミー文字列（例：空白文字）を指定してください。<BR>
+同様に整数型カラムに空文字列を指定することはできません。特に値が決まっていない
+整数型カラムにはダミー値（例：0）を指定してください。
 </div>
 (3) Update<BR>
 <div class=spc>
-�I���������R�[�h���X�V���܂��B<BR>
-�ő��5�̃J�����̒l�𓯎��ɕύX���邱�Ƃ��ł��܂��B
+選択したレコードを更新します。<BR>
+最大で5つのカラムの値を同時に変更することができます。
 </div>
 (4) Delete<BR>
 <div class=spc>
-�I���������R�[�h���폜���܂��B
+選択したレコードを削除します。
 </div>
 (5) Create Table<BR>
 <div class=spc>
-�e�[�u����V�K�ɍ쐬���܂��B
+テーブルを新規に作成します。
 </div>
 (6) Delete Table<BR>
 <div class=spc>
-���ݑI������Ă���e�[�u�����폜���܂��B
+現在選択されているテーブルを削除します。
 </div>
 (7) Show Table Information<BR>
 <div class=spc>
-���ݑI������Ă���e�[�u���̏���\�����܂��B
+現在選択されているテーブルの情報を表示します。
 </div>
 (8) Refresh<BR>
 <div class=spc>
-���R�[�h�ꗗ�����t���b�V�����܂��B
+レコード一覧をリフレッシュします。
 </div><P>
 </div>
 
-���̑��̋@�\<BR>
+その他の機能<BR>
 <div class=spc>
-(1) ���R�[�h�̃\�[�g<BR>
+(1) レコードのソート<BR>
 <div class=spc>
-�E�B���h�E����̃J�������������ƁC���̃J�����̒l�ŏ����ƂȂ�悤�Ƀ��R�[�h���\�[�g���܂��B
-�����J���������ēx�����ƁC�~���Ń\�[�g���܂��B
+ウィンドウ上方のカラム名を押すと，そのカラムの値で昇順となるようにレコードをソートします。
+同じカラム名を再度押すと，降順でソートします。
 </div>
 </div>
 
