@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <shlwapi.h>
+#include "..\commonfunc\StkStringParser.h"
 
 #define SERVICE_NAME (TEXT("StkWebAppCmd"))
 
@@ -264,10 +265,54 @@ int main(int argc, char* argv[])
 	}
 
 	///////////////////////////////////
+	// Fetch the parameters          //
+	///////////////////////////////////
+
+	TCHAR ProductName[16] = _T("");
+	TCHAR SrvIpAddr[64] = _T("");
+	TCHAR SrvPort[8] = _T("");
+	TCHAR WebIpAddr[64] = _T("");
+	TCHAR WebPort[8] = _T("");
+
+	if (argc >= 3) {
+		for (int Loop = 2; Loop < argc; Loop++) {
+			TCHAR TargetParam[64] = _T("");
+			wsprintf(TargetParam, _T("%S"), argv[Loop]);
+			TCHAR TmpFetchedParam[64] = _T("");
+			if (StkStringParser::ParseInto1Param(TargetParam, _T("ProductName=$"), _T('$'), TmpFetchedParam) == 1) {
+				lstrcpy(ProductName, TmpFetchedParam);
+			}
+			if (StkStringParser::ParseInto1Param(TargetParam, _T("SrvIpAddr=$"), _T('$'), TmpFetchedParam) == 1) {
+				lstrcpy(SrvIpAddr, TmpFetchedParam);
+			}
+			if (StkStringParser::ParseInto1Param(TargetParam, _T("SrvPort=$"), _T('$'), TmpFetchedParam) == 1) {
+				lstrcpy(SrvPort, TmpFetchedParam);
+			}
+			if (StkStringParser::ParseInto1Param(TargetParam, _T("WebIpAddr=$"), _T('$'), TmpFetchedParam) == 1) {
+				lstrcpy(WebIpAddr, TmpFetchedParam);
+			}
+			if (StkStringParser::ParseInto1Param(TargetParam, _T("WebPort=$"), _T('$'), TmpFetchedParam) == 1) {
+				lstrcpy(WebPort, TmpFetchedParam);
+			}
+		}
+		printf("ProductName=%S\r\n", ProductName);
+		printf("SrvIpAddr=%S\r\n", SrvIpAddr);
+		printf("SrvPort=%S\r\n", SrvPort);
+		printf("WebIpAddr=%S\r\n", WebIpAddr);
+		printf("WebPort=%S\r\n", WebPort);
+	}
+
+	///////////////////////////////////
 	// Commands for installation     //
 	///////////////////////////////////
 
-	if (strcmp(argv[1], "modperm") == 0) {
+	BOOL InstFlag = FALSE;
+	if (strcmp(argv[1], "inst") == 0) {
+		InstFlag = TRUE;
+	}
+	if (strcmp(argv[1], "modperm") == 0 || InstFlag == TRUE) {
+		// Modify permissions
+		printf("Modify permissions...\r\n");
 		TCHAR CmdLineForIcacls[512];
 
 		// Grant modify permission to nginx.conf
@@ -296,10 +341,10 @@ int main(int argc, char* argv[])
 		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
-
-		return 0;
 	}
-	if (strcmp(argv[1], "modconfig") == 0) {
+	if (strcmp(argv[1], "modconfig") == 0 || InstFlag == TRUE) {
+		// Modify config files
+		printf("Modify config files...\r\n");
 		HANDLE FileHndl;
 
 		TCHAR NginxConfPath[MAX_PATH];
@@ -318,12 +363,34 @@ int main(int argc, char* argv[])
 			CloseHandle(FileHndl);
 		};
 
-		return 0;
+		TCHAR StkWebAppConfPath[MAX_PATH];
+		swprintf(StkWebAppConfPath, MAX_PATH, _T("%s\\stkwebapp.conf"), WorkPath);
+		FileHndl = CreateFile(StkWebAppConfPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (FileHndl != INVALID_HANDLE_VALUE) {
+			char ConfStr1[4096] = "servicehost=127.0.0.1\r\nserviceport=8081\r\n";
+			DWORD NumOfByteWrite;
+			WriteFile(FileHndl, ConfStr1, strlen(ConfStr1), &NumOfByteWrite, NULL);
+			CloseHandle(FileHndl);
+		};
 	}
-	if (strcmp(argv[1], "fwadd") == 0) {
-		return 0;
+	if (strcmp(argv[1], "fwadd") == 0 || InstFlag == TRUE) {
+		// Add firewall exception
+		printf("Add firewall exception...\r\n");
+		ZeroMemory(&si,sizeof(si));
+		si.cb=sizeof(si);
+		TCHAR CmdLine[512];
+		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" firewall add allowedprogram \"%s\\nginx.exe\" StkWebApp_nginx ENABLE"), SystemDir, WorkPath);
+		printf("%S\r\n", CmdLine);
+		CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
+		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" firewall add allowedprogram \"%s\\stkwebapp.exe\" StkWebApp_service ENABLE"), SystemDir, WorkPath);
+		printf("%S\r\n", CmdLine);
+		CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
 	}
-	if (strcmp(argv[1], "srvadd") == 0) {
+	if (strcmp(argv[1], "srvadd") == 0 || InstFlag == TRUE) {
 		// Add service
 		printf("Add service...\r\n");
 		ZeroMemory(&si,sizeof(si));
@@ -334,9 +401,8 @@ int main(int argc, char* argv[])
 		CreateProcess(NULL, CmdLineForService, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
-		return 0;
 	}
-	if (strcmp(argv[1], "start") == 0) {
+	if (strcmp(argv[1], "start") == 0 || InstFlag == TRUE) {
 		// Start service
 		printf("Start service...\r\n");
 		ZeroMemory(&si,sizeof(si));
@@ -347,14 +413,17 @@ int main(int argc, char* argv[])
 		CreateProcess(NULL, CmdLineForNet, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
-		return 0;
 	}
 
 	///////////////////////////////////
 	// Commands for uninstallation   //
 	///////////////////////////////////
 
-	if (strcmp(argv[1], "stop") == 0) {
+	BOOL UninstFlag = FALSE;
+	if (strcmp(argv[1], "uninst") == 0) {
+		UninstFlag = TRUE;
+	}
+	if (strcmp(argv[1], "stop") == 0 || UninstFlag == TRUE) {
 		// Stop service
 		printf("Stop service...\r\n");
 		ZeroMemory(&si,sizeof(si));
@@ -365,9 +434,8 @@ int main(int argc, char* argv[])
 		CreateProcess(NULL, CmdLineForNet, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
-		return 0;
 	}
-	if (strcmp(argv[1], "srvdel") == 0) {
+	if (strcmp(argv[1], "srvdel") == 0 || UninstFlag == TRUE) {
 		// Delete service
 		printf("Delete service...\r\n");
 		ZeroMemory(&si,sizeof(si));
@@ -378,10 +446,23 @@ int main(int argc, char* argv[])
 		CreateProcess(NULL, CmdLineForService, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
-		return 0;
 	}
-	if (strcmp(argv[1], "fwdel") == 0) {
-		return 0;
+	if (strcmp(argv[1], "fwdel") == 0 || UninstFlag == TRUE) {
+		// Delete firewall exception
+		printf("Delete firewall exception...\r\n");
+		ZeroMemory(&si,sizeof(si));
+		si.cb=sizeof(si);
+		TCHAR CmdLine[512];
+		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" firewall delete allowedprogram \"%s\\nginx.exe\""), SystemDir, WorkPath);
+		printf("%S\r\n", CmdLine);
+		CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
+		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" firewall delete allowedprogram \"%s\\stkwebapp.exe\""), SystemDir, WorkPath);
+		printf("%S\r\n", CmdLine);
+		CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
 	}
 
 }

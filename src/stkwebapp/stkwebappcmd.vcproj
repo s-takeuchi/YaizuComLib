@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib Debug\commonfunc.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -133,7 +133,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib Release\commonfunc.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
