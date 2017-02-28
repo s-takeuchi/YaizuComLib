@@ -31,16 +31,60 @@ Webアプリケーションの登録／削除／起動／停止を行うCLIで�
 
 <H2 ID="1.2">1.2 StkWebAppCmdの要件</H2>
 <div class="topic">
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+StkWebAppCmdは，下記のフォルダおよびファイル構成を前提としています。<br/>
 <img src="stkwebappcmd.gif"><br/>
+/appnameフォルダは，StkWebAppに基づいたWebアプリケーションを構成するフォルダおよびファイルを格納する最上位フォルダであり，
+任意のフォルダ名が設定されることを許します。<br/>
+/appnameフォルダ直下には，nginxの実行ファイル(nginx.exe)，nginxの関連フォルダ，および以下のファイルが存在する必要があります。<br/>
+<ul>
+<li>stkwebappcmd.exe</li>
+<li>stkwebapp.exe</li>
+<li>stkwebapp.conf</li>
+<li>stkwebapp.dat</li>
+</ul>
+また，/appname/confには，nginxのConfigファイル(nginx.conf)が存在する必要があります。<br/>
+
 </div><p>
 
 
 
-<H2 ID="1.3">1.3 XXX</H2>
+<H2 ID="1.3">1.3 StkWebAppCmdの使用方法</H2>
 <div class="topic">
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-</table>
+<pre><code>
+StkWebAppCmdの使用方法を以下に示します。<br/>
+StkWebAppCmd (Service command for StkWebApp)
+Command usage : stkwebappcmd &ltcommand&gt &ltoption 1&gt &ltoption 2&gt ...
+
+Commands
+  help      : Display help.
+  modperm   : Modify permission of configuration and data
+              files.
+  modconfig : Modify configuration files.
+              ProductName, SrvHost, SrvPort, WebHost and
+              WebPort options are required.
+  fwadd     : Add exception to the firewall. ProductName
+              option is required.
+  fwdel     : Delete exception from the firewall.
+  srvadd    : Add service to the system. ProductName
+              option is required.
+  srvdel    : Delete service from the system. ProductName
+              option is required.
+  start     : Start the service. ProductName option is
+              required.
+  stop      : Stop the service. ProductName option is
+              required.
+  inst      : Execute modperm, modconfig, fwadd, srvadd
+              and start sequencially.
+
+  uninst    : Execute fwdel, srvdel and stop sequencially.
+
+Options
+  ProductName : Product name
+  SrvHost : Host name or IP address of REST API service
+  SrvPort : Port number of REST API service
+  WebHost : Host name or IP address of WEB service
+  WebPort : Port number of WEB service
+</codo></pre>
 </div><p>
 
 
