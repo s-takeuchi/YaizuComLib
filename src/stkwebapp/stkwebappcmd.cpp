@@ -2,7 +2,9 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <shlwapi.h>
+#include "..\commonfunc\StkProperties.h"
 #include "..\commonfunc\StkStringParser.h"
+#include "..\stksocket\stksocket.h"
 
 #define SERVICE_NAME (TEXT("StkWebAppCmd"))
 
@@ -65,23 +67,43 @@ void StartProcesses()
 
 void StopProcesses()
 {
-	EnumWindows(EnumWindowsProc, (LPARAM)&pi_wapp);
-	if (WaitForSingleObject(pi_wapp.hProcess, 5000) == WAIT_TIMEOUT) {
-		TerminateProcess(pi_wapp.hProcess, 0);
-	}
-	CloseHandle(pi_wapp.hThread);
-	CloseHandle(pi_wapp.hProcess);
-
+	/***** Set current directory *****/
 	TCHAR Buf[256];
 	TCHAR CmdLine[512];
 	GetModuleFileName(NULL, Buf, 255);
 	LPTSTR Addr = StrStr(Buf, _T("\\stkwebappcmd.exe"));
 	lstrcpy(Addr, _T(""));
-	TCHAR SystemDir[MAX_PATH];
-	GetSystemDirectory(SystemDir, MAX_PATH);
-
 	SetCurrentDirectory(Buf);
 
+	/***** Stop StkWebApp *****/
+	char IpAddrTmp[256] = "127.0.0.1";
+	TCHAR IpAddr[256] = _T("127.0.0.1");
+	int Port = 8081;
+	StkProperties *Prop = new StkProperties();
+	if (Prop->GetProperties(_T("stkwebapp.conf")) == 0) {
+		Prop->GetPropertyStr("servicehost", IpAddrTmp);
+		wsprintf(IpAddr, _T("%S"), IpAddrTmp);
+		Prop->GetPropertyInt("serviceport", &Port);
+	}
+	StkSocket_AddInfo(1, SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, IpAddr, Port);
+	if (StkSocket_Connect(1) == 0) {
+		char SendDat[1024];
+		char Dat[256] = "<Stop/>";
+		BYTE RecvDat[1024];
+		sprintf_s(SendDat, 1024, "POST /service/ HTTP/1.1\nContent-Length: %d\nContent-Type: application/xml\n\n%s", strlen(Dat), Dat);
+		StkSocket_Send(1, 1, (BYTE*)SendDat, strlen((char*)SendDat));
+		int RetR;
+		for (int Loop = 0; Loop < 10; Loop++) {
+			RetR = StkSocket_Receive(1, 1, RecvDat, 1024, 205000, NULL, -1, FALSE);
+			if (RetR > 0) {
+				break;
+			}
+		}
+		StkSocket_Disconnect(1, 1, TRUE);
+	}
+	StkSocket_DeleteInfo(1);
+
+	/***** Stop nginx *****/
 	PROCESS_INFORMATION pi_nginxstop;
 	STARTUPINFO si_nginx;
 	ZeroMemory(&si_nginx, sizeof(si_nginx));
