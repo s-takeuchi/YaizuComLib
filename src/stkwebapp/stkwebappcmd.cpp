@@ -22,8 +22,6 @@ SERVICE_TABLE_ENTRY ServiceTable[] = {
 BOOL g_bRun = TRUE;
 BOOL g_bService = TRUE;
 SERVICE_STATUS_HANDLE g_hServiceStatus = NULL;
-PROCESS_INFORMATION pi_wapp;
-PROCESS_INFORMATION pi_nginx;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,12 +51,14 @@ void StartProcesses()
 	SetCurrentDirectory(Buf);
 
 	STARTUPINFO si_wapp;
+	PROCESS_INFORMATION pi_wapp;
 	ZeroMemory(&si_wapp, sizeof(si_wapp));
 	si_wapp.cb = sizeof(si_wapp);
 	wsprintf(CmdLine, _T("%s\\stkwebapp.exe"), Buf);
 	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_wapp, &pi_wapp);
 
 	STARTUPINFO si_nginx;
+	PROCESS_INFORMATION pi_nginx;
 	ZeroMemory(&si_nginx, sizeof(si_nginx));
 	si_nginx.cb = sizeof(si_nginx);
 	wsprintf(CmdLine, _T("\"%s\\nginx.exe\""), Buf); /* instead of  [cmd.exe /c "start \nginx.exe"] */
@@ -301,7 +301,7 @@ int main(int argc, char* argv[])
 		printf("  modperm   : Modify permission of configuration and data files.\r\n");
 		printf("  modconfig : Modify configuration files. ProductName, SrvHost, SrvPort, WebHost and WebPort options are required.\r\n");
 		printf("  fwadd     : Add exception to the firewall. ProductName option is required.\r\n");
-		printf("  fwdel     : Delete exception from the firewall.\r\n");
+		printf("  fwdel     : Delete exception from the firewall. ProductName option is required.\r\n");
 		printf("  srvadd    : Add service to the system. ProductName option is required.\r\n");
 		printf("  srvdel    : Delete service from the system. ProductName option is required.\r\n");
 		printf("  start     : Start the service. ProductName option is required.\r\n");
@@ -435,7 +435,7 @@ int main(int argc, char* argv[])
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
 		TCHAR CmdLine[512];
-		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" firewall add allowedprogram \"%s\\nginx.exe\" %s ENABLE"), SystemDir, WorkPath, ProductName);
+		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" advfirewall firewall add rule name=\"%s\" dir=in program=\"%s\\nginx.exe\" action=allow"), SystemDir, ProductName, WorkPath);
 		printf("%S\r\n", CmdLine);
 		CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
@@ -504,7 +504,7 @@ int main(int argc, char* argv[])
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
 		TCHAR CmdLine[512];
-		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" firewall delete allowedprogram \"%s\\nginx.exe\""), SystemDir, WorkPath);
+		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" advfirewall firewall delete rule name=\"%s\""), SystemDir, ProductName);
 		printf("%S\r\n", CmdLine);
 		CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
