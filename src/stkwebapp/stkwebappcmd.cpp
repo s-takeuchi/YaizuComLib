@@ -288,6 +288,39 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
+	///////////////////////////////////
+	// Abnormal case                 //
+	///////////////////////////////////
+
+	if (strcmp(argv[1], "help") != 0 &&
+		strcmp(argv[1], "modperm") != 0 &&
+		strcmp(argv[1], "modconfig") != 0 &&
+		strcmp(argv[1], "fwadd") != 0 &&
+		strcmp(argv[1], "fwdel") != 0 &&
+		strcmp(argv[1], "srvadd") != 0 &&
+		strcmp(argv[1], "srvdel") != 0 &&
+		strcmp(argv[1], "start") != 0 &&
+		strcmp(argv[1], "stop") != 0 &&
+		strcmp(argv[1], "inst") != 0 &&
+		strcmp(argv[1], "uninst") != 0) {
+		printf("Invalid command is specified. [%s]\r\n", argv[1]);
+		return 0;
+	}
+	if (argc >= 3) {
+		for (int Loop = 2; Loop < argc; Loop++) {
+			TCHAR TargetParam[64] = _T("");
+			wsprintf(TargetParam, _T("%S"), argv[Loop]);
+			TCHAR TmpFetchedParam[64] = _T("");
+			if (StkStringParser::ParseInto1Param(TargetParam, _T("ProductName=$"), _T('$'), TmpFetchedParam) != 1 &&
+				StkStringParser::ParseInto1Param(TargetParam, _T("SrvHost=$"), _T('$'), TmpFetchedParam) != 1 &&
+				StkStringParser::ParseInto1Param(TargetParam, _T("SrvPort=$"), _T('$'), TmpFetchedParam) != 1 &&
+				StkStringParser::ParseInto1Param(TargetParam, _T("WebHost=$"), _T('$'), TmpFetchedParam) != 1 &&
+				StkStringParser::ParseInto1Param(TargetParam, _T("WebPort=$"), _T('$'), TmpFetchedParam) != 1) {
+				printf("Invalid option is specified. [%S]\r\n", TargetParam);
+				return 0;
+			}
+		}
+	}
 
 	///////////////////////////////////
 	// Help                          //
