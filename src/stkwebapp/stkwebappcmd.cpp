@@ -340,7 +340,7 @@ int main(int argc, char* argv[])
 		}
 	}
 	{
-		TCHAR TargetFile[7][MAX_PATH];
+		TCHAR TargetFile[9][MAX_PATH];
 
 		wsprintf(TargetFile[0], _T("%s\\icacls.exe"), SystemDir);
 		wsprintf(TargetFile[1], _T("%s\\netsh.exe"), SystemDir);
@@ -349,8 +349,10 @@ int main(int argc, char* argv[])
 		wsprintf(TargetFile[4], _T("%s\\conf\\nginx.conf"), WorkPath);
 		wsprintf(TargetFile[5], _T("%s\\stkwebapp.conf"), WorkPath);
 		wsprintf(TargetFile[6], _T("%s\\stkwebapp.dat"), WorkPath);
+		wsprintf(TargetFile[7], _T("%s\\nginx.exe"), WorkPath);
+		wsprintf(TargetFile[8], _T("%s\\stkwebapp.exe"), WorkPath);
 
-		for (int Loop = 0; Loop < 7; Loop++) {
+		for (int Loop = 0; Loop < 9; Loop++) {
 			if (GetFileSize(TargetFile[Loop]) == -1) {
 				printf("File/Folder structure is invalid. [%S]\r\n", TargetFile[Loop]);
 				return 0;
