@@ -25,6 +25,24 @@ SERVICE_STATUS_HANDLE g_hServiceStatus = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+// Get file size of the specified file name
+// FilePaht [in] : Path of file which you want to get the size.
+// Return : Size of the specified file. If an error occurred, -1 is returned. (The value is casted into int.)
+int GetFileSize(TCHAR* FilePath)
+{
+	HANDLE ReadFileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
+		return -1;
+	}
+	LARGE_INTEGER ExistingFileSize;
+	if (GetFileSizeEx(ReadFileHndl, &ExistingFileSize) == 0) {
+		CloseHandle(ReadFileHndl);
+		return -1;
+	}
+	CloseHandle(ReadFileHndl);
+	return (int)ExistingFileSize.QuadPart;
+}
+
 BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
     PROCESS_INFORMATION* pi = (PROCESS_INFORMATION*)lParam;
@@ -317,6 +335,24 @@ int main(int argc, char* argv[])
 				StkStringParser::ParseInto1Param(TargetParam, _T("WebHost=$"), _T('$'), TmpFetchedParam) != 1 &&
 				StkStringParser::ParseInto1Param(TargetParam, _T("WebPort=$"), _T('$'), TmpFetchedParam) != 1) {
 				printf("Invalid option is specified. [%S]\r\n", TargetParam);
+				return 0;
+			}
+		}
+	}
+	{
+		TCHAR TargetFile[7][MAX_PATH];
+
+		wsprintf(TargetFile[0], _T("%s\\icacls.exe"), SystemDir);
+		wsprintf(TargetFile[1], _T("%s\\netsh.exe"), SystemDir);
+		wsprintf(TargetFile[2], _T("%s\\sc.exe"), SystemDir);
+		wsprintf(TargetFile[3], _T("%s\\net.exe"), SystemDir);
+		wsprintf(TargetFile[4], _T("%s\\conf\\nginx.conf"), WorkPath);
+		wsprintf(TargetFile[5], _T("%s\\stkwebapp.conf"), WorkPath);
+		wsprintf(TargetFile[6], _T("%s\\stkwebapp.dat"), WorkPath);
+
+		for (int Loop = 0; Loop < 7; Loop++) {
+			if (GetFileSize(TargetFile[Loop]) == -1) {
+				printf("File/Folder structure is invalid. [%S]\r\n", TargetFile[Loop]);
 				return 0;
 			}
 		}
