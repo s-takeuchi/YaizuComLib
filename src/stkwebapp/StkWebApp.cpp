@@ -364,9 +364,14 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	}
 	// If service stop request is presented...
 	if (FndFlag == FALSE && Method == STKWEBAPP_METHOD_POST && lstrcmp(UrlPath, _T("/service/")) == 0) {
-		ResultCode = 202;
-		FndFlag = TRUE;
-		pImpl->StopFlag = TRUE;
+		int ErrorCode;
+		StkObject* TmpObj = StkObject::CreateObjectFromXml(_T("<Req><Stop/></Req>"), &ErrorCode);
+		if (StkObjReq->Equals(TmpObj) == TRUE) {
+			ResultCode = 202;
+			FndFlag = TRUE;
+			pImpl->StopFlag = TRUE;
+		}
+		delete TmpObj;
 	}
 	if (FndFlag == FALSE) {
 		ResultCode = 404;
