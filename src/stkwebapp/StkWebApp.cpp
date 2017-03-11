@@ -30,6 +30,8 @@ public:
 	TCHAR HandlerUrlPath[MAX_REQHANDLER_COUNT][128];
 	StkWebAppExec* Handler[MAX_REQHANDLER_COUNT];
 
+	BOOL StopFlag;
+
 public:
 	TCHAR* SkipHttpHeader(TCHAR*);
 
@@ -108,6 +110,9 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	switch (ResultCode) {
 	case 200:
 		strcpy_s(Status, 32, "OK");
+		break;
+	case 202:
+		strcpy_s(Status, 32, "Accepted");
 		break;
 	case 404:
 		strcpy_s(Status, 32, "Not Found");
@@ -321,6 +326,17 @@ BOOL StkWebApp::Contains(int ThreadId)
 	return FALSE;
 }
 
+void StkWebApp::TheLoop()
+{
+	while (TRUE) {
+		if (pImpl->StopFlag) {
+			Sleep(100);
+			break;
+		}
+		Sleep(100);
+	}
+}
+
 int StkWebApp::ThreadLoop(int ThreadId)
 {
 	int XmlJsonType;
@@ -345,6 +361,12 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			FndFlag = TRUE;
 			break;
 		}
+	}
+	// If service stop request is presented...
+	if (FndFlag == FALSE && Method == STKWEBAPP_METHOD_POST && lstrcmp(UrlPath, _T("/service/")) == 0) {
+		ResultCode = 202;
+		FndFlag = TRUE;
+		pImpl->StopFlag = TRUE;
 	}
 	if (FndFlag == FALSE) {
 		ResultCode = 404;
@@ -377,6 +399,7 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	InitializeCriticalSection(&pImpl->ReqHandlerCs);
 	pImpl->WebThreadCount = 0;
 	pImpl->HandlerCount = 0;
+	pImpl->StopFlag = FALSE;
 
 	// Update array of StkWebApp
 	if (StkWebAppCount < MAX_IMPL_COUNT) {

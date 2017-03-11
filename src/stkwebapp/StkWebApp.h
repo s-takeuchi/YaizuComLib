@@ -24,6 +24,8 @@ public:
 	int AddReqHandler(int, TCHAR[128], StkWebAppExec*);
 	int DeleteReqHandler(int, TCHAR[128]);
 
+	void TheLoop();
+
 	// Do not call APIs shown below. These are only internal use.
 	static StkWebApp* GetStkWebAppByThreadId(int);
 	BOOL Contains(int);
