@@ -114,6 +114,9 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	case 202:
 		strcpy_s(Status, 32, "Accepted");
 		break;
+	case 400:
+		strcpy_s(Status, 32, "Bad Request");
+		break;
 	case 404:
 		strcpy_s(Status, 32, "Not Found");
 		break;
@@ -370,6 +373,9 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			ResultCode = 202;
 			FndFlag = TRUE;
 			pImpl->StopFlag = TRUE;
+		} else {
+			ResultCode = 400;
+			FndFlag = TRUE;
 		}
 		delete TmpObj;
 	}
