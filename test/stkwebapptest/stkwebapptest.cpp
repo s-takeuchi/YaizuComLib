@@ -121,6 +121,43 @@ BOOL SendTestData(int Id, char* Dat)
 	return CompObjs((BYTE*)Dat, (BYTE*)RecvDat);
 }
 
+int SendTestData2(int Id, char* Dat)
+{
+	char Tmp[256];
+	BYTE RecvDat[4096];
+
+	int RetC = StkSocket_Connect(Id);
+	int RetS = 0;
+
+	sprintf_s(Tmp, 256, "POST /service/ HTTP/1.1\nContent-Length: %d\nContent-Type: application/xml\n\n%s", strlen(Dat), Dat);
+	if ((RetS = StkSocket_Send(Id, Id, (BYTE*)Tmp, strlen((char*)Tmp))) <= 0) {
+		return -1;
+	}
+	int RetR;
+	for (int Loop = 0; Loop < 10; Loop++) {
+		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, 205000, NULL, -1, FALSE);
+		if (RetR > 0) {
+			RecvDat[RetR] = '\0';
+			break;
+		}
+	}
+	StkSocket_Disconnect(Id, Id, TRUE);
+	if (RetR <= 0) {
+		return -1;
+	}
+	if (strstr((char*)RecvDat, "200") != 0) {
+		return 200;
+	}
+	if (strstr((char*)RecvDat, "202") != 0) {
+		return 202;
+	}
+	if (strstr((char*)RecvDat, "400") != 0) {
+		return 400;
+	}
+
+	return -1;
+}
+
 int ElemStkThreadMainSend(int Id)
 {
 	BOOL Ret;
@@ -135,6 +172,25 @@ int ElemStkThreadMainSend(int Id)
 		SendTestDataFailed = TRUE;
 	}
 	SendTestDataCount++;
+
+	return 0;
+}
+
+int ElemStkThreadMainSend2(int Id)
+{
+	if (SendTestData2(Id, "<Req><Start/></Req>\n") != 400) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	if (SendTestData2(Id, "<Stop/>\n") != 400) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	if (SendTestData2(Id, "<Req><Stop/></Req>\n") != 202) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	Sleep(1000);
 
 	return 0;
 }
@@ -191,6 +247,7 @@ void ReqResTest1()
 	delete Soc;
 
 	for (int Loop = 0; Loop < THREADNUM; Loop++) {
+		StkSocket_DeleteInfo(SendIds[Loop]);
 		DeleteStkThread(SendIds[Loop]);
 	}
 
@@ -207,6 +264,32 @@ void ReqResTest1()
 	}else {
 		printf("... OK\r\n");
 	}
+}
+
+void ReqResTest2()
+{
+	printf("StkWebAppTest2 ");
+
+	int Ids[1] = {11};
+	int SendIds[1] = {31};
+	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
+	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
+
+	wsprintf(Name, _T("Sender"));
+	wsprintf(Desc, _T("Description"));
+	AddStkThread(SendIds[0], Name, Desc, NULL, NULL, ElemStkThreadMainSend2, NULL, NULL);
+	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
+
+	StkWebApp* Soc = new StkWebApp(Ids, 1, _T("localhost"), 8080);
+	StartSpecifiedStkThreads(SendIds, 1);
+	Soc->TheLoop();
+	StopSpecifiedStkThreads(SendIds, 1);
+	delete Soc;
+
+	StkSocket_DeleteInfo(SendIds[0]);
+	DeleteStkThread(SendIds[0]);
+
+	printf("...OK\r\n");
 }
 
 void AddDeleteStkWebAppTest()
@@ -321,6 +404,7 @@ int main(int Argc, char* Argv[])
 	AddDeleteStkWebAppTest();
 	AddDeleteReqHandlerTest();
 	ReqResTest1();
+	ReqResTest2();
 
 	return 0;
 }

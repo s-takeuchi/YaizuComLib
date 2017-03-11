@@ -183,6 +183,11 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
 	}
+	if (Ret >= DATA_LEN) {
+		Dat[DATA_LEN - 1] = '\0';
+	} else {
+		Dat[Ret] = '\0';
+	}
 	TCHAR *DatWc = Uft8ToWideChar(Dat);
 	if (DatWc == NULL) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
