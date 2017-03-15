@@ -910,6 +910,23 @@ void XmlEncodingTest3()
 	delete Xml2;
 }
 
+void XmlJsonDecodingTest1()
+{
+	wprintf(_T("XmlJsonDecodingTest1 ... "));
+	int Offset;
+
+	StkObject* RetObjJson = StkObject::CreateObjectFromJson(_T("\"Abc\" : {\"Xyz\" : \"123\"}"), &Offset);
+	StkObject* RetObjXml = StkObject::CreateObjectFromXml(_T("<Abc><Xyz>123</Xyz></Abc>"), &Offset);
+	if (RetObjJson->Equals(RetObjXml)) {
+		printf("OK\r\n");
+	} else {
+		printf("NG\r\n");
+		exit(0);
+	}
+	delete RetObjJson;
+	delete RetObjXml;
+}
+
 void XmlJsonEncodingTest1()
 {
 	StkObject* TopElem = new StkObject(_T("House"));
@@ -1217,7 +1234,7 @@ void XmlDecodingTest4(TCHAR* Name)
 	delete Xml;
 }
 
-void XmlDecordingAbnormalTest1()
+void XmlDecodingAbnormalTest1()
 {
 	AbnormalCaseForXml(_T(""), StkObject::ERROR_XML_NO_ELEMENT_FOUND);
 	AbnormalCaseForXml(NULL, StkObject::ERROR_XML_NO_ELEMENT_FOUND);
@@ -1363,7 +1380,7 @@ void JsonDecodingTest2()
 	delete RetObj4;
 }
 
-void JsonDecordingAbnormalTest1()
+void JsonDecodingAbnormalTest1()
 {
 	AbnormalCaseForJson(_T(""), StkObject::ERROR_JSON_NO_ELEMENT_FOUND);
 	AbnormalCaseForJson(NULL, StkObject::ERROR_JSON_NO_ELEMENT_FOUND);
@@ -1610,12 +1627,15 @@ void StkObjectTest()
 		XmlDecodingTest2();
 		XmlDecodingTest3(_T("DecodeCheck1"));
 		XmlDecodingTest4(_T("DecodeCheck2"));
-		XmlDecordingAbnormalTest1();
+		XmlDecodingAbnormalTest1();
 
 		// JSON
 		JsonDecodingTest1();
 		JsonDecodingTest2();
-		JsonDecordingAbnormalTest1();
+		JsonDecodingAbnormalTest1();
+
+		// XML and JSON
+		XmlJsonDecodingTest1();
 	}
 
 	// General check
