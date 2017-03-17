@@ -6,6 +6,7 @@
 #include "..\stkthread\stkthread.h"
 #include "..\commonfunc\stkobject.h"
 #include "..\commonfunc\StkStringParser.h"
+#include "..\commonfunc\MsgProc.h"
 #include "StkWebApp.h"
 #include "StkWebAppExec.h"
 
@@ -41,6 +42,7 @@ public:
 	BYTE* MakeHttpHeader(int, int, int);
 	StkObject* RecvRequest(int, int*, int*, TCHAR[128]);
 	void SendResponse(StkObject*, int, int, int);
+	StkObject* MakeErrorResponse(int ErrId);
 
 	static int ElemStkThreadMainRecv(int);
 
@@ -132,7 +134,6 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	} else if (XmlJsonType == 2) {
 		strcpy_s(ContType, 64, "Content-Type: application/json\r\n");
 	} else if (XmlJsonType == 0) {
-		strcpy_s(ContType, 64, "Content-Type: text/html\r\n");
 	}
 	sprintf_s(ContLen, 64, "Content-Length: %d\r\n", DataLength);
 	sprintf_s(Connection, 64, "Connection: close\r\n");
@@ -218,7 +219,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		delete DatWc;
 		return NULL;
 	}
-	
+
 	int ErrorCode = 0;
 	StkObject* ReqObj = NULL;
 	if (*XmlJsonType == 1) {
@@ -229,7 +230,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	}
 	delete DatWc;
 	return ReqObj;
-};
+}
 
 void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType, int ResultCode)
 {
@@ -273,7 +274,16 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 	delete HeaderDat;
 	delete RespDat;
 	StkSocket_CloseAccept(TargetId, TargetId, TRUE);
-};
+}
+
+StkObject* StkWebApp::Impl::MakeErrorResponse(int ErrId)
+{
+	StkObject* ErrResObj = new StkObject(_T("Res"));
+	ErrResObj->AppendChildElement(new StkObject(_T("Code"), ErrId));
+	ErrResObj->AppendChildElement(new StkObject(_T("MsgEng"), MessageProc::GetMsgEng(ErrId)));
+	ErrResObj->AppendChildElement(new StkObject(_T("MsgJpn"), MessageProc::GetMsgJpn(ErrId)));
+	return ErrResObj;
+}
 
 int StkWebApp::Impl::ElemStkThreadMainRecv(int Id)
 {
@@ -359,6 +369,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		return 0;
 	}
 
+	// If valid request is received...
 	StkObject* StkObjRes = NULL;
 	BOOL FndFlag = FALSE;
 	for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
@@ -370,6 +381,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			break;
 		}
 	}
+
 	// If service stop request is presented...
 	if (FndFlag == FALSE && Method == STKWEBAPP_METHOD_POST && lstrcmp(UrlPath, _T("/service/")) == 0) {
 		int ErrorCode;
@@ -380,12 +392,14 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			pImpl->StopFlag = TRUE;
 		} else {
 			ResultCode = 400;
+			StkObjRes = pImpl->MakeErrorResponse(1004);
 			FndFlag = TRUE;
 		}
 		delete TmpObj;
 	}
 	if (FndFlag == FALSE) {
 		ResultCode = 404;
+		StkObjRes = pImpl->MakeErrorResponse(1001);
 	}
 	if (StkObjRes == NULL) {
 		XmlJsonType = 0;
@@ -416,6 +430,16 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	pImpl->WebThreadCount = 0;
 	pImpl->HandlerCount = 0;
 	pImpl->StopFlag = FALSE;
+
+	// Message definition
+	MessageProc::AddJpn(1001, _T("クライアントからのリクエストに対応するAPIは定義されていません。"));
+	MessageProc::AddEng(1001, _T("No API is defined for the request sent from client."));
+	MessageProc::AddJpn(1002, _T("リクエストはXML, JSONのいずれでもありません。"));
+	MessageProc::AddEng(1002, _T("The request is neither XML nor JSON."));
+	MessageProc::AddJpn(1003, _T("HTTPヘッダのContent-Typeと実際のデータの型が一致しません。"));
+	MessageProc::AddEng(1003, _T("Actual data type does not correspond with Content-Type in HTTP header."));
+	MessageProc::AddJpn(1004, _T("URL\"/service/\"にPOSTされたリクエストは不正です。"));
+	MessageProc::AddEng(1004, _T("Invalid request is posted to URL\"/service/\"."));
 
 	// Update array of StkWebApp
 	if (StkWebAppCount < MAX_IMPL_COUNT) {
@@ -505,6 +529,9 @@ StkWebApp::~StkWebApp()
 		StkWebAppCount--;
 		break;
 	}
+
+	// Message deletion
+	MessageProc::ClearAllMsg();
 
 	delete pImpl;
 };

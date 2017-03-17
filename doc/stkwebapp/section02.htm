@@ -1,13 +1,16 @@
-﻿<HEAD>
+﻿<!DOCTYPE html>
+
+<html lang="ja">
+
+<HEAD>
+<title>StkWebApp</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="content-style-type" content="text/css">
 <link rel="stylesheet" href="./style.css" type="text/css">
 </HEAD>
 
 <BODY>
 <div id="container">
 <H1>2. StkWebApp</H1>
-<p/>
 
 
 
@@ -16,7 +19,7 @@
 StkWebAppは，REST APIを実現するためのクラスを提供します。<br/>
 想定する主な使用方法としては，下図のように，HTTP Serverのリバースプロキシ機能を用いて，特定のURLに対するアクセスをStkWebAppにディスパッチする方法で，
 これによりWeb BrowserからのリクエストをStkWebAppで処理します。<br/>
-<center><img src="stkwebapp.gif"></center><br/>
+<img src="stkwebapp.gif" alt="Component relation"><br/>
 
 StkWebAppは，内部的に下記のライブラリを利用します。<br/>
 StkWebAppを使用するプログラムは，下記のライブラリも組み込む必要があります。<br/>
@@ -33,25 +36,29 @@ StkWebAppを使用するプログラムは，下記のライブラリも組み�
 
 <H2 ID="2.2">2.2 StkWebAppの構成</H2>
 <div class="topic">
-StkWebAppは以下のファイルから構成されます。<br/>
+<p>
+StkWebAppは以下のファイルから構成されます。
+</p>
 <table class="tblstyle">
 <tr><td>stkwebapp.lib</td><td>StkWebAppの静的ライブラリです。</td></tr>
 <tr><td>StkWebApp.h</td><td>StkWebAppの利用プログラムのためのヘッダファイルで，StkWebAppクラスを定義します。<br/>StkWebAppクラスは，REST APIを実現する基本的な機能を提供します。</td></tr>
 <tr><td>StkWebAppExec.h</td><td>StkWebAppの利用プログラムのためのヘッダファイルで，StkWebAppExecクラスを定義します。<br/>StkWebAppExecクラスは，個々のREST APIの処理を実現するクラスの基底クラスです。</td></tr>
-</table><p/>
-StkWebAppの動作に必要なメモリサイズは下記のとおりです。<br/>
+</table>
+<p>
+StkWebAppの動作に必要なメモリサイズは下記のとおりです。
+</p>
 <table class="tblstyle">
 <tr><td>スタック</td><td>同時に動作可能なスレッド数×2Mバイト＋1Mバイト</td></tr>
 <tr><td>ヒープ</td><td>1Mバイト</td></tr>
-</table><p/>
-</div><p>
+</table>
+</div>
 
 
 
 <H2 ID="2.3">2.3 クラス関連図</H2>
 <div class="topic">
 StkWebApp, StkWebAppExecおよびユーザープログラムの関連を以下に示します。<br/>
-<center><img src="class.gif"></center><br/>
+<img src="class.gif" alt="Class diagram"><br/>
 StkWebAppは，StkWebAppクラスとStkWebAppExecクラスをUserProgramに提供します。
 UserProgramは，StkWebAppインスタンスを生成するとともに，StkWebAppExecクラスの派生クラスからインスタンスを生成します。
 StkWebAppExecクラスの派生クラスでは，個別のAPIの処理を定義します。<br/>
@@ -62,7 +69,7 @@ StkWebAppExecクラスの派生クラスでは，個別のAPIの処理を定義�
 <H2 ID="2.4">2.4 StkWebAppクラス</H2>
 <div class="topic">
 
-StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)<p/>
+<p>StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)</p>
 StkWebAppインスタンスを生成すると同時に，以下を行います。<br/>
 <ul>
 <li>ワーカースレッドの生成および起動</li>
@@ -73,19 +80,18 @@ StkWebAppインスタンスを生成すると同時に，以下を行います�
 <tr><td>Count[入力]</td><td>TargetIds配列で指定した要素(ID)の数</td></tr>
 <tr><td>HostNamet[入力]</td><td>Listenするホスト名およびIPアドレス</td></tr>
 <tr><td>TargetPort[入力]</td><td>Listenするポート番号</td></tr>
-</td></tr>
 </table>
-<hr/><p/>
+<hr/>
 
-~StkWebApp()<p/>
+<p>~StkWebApp()</p>
 以下を行うと同時に，StkWebAppインスタンスを消滅させます。<br/>
 <ul>
 <li>Listenしたソケットのクローズ</li>
 <li>ワーカースレッドの停止および削除</li>
 </ul><br/>
-<hr/><p/>
+<hr/>
 
-int AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)<p/>
+<p>int AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)</p>
 ある特定のメソッドおよびURLと関連付くリクエストを処理するハンドラを登録します。<br/>
 <table class="tblstyle">
 <tr><td>
@@ -100,23 +106,21 @@ StkWebApp::STKWEBAPP_METHOD_DELETE<br/>
 <tr><td>UrlPath[入力]</td><td>ハンドラの処理対象となるURL。ワイルドカードとして$を指定可能。</td></tr>
 <tr><td>HandlerObj[入力]</td><td>処理ハンドラとなるStkWebAppExecインスタンスのポインタ</td></tr>
 <tr><td>戻り値</td><td>-1:すでにおなじメソッドおよびURLでハンドラが登録済<br/>-1以外:登録後のハンドラの数</td></tr>
-</td></tr>
 </table>
-<hr/><p/>
+<hr/>
 
-int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[128])<p/>
+<p>int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[128])</p>
 登録済のハンドラを削除します。<br/>
 <table class="tblstyle">
 <tr><td>Method[入力]</td><td>削除するハンドラを登録したときに指定したメソッドおよびその論理積<br/></td></tr>
 <tr><td>UrlPath[入力]</td><td>削除するハンドラを登録したときに指定したURL</td></tr>
 <tr><td>戻り値</td><td>-1:指定したハンドラが登録されていない<br/>-1以外:削除後のハンドラの数</td></tr>
-</td></tr>
 </table>
-<hr/><p/>
+<hr/>
 
-void StkWebApp::TheLoop()<p/>
+<p>void StkWebApp::TheLoop()</p>
 URL"/service/"に"&lt;Req&gt;&lt;Stop/&gt;&lt;/Req&gt;"が送信されるまで，本メソッドから処理が戻りません。<br/>
-<hr/><p/>
+<hr/>
 
 </div><p>
 
@@ -124,7 +128,7 @@ URL"/service/"に"&lt;Req&gt;&lt;Stop/&gt;&lt;/Req&gt;"が送信されるまで�
 
 <H2 ID="2.5">2.5 StkWebAppExecクラス</H2>
 <div class="topic">
-virtual StkObject* Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[128], int* ResultCode) = 0<p/>
+<p>virtual StkObject* Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[128], int* ResultCode) = 0</p>
 StkWebAppExecクラスの派生クラスが実装するメソッドです。純粋仮想関数として定義されています。<br/>
 <table class="tblstyle">
 <tr><td>ReqObj[入力]</td><td>クライアントがリクエストとして与えたXMLおよびJSON形式のデータをStkObjectに変換したもの<br/></td></tr>
@@ -132,13 +136,37 @@ StkWebAppExecクラスの派生クラスが実装するメソッドです。純�
 <tr><td>UrlPath[入力]</td><td>クライアントがリクエストとして与えたURL</td></tr>
 <tr><td>ResultCode[出力]</td><td>クライアントに返すステータスコード</td></tr>
 <tr><td>戻り値</td><td>クライアントに返すデータ。最終的にXMLまたはJSON形式のデータに変換される</td></tr>
-</td></tr>
 </table>
-<hr/><p/>
+<hr/>
 </div><p>
 
+
+
+<H2 ID="2.6">2.6 異常時の振る舞い</H2>
+<div class="topic">
+StkWebAppは，リクエストの不正や内部処理の異常を検知した場合，エラーコードおよびエラーメッセージを梱包したレスポンスを返します。<br/>
+レスポンスは以下のように定義されます。<br/>
+<p>
+<table class="tblstyle"><tr>
+<td><pre><code>XMLの場合:
+&lt;Res&gt;
+  &lt;Code&gt;1234&lt;/Code&gt;
+  &lt;MsgEng&gt;xyz&lt;/MsgEng&gt;
+  &lt;MsgJpn&gt;xyz&lt;/MsgJpn&gt;
+&lt;/Res&gt;
+</code></pre></td>
+<td><pre><code>JSONの場合:
+"Res":{
+  "Code":1234
+  "MsgEng":"xyz"
+  "MsgJpn":"xyz"
+}
+</code></pre></td>
+</tr></table>
+</div><p>
 
 
 
 </div>
 </BODY>
+</html>

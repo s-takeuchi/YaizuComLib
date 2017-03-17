@@ -121,7 +121,7 @@ BOOL SendTestData(int Id, char* Dat)
 	return CompObjs((BYTE*)Dat, (BYTE*)RecvDat);
 }
 
-int SendTestData2(int Id, char* Dat)
+int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType)
 {
 	char Tmp[256];
 	BYTE RecvDat[4096];
@@ -129,7 +129,7 @@ int SendTestData2(int Id, char* Dat)
 	int RetC = StkSocket_Connect(Id);
 	int RetS = 0;
 
-	sprintf_s(Tmp, 256, "POST /service/ HTTP/1.1\nContent-Length: %d\nContent-Type: application/xml\n\n%s", strlen(Dat), Dat);
+	sprintf_s(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, strlen(Dat), ContType, Dat);
 	if ((RetS = StkSocket_Send(Id, Id, (BYTE*)Tmp, strlen((char*)Tmp))) <= 0) {
 		return -1;
 	}
@@ -145,17 +145,11 @@ int SendTestData2(int Id, char* Dat)
 	if (RetR <= 0) {
 		return -1;
 	}
-	if (strstr((char*)RecvDat, "200") != 0) {
-		return 200;
-	}
-	if (strstr((char*)RecvDat, "202") != 0) {
-		return 202;
-	}
-	if (strstr((char*)RecvDat, "400") != 0) {
-		return 400;
-	}
-
-	return -1;
+	char* ValStr = strstr((char*)RecvDat, "HTTP/1.1");
+	ValStr += 9;
+	int Val;
+	sscanf_s(ValStr, "%d", &Val);
+	return Val;
 }
 
 int ElemStkThreadMainSend(int Id)
@@ -178,18 +172,34 @@ int ElemStkThreadMainSend(int Id)
 
 int ElemStkThreadMainSend2(int Id)
 {
-	if (SendTestData2(Id, "<Req><Start/></Req>\n") != 400) {
+	printf("StkWebAppTest2:GET /abc/ <Aaa/> == 404");
+	if (SendTestData2(Id, "GET", "/abc/", "<Aaa/>\n", "application/xml") != 404) {
 		printf("... NG\r\n");
 		exit(0);
 	}
-	if (SendTestData2(Id, "<Stop/>\n") != 400) {
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest2:POST /service/ <Req><Start/></Req> == 400");
+	if (SendTestData2(Id, "POST", "/service/", "<Req><Start/></Req>\n", "application/xml") != 400) {
 		printf("... NG\r\n");
 		exit(0);
 	}
-	if (SendTestData2(Id, "<Req><Stop/></Req>\n") != 202) {
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest2:POST /service/ <Stop/> == 400");
+	if (SendTestData2(Id, "POST", "/service/", "<Stop/>\n", "application/xml") != 400) {
 		printf("... NG\r\n");
 		exit(0);
 	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest2:POST /service/ <Req><Stop/></Req> == 202");
+	if (SendTestData2(Id, "POST", "/service/", "<Req><Stop/></Req>\n", "application/xml") != 202) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
 	Sleep(1000);
 
 	return 0;
@@ -268,8 +278,6 @@ void ReqResTest1()
 
 void ReqResTest2()
 {
-	printf("StkWebAppTest2 ");
-
 	int Ids[1] = {11};
 	int SendIds[1] = {31};
 	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
@@ -288,8 +296,6 @@ void ReqResTest2()
 
 	StkSocket_DeleteInfo(SendIds[0]);
 	DeleteStkThread(SendIds[0]);
-
-	printf("...OK\r\n");
 }
 
 void AddDeleteStkWebAppTest()
@@ -403,8 +409,8 @@ int main(int Argc, char* Argv[])
 {
 	AddDeleteStkWebAppTest();
 	AddDeleteReqHandlerTest();
-	ReqResTest1();
 	ReqResTest2();
+	//ReqResTest1();
 
 	return 0;
 }

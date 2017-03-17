@@ -1,6 +1,9 @@
-﻿<HEAD>
+﻿<!DOCTYPE html>
+
+<html lang="ja">
+<HEAD>
+<title>StkWebAppCmd</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="content-style-type" content="text/css">
 <link rel="stylesheet" href="./style.css" type="text/css">
 </HEAD>
 
@@ -32,7 +35,7 @@ Webアプリケーションの登録／削除／起動／停止を行うCLIで�
 <H2 ID="1.2">1.2 StkWebAppCmdの要件</H2>
 <div class="topic">
 StkWebAppCmdは，下記のフォルダおよびファイル構成を前提としています。<br/>
-<img src="stkwebappcmd.gif"><br/>
+<img src="stkwebappcmd.gif" alt="file tree"><br/>
 /appnameフォルダは，StkWebAppに基づいたWebアプリケーションを構成するフォルダおよびファイルを格納する最上位フォルダであり，
 任意のフォルダ名が設定されることを許します。<br/>
 /appnameフォルダ直下には，nginxの実行ファイル(nginx.exe)，nginxの関連フォルダ，および以下のファイルが存在する必要があります。<br/>
@@ -53,7 +56,7 @@ StkWebAppCmdは，下記のフォルダおよびファイル構成を前提と�
 <pre><code>
 StkWebAppCmdの使用方法を以下に示します。<br/>
 StkWebAppCmd (Service command for StkWebApp)
-Command usage : stkwebappcmd &ltcommand&gt &ltoption 1&gt &ltoption 2&gt ...
+Command usage : stkwebappcmd &lt;command&gt; &lt;option 1&gt; &lt;option 2&gt; ...
 
 Commands
   help      : Display help.
@@ -85,10 +88,11 @@ Options
   SrvPort : Port number of REST API service
   WebHost : Host name or IP address of WEB service
   WebPort : Port number of WEB service
-</codo></pre>
+</code></pre>
 </div><p>
 
 
 
 </div>
 </BODY>
+</html>
