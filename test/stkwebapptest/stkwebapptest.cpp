@@ -227,42 +227,42 @@ int ElemStkThreadMainSend(int Id)
 int ElemStkThreadMainSend2(int Id)
 {
 	int ErrorCode;
-	printf("StkWebAppTest2:GET /abc/ <Aaa/> == 404");
+	printf("StkWebAppTest2:GET /abc/ [<Aaa/>] == 404");
 	if (SendTestData2(Id, "GET", "/abc/", "<Aaa/>\n", "application/xml", &ErrorCode) != 404 || ErrorCode != 1001) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest2:GET /abc/ \"aaa\" : {\"bbb\" : \"xxx\"} == 404");
+	printf("StkWebAppTest2:GET /abc/ [\"aaa\" : {\"bbb\" : \"xxx\"}] == 404");
 	if (SendTestData2(Id, "GET", "/abc/", "\"aaa\" : {\"bbb\" : \"xxx\"}\n", "application/json", &ErrorCode) != 404 || ErrorCode != 1001) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest2:GET /abc/ XYZ == 400");
+	printf("StkWebAppTest2:GET /abc/ [XYZ] == 400");
 	if (SendTestData2(Id, "GET", "/abc/", "XYZ\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1002) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest2:POST /service/ <Req><Start/></Req> == 400");
+	printf("StkWebAppTest2:POST /service/ [<Req><Start/></Req>] == 400");
 	if (SendTestData2(Id, "POST", "/service/", "<Req><Start/></Req>\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1004) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest2:POST /service/ <Stop/> == 400");
+	printf("StkWebAppTest2:POST /service/ [<Stop/>] == 400");
 	if (SendTestData2(Id, "POST", "/service/", "<Stop/>\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1004) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest2:POST /service/ <Req><Stop/></Req> == 202");
+	printf("StkWebAppTest2:POST /service/ [<Req><Stop/></Req>] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "<Req><Stop/></Req>\n", "application/xml", &ErrorCode) != 202 || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);

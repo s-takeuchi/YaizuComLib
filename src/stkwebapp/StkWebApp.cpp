@@ -243,10 +243,8 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 	} else {
 		if (XmlJsonType == 1 && Obj != NULL) {
 			Obj->ToXml(XmlOrJson, DATA_LEN);
-		} else if (XmlJsonType == 2 && Obj != NULL) {
+		} else if ((XmlJsonType == 0 || XmlJsonType == 2) && Obj != NULL) {
 			Obj->ToJson(XmlOrJson, DATA_LEN);
-		} else if (XmlJsonType == 0 && Obj != NULL) {
-			Obj->ToXml(XmlOrJson, DATA_LEN);
 		}
 		Dat = WideCharToUtf8(XmlOrJson);
 		DatLength = strlen((char*)Dat);
@@ -367,10 +365,11 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		return 0;
 	}
 
-	// If valid request is received...
+	// If a request is received...
 	StkObject* StkObjRes = NULL;
 	BOOL FndFlag = FALSE;
 	if (XmlJsonType != -1) {
+		// If valid request is received...
 		for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
 			TCHAR Param[4][128] = {_T(""), _T(""), _T(""), _T("")};
 			if (Method & pImpl->HandlerMethod[Loop] &&
@@ -381,7 +380,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			}
 		}
 	} else {
-		XmlJsonType = 2;
+		// If invalid request is received...
 		ResultCode = 400;
 		StkObjRes = pImpl->MakeErrorResponse(1002);
 		FndFlag = TRUE;
@@ -402,13 +401,21 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		}
 		delete TmpObj;
 	}
+
+	// Corresponding API is not found.
 	if (FndFlag == FALSE) {
 		ResultCode = 404;
 		StkObjRes = pImpl->MakeErrorResponse(1001);
 	}
-	if (StkObjRes == NULL) {
+
+	// Reset "XmlJsonType"
+	if (StkObjRes == NULL && (XmlJsonType == 1 || XmlJsonType == 2)) {
 		XmlJsonType = 0;
 	}
+	if (StkObjRes != NULL && (XmlJsonType == -1 || XmlJsonType == 0)) {
+		XmlJsonType = 2;
+	}
+
 	pImpl->SendResponse(StkObjRes, ThreadId, XmlJsonType, ResultCode);
 	delete StkObjRes;
 	if (StkObjReq != NULL) {
