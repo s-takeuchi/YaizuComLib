@@ -196,7 +196,6 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	}
 
 	//// Acquire METHOD and URL path begin ////
-	*Method = STKWEBAPP_METHOD_UNDEFINED;
 	TCHAR MethodStr[16];
 	StkStringParser::ParseInto3Params(DatWc, _T("# # HTTP#"), _T('#'), MethodStr, UrlPath, NULL);
 	if (lstrcmp(MethodStr, _T("GET")) == 0) {
@@ -215,7 +214,6 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	TCHAR* Req = SkipHttpHeader(DatWc);
 	*XmlJsonType = StkObject::Analyze(Req);
 	if (*XmlJsonType == -1) {
-		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		delete DatWc;
 		return NULL;
 	}
@@ -365,21 +363,28 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath);
 
 	// If no request is received, return from this method.
-	if (StkObjReq == NULL && Method == StkWebApp::STKWEBAPP_METHOD_UNDEFINED && XmlJsonType == -1) {
+	if (StkObjReq == NULL && Method == StkWebApp::STKWEBAPP_METHOD_UNDEFINED && lstrcmp(UrlPath, _T("")) == 0 && XmlJsonType == -1) {
 		return 0;
 	}
 
 	// If valid request is received...
 	StkObject* StkObjRes = NULL;
 	BOOL FndFlag = FALSE;
-	for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
-		TCHAR Param[4][128] = {_T(""), _T(""), _T(""), _T("")};
-		if (Method & pImpl->HandlerMethod[Loop] &&
-			StkStringParser::ParseInto4Params(UrlPath, pImpl->HandlerUrlPath[Loop], _T('$'), Param[0], Param[1], Param[2], Param[3]) == 1) {
-			StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode);
-			FndFlag = TRUE;
-			break;
+	if (XmlJsonType != -1) {
+		for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
+			TCHAR Param[4][128] = {_T(""), _T(""), _T(""), _T("")};
+			if (Method & pImpl->HandlerMethod[Loop] &&
+				StkStringParser::ParseInto4Params(UrlPath, pImpl->HandlerUrlPath[Loop], _T('$'), Param[0], Param[1], Param[2], Param[3]) == 1) {
+				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode);
+				FndFlag = TRUE;
+				break;
+			}
 		}
+	} else {
+		XmlJsonType = 2;
+		ResultCode = 400;
+		StkObjRes = pImpl->MakeErrorResponse(1002);
+		FndFlag = TRUE;
 	}
 
 	// If service stop request is presented...

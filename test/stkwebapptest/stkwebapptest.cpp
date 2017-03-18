@@ -121,10 +121,11 @@ BOOL SendTestData(int Id, char* Dat)
 	return CompObjs((BYTE*)Dat, (BYTE*)RecvDat);
 }
 
-int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType)
+int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode)
 {
 	char Tmp[256];
 	BYTE RecvDat[4096];
+	*ErrorCode = -1;
 
 	int RetC = StkSocket_Connect(Id);
 	int RetS = 0;
@@ -145,6 +146,59 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType)
 	if (RetR <= 0) {
 		return -1;
 	}
+
+	// Change UTF-8 into UTF-16
+	TCHAR* RecvDatW = NULL;
+	int WcSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)RecvDat, -1, NULL, NULL);
+	if (WcSize > 0) {
+		RecvDatW = new TCHAR[WcSize + 1];
+		WcSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)RecvDat, -1, RecvDatW, WcSize);
+		RecvDatW[WcSize] = '\0';
+	}
+
+	// Skip HTTP header
+	TCHAR* DatPtr = StrStr(RecvDatW, _T("\n\n"));
+	if (DatPtr == NULL) {
+		DatPtr = StrStr(RecvDatW, _T("\r\n\r\n"));
+	}
+	if (DatPtr == NULL) {
+		DatPtr = StrStr(RecvDatW, _T("\n\r\n\r"));
+	}
+
+	// Make StkObject from HTTP response data
+	int XmlJsonType = StkObject::Analyze(DatPtr);
+	StkObject* DatObj = NULL;
+	if (XmlJsonType == 1) {
+		int TmpCode;
+		DatObj = StkObject::CreateObjectFromXml(DatPtr, &TmpCode);
+	}
+	if (XmlJsonType == 2) {
+		int TmpCode;
+		DatObj = StkObject::CreateObjectFromJson(DatPtr, &TmpCode);
+	}
+	delete RecvDatW;
+
+	// Acquire error code
+	if (XmlJsonType == 1 || XmlJsonType == 2) {
+		TCHAR* ErrorCodeStr = NULL;
+		StkObject* TmpObj = DatObj->GetFirstChildElement();
+		while (TmpObj != NULL) {
+			if (lstrcmp(TmpObj->GetName(), _T("Code")) == 0) {
+				if (XmlJsonType == 1) {
+					ErrorCodeStr = TmpObj->GetStringValue();
+					*ErrorCode = _wtoi(ErrorCodeStr);
+				}
+				if (XmlJsonType == 2) {
+					*ErrorCode = TmpObj->GetIntValue();
+				}
+				break;
+			}
+			TmpObj = TmpObj->GetNext();
+		}
+		delete DatObj;
+	}
+
+	// Acquire status code
 	char* ValStr = strstr((char*)RecvDat, "HTTP/1.1");
 	ValStr += 9;
 	int Val;
@@ -172,29 +226,44 @@ int ElemStkThreadMainSend(int Id)
 
 int ElemStkThreadMainSend2(int Id)
 {
+	int ErrorCode;
 	printf("StkWebAppTest2:GET /abc/ <Aaa/> == 404");
-	if (SendTestData2(Id, "GET", "/abc/", "<Aaa/>\n", "application/xml") != 404) {
+	if (SendTestData2(Id, "GET", "/abc/", "<Aaa/>\n", "application/xml", &ErrorCode) != 404 || ErrorCode != 1001) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest2:GET /abc/ \"aaa\" : {\"bbb\" : \"xxx\"} == 404");
+	if (SendTestData2(Id, "GET", "/abc/", "\"aaa\" : {\"bbb\" : \"xxx\"}\n", "application/json", &ErrorCode) != 404 || ErrorCode != 1001) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest2:GET /abc/ XYZ == 400");
+	if (SendTestData2(Id, "GET", "/abc/", "XYZ\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1002) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
 	printf("StkWebAppTest2:POST /service/ <Req><Start/></Req> == 400");
-	if (SendTestData2(Id, "POST", "/service/", "<Req><Start/></Req>\n", "application/xml") != 400) {
+	if (SendTestData2(Id, "POST", "/service/", "<Req><Start/></Req>\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1004) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
 	printf("StkWebAppTest2:POST /service/ <Stop/> == 400");
-	if (SendTestData2(Id, "POST", "/service/", "<Stop/>\n", "application/xml") != 400) {
+	if (SendTestData2(Id, "POST", "/service/", "<Stop/>\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1004) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
 	printf("StkWebAppTest2:POST /service/ <Req><Stop/></Req> == 202");
-	if (SendTestData2(Id, "POST", "/service/", "<Req><Stop/></Req>\n", "application/xml") != 202) {
+	if (SendTestData2(Id, "POST", "/service/", "<Req><Stop/></Req>\n", "application/xml", &ErrorCode) != 202 || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
@@ -410,7 +479,7 @@ int main(int Argc, char* Argv[])
 	AddDeleteStkWebAppTest();
 	AddDeleteReqHandlerTest();
 	ReqResTest2();
-	//ReqResTest1();
+	ReqResTest1();
 
 	return 0;
 }
