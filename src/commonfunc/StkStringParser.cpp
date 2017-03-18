@@ -122,7 +122,7 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 		}
 		if (CurrStr != NULL) {
 			OutputBegin[Loop] = StrStr(CurrStr, SearchString[Loop]);
-			OutputEnd[Loop] = StrStr(CurrStr + 1, SearchString[Loop + 1]);
+			OutputEnd[Loop] = StrStr(CurrStr + lstrlen(SearchString[Loop]), SearchString[Loop + 1]);
 			if (OutputBegin[Loop] != NULL) {
 				OutputBegin[Loop] = StrStr(CurrStr, SearchString[Loop]) + lstrlen(SearchString[Loop]);
 			}

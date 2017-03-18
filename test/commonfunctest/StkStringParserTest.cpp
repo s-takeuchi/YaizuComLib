@@ -148,6 +148,34 @@ int StkStringParserTest()
 		printf("OK\r\n");
 	}
 	{
+		printf("[StkStringParser] normal: Short string (4) ...");
+		TCHAR Target[100] = _T("abcdefg");
+		TCHAR Format[100] = _T("#b#d#f#");
+		TCHAR OutStr1[256];
+		TCHAR OutStr2[256];
+		TCHAR OutStr3[256];
+		TCHAR OutStr4[256];
+		int Ret = StkStringParser::ParseInto4Params(Target, Format, _T('#'), OutStr1, OutStr2, OutStr3, OutStr4);
+		if (lstrcmp(OutStr1, _T("a")) != 0 || lstrcmp(OutStr2, _T("c")) != 0 || lstrcmp(OutStr3, _T("e")) != 0 || lstrcmp(OutStr4, _T("g")) != 0 || Ret != 1) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
+	{
+		printf("[StkStringParser] normal: Recursive string ...");
+		TCHAR Target[100] = _T("abcd1234xyzabcd1234xyz");
+		TCHAR Format[100] = _T("abcd1234xyz#12#xyz");
+		TCHAR OutStr1[256];
+		TCHAR OutStr2[256];
+		int Ret = StkStringParser::ParseInto2Params(Target, Format, _T('#'), OutStr1, OutStr2);
+		if (lstrcmp(OutStr1, _T("abcd")) != 0 || lstrcmp(OutStr2, _T("34")) != 0 || Ret != 1) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
+	{
 		printf("[StkStringParser] normal: All Fetch ...");
 		TCHAR Target[100] = _T("abcdefg012345+-*/xyz6789QWERTYUIO@@@****!!!!");
 		TCHAR Format[100] = _T("#");
