@@ -213,16 +213,14 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 
 	TCHAR* Req = SkipHttpHeader(DatWc);
 	*XmlJsonType = StkObject::Analyze(Req);
-	if (*XmlJsonType == -1) {
+	if (*XmlJsonType == -1 || *XmlJsonType == 1) {
 		delete DatWc;
 		return NULL;
 	}
 
 	int ErrorCode = 0;
 	StkObject* ReqObj = NULL;
-	if (*XmlJsonType == 1) {
-		ReqObj = StkObject::CreateObjectFromXml(Req, &ErrorCode);
-	} else if (*XmlJsonType == 2) {
+	if (*XmlJsonType == 2) {
 		ReqObj = StkObject::CreateObjectFromJson(Req, &ErrorCode);
 	} else if (*XmlJsonType == 0) {
 	}
@@ -242,7 +240,7 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 		ResultCode = 500;
 	} else {
 		if (XmlJsonType == 1 && Obj != NULL) {
-			Obj->ToXml(XmlOrJson, DATA_LEN);
+			ResultCode = 500;
 		} else if ((XmlJsonType == 0 || XmlJsonType == 2) && Obj != NULL) {
 			Obj->ToJson(XmlOrJson, DATA_LEN);
 		}
@@ -368,7 +366,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	// If a request is received...
 	StkObject* StkObjRes = NULL;
 	BOOL FndFlag = FALSE;
-	if (XmlJsonType != -1) {
+	if (XmlJsonType != -1 && XmlJsonType != 1) {
 		// If valid request is received...
 		for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
 			TCHAR Param[4][128] = {_T(""), _T(""), _T(""), _T("")};
@@ -389,7 +387,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	// If service stop request is presented...
 	if (FndFlag == FALSE && Method == STKWEBAPP_METHOD_POST && lstrcmp(UrlPath, _T("/service/")) == 0) {
 		int ErrorCode;
-		StkObject* TmpObj = StkObject::CreateObjectFromXml(_T("<Req><Stop/></Req>"), &ErrorCode);
+		StkObject* TmpObj = StkObject::CreateObjectFromJson(_T("{ \"Operation\" : \"Stop\" }"), &ErrorCode);
 		if (StkObjReq->Equals(TmpObj) == TRUE) {
 			ResultCode = 202;
 			FndFlag = TRUE;
@@ -409,10 +407,10 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	}
 
 	// Reset "XmlJsonType"
-	if (StkObjRes == NULL && (XmlJsonType == 1 || XmlJsonType == 2)) {
+	if (StkObjRes == NULL && XmlJsonType == 2) {
 		XmlJsonType = 0;
 	}
-	if (StkObjRes != NULL && (XmlJsonType == -1 || XmlJsonType == 0)) {
+	if (StkObjRes != NULL && (XmlJsonType == -1 || XmlJsonType == 0 || XmlJsonType == 1)) {
 		XmlJsonType = 2;
 	}
 
@@ -446,8 +444,8 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	// Message definition
 	MessageProc::AddJpn(1001, _T("クライアントからのリクエストに対応するAPIは定義されていません。"));
 	MessageProc::AddEng(1001, _T("No API is defined for the request sent from client."));
-	MessageProc::AddJpn(1002, _T("リクエストはXML, JSONのいずれでもありません。"));
-	MessageProc::AddEng(1002, _T("The request is neither XML nor JSON."));
+	MessageProc::AddJpn(1002, _T("リクエストはJSONではないデータを含んでいます。"));
+	MessageProc::AddEng(1002, _T("The request contains non-JSON data."));
 	MessageProc::AddJpn(1003, _T("HTTPヘッダのContent-Typeと実際のデータの型が一致しません。"));
 	MessageProc::AddEng(1003, _T("Actual data type does not correspond with Content-Type in HTTP header."));
 	MessageProc::AddJpn(1004, _T("URL\"/service/\"にPOSTされたリクエストは不正です。"));

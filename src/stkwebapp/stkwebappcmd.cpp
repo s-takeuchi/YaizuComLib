@@ -106,9 +106,9 @@ void StopProcesses()
 	StkSocket_AddInfo(1, SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, IpAddr, Port);
 	if (StkSocket_Connect(1) == 0) {
 		char SendDat[1024];
-		char Dat[256] = "<Req><Stop/></Req>";
+		char Dat[256] = "{ \"Operation\" : \"Stop\" }";
 		BYTE RecvDat[1024];
-		sprintf_s(SendDat, 1024, "POST /service/ HTTP/1.1\nContent-Length: %d\nContent-Type: application/xml\n\n%s", strlen(Dat), Dat);
+		sprintf_s(SendDat, 1024, "POST /service/ HTTP/1.1\nContent-Length: %d\nContent-Type: application/json\n\n%s", strlen(Dat), Dat);
 		StkSocket_Send(1, 1, (BYTE*)SendDat, strlen((char*)SendDat));
 		int RetR;
 		for (int Loop = 0; Loop < 10; Loop++) {

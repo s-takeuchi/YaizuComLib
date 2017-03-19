@@ -1513,10 +1513,20 @@ int MemoryLeakChecking2()
 			NewObj2->ToXml(StrVal3, 4096);
 			delete NewObj2;
 
-			TCHAR StrVal4[4096] = _T("");
+			TCHAR StrVal4[4096];
+			lstrcpy(StrVal4, _T(""));
 			NewObj2 = StkObject::CreateObjectFromJson(_T("\"Aaaa\" : { \"Bbbb\" : \"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\", \"Bbbb\" : \"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", \"Bbbb\" : \"\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\", \"Bbbb\" : \"\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\", \"Bbbb\" : \"\\f\\f\\f\\f\\f\\f\\f\\f\\f\\f\", \"Bbbb\" : \"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\", \"Bbbb\" : \"\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\", \"Bbbb\" : \"\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\" }"), &Offset);
 			NewObj2->ToJson(StrVal4, 4096);
 			delete NewObj2;
+			lstrcpy(StrVal4, _T(""));
+			NewObj2 = StkObject::CreateObjectFromJson(_T("\"aaa\" : {\"Hello\" : { \"FirstName\" : \"Shinya\", \"Middle\" : \"Tsunemi\", \"Last\" : \"Takeuchi\" }, \"Bye\" : \"Bye\"}"), &Offset);
+			NewObj2->ToJson(StrVal4, 4096);
+			delete NewObj2;
+			lstrcpy(StrVal4, _T(""));
+			NewObj2 = StkObject::CreateObjectFromJson(_T("\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}"), &Offset);
+			NewObj2->ToJson(StrVal4, 4096);
+			delete NewObj2;
+
 		}
 		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
 	}

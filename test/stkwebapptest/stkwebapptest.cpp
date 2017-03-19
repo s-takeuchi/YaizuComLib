@@ -95,7 +95,7 @@ BOOL SendTestData(int Id, char* Dat)
 	} else {
 		strcpy_s(UrlPath, 128, "/aaa/ddd/");
 	}
-	sprintf_s(TmpHeader, 256, "POST %s HTTP/1.1\nContent-Length: %d\nContent-Type: application/xml\n\n", UrlPath, strlen(Dat) + 1);
+	sprintf_s(TmpHeader, 256, "POST %s HTTP/1.1\nContent-Length: %d\nContent-Type: application/json\n\n", UrlPath, strlen(Dat) + 1);
 
 	if (StkSocket_Send(Id, Id, (BYTE*)TmpHeader, strlen((char*)TmpHeader)) <= 0) {
 		return FALSE;
@@ -210,9 +210,9 @@ int ElemStkThreadMainSend(int Id)
 {
 	BOOL Ret;
 	if (Id % 3 == 0) {
-		Ret = SendTestData(Id, "<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>");
+		Ret = SendTestData(Id, "\"aaa\" : {\"Hello\" : { \"FirstName\" : \"Shinya\", \"Middle\" : \"Tsunemi\", \"Last\" : \"Takeuchi\" }, \"Bye\" : \"Bye\"}");
 	} else if (Id % 3 == 1) {
-		Ret = SendTestData(Id, "<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>Haru</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>Natsu</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>Aki</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>Fuyu</Ddd></Ccc></Bbb></Aaa>");
+		Ret = SendTestData(Id, "\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}");
 	} else if (Id % 3 == 2) {
 		Ret = SendTestData(Id, "\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 0.5 }}");
 	}
@@ -227,8 +227,8 @@ int ElemStkThreadMainSend(int Id)
 int ElemStkThreadMainSend2(int Id)
 {
 	int ErrorCode;
-	printf("StkWebAppTest2:GET /abc/ [<Aaa/>] == 404");
-	if (SendTestData2(Id, "GET", "/abc/", "<Aaa/>\n", "application/xml", &ErrorCode) != 404 || ErrorCode != 1001) {
+	printf("StkWebAppTest2:GET /abc/ [{ \"AAA\":123 }] == 404");
+	if (SendTestData2(Id, "GET", "/abc/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 404 || ErrorCode != 1001) {
 		printf("... NG\r\n");
 		exit(0);
 	}
@@ -249,21 +249,21 @@ int ElemStkThreadMainSend2(int Id)
 	printf("... OK\r\n");
 
 	printf("StkWebAppTest2:POST /service/ [<Req><Start/></Req>] == 400");
-	if (SendTestData2(Id, "POST", "/service/", "<Req><Start/></Req>\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1004) {
+	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Start\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1004) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
 	printf("StkWebAppTest2:POST /service/ [<Stop/>] == 400");
-	if (SendTestData2(Id, "POST", "/service/", "<Stop/>\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1004) {
+	if (SendTestData2(Id, "POST", "/service/", "{ \"Stop\" : \"YES\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1004) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
 	printf("StkWebAppTest2:POST /service/ [<Req><Stop/></Req>] == 202");
-	if (SendTestData2(Id, "POST", "/service/", "<Req><Stop/></Req>\n", "application/xml", &ErrorCode) != 202 || ErrorCode != -1) {
+	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
