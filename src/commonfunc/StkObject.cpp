@@ -1548,6 +1548,8 @@ StkObject* StkObject::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObject* 
 			if (PrevStatus == ELEMOBJ_END) {
 				PrevStatus = ARRAY_END;
 				ArrayFlag = FALSE;
+				delete PrevName;
+				PrevName = NULL;
 				continue;
 			} else {
 				Impl::CleanupObjectsForJson(PrevName, RetObj);
