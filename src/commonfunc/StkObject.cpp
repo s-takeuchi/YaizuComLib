@@ -1177,8 +1177,13 @@ void StkObject::ToJson(TCHAR* Msg, int MsgLength, int Indent, BOOL ArrayFlag)
 		}
 		if (ArrayFlag == FALSE) {
 			if (pImpl->Type == STKOBJECT_ELEMENT || pImpl->FirstAttr != NULL) {
-				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : {\r\n"), pImpl->Name);
-				Length += (lstrlen(pImpl->Name) + 8);
+				if (*pImpl->Name == _T('\0')) {
+					_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("{\r\n"), pImpl->Name);
+					Length += 3;
+				} else {
+					_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : {\r\n"), pImpl->Name);
+					Length += (lstrlen(pImpl->Name) + 8);
+				}
 				if (Length >= MsgLength) {
 					Length = MsgLength - 1;
 				}
