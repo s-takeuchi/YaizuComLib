@@ -235,12 +235,18 @@ echo Building stkwebapp.sln and stkwebappcmd.sln...
 copy "..\src\stkwebapp\Release\stkwebapp.lib" deployment
 %DEVENV% "..\src\stkwebapp\stkwebappcmd.sln" /rebuild Release
 copy "..\src\stkwebapp\Release\stkwebappcmd.exe" deployment
+copy "..\src\stkwebapp\StkWebApp.h" deployment
+copy "..\src\stkwebapp\StkWebAppExec.h" deployment
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebapp.lib
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebappcmd.exe
+%SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\StkWebApp.h
+%SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\StkWebAppExec.h
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebapp.pdf
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip buildver.txt
 del ..\build\deployment\stkwebapp.lib
 del ..\build\deployment\stkwebappcmd.exe
+del ..\build\deployment\StkWebApp.h
+del ..\build\deployment\StkWebAppExec.h
 del ..\build\deployment\stkwebapp.pdf
 
 
