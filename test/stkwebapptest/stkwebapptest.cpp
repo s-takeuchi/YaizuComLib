@@ -130,7 +130,11 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, in
 	int RetC = StkSocket_Connect(Id);
 	int RetS = 0;
 
-	sprintf_s(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, strlen(Dat), ContType, Dat);
+	if (Method == NULL && Url == NULL) {
+		sprintf_s(Tmp, 256, "%s", Dat);
+	} else {
+		sprintf_s(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, strlen(Dat), ContType, Dat);
+	}
 	if ((RetS = StkSocket_Send(Id, Id, (BYTE*)Tmp, strlen((char*)Tmp))) <= 0) {
 		return -1;
 	}
@@ -227,6 +231,14 @@ int ElemStkThreadMainSend(int Id)
 int ElemStkThreadMainSend2(int Id)
 {
 	int ErrorCode;
+
+	printf("StkWebAppTest2:Invalid request == 400");
+	if (SendTestData2(Id, NULL, NULL, "dummy", "", &ErrorCode) != 400 || ErrorCode != 1005) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
 	printf("StkWebAppTest2:GET /abc/ [{ \"AAA\":123 }] == 404");
 	if (SendTestData2(Id, "GET", "/abc/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 404 || ErrorCode != 1001) {
 		printf("... NG\r\n");
@@ -248,21 +260,28 @@ int ElemStkThreadMainSend2(int Id)
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest2:POST /service/ [<Req><Start/></Req>] == 400");
+	printf("StkWebAppTest2:GET /abc/ [<Aaa><Bbb/></Aaa>] == 400");
+	if (SendTestData2(Id, "GET", "/abc/", "<Aaa><Bbb/></Aaa>\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1002) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest2:POST /service/ [{ \"Operation\" : \"Start\" }] == 400");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Start\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1004) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest2:POST /service/ [<Stop/>] == 400");
+	printf("StkWebAppTest2:POST /service/ [{ \"Stop\" : \"YES\" }] == 400");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Stop\" : \"YES\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1004) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest2:POST /service/ [<Req><Stop/></Req>] == 202");
+	printf("StkWebAppTest2:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);

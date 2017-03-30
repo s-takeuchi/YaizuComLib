@@ -16,6 +16,7 @@ public:
 	static const unsigned char STKWEBAPP_METHOD_POST      = 0x04;
 	static const unsigned char STKWEBAPP_METHOD_PUT       = 0x08;
 	static const unsigned char STKWEBAPP_METHOD_DELETE    = 0x10;
+	static const unsigned char STKWEBAPP_METHOD_INVALID   = 0x20;
 
 public:
 	StkWebApp(int*, int, TCHAR*, int);

@@ -197,7 +197,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 
 	//// Acquire METHOD and URL path begin ////
 	TCHAR MethodStr[16];
-	StkStringParser::ParseInto3Params(DatWc, _T("# # HTTP#"), _T('#'), MethodStr, UrlPath, NULL);
+	StkStringParser::ParseInto3Params(DatWc, _T("# # HTTP#"), _T('#'), MethodStr, 16, UrlPath, 128, NULL, -1);
 	if (lstrcmp(MethodStr, _T("GET")) == 0) {
 		*Method = STKWEBAPP_METHOD_GET;
 	} else if (lstrcmp(MethodStr, _T("HEAD")) == 0) {
@@ -208,6 +208,10 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		*Method = STKWEBAPP_METHOD_PUT;
 	} else if (lstrcmp(MethodStr, _T("DELETE")) == 0) {
 		*Method = STKWEBAPP_METHOD_DELETE;
+	} else {
+		*Method = STKWEBAPP_METHOD_INVALID;
+		delete DatWc;
+		return NULL;
 	}
 	//// Acquire METHOD and URL path end ////
 
@@ -366,7 +370,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	// If a request is received...
 	StkObject* StkObjRes = NULL;
 	BOOL FndFlag = FALSE;
-	if (XmlJsonType != -1 && XmlJsonType != 1) {
+	if (XmlJsonType == 0 || XmlJsonType == 2) {
 		// If valid request is received...
 		for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
 			TCHAR Param[4][128] = {_T(""), _T(""), _T(""), _T("")};
@@ -379,8 +383,13 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		}
 	} else {
 		// If invalid request is received...
-		ResultCode = 400;
-		StkObjRes = pImpl->MakeErrorResponse(1002);
+		if (Method == StkWebApp::STKWEBAPP_METHOD_INVALID) {
+			ResultCode = 400;
+			StkObjRes = pImpl->MakeErrorResponse(1005);
+		} else {
+			ResultCode = 400;
+			StkObjRes = pImpl->MakeErrorResponse(1002);
+		}
 		FndFlag = TRUE;
 	}
 
@@ -449,7 +458,9 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	MessageProc::AddJpn(1003, _T("HTTPヘッダのContent-Typeと実際のデータの型が一致しません。"));
 	MessageProc::AddEng(1003, _T("Actual data type does not correspond with Content-Type in HTTP header."));
 	MessageProc::AddJpn(1004, _T("URL\"/service/\"にPOSTされたリクエストは不正です。"));
-	MessageProc::AddEng(1004, _T("Invalid request is posted to URL\"/service/\"."));
+	MessageProc::AddEng(1004, _T("An invalid request is posted to URL\"/service/\"."));
+	MessageProc::AddJpn(1005, _T("不正なリクエストを受信しました。リクエストが壊れているかHTTPヘッダに不正な値が指定されています。"));
+	MessageProc::AddEng(1005, _T("An invalid request is received. The request might be broken or invalid value is configured in the HTTP header."));
 
 	// Update array of StkWebApp
 	if (StkWebAppCount < MAX_IMPL_COUNT) {
