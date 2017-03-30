@@ -5,27 +5,51 @@
 
 int StkStringParser::ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1)
 {
-	return ParseInto4Params(OriginStr, Format, Target, OutStr1, NULL, NULL, NULL);
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, NULL, -1, NULL, -1, NULL, -1);
+}
+
+int StkStringParser::ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len)
+{
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, NULL, -1, NULL, -1, NULL, -1);
 }
 
 int StkStringParser::ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2)
 {
-	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr2, NULL, NULL);
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, NULL, -1, NULL, -1);
+}
+
+int StkStringParser::ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len)
+{
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, OutStr2, OutStr2Len, NULL, -1, NULL, -1);
 }
 
 int StkStringParser::ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3)
 {
-	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr2, OutStr3, NULL);
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, OutStr3, -1, NULL, -1);
 }
 
-// OutputStr1 [out] : 1st Parameter acquired
-// OutputStr2 [out] : 2nd Parameter acquired
-// OutputStr3 [out] : 3rd Parameter acquired
-// OutputStr4 [out] : 4th Parameter acquired
+int StkStringParser::ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len, TCHAR* OutStr3, int OutStr3Len)
+{
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, OutStr2, OutStr2Len, OutStr3, OutStr3Len, NULL, -1);
+}
+
+int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3, TCHAR* OutStr4)
+{
+	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, OutStr3, -1, OutStr4, -1);
+}
+
+// OutStr1   [out] : 1st Parameter to be acquired
+// OutStr1Len [in] : Size of OutStr1. If -1 is presented, it is regarded as infinite length.
+// OutStr2   [out] : 2nd Parameter to be acquired
+// OutStr2Len [in] : Size of OutStr2. If -1 is presented, it is regarded as infinite length.
+// OutStr3   [out] : 3rd Parameter to be acquired
+// OutStr3Len [in] : Size of OutStr3. If -1 is presented, it is regarded as infinite length.
+// OutStr4   [out] : 4th Parameter to be acquired
+// OutStr4Len [in] : Size of OutStr4. If -1 is presented, it is regarded as infinite length.
 // Return: Result code (0: Number of parameters to be set differs from the number of targets,
 //                      1: Number of parameters to be set is same as the number of targets,
 //                     -1: Invalid OriginStrWk or FormatWk was presented)
-int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3, TCHAR* OutStr4)
+int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len, TCHAR* OutStr3, int OutStr3Len, TCHAR* OutStr4, int OutStr4Len)
 {
 	if (OutStr1 != NULL) {
 		lstrcpy(OutStr1, _T(""));
@@ -132,21 +156,33 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 		}
 		if (Loop == 0 && OutStr1 != NULL && OutputBegin[0] != NULL && OutputEnd[0] != NULL) {
 			int TmpLen = OutputEnd[0] - OutputBegin[0] + 1;
+			if (OutStr1Len != -1 && OutStr1Len < TmpLen) {
+				TmpLen = OutStr1Len;
+			}
 			lstrcpyn(OutStr1, OutputBegin[0], TmpLen);
 			NumberOfParamSet++;
 		}
 		if (Loop == 1 && OutStr2 != NULL && OutputBegin[1] != NULL && OutputEnd[1] != NULL) {
 			int TmpLen = OutputEnd[1] - OutputBegin[1] + 1;
+			if (OutStr2Len != -1 && OutStr2Len < TmpLen) {
+				TmpLen = OutStr2Len;
+			}
 			lstrcpyn(OutStr2, OutputBegin[1], TmpLen);
 			NumberOfParamSet++;
 		}
 		if (Loop == 2 && OutStr3 != NULL && OutputBegin[2] != NULL && OutputEnd[2] != NULL) {
 			int TmpLen = OutputEnd[2] - OutputBegin[2] + 1;
+			if (OutStr3Len != -1 && OutStr3Len < TmpLen) {
+				TmpLen = OutStr3Len;
+			}
 			lstrcpyn(OutStr3, OutputBegin[2], TmpLen);
 			NumberOfParamSet++;
 		}
 		if (Loop == 3 && OutStr4 != NULL && OutputBegin[3] != NULL && OutputEnd[3] != NULL) {
 			int TmpLen = OutputEnd[3] - OutputBegin[3] + 1;
+			if (OutStr4Len != -1 && OutStr4Len < TmpLen) {
+				TmpLen = OutStr4Len;
+			}
 			lstrcpyn(OutStr4, OutputBegin[3], TmpLen);
 			NumberOfParamSet++;
 		}

@@ -23,6 +23,19 @@ int StkStringParserTest()
 		printf("OK\r\n");
 	}
 	{
+		printf("[StkStringParser] normal: two params with length ...");
+		TCHAR Target[100] = _T("abcdefg012345+-*/xyz6789");
+		TCHAR Format[100] = _T("abcdefg#+-*/#6789");
+		TCHAR OutStr1[256];
+		TCHAR OutStr2[256];
+		StkStringParser::ParseInto2Params(Target, Format, _T('#'), OutStr1, 4, OutStr2, 4);
+		if (lstrcmp(OutStr1, _T("012")) != 0 || lstrcmp(OutStr2, _T("xyz")) != 0) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
+	{
 		printf("[StkStringParser] normal: four params ...");
 		TCHAR Target[100] = _T("abcdefg012345+-*/xyz6789QWERTYUIO@@@****!!!!");
 		TCHAR Format[100] = _T("abcdefg#+-*/#6789#@@@#!!!!");
@@ -35,6 +48,42 @@ int StkStringParserTest()
 			lstrcmp(OutStr2, _T("xyz")) != 0 ||
 			lstrcmp(OutStr3, _T("QWERTYUIO")) != 0 ||
 			lstrcmp(OutStr4, _T("****")) != 0 ||
+			Ret != 1) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
+	{
+		printf("[StkStringParser] normal: three params with length ...");
+		TCHAR Target[100] = _T("Ç†Ç¢Ç§Ç¶Ç®ìåêºìÏñkÈ≥ñ£È±È≤òVé·íjèóèºí|î~ÉAÉCÉEÉGÉI");
+		TCHAR Format[100] = _T("Ç†Ç¢Ç§Ç¶Ç®$È≥ñ£È±È≤$èºí|î~$");
+		TCHAR OutStr1[256];
+		TCHAR OutStr2[256];
+		TCHAR OutStr3[256];
+		int Ret = StkStringParser::ParseInto3Params(Target, Format, _T('$'), OutStr1, 10, OutStr2, 4, OutStr3, 3);
+		if (lstrcmp(OutStr1, _T("ìåêºìÏñk")) != 0 ||
+			lstrcmp(OutStr2, _T("òVé·íj")) != 0 ||
+			lstrcmp(OutStr3, _T("ÉAÉC")) != 0 ||
+			Ret != 1) {
+			printf("NG\r\n");
+			exit(0);
+		}
+		printf("OK\r\n");
+	}
+	{
+		printf("[StkStringParser] normal: four params with length ...");
+		TCHAR Target[100] = _T("abcdefg012345+-*/xyz6789QWERTYUIO@@@****!!!!");
+		TCHAR Format[100] = _T("abcdefg#+-*/#6789#@@@#!!!!");
+		TCHAR OutStr1[256];
+		TCHAR OutStr2[256];
+		TCHAR OutStr3[256];
+		TCHAR OutStr4[256];
+		int Ret = StkStringParser::ParseInto4Params(Target, Format, _T('#'), OutStr1, 5, OutStr2, 2, OutStr3, 4, OutStr4, 3);
+		if (lstrcmp(OutStr1, _T("0123")) != 0 ||
+			lstrcmp(OutStr2, _T("x")) != 0 ||
+			lstrcmp(OutStr3, _T("QWE")) != 0 ||
+			lstrcmp(OutStr4, _T("**")) != 0 ||
 			Ret != 1) {
 			printf("NG\r\n");
 			exit(0);
