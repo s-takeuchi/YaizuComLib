@@ -222,6 +222,19 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		return NULL;
 	}
 
+	//// Acquire ContentType begin ////
+	{
+		TCHAR Buf[1024];
+		TCHAR ContentType[32];
+		StkStringParser::ParseInto3Params(DatWc, _T("#Content-Type: #\n#"), _T('#'), Buf, 1024, ContentType, 32, NULL, -1);
+		if (StrStr(ContentType, _T("application/json")) == NULL && lstrcmp(ContentType, _T("")) != 0) {
+			*XmlJsonType = -1;
+			delete DatWc;
+			return NULL;
+		}
+	}
+	//// Acquire ContentType end ////
+
 	int ErrorCode = 0;
 	StkObject* ReqObj = NULL;
 	if (*XmlJsonType == 2) {
@@ -453,14 +466,12 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	// Message definition
 	MessageProc::AddJpn(1001, _T("クライアントからのリクエストに対応するAPIは定義されていません。"));
 	MessageProc::AddEng(1001, _T("No API is defined for the request sent from client."));
-	MessageProc::AddJpn(1002, _T("リクエストはJSONではないデータを含んでいます。"));
-	MessageProc::AddEng(1002, _T("The request contains non-JSON data."));
-	MessageProc::AddJpn(1003, _T("HTTPヘッダのContent-Typeと実際のデータの型が一致しません。"));
-	MessageProc::AddEng(1003, _T("Actual data type does not correspond with Content-Type in HTTP header."));
+	MessageProc::AddJpn(1002, _T("リクエストがJSONではないデータを含んでいるかHTTPヘッダのContent-Typeがapplication/jsonではありません。"));
+	MessageProc::AddEng(1002, _T("The request contains non-JSON data or Content-Type of HTTP header is not application/json."));
 	MessageProc::AddJpn(1004, _T("URL\"/service/\"にPOSTされたリクエストは不正です。"));
 	MessageProc::AddEng(1004, _T("An invalid request is posted to URL\"/service/\"."));
-	MessageProc::AddJpn(1005, _T("不正なリクエストを受信しました。リクエストが壊れているかHTTPヘッダに不正な値が指定されています。"));
-	MessageProc::AddEng(1005, _T("An invalid request is received. The request might be broken or invalid value is configured in the HTTP header."));
+	MessageProc::AddJpn(1005, _T("不正なリクエストを受信しました。リクエストが壊れているおそれがあります。"));
+	MessageProc::AddEng(1005, _T("An invalid request is received. The request might be broken."));
 
 	// Update array of StkWebApp
 	if (StkWebAppCount < MAX_IMPL_COUNT) {

@@ -232,8 +232,22 @@ int ElemStkThreadMainSend2(int Id)
 {
 	int ErrorCode;
 
-	printf("StkWebAppTest2:Invalid request == 400");
+	printf("StkWebAppTest2:Invalid request 1 == 400");
 	if (SendTestData2(Id, NULL, NULL, "dummy", "", &ErrorCode) != 400 || ErrorCode != 1005) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest2:Invalid request 2 == 400");
+	if (SendTestData2(Id, NULL, NULL, "Aaaaaaaaaaaaaaaaaaaaaaaaa\r\n\r\n Bbbbbbbbbbbbbb HTTP Cccccccccccccccccccccccccccc", "", &ErrorCode) != 400 || ErrorCode != 1005) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest2:GET /aaa/ [{ \"AAA\":123 } with No Content-Type] == 404");
+	if (SendTestData2(Id, NULL, NULL, "GET /aaa/ HTTP/1.1\r\n\r\n{ \"AAA\":123 }\n", "", &ErrorCode) != 404 || ErrorCode != 1001) {
 		printf("... NG\r\n");
 		exit(0);
 	}
@@ -248,6 +262,13 @@ int ElemStkThreadMainSend2(int Id)
 
 	printf("StkWebAppTest2:GET /abc/ [\"aaa\" : {\"bbb\" : \"xxx\"}] == 404");
 	if (SendTestData2(Id, "GET", "/abc/", "\"aaa\" : {\"bbb\" : \"xxx\"}\n", "application/json", &ErrorCode) != 404 || ErrorCode != 1001) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest2:GET /abc/ [{ \"AAA\":123 } with application/xml] == 400");
+	if (SendTestData2(Id, "GET", "/abc/", "{ \"AAA\":123 }\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1002) {
 		printf("... NG\r\n");
 		exit(0);
 	}
