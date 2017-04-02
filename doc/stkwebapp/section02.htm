@@ -19,6 +19,7 @@
 StkWebAppは，REST APIを実現するためのクラスを提供します。<br/>
 想定する主な使用方法としては，下図のように，HTTP Serverのリバースプロキシ機能を用いて，特定のURLに対するアクセスをStkWebAppにディスパッチする方法で，
 これによりWeb BrowserからのリクエストをStkWebAppで処理します。<br/>
+StkWebAppは，リクエストデータとしてJSON形式のデータを受け付け，レスポンスデータとしてJSON形式のデータを返却します。<br/>
 <img src="stkwebapp.gif" alt="Component relation"><br/>
 
 StkWebAppは，内部的に下記のライブラリを利用します。<br/>
@@ -131,11 +132,11 @@ URL"/service/"に"{ "Operation" : "Stop" }"が送信されるまで，本メソ�
 <p>virtual StkObject* Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[128], int* ResultCode) = 0</p>
 StkWebAppExecクラスの派生クラスが実装するメソッドです。純粋仮想関数として定義されています。<br/>
 <table class="tblstyle">
-<tr><td>ReqObj[入力]</td><td>クライアントがリクエストとして与えたXMLおよびJSON形式のデータをStkObjectに変換したもの<br/></td></tr>
+<tr><td>ReqObj[入力]</td><td>クライアントがリクエストとして与えたJSON形式のデータをStkObjectに変換したもの<br/></td></tr>
 <tr><td>Method[入力]</td><td>クライアントがリクエストとして与えたメソッド</td></tr>
 <tr><td>UrlPath[入力]</td><td>クライアントがリクエストとして与えたURL</td></tr>
 <tr><td>ResultCode[出力]</td><td>クライアントに返すステータスコード</td></tr>
-<tr><td>戻り値</td><td>クライアントに返すデータ。最終的にXMLまたはJSON形式のデータに変換される</td></tr>
+<tr><td>戻り値</td><td>クライアントに返すデータ。最終的にJSON形式のデータに変換し，クライアントに返却する。</td></tr>
 </table>
 <hr/>
 </div><p>
