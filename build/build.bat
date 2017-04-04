@@ -209,25 +209,28 @@ del ..\build\deployment\stkthreadgui.lib
 del ..\build\deployment\stkthreadgui.h
 del ..\build\deployment\stkthreadgui.pdf
 
-echo Building stkdata.sln and stkdatagui.sln...
+echo Building stkdata.sln...
 %DEVENV% "..\src\stkdata\stkdata.sln" /rebuild Release
 copy "..\src\stkdata\Release\stkdata.lib" deployment
-%DEVENV% "..\src\stkdatagui\stkdatagui.sln" /rebuild Release
-copy "..\src\stkdatagui\Release\stkdatagui.exe" deployment
 copy "..\src\stkdata\stkdata.h" deployment
 copy "..\src\stkdata\stkdataapi.h" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.lib
-%SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdatagui.exe
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdataapi.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.pdf
-%SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdatagui.pdf
 %SEVENZIP% a ..\build\deployment\stkdata.zip buildver.txt
 del ..\build\deployment\stkdata.lib
-del ..\build\deployment\stkdatagui.exe
 del ..\build\deployment\stkdata.h
 del ..\build\deployment\stkdataapi.h
 del ..\build\deployment\stkdata.pdf
+
+echo Building stkdatagui.sln...
+%DEVENV% "..\src\stkdatagui\stkdatagui.sln" /rebuild Release
+copy "..\src\stkdatagui\Release\stkdatagui.exe" deployment
+%SEVENZIP% a ..\build\deployment\stkdatagui.zip ..\build\deployment\stkdatagui.exe
+%SEVENZIP% a ..\build\deployment\stkdatagui.zip ..\build\deployment\stkdatagui.pdf
+%SEVENZIP% a ..\build\deployment\stkdatagui.zip buildver.txt
+del ..\build\deployment\stkdatagui.exe
 del ..\build\deployment\stkdatagui.pdf
 
 echo Building stkwebapp.sln and stkwebappcmd.sln...
