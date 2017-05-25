@@ -289,7 +289,7 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 
 StkObject* StkWebApp::Impl::MakeErrorResponse(int ErrId)
 {
-	StkObject* ErrResObj = new StkObject(_T("Res"));
+	StkObject* ErrResObj = new StkObject(_T(""));
 	ErrResObj->AppendChildElement(new StkObject(_T("Code"), ErrId));
 	ErrResObj->AppendChildElement(new StkObject(_T("MsgEng"), MessageProc::GetMsgEng(ErrId)));
 	ErrResObj->AppendChildElement(new StkObject(_T("MsgJpn"), MessageProc::GetMsgJpn(ErrId)));
