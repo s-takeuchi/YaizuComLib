@@ -371,7 +371,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	int XmlJsonType;
 	int Method;
 	TCHAR UrlPath[128];
-	int ResultCode;
+	int ResultCode = 200;
 
 	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath);
 
