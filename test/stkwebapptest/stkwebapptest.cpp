@@ -95,7 +95,7 @@ BOOL SendTestData(int Id, char* Dat)
 	} else {
 		strcpy_s(UrlPath, 128, "/aaa/ddd/");
 	}
-	sprintf_s(TmpHeader, 256, "POST %s HTTP/1.1\nContent-Length: %d\nContent-Type: application/json\n\n", UrlPath, strlen(Dat) + 1);
+	sprintf_s(TmpHeader, 256, "POST %s HTTP/1.1\nContent-Length: %d\nAccept-Language: ja-JP;q=0.5,en-US;q=0.3,en-GB;q=0.2\nContent-Type: application/json\n\n", UrlPath, strlen(Dat) + 1);
 
 	if (StkSocket_Send(Id, Id, (BYTE*)TmpHeader, strlen((char*)TmpHeader)) <= 0) {
 		return FALSE;

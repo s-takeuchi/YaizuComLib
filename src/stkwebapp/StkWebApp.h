@@ -27,7 +27,7 @@ public:
 
 	void TheLoop();
 
-	// Do not call APIs shown below. These are only internal use.
+	// Do not call APIs shown below. These are only for internal use.
 	static StkWebApp* GetStkWebAppByThreadId(int);
 	BOOL Contains(int);
 	int ThreadLoop(int);

@@ -40,7 +40,7 @@ public:
 	BYTE* WideCharToUtf8(TCHAR*);
 
 	BYTE* MakeHttpHeader(int, int, int);
-	StkObject* RecvRequest(int, int*, int*, TCHAR[128]);
+	StkObject* RecvRequest(int, int*, int*, TCHAR[128], TCHAR[3]);
 	void SendResponse(StkObject*, int, int, int);
 	StkObject* MakeErrorResponse(int ErrId);
 
@@ -168,7 +168,7 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	return (BYTE*)HeaderData;
 }
 
-StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, TCHAR UrlPath[128])
+StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, TCHAR UrlPath[128], TCHAR Locale[3])
 {
 	*XmlJsonType = -1;
 	*Method = STKWEBAPP_METHOD_UNDEFINED;
@@ -214,6 +214,11 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		return NULL;
 	}
 	//// Acquire METHOD and URL path end ////
+
+	//// Acquire a locale begin ////
+	lstrcpy(Locale, _T(""));
+	StkStringParser::ParseInto2Params(DatWc, _T("#Accept-Language: #"), _T('#'), NULL, 0, Locale, 3);
+    //// Acquire a locale end   ////
 
 	TCHAR* Req = SkipHttpHeader(DatWc);
 	*XmlJsonType = StkObject::Analyze(Req);
@@ -372,8 +377,9 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	int Method;
 	TCHAR UrlPath[128];
 	int ResultCode = 200;
+	TCHAR Locale[3];
 
-	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath);
+	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath, Locale);
 
 	// If no request is received, return from this method.
 	if (StkObjReq == NULL && Method == StkWebApp::STKWEBAPP_METHOD_UNDEFINED && lstrcmp(UrlPath, _T("")) == 0 && XmlJsonType == -1) {
@@ -389,7 +395,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			TCHAR Param[4][128] = {_T(""), _T(""), _T(""), _T("")};
 			if (Method & pImpl->HandlerMethod[Loop] &&
 				StkStringParser::ParseInto4Params(UrlPath, pImpl->HandlerUrlPath[Loop], _T('$'), Param[0], Param[1], Param[2], Param[3]) == 1) {
-				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode);
+				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode, Locale);
 				FndFlag = TRUE;
 				break;
 			}
