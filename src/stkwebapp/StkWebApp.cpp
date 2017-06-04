@@ -110,18 +110,63 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 
 	/***** Make response status begin *****/
 	switch (ResultCode) {
-	case 200:
-		strcpy_s(Status, 32, "OK");
-		break;
-	case 202:
-		strcpy_s(Status, 32, "Accepted");
-		break;
-	case 400:
-		strcpy_s(Status, 32, "Bad Request");
-		break;
-	case 404:
-		strcpy_s(Status, 32, "Not Found");
-		break;
+	case 100:	strcpy_s(Status, 32, "Continue"); break;
+	case 101:	strcpy_s(Status, 32, "Switching Protocols"); break;
+	case 102:	strcpy_s(Status, 32, "Processing"); break;
+	case 200:	strcpy_s(Status, 32, "OK"); break;
+	case 201:	strcpy_s(Status, 32, "Created"); break;
+	case 202:	strcpy_s(Status, 32, "Accepted"); break;
+	case 203:	strcpy_s(Status, 32, "Non-Authoritative Information"); break;
+	case 204:	strcpy_s(Status, 32, "No Content"); break;
+	case 205:	strcpy_s(Status, 32, "Reset Content"); break;
+	case 206:	strcpy_s(Status, 32, "Partial Content"); break;
+	case 207:	strcpy_s(Status, 32, "Multi-Status"); break;
+	case 208:	strcpy_s(Status, 32, "Already Reported"); break;
+	case 226:	strcpy_s(Status, 32, "IM Used"); break;
+	case 300:	strcpy_s(Status, 32, "Multiple Choices"); break;
+	case 301:	strcpy_s(Status, 32, "Moved Permanently"); break;
+	case 302:	strcpy_s(Status, 32, "Found"); break;
+	case 303:	strcpy_s(Status, 32, "See Other"); break;
+	case 304:	strcpy_s(Status, 32, "Not Modified"); break;
+	case 305:	strcpy_s(Status, 32, "Use Proxy"); break;
+	case 307:	strcpy_s(Status, 32, "Temporary Redirect"); break;
+	case 308:	strcpy_s(Status, 32, "Permanent Redirect"); break;
+	case 400:	strcpy_s(Status, 32, "Bad Request"); break;
+	case 401:	strcpy_s(Status, 32, "Unauthorized"); break;
+	case 402:	strcpy_s(Status, 32, "Payment Required"); break;
+	case 403:	strcpy_s(Status, 32, "Forbidden"); break;
+	case 404:	strcpy_s(Status, 32, "Not Found"); break;
+	case 405:	strcpy_s(Status, 32, "Method Not Allowed"); break;
+	case 406:	strcpy_s(Status, 32, "Not Acceptable"); break;
+	case 407:	strcpy_s(Status, 32, "Proxy Authentication Required"); break;
+	case 408:	strcpy_s(Status, 32, "Request Timeout"); break;
+	case 409:	strcpy_s(Status, 32, "Conflict"); break;
+	case 410:	strcpy_s(Status, 32, "Gone"); break;
+	case 411:	strcpy_s(Status, 32, "Length Required"); break;
+	case 412:	strcpy_s(Status, 32, "Precondition Failed"); break;
+	case 413:	strcpy_s(Status, 32, "Payload Too Large"); break;
+	case 414:	strcpy_s(Status, 32, "URI Too Long"); break;
+	case 415:	strcpy_s(Status, 32, "Unsupported Media Type"); break;
+	case 416:	strcpy_s(Status, 32, "Range Not Satisfiable"); break;
+	case 417:	strcpy_s(Status, 32, "Expectation Failed"); break;
+	case 418:	strcpy_s(Status, 32, "I'm a teapot"); break;
+	case 421:	strcpy_s(Status, 32, "Misdirected Request"); break;
+	case 422:	strcpy_s(Status, 32, "Unprocessable Entity"); break;
+	case 423:	strcpy_s(Status, 32, "Locked"); break;
+	case 424:	strcpy_s(Status, 32, "Failed Dependency"); break;
+	case 426:	strcpy_s(Status, 32, "Upgrade Required"); break;
+	case 451:	strcpy_s(Status, 32, "Unavailable For Legal Reasons"); break;
+	case 500:	strcpy_s(Status, 32, "Internal Server Error"); break;
+	case 501:	strcpy_s(Status, 32, "Not Implemented"); break;
+	case 502:	strcpy_s(Status, 32, "Bad Gateway"); break;
+	case 503:	strcpy_s(Status, 32, "Service Unavailable"); break;
+	case 504:	strcpy_s(Status, 32, "Gateway Timeout"); break;
+	case 505:	strcpy_s(Status, 32, "HTTP Version Not Supported"); break;
+	case 506:	strcpy_s(Status, 32, "Variant Also Negotiates"); break;
+	case 507:	strcpy_s(Status, 32, "Insufficient Storage"); break;
+	case 508:	strcpy_s(Status, 32, "Loop Detected"); break;
+	case 509:	strcpy_s(Status, 32, "Bandwidth Limit Exceeded"); break;
+	case 510:	strcpy_s(Status, 32, "Not Extended"); break;
 	default:
 		strcpy_s(Status, 32, "Internal Server Error");
 		break;
