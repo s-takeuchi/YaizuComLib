@@ -11,6 +11,7 @@
 #include "StkWebAppTest1.h"
 #include "StkWebAppTest2.h"
 #include "StkWebAppTest3.h"
+#include "StkWebAppTest4.h"
 
 #define THREADNUM 10
 
@@ -121,7 +122,7 @@ BOOL SendTestData(int Id, char* Dat)
 	return CompObjs((BYTE*)Dat, (BYTE*)RecvDat);
 }
 
-int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode)
+int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode, TCHAR Header[64] = NULL)
 {
 	char Tmp[256];
 	BYTE RecvDat[4096];
@@ -158,6 +159,10 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, in
 		RecvDatW = new TCHAR[WcSize + 1];
 		WcSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)RecvDat, -1, RecvDatW, WcSize);
 		RecvDatW[WcSize] = '\0';
+	}
+
+	if (Header != NULL) {
+		lstrcpyn(Header, RecvDatW, 64);
 	}
 
 	// Skip HTTP header
@@ -314,6 +319,79 @@ int ElemStkThreadMainSend2(int Id)
 	return 0;
 }
 
+int ElemStkThreadMainSend3(int Id)
+{
+	int ErrorCode;
+	TCHAR Header[64];
+
+	printf("StkWebAppTest3:GET /aaa/100/ [{ \"AAA\":aaa }] == 100 Continue");
+	if (SendTestData2(Id, "GET", "/aaa/100/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 100 || StrStr(Header, _T("Continue")) == NULL || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest3:GET /aaa/102/ [{ \"AAA\":aaa }] == 102 Processing");
+	if (SendTestData2(Id, "GET", "/aaa/102/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 102 || StrStr(Header, _T("Processing")) == NULL || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest3:GET /aaa/202/ [{ \"AAA\":aaa }] == 202 Accepted");
+	if (SendTestData2(Id, "GET", "/aaa/202/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 202 || StrStr(Header, _T("Accepted")) == NULL || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest3:GET /aaa/204/ [{ \"AAA\":aaa }] == 204 No Content");
+	if (SendTestData2(Id, "GET", "/aaa/204/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 204 || StrStr(Header, _T("No Content")) == NULL || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest3:GET /aaa/304/ [{ \"AAA\":aaa }] == 304 Not Modified");
+	if (SendTestData2(Id, "GET", "/aaa/304/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 304 || StrStr(Header, _T("Not Modified")) == NULL || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest3:GET /aaa/400/ [{ \"AAA\":aaa }] == 400 Bad Request");
+	if (SendTestData2(Id, "GET", "/aaa/400/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 400 || StrStr(Header, _T("Bad Request")) == NULL || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest3:GET /aaa/404/ [{ \"AAA\":aaa }] == 404 Not Found");
+	if (SendTestData2(Id, "GET", "/aaa/404/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 404 || StrStr(Header, _T("Not Found")) == NULL || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest3:GET /aaa/500/ [{ \"AAA\":aaa }] == 500 Internal Server Error");
+	if (SendTestData2(Id, "GET", "/aaa/500/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 500 || StrStr(Header, _T("Internal Server Error")) == NULL || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest3:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
+	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	Sleep(1000);
+
+	return 0;
+}
+
 void ReqResTest1()
 {
 	printf("StkWebAppTest1 ");
@@ -401,6 +479,33 @@ void ReqResTest2()
 	StartSpecifiedStkThreads(SendIds, 1);
 	Soc->TheLoop();
 	StopSpecifiedStkThreads(SendIds, 1);
+	delete Soc;
+
+	StkSocket_DeleteInfo(SendIds[0]);
+	DeleteStkThread(SendIds[0]);
+}
+
+void ReqResTest3()
+{
+	int Ids[1] = {11};
+	int SendIds[1] = {31};
+	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
+	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
+
+	wsprintf(Name, _T("Sender"));
+	wsprintf(Desc, _T("Description"));
+	AddStkThread(SendIds[0], Name, Desc, NULL, NULL, ElemStkThreadMainSend3, NULL, NULL);
+	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
+
+	StkWebApp* Soc = new StkWebApp(Ids, 1, _T("localhost"), 8080);
+	StkWebAppTest4* Test4Hndl = new StkWebAppTest4();
+	int Add1 = Soc->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("/aaa/$/"), (StkWebAppExec*)Test4Hndl);
+
+	StartSpecifiedStkThreads(SendIds, 1);
+	Soc->TheLoop();
+	StopSpecifiedStkThreads(SendIds, 1);
+
+	int Del1 = Soc->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("/aaa/$/"));
 	delete Soc;
 
 	StkSocket_DeleteInfo(SendIds[0]);
@@ -518,6 +623,7 @@ int main(int Argc, char* Argv[])
 {
 	AddDeleteStkWebAppTest();
 	AddDeleteReqHandlerTest();
+	ReqResTest3();
 	ReqResTest2();
 	ReqResTest1();
 
