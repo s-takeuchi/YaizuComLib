@@ -613,9 +613,6 @@ StkWebApp::~StkWebApp()
 		break;
 	}
 
-	// Message deletion
-	MessageProc::ClearAllMsg();
-
 	delete pImpl;
 };
 
