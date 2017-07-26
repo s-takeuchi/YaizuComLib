@@ -419,11 +419,6 @@ int main(int argc, char* argv[])
 				lstrcpy(WebPort, TmpFetchedParam);
 			}
 		}
-		printf("ProductName=%S\r\n", ProductName);
-		printf("SrvHost=%S\r\n", SrvHost);
-		printf("SrvPort=%S\r\n", SrvPort);
-		printf("WebHost=%S\r\n", WebHost);
-		printf("WebPort=%S\r\n", WebPort);
 	}
 
 	///////////////////////////////////
@@ -432,7 +427,14 @@ int main(int argc, char* argv[])
 
 	BOOL InstFlag = FALSE;
 	if (strcmp(argv[1], "inst") == 0) {
-		InstFlag = TRUE;
+		TCHAR Buf[512];
+		wsprintf(Buf, _T("%s\\stkwebapp.conf"), WorkPath);
+		if (GetFileSize(Buf) > 0) {
+			printf("Program has already been installed.\r\n");
+			return 0;
+		} else {
+			InstFlag = TRUE;
+		}
 	}
 	if (strcmp(argv[1], "modperm") == 0 || InstFlag == TRUE) {
 		// Modify permissions
@@ -581,4 +583,6 @@ int main(int argc, char* argv[])
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 	}
+
+	return 0;
 }
