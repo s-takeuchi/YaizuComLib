@@ -8,6 +8,7 @@
 #include "..\..\src\commonfunc\StkObject.h"
 #include "..\..\src\stksocket\stksocket.h"
 #include "..\..\src\stkwebapp\StkWebApp.h"
+#include "..\..\src\stkwebapp\StkWebAppExec.h"
 #include "StkWebAppTest1.h"
 #include "StkWebAppTest2.h"
 #include "StkWebAppTest3.h"
@@ -411,11 +412,11 @@ void ReqResTest1()
 	StkWebApp* Soc = new StkWebApp(Ids, THREADNUM, _T("localhost"), 8080);
 
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
-	int Add1 = Soc->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/bbb/"), (StkWebAppExec*)Test1Hndl);
+	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, _T("/aaa/bbb/"), (StkWebAppExec*)Test1Hndl);
 	StkWebAppTest2* Test2Hndl = new StkWebAppTest2();
-	int Add2 = Soc->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/ccc/"), (StkWebAppExec*)Test2Hndl);
+	int Add2 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, _T("/aaa/ccc/"), (StkWebAppExec*)Test2Hndl);
 	StkWebAppTest3* Test3Hndl = new StkWebAppTest3();
-	int Add3 = Soc->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/ddd/"), (StkWebAppExec*)Test3Hndl);
+	int Add3 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, _T("/aaa/ddd/"), (StkWebAppExec*)Test3Hndl);
 
 	SendTestDataCount = 0;
 	////////// Main logic starts
@@ -437,9 +438,9 @@ void ReqResTest1()
 	}
 	////////// Main logic ends
 
-	int Del1 = Soc->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/bbb/"));
-	int Del2 = Soc->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/ccc/"));
-	int Del3 = Soc->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_POST, _T("/aaa/ddd/"));
+	int Del1 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, _T("/aaa/bbb/"));
+	int Del2 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, _T("/aaa/ccc/"));
+	int Del3 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, _T("/aaa/ddd/"));
 
 	delete Soc;
 
@@ -499,13 +500,13 @@ void ReqResTest3()
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, _T("localhost"), 8080);
 	StkWebAppTest4* Test4Hndl = new StkWebAppTest4();
-	int Add1 = Soc->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("/aaa/$/"), (StkWebAppExec*)Test4Hndl);
+	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/aaa/$/"), (StkWebAppExec*)Test4Hndl);
 
 	StartSpecifiedStkThreads(SendIds, 1);
 	Soc->TheLoop();
 	StopSpecifiedStkThreads(SendIds, 1);
 
-	int Del1 = Soc->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("/aaa/$/"));
+	int Del1 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/aaa/$/"));
 	delete Soc;
 
 	StkSocket_DeleteInfo(SendIds[0]);
@@ -596,18 +597,18 @@ void AddDeleteReqHandlerTest()
 	StkWebApp* TmpApp2 = new StkWebApp(TmpIds2, 3, _T("localhost"), 8082);
 
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
-	int Add1 = TmpApp1->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"), (StkWebAppExec*)Test1Hndl);
+	int Add1 = TmpApp1->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("aaa"), (StkWebAppExec*)Test1Hndl);
 
 	StkWebAppTest2* Test2Hndl = new StkWebAppTest2();
-	int Add2 = TmpApp1->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"), (StkWebAppExec*)Test2Hndl);
+	int Add2 = TmpApp1->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("aaa"), (StkWebAppExec*)Test2Hndl);
 
 	StkWebAppTest3* Test3Hndl = new StkWebAppTest3();
-	int Add3 = TmpApp2->AddReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"), (StkWebAppExec*)Test3Hndl);
+	int Add3 = TmpApp2->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("aaa"), (StkWebAppExec*)Test3Hndl);
 
-	int Del1 = TmpApp1->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"));
-	int Del2 = TmpApp1->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"));
+	int Del1 = TmpApp1->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("aaa"));
+	int Del2 = TmpApp1->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("aaa"));
 	delete Test2Hndl;
-	int Del3 = TmpApp2->DeleteReqHandler(StkWebApp::STKWEBAPP_METHOD_GET, _T("aaa"));
+	int Del3 = TmpApp2->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("aaa"));
 
 	delete TmpApp1;
 	delete TmpApp2;
