@@ -216,7 +216,7 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, TCHAR UrlPath[128], TCHAR Locale[3])
 {
 	*XmlJsonType = -1;
-	*Method = STKWEBAPP_METHOD_UNDEFINED;
+	*Method = StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED;
 	lstrcpy(UrlPath, _T(""));
 
 	int Ret = StkSocket_Accept(TargetId);
@@ -244,17 +244,17 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	TCHAR MethodStr[16];
 	StkStringParser::ParseInto3Params(DatWc, _T("# # HTTP#"), _T('#'), MethodStr, 16, UrlPath, 128, NULL, -1);
 	if (lstrcmp(MethodStr, _T("GET")) == 0) {
-		*Method = STKWEBAPP_METHOD_GET;
+		*Method = StkWebAppExec::STKWEBAPP_METHOD_GET;
 	} else if (lstrcmp(MethodStr, _T("HEAD")) == 0) {
-		*Method = STKWEBAPP_METHOD_HEAD;
+		*Method = StkWebAppExec::STKWEBAPP_METHOD_HEAD;
 	} else if (lstrcmp(MethodStr, _T("POST")) == 0) {
-		*Method = STKWEBAPP_METHOD_POST;
+		*Method = StkWebAppExec::STKWEBAPP_METHOD_POST;
 	} else if (lstrcmp(MethodStr, _T("PUT")) == 0) {
-		*Method = STKWEBAPP_METHOD_PUT;
+		*Method = StkWebAppExec::STKWEBAPP_METHOD_PUT;
 	} else if (lstrcmp(MethodStr, _T("DELETE")) == 0) {
-		*Method = STKWEBAPP_METHOD_DELETE;
+		*Method = StkWebAppExec::STKWEBAPP_METHOD_DELETE;
 	} else {
-		*Method = STKWEBAPP_METHOD_INVALID;
+		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
 		delete DatWc;
 		return NULL;
 	}
@@ -379,7 +379,7 @@ int StkWebApp::Impl::DeleteReqHandler(int Method, TCHAR UrlPath[128])
 		if (Method != HandlerMethod[Loop] || lstrcmp(UrlPath, HandlerUrlPath[Loop]) != 0) {
 			continue;
 		}
-		HandlerMethod[Loop] = STKWEBAPP_METHOD_UNDEFINED;
+		HandlerMethod[Loop] = StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED;
 		lstrcpy(HandlerUrlPath[Loop], _T(""));
 		delete Handler[Loop];
 		for (int Loop2 = Loop; Loop2 < HandlerCount - 1; Loop2++) {
@@ -427,7 +427,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath, Locale);
 
 	// If no request is received, return from this method.
-	if (StkObjReq == NULL && Method == StkWebApp::STKWEBAPP_METHOD_UNDEFINED && lstrcmp(UrlPath, _T("")) == 0 && XmlJsonType == -1) {
+	if (StkObjReq == NULL && Method == StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED && lstrcmp(UrlPath, _T("")) == 0 && XmlJsonType == -1) {
 		return 0;
 	}
 
@@ -447,7 +447,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		}
 	} else {
 		// If invalid request is received...
-		if (Method == StkWebApp::STKWEBAPP_METHOD_INVALID) {
+		if (Method == StkWebAppExec::STKWEBAPP_METHOD_INVALID) {
 			ResultCode = 400;
 			StkObjRes = pImpl->MakeErrorResponse(1005);
 		} else {
@@ -458,7 +458,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	}
 
 	// If service stop request is presented...
-	if (FndFlag == FALSE && Method == STKWEBAPP_METHOD_POST && lstrcmp(UrlPath, _T("/service/")) == 0) {
+	if (FndFlag == FALSE && Method == StkWebAppExec::STKWEBAPP_METHOD_POST && lstrcmp(UrlPath, _T("/service/")) == 0) {
 		int ErrorCode;
 		StkObject* TmpObj = StkObject::CreateObjectFromJson(_T("{ \"Operation\" : \"Stop\" }"), &ErrorCode);
 		if (StkObjReq->Equals(TmpObj) == TRUE) {
