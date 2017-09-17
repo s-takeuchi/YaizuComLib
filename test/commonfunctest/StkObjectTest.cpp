@@ -757,12 +757,12 @@ void GeneralTestCase6()
 	/////////////////////////////////////////////////////////////////
 	{
 		wprintf(_T("GeneralCheck6#Identify the presented text is XML or JSON (Normal-2) ..."));
-		int RetXml1 = StkObject::Analyze(_T("<>"));
-		int RetJson1 = StkObject::Analyze(_T("{}"));
-		int RetXml2 = StkObject::Analyze(_T("  \t\r\n<>  \t\r\n"));
-		int RetJson2 = StkObject::Analyze(_T("  \t\r\n{}  \t\r\n"));
-		int RetXml3 = StkObject::Analyze(_T("  \t\r\n<aaa>  \t\r\n"));
-		int RetJson3 = StkObject::Analyze(_T("  \t\r\n\"aaa\" : {}  \t\r\n"));
+		int RetXml1 = StkObject::Analyze(_T("<aaa/>"));
+		int RetJson1 = StkObject::Analyze(_T("{\"aaa\":1}"));
+		int RetXml2 = StkObject::Analyze(_T("  \t\r\n  <aaa/>  \t\r\n"));
+		int RetJson2 = StkObject::Analyze(_T("  \t\r\n  {\"aaa\":1}  \t\r\n"));
+		int RetXml3 = StkObject::Analyze(_T("  \t\r\n  <aaa>bbb</aaa>  \t\r\n"));
+		int RetJson3 = StkObject::Analyze(_T("  \t\r\n  \"aaa\" : {\"bbb\":1}  \t\r\n"));
 		if (!(RetXml1 == 1 && RetJson1 == 2 && RetXml2 == 1 && RetJson2 == 2 && RetXml3 == 1 && RetJson3 == 2)) {
 			printf("NG\r\n");
 			exit(0);
@@ -777,10 +777,14 @@ void GeneralTestCase6()
 		int RetJson1 = StkObject::Analyze(_T("{"));
 		int RetXml2 = StkObject::Analyze(_T(">"));
 		int RetJson2 = StkObject::Analyze(_T("}"));
+		int RetXml3 = StkObject::Analyze(_T("<>"));
+		int RetJson3 = StkObject::Analyze(_T("{}"));
+		int RetXml4 = StkObject::Analyze(_T("  <aaa>  "));
+		int RetJson4 = StkObject::Analyze(_T("  {\"aaa\"}  "));
 		int RetEmpty1 = StkObject::Analyze(_T(""));
 		int RetEmpty2 = StkObject::Analyze(NULL);
 		int RetEmpty3 = StkObject::Analyze(_T(" \t \r\n \t \r\n "));
-		if (RetXml1 != -1 || RetJson1 != -1 || RetXml2 != -1 || RetJson2 != -1|| RetEmpty1 != 0 || RetEmpty2 != 0 || RetEmpty3 != 0) {
+		if (RetXml1 != -1 || RetJson1 != -1 || RetXml2 != -1 || RetJson2 != -1 || RetXml3 != -1 || RetJson3 != -1 || RetXml4 != -1 || RetJson4 != -1 || RetEmpty1 != 0 || RetEmpty2 != 0 || RetEmpty3 != 0) {
 			printf("NG\r\n");
 			exit(0);
 		}

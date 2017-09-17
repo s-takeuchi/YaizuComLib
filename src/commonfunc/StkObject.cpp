@@ -1328,7 +1328,7 @@ void StkObject::ToJson(TCHAR* Msg, int MsgLength, int Indent, BOOL ArrayFlag)
 
 // Check the presented string whether which is composed of XML or JSON.
 // Txt [in] : Checking target (null-terminated TCHAR string)
-// Result : Result of the checking (0: Empty string of NULL, 1: XML, 2: JSON)
+// Result : Result of the checking (-1: Invalid, 0: Empty string of NULL, 1: XML, 2: JSON)
 int StkObject::Analyze(TCHAR* Txt)
 {
 	static const int ELEM_UNKNOWN = 0;
@@ -1369,10 +1369,22 @@ int StkObject::Analyze(TCHAR* Txt)
 		}
 		if (Txt[Loop] == TCHAR('>') && Status == ELEM_XML_START) {
 			Status = ELEM_XML_END;
+			int ErrorCode = 0;
+			StkObject* TmpObj = CreateObjectFromXml(Txt, &ErrorCode);
+			if (TmpObj == NULL) {
+				return -1;
+			}
+			delete TmpObj;
 			return 1;
 		}
 		if (Txt[Loop] == TCHAR('}') && Status == ELEM_JSON_START) {
 			Status = ELEM_JSON_END;
+			int ErrorCode = 0;
+			StkObject* TmpObj = CreateObjectFromJson(Txt, &ErrorCode);
+			if (TmpObj == NULL) {
+				return -1;
+			}
+			delete TmpObj;
 			return 2;
 		}
 		return -1;

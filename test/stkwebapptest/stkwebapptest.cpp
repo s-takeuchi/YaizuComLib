@@ -325,78 +325,78 @@ int ElemStkThreadMainSend3(int Id)
 	int ErrorCode;
 	TCHAR Header[64];
 
-	printf("StkWebAppTest3:GET /aaa/100/ [{ \"AAA\":aaa }] == 100 Continue");
-	if (SendTestData2(Id, "GET", "/aaa/100/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 100 || StrStr(Header, _T("Continue")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/100/ [{ \"AAA\":\"aaa\" }] == 100 Continue");
+	if (SendTestData2(Id, "GET", "/aaa/100/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 100 || StrStr(Header, _T("Continue")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/102/ [{ \"AAA\":aaa }] == 102 Processing");
-	if (SendTestData2(Id, "GET", "/aaa/102/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 102 || StrStr(Header, _T("Processing")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/102/ [{ \"AAA\":\"aaa\" }] == 102 Processing");
+	if (SendTestData2(Id, "GET", "/aaa/102/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 102 || StrStr(Header, _T("Processing")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/202/ [{ \"AAA\":aaa }] == 202 Accepted");
-	if (SendTestData2(Id, "GET", "/aaa/202/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 202 || StrStr(Header, _T("Accepted")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/202/ [{ \"AAA\":\"aaa\" }] == 202 Accepted");
+	if (SendTestData2(Id, "GET", "/aaa/202/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 202 || StrStr(Header, _T("Accepted")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/204/ [{ \"AAA\":aaa }] == 204 No Content");
-	if (SendTestData2(Id, "GET", "/aaa/204/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 204 || StrStr(Header, _T("No Content")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/204/ [{ \"AAA\":\"aaa\" }] == 204 No Content");
+	if (SendTestData2(Id, "GET", "/aaa/204/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 204 || StrStr(Header, _T("No Content")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/304/ [{ \"AAA\":aaa }] == 304 Not Modified");
-	if (SendTestData2(Id, "GET", "/aaa/304/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 304 || StrStr(Header, _T("Not Modified")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/304/ [{ \"AAA\":\"aaa\" }] == 304 Not Modified");
+	if (SendTestData2(Id, "GET", "/aaa/304/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 304 || StrStr(Header, _T("Not Modified")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/400/ [{ \"AAA\":aaa }] == 400 Bad Request");
-	if (SendTestData2(Id, "GET", "/aaa/400/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 400 || StrStr(Header, _T("Bad Request")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/400/ [{ \"AAA\":\"aaa\" }] == 400 Bad Request");
+	if (SendTestData2(Id, "GET", "/aaa/400/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 400 || StrStr(Header, _T("Bad Request")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/401/ [{ \"AAA\":aaa }] == 401 Unauthorized");
-	if (SendTestData2(Id, "GET", "/aaa/401/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 401 || StrStr(Header, _T("Unauthorized")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/401/ [{ \"AAA\":\"aaa\" }] == 401 Unauthorized");
+	if (SendTestData2(Id, "GET", "/aaa/401/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 401 || StrStr(Header, _T("Unauthorized")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/404/ [{ \"AAA\":aaa }] == 404 Not Found");
-	if (SendTestData2(Id, "GET", "/aaa/404/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 404 || StrStr(Header, _T("Not Found")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/404/ [{ \"AAA\":\"aaa\" }] == 404 Not Found");
+	if (SendTestData2(Id, "GET", "/aaa/404/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 404 || StrStr(Header, _T("Not Found")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/414/ [{ \"AAA\":aaa }] == 414 URI Too Long");
-	if (SendTestData2(Id, "GET", "/aaa/414/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 414 || StrStr(Header, _T("URI Too Long")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/414/ [{ \"AAA\":\"aaa\" }] == 414 URI Too Long");
+	if (SendTestData2(Id, "GET", "/aaa/414/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 414 || StrStr(Header, _T("URI Too Long")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/500/ [{ \"AAA\":aaa }] == 500 Internal Server Error");
-	if (SendTestData2(Id, "GET", "/aaa/500/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 500 || StrStr(Header, _T("Internal Server Error")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/500/ [{ \"AAA\":\"aaa\" }] == 500 Internal Server Error");
+	if (SendTestData2(Id, "GET", "/aaa/500/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 500 || StrStr(Header, _T("Internal Server Error")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
 	printf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/510/ [{ \"AAA\":aaa }] == 510 Not Extended");
-	if (SendTestData2(Id, "GET", "/aaa/510/", "{ \"AAA\":aaa }\n", "application/json", &ErrorCode, Header) != 510 || StrStr(Header, _T("Not Extended")) == NULL || ErrorCode != -1) {
+	printf("StkWebAppTest3:GET /aaa/510/ [{ \"AAA\":\"aaa\" }] == 510 Not Extended");
+	if (SendTestData2(Id, "GET", "/aaa/510/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 510 || StrStr(Header, _T("Not Extended")) == NULL || ErrorCode != -1) {
 		printf("... NG\r\n");
 		exit(0);
 	}
