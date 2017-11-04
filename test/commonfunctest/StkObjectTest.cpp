@@ -1022,7 +1022,7 @@ void XmlJsonEncodingTest2()
 	}
 	printf("OK\r\n");
 	printf("JSON encoding with no name and no value...");
-	if (StrStr(Temp2, _T("\"Japan\" : {\r\n  \"@attributes\" : {\r\n    \"\" : \"\", \"A\" : \"B\"\r\n  },\r\n  {\r\n    {\r\n    },\r\n    \"\" : \"\",\r\n    \"A\" : \"B\"\r\n  }\r\n}")) == 0) {
+	if (StrStr(Temp2, _T("\"Japan\" : {\r\n  \"@attributes\" : {\r\n    \"\" : \"\", \"A\" : \"B\"\r\n  },\r\n  {\r\n    \"\" : [\r\n      {\r\n      },\r\n      \"\"\r\n    ],\r\n    \"A\" : \"B\"\r\n  }\r\n}")) == 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
