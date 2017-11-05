@@ -964,8 +964,40 @@ void XmlJsonEncodingTest1()
 	ChildElem2c->AppendChildElement(new StkObject(_T("Furniture"), _T("Steel Bed")));
 	ChildElem2->AppendChildElement(ChildElem2c);
 
+	StkObject* ChildElem3 = new StkObject(_T("Workroom"));
+
+	StkObject* ChildElem3a = new StkObject(_T("Rack"));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Big-Rack"), _T("Steel Blue")));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Big-Rack"), _T("Steel Red")));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Big-Rack"), _T("Steel Green")));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Small-Rack"), _T("Steel Blue")));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Small-Rack"), _T("Steel Green")));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Big-Rack"), _T("Wood Blue")));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Big-Rack"), _T("Wood Red")));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Big-Rack"), _T("Wood Green")));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Small-Rack"), _T("Wood Blue")));
+	ChildElem3a->AppendChildElement(new StkObject(_T("Small-Rack"), _T("Wood Green")));
+	ChildElem3->AppendChildElement(ChildElem3a);
+
+	StkObject* ChildElem3b = new StkObject(_T("Rack"));
+	ChildElem3b->AppendChildElement(new StkObject(_T("Tiny-Rack"), _T("Steel Blue")));
+	ChildElem3b->AppendChildElement(new StkObject(_T("Tiny-Rack"), _T("Steel Red")));
+	ChildElem3->AppendChildElement(ChildElem3b);
+
+	StkObject* ChildElem3c = new StkObject(_T("Table"));
+	ChildElem3c->AppendChildElement(new StkObject(_T("WorkTable"), _T("Steel")));
+	ChildElem3c->AppendChildElement(new StkObject(_T("WorkTable"), _T("Wood")));
+	ChildElem3->AppendChildElement(ChildElem3c);
+
+	StkObject* ChildElem3d = new StkObject(_T("Rack"));
+	ChildElem3d->AppendChildElement(new StkObject(_T("Tiny-Rack"), _T("Steel Blue")));
+	ChildElem3d->AppendChildElement(new StkObject(_T("Tiny-Rack"), _T("Steel Red")));
+	ChildElem3->AppendChildElement(ChildElem3d);
+
+
 	TopElem->AppendChildElement(ChildElem1);
 	TopElem->AppendChildElement(ChildElem2);
+	TopElem->AppendChildElement(ChildElem3);
 
 	TCHAR XmlTxt[8192] = _T("");
 	TCHAR JsonTxt[8192] = _T("");
