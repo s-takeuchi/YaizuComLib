@@ -457,6 +457,7 @@ StkObjectインスタンスからJSONを生成します。<br>
 \t → \\t<br>
 <p>
 属性は，名称が"@attributes"の要素に変換されます。<br>
+同じ名称のStkObjectインスタンスが同一階層上に連続して2つ以上出現する場合，本APIはそれらを配列で表現します。<br>
 </p>
 <table class="tblstyle">
 <tr><td>StrJson[出力]</td><td>JSONを格納するバッファのポインタ。呼び出し元で予め空文字で初期化しておく必要がある。</td></tr>
