@@ -134,7 +134,7 @@ StkWebAppExecクラスの派生クラスが実装するメソッドです。純�
 <table class="tblstyle">
 <tr><td>ReqObj[入力]</td><td>クライアントがリクエストとして与えたJSON形式のデータをStkObjectに変換したもの<br/></td></tr>
 <tr><td>Method[入力]</td><td>クライアントがリクエストとして与えたメソッド</td></tr>
-<tr><td>UrlPath[入力]</td><td>クライアントがリクエストとして与えたURL</td></tr>
+<tr><td>UrlPath[入力]</td><td>クライアントがリクエストとして与えたURL。URLデコード（パーセントデコード）はされていない。</td></tr>
 <tr><td>ResultCode[出力]</td><td>クライアントに返すステータスコード</td></tr>
 <tr><td>Locale[出力]</td><td>ブラウザ（クライアント）のロケール。日本語の場合"ja"が格納される。</td></tr>
 <tr><td>戻り値</td><td>クライアントに返すデータ。最終的にJSON形式のデータに変換し，クライアントに返却する。</td></tr>
