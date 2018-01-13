@@ -1477,6 +1477,7 @@ StkObject* StkObject::CreateObjectFromJson(TCHAR* Json, int* Offset, StkObject* 
 			} else if (PrevStatus == ELEMOBJ_START) {
 				PrevStatus = STRVAL_START;
 				continue;
+			} else if (PrevStatus == STRVAL_START) {
 			} else {
 				Impl::CleanupObjectsForJson(PrevName, RetObj);
 				*Offset = ERROR_JSON_INVALID_QUOT_FOUND;

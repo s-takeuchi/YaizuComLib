@@ -1337,6 +1337,20 @@ void JsonDecodingTest1()
 	delete RetObj;
 	printf("OK\r\n");
 	////////////////////////////////////////////////////
+	lstrcpy(Msg, _T("\"Yyy\" : {\"Zzz\" : \"\", \"Xxx\" : [\"\", \"\", \"\"]}"));
+	wprintf(_T("JSON Decoding : %s ..."), Msg);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
+	if (RetObj == NULL ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetName(), _T("Zzz")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), _T("")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), _T("Xxx")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), _T("")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	delete RetObj;
+	printf("OK\r\n");
+	////////////////////////////////////////////////////
 	lstrcpy(Msg, _T("\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}"));
 	wprintf(_T("JSON Decoding : %s ..."), Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
