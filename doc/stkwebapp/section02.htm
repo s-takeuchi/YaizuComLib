@@ -92,7 +92,7 @@ StkWebAppインスタンスを生成すると同時に，以下を行います�
 </ul><br/>
 <hr/>
 
-<p>int AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)</p>
+<p>int AddReqHandler(int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)</p>
 ある特定のメソッドおよびURLと関連付くリクエストを処理するハンドラを登録します。<br/>
 <table class="tblstyle">
 <tr><td>
@@ -110,7 +110,7 @@ StkWebAppExec::STKWEBAPP_METHOD_DELETE<br/>
 </table>
 <hr/>
 
-<p>int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[128])</p>
+<p>int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH])</p>
 登録済のハンドラを削除します。<br/>
 <table class="tblstyle">
 <tr><td>Method[入力]</td><td>削除するハンドラを登録したときに指定したメソッドおよびその論理積<br/></td></tr>
@@ -129,7 +129,7 @@ URL"/service/"に"{ "Operation" : "Stop" }"がPOSTされるまで，本メソッ
 
 <H2 ID="2.5">2.5 StkWebAppExecクラス</H2>
 <div class="topic">
-<p>virtual StkObject* Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[128], int* ResultCode, TCHAR Locale[3]) = 0</p>
+<p>virtual StkObject* Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, TCHAR Locale[3]) = 0</p>
 StkWebAppExecクラスの派生クラスが実装するメソッドです。純粋仮想関数として定義されています。<br/>
 <table class="tblstyle">
 <tr><td>ReqObj[入力]</td><td>クライアントがリクエストとして与えたJSON形式のデータをStkObjectに変換したもの<br/></td></tr>
