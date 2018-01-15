@@ -12,6 +12,8 @@ public:
 	static const unsigned char STKWEBAPP_METHOD_DELETE    = 0x10;
 	static const unsigned char STKWEBAPP_METHOD_INVALID   = 0x20;
 
+	static const int URL_PATH_LENGTH = 1024;
+
 public:
-	virtual StkObject* Execute(StkObject*, int, TCHAR[128], int*, TCHAR[3]) = 0;
+	virtual StkObject* Execute(StkObject*, int, TCHAR[StkWebAppExec::URL_PATH_LENGTH], int*, TCHAR[3]) = 0;
 };

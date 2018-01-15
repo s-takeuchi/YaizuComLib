@@ -28,7 +28,7 @@ public:
 
 	int HandlerCount;
 	int HandlerMethod[MAX_REQHANDLER_COUNT];
-	TCHAR HandlerUrlPath[MAX_REQHANDLER_COUNT][128];
+	TCHAR HandlerUrlPath[MAX_REQHANDLER_COUNT][StkWebAppExec::URL_PATH_LENGTH];
 	StkWebAppExec* Handler[MAX_REQHANDLER_COUNT];
 
 	BOOL StopFlag;
@@ -40,14 +40,14 @@ public:
 	BYTE* WideCharToUtf8(TCHAR*);
 
 	BYTE* MakeHttpHeader(int, int, int);
-	StkObject* RecvRequest(int, int*, int*, TCHAR[128], TCHAR[3]);
+	StkObject* RecvRequest(int, int*, int*, TCHAR[StkWebAppExec::URL_PATH_LENGTH], TCHAR[3]);
 	void SendResponse(StkObject*, int, int, int);
 	StkObject* MakeErrorResponse(int ErrId);
 
 	static int ElemStkThreadMainRecv(int);
 
-	int AddReqHandler(int, TCHAR[128], StkWebAppExec*);
-	int DeleteReqHandler(int, TCHAR[128]);
+	int AddReqHandler(int, TCHAR[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
+	int DeleteReqHandler(int, TCHAR[StkWebAppExec::URL_PATH_LENGTH]);
 };
 
 TCHAR* StkWebApp::Impl::SkipHttpHeader(TCHAR* Txt)
@@ -213,7 +213,7 @@ BYTE* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJso
 	return (BYTE*)HeaderData;
 }
 
-StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, TCHAR UrlPath[128], TCHAR Locale[3])
+StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH], TCHAR Locale[3])
 {
 	*XmlJsonType = -1;
 	*Method = StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED;
@@ -242,7 +242,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 
 	//// Acquire METHOD and URL path begin ////
 	TCHAR MethodStr[16];
-	StkStringParser::ParseInto3Params(DatWc, _T("# # HTTP#"), _T('#'), MethodStr, 16, UrlPath, 128, NULL, -1);
+	StkStringParser::ParseInto3Params(DatWc, _T("# # HTTP#"), _T('#'), MethodStr, 16, UrlPath, StkWebAppExec::URL_PATH_LENGTH, NULL, -1);
 	if (lstrcmp(MethodStr, _T("GET")) == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_GET;
 	} else if (lstrcmp(MethodStr, _T("HEAD")) == 0) {
@@ -355,7 +355,7 @@ int StkWebApp::Impl::ElemStkThreadMainRecv(int Id)
 	return Obj->ThreadLoop(Id);
 }
 
-int StkWebApp::Impl::AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)
+int StkWebApp::Impl::AddReqHandler(int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
 {
 	EnterCriticalSection(&ReqHandlerCs);
 	for (int Loop = 0; Loop < HandlerCount; Loop++) {
@@ -372,7 +372,7 @@ int StkWebApp::Impl::AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec
 	return HandlerCount;
 }
 
-int StkWebApp::Impl::DeleteReqHandler(int Method, TCHAR UrlPath[128])
+int StkWebApp::Impl::DeleteReqHandler(int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH])
 {
 	EnterCriticalSection(&ReqHandlerCs);
 	for (int Loop = 0; Loop < HandlerCount; Loop++) {
@@ -420,7 +420,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 {
 	int XmlJsonType;
 	int Method;
-	TCHAR UrlPath[128];
+	TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH];
 	int ResultCode = 200;
 	TCHAR Locale[3];
 
@@ -437,7 +437,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	if (XmlJsonType == 0 || XmlJsonType == 2) {
 		// If valid request is received...
 		for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
-			TCHAR Param[4][128] = {_T(""), _T(""), _T(""), _T("")};
+			TCHAR Param[4][StkWebAppExec::URL_PATH_LENGTH] = {_T(""), _T(""), _T(""), _T("")};
 			if (Method & pImpl->HandlerMethod[Loop] &&
 				StkStringParser::ParseInto4Params(UrlPath, pImpl->HandlerUrlPath[Loop], _T('$'), Param[0], Param[1], Param[2], Param[3]) == 1) {
 				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode, Locale);
@@ -616,12 +616,12 @@ StkWebApp::~StkWebApp()
 	delete pImpl;
 };
 
-int StkWebApp::AddReqHandler(int Method, TCHAR UrlPath[128], StkWebAppExec* HandlerObj)
+int StkWebApp::AddReqHandler(int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
 {
 	return pImpl->AddReqHandler(Method, UrlPath, HandlerObj);
 }
 
-int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[128])
+int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH])
 {
 	return pImpl->DeleteReqHandler(Method, UrlPath);
 }

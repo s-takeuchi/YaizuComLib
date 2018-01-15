@@ -13,8 +13,8 @@ public:
 	StkWebApp(int*, int, TCHAR*, int);
 	virtual ~StkWebApp();
 
-	int AddReqHandler(int, TCHAR[128], StkWebAppExec*);
-	int DeleteReqHandler(int, TCHAR[128]);
+	int AddReqHandler(int, TCHAR[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
+	int DeleteReqHandler(int, TCHAR[StkWebAppExec::URL_PATH_LENGTH]);
 
 	void TheLoop();
 

@@ -89,13 +89,13 @@ BOOL SendTestData(int Id, char* Dat)
 	StkSocket_Connect(Id);
 
 	char TmpHeader[256];
-	char UrlPath[128];
+	char UrlPath[StkWebAppExec::URL_PATH_LENGTH];
 	if (Id % 3 == 0) {
-		strcpy_s(UrlPath, 128, "/aaa/bbb/");
+		strcpy_s(UrlPath, StkWebAppExec::URL_PATH_LENGTH, "/aaa/bbb/");
 	} else if (Id % 3 == 1) {
-		strcpy_s(UrlPath, 128, "/aaa/ccc/");
+		strcpy_s(UrlPath, StkWebAppExec::URL_PATH_LENGTH, "/aaa/ccc/");
 	} else {
-		strcpy_s(UrlPath, 128, "/aaa/ddd/");
+		strcpy_s(UrlPath, StkWebAppExec::URL_PATH_LENGTH, "/aaa/ddd/");
 	}
 	sprintf_s(TmpHeader, 256, "POST %s HTTP/1.1\nContent-Length: %d\nAccept-Language: ja-JP;q=0.5,en-US;q=0.3,en-GB;q=0.2\nContent-Type: application/json\n\n", UrlPath, strlen(Dat) + 1);
 
