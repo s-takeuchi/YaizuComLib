@@ -1343,8 +1343,48 @@ void JsonDecodingTest1()
 	if (RetObj == NULL ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetName(), _T("Zzz")) != 0 ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), _T("")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), _T("Xxx")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), _T("")) != 0 ||
 		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), _T("Xxx")) != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), _T("")) != 0) {
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), _T("")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), _T("Xxx")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), _T("")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	delete RetObj;
+	printf("OK\r\n");
+	////////////////////////////////////////////////////
+	lstrcpy(Msg, _T("{\"Aaa\" : \"\", \"Bbb\" : \"222\", \"Ccc\" : \"\", \"Ddd\" : \"444\"}"));
+	wprintf(_T("JSON Decoding : %s ..."), Msg);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
+	if (RetObj == NULL ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetName(), _T("Aaa")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), _T("")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), _T("Bbb")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), _T("222")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), _T("Ccc")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), _T("")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), _T("Ddd")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), _T("444")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	delete RetObj;
+	printf("OK\r\n");
+	////////////////////////////////////////////////////
+	lstrcpy(Msg, _T("{\"Aaa\" : \"111\", \"Bbb\" : \"\", \"Ccc\" : \"333\", \"Ddd\" : \"\"}"));
+	wprintf(_T("JSON Decoding : %s ..."), Msg);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
+	if (RetObj == NULL ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetName(), _T("Aaa")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), _T("111")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), _T("Bbb")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), _T("")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), _T("Ccc")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), _T("333")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), _T("Ddd")) != 0 ||
+		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), _T("")) != 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
