@@ -10,7 +10,7 @@
 #include "StkWebApp.h"
 #include "StkWebAppExec.h"
 
-#define DATA_LEN 1000000
+#define DATA_LEN 16000000
 #define MAX_THREAD_COUNT 64
 #define MAX_REQHANDLER_COUNT 1024
 #define MAX_IMPL_COUNT 8

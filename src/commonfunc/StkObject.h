@@ -79,7 +79,7 @@ public:
 	void SetNext(StkObject*); // DO NOT USE THIS API. USE Append* API INSTEAD.
 
 	void ToXml(TCHAR*, int, int Indent = 0); // DO NOT SPECIFY 3RD PARAMETER.
-	void ToJson(TCHAR*, int, int Indent = 0, BOOL ArrayFlag = FALSE); // DO NOT SPECIFY 3RD AND 4TH PARAMETERS.
+	int ToJson(TCHAR*, int, int Indent = 0, BOOL ArrayFlag = FALSE); // DO NOT SPECIFY 3RD AND 4TH PARAMETERS.
 
 	static int Analyze(TCHAR*);
 	static StkObject* CreateObjectFromXml(TCHAR*, int*);

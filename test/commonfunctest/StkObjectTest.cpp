@@ -822,6 +822,57 @@ void JsonEncodingTest1()
 	delete Obj;
 }
 
+void JsonEncodingTest2()
+{
+	wprintf(_T("JSON Encoding#Triming ... "));
+
+	StkObject* MkDat1 = MakeTestData1();
+	TCHAR JsonTxt1[128];
+	int Ret = 0;
+
+	lstrcpy(JsonTxt1, _T(""));
+	Ret = MkDat1->ToJson(JsonTxt1, 32);
+	if (lstrcmp(JsonTxt1, _T("\"SoftwareCompany\" : {\r\n  \"@attr")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	lstrcpy(JsonTxt1, _T(""));
+	Ret = MkDat1->ToJson(JsonTxt1, 33);
+	if (lstrcmp(JsonTxt1, _T("\"SoftwareCompany\" : {\r\n  \"@attri")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	lstrcpy(JsonTxt1, _T(""));
+	Ret = MkDat1->ToJson(JsonTxt1, 34);
+	if (lstrcmp(JsonTxt1, _T("\"SoftwareCompany\" : {\r\n  \"@attrib")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+
+	StkObject* MkDat2 = MakeTestData2();
+	TCHAR JsonTxt2[128];
+	lstrcpy(JsonTxt2, _T(""));
+	Ret = MkDat2->ToJson(JsonTxt2, 32);
+	if (lstrcmp(JsonTxt2, _T("\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	lstrcpy(JsonTxt2, _T(""));
+	Ret = MkDat2->ToJson(JsonTxt2, 33);
+	if (lstrcmp(JsonTxt2, _T("\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"カ")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	lstrcpy(JsonTxt2, _T(""));
+	Ret = MkDat2->ToJson(JsonTxt2, 34);
+	if (lstrcmp(JsonTxt2, _T("\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"カロ")) != 0) {
+		printf("NG\r\n");
+		exit(0);
+	}
+	printf("OK\r\n");
+
+}
+
 void XmlEncodingTest2()
 {
 	StkObject* Xml2 = new StkObject(_T("EncodeTesting"));
@@ -1726,13 +1777,38 @@ int MemoryLeakChecking4()
 	return 0;
 }
 
+void PerformanceTest()
+{
+	printf("Performance test ... ");
+
+	TCHAR JsonTxt[16000000];
+	DWORD PrevMiliSec = 0;
+	DWORD MiliSec = 0;
+
+	for (int Loop = 2; Loop < 10; Loop++) {
+		lstrcpy(JsonTxt, _T(""));
+		StkObject* ObjWid = MakeTestData3(_T("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほ"), 2, Loop);
+		PrevMiliSec = GetTickCount();
+		ObjWid->ToJson(JsonTxt, 16000000);
+		MiliSec = GetTickCount() - PrevMiliSec;
+		printf("JsonTxtLength[width=%d] = %d(%f Sec),   ", Loop, lstrlen(JsonTxt), (float)MiliSec / 1000.0f);
+		delete ObjWid;
+	}
+
+	printf("\r\n");
+	exit(0);
+}
+
 void StkObjectTest()
 {
 	printf("StkObjectTest started.\r\n");
 
+	//PerformanceTest();
+
 	// Encode check
 	{
 		JsonEncodingTest1();
+		JsonEncodingTest2();
 		XmlEncodingTest2();
 		XmlEncodingTest3();
 		XmlJsonEncodingTest1();
