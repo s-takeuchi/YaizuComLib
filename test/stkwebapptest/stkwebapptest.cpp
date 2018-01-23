@@ -240,8 +240,8 @@ int ElemStkThreadMainSend2(int Id)
 {
 	int ErrorCode;
 
-	printf("StkWebAppTest2:GET /bigdata/ [{ \"AAA\":123 }] == 200");
-	if (SendTestData2(Id, "GET", "/bigdata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 200) {
+	printf("StkWebAppTest2:GET /bigdata/ [{ \"AAA\":123 }] == 500 buffer over flow");
+	if (SendTestData2(Id, "GET", "/bigdata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500) {
 		printf("... NG\r\n");
 		exit(0);
 	}
@@ -507,6 +507,7 @@ void ReqResTest2()
 	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, _T("localhost"), 8080);
+	Soc->SetSendBufSize(2000);
 	StkWebAppTest5* Test5Hndl = new StkWebAppTest5();
 	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/bigdata/"), (StkWebAppExec*)Test5Hndl);
 

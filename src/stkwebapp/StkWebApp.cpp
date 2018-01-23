@@ -11,7 +11,6 @@
 #include "StkWebAppExec.h"
 
 #define DATA_LEN_RECV 1000000
-#define DATA_LEN_SEND 20000000
 #define MAX_THREAD_COUNT 64
 #define MAX_REQHANDLER_COUNT 1024
 #define MAX_IMPL_COUNT 8
@@ -33,6 +32,8 @@ public:
 	StkWebAppExec* Handler[MAX_REQHANDLER_COUNT];
 
 	BOOL StopFlag;
+
+	int SendBufSize;
 
 public:
 	TCHAR* SkipHttpHeader(TCHAR*);
@@ -311,12 +312,17 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 		if (XmlJsonType == 1 && Obj != NULL) {
 			ResultCode = 500;
 		} else if ((XmlJsonType == 0 || XmlJsonType == 2) && Obj != NULL) {
-			TCHAR* XmlOrJson = new TCHAR[DATA_LEN_SEND];
+			TCHAR* XmlOrJson = new TCHAR[SendBufSize];
 			lstrcpy(XmlOrJson, _T(""));
-			Obj->ToJson(XmlOrJson, DATA_LEN_SEND);
-			Dat = WideCharToUtf8(XmlOrJson);
-			DatLength = strlen((char*)Dat);
-			delete XmlOrJson;
+			int Length = Obj->ToJson(XmlOrJson, SendBufSize);
+			if (Length == SendBufSize - 1) {
+				ResultCode = 500;
+				delete XmlOrJson;
+			} else {
+				Dat = WideCharToUtf8(XmlOrJson);
+				DatLength = strlen((char*)Dat);
+				delete XmlOrJson;
+			}
 		}
 	}
 
@@ -518,6 +524,7 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	pImpl->WebThreadCount = 0;
 	pImpl->HandlerCount = 0;
 	pImpl->StopFlag = FALSE;
+	pImpl->SendBufSize = 1000000;
 
 	// Message definition
 	MessageProc::AddJpn(1001, _T("クライアントからのリクエストに対応するAPIは定義されていません。"));
@@ -629,4 +636,14 @@ int StkWebApp::AddReqHandler(int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_L
 int StkWebApp::DeleteReqHandler(int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH])
 {
 	return pImpl->DeleteReqHandler(Method, UrlPath);
+}
+
+int StkWebApp::GetSendBufSize()
+{
+	return pImpl->SendBufSize;
+}
+
+void StkWebApp::SetSendBufSize(int Size)
+{
+	pImpl->SendBufSize = Size;
 }
