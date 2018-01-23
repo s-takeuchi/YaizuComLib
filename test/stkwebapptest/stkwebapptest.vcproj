@@ -216,6 +216,14 @@
 				RelativePath=".\StkWebAppTest4.h"
 				>
 			</File>
+			<File
+				RelativePath=".\StkWebAppTest5.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StkWebAppTest5.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

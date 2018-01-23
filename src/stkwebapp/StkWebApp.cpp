@@ -10,7 +10,8 @@
 #include "StkWebApp.h"
 #include "StkWebAppExec.h"
 
-#define DATA_LEN 16000000
+#define DATA_LEN_RECV 1000000
+#define DATA_LEN_SEND 20000000
 #define MAX_THREAD_COUNT 64
 #define MAX_REQHANDLER_COUNT 1024
 #define MAX_IMPL_COUNT 8
@@ -223,14 +224,14 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	if (Ret == -1) {
 		return NULL;
 	}
-	BYTE Dat[DATA_LEN];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN, 200030, NULL, -1, FALSE);
+	BYTE Dat[DATA_LEN_RECV];
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN_RECV, 200030, NULL, -1, FALSE);
 	if (Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
 	}
-	if (Ret >= DATA_LEN) {
-		Dat[DATA_LEN - 1] = '\0';
+	if (Ret >= DATA_LEN_RECV) {
+		Dat[DATA_LEN_RECV - 1] = '\0';
 	} else {
 		Dat[Ret] = '\0';
 	}
@@ -299,20 +300,24 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 {
 	BYTE* Dat = NULL;
 	int DatLength = 0;
-	TCHAR XmlOrJson[DATA_LEN] = _T("");
 
 	if (XmlJsonType != 0 && XmlJsonType != 1 && XmlJsonType != 2) {
+		// There is no chance to handle this case without a bug.
 		ResultCode = 500;
 	} else if ((XmlJsonType == 1 && Obj == NULL) || (XmlJsonType == 2 && Obj == NULL)) {
+		// There is no chance to handle this case without a bug.
 		ResultCode = 500;
 	} else {
 		if (XmlJsonType == 1 && Obj != NULL) {
 			ResultCode = 500;
 		} else if ((XmlJsonType == 0 || XmlJsonType == 2) && Obj != NULL) {
-			Obj->ToJson(XmlOrJson, DATA_LEN);
+			TCHAR* XmlOrJson = new TCHAR[DATA_LEN_SEND];
+			lstrcpy(XmlOrJson, _T(""));
+			Obj->ToJson(XmlOrJson, DATA_LEN_SEND);
+			Dat = WideCharToUtf8(XmlOrJson);
+			DatLength = strlen((char*)Dat);
+			delete XmlOrJson;
 		}
-		Dat = WideCharToUtf8(XmlOrJson);
-		DatLength = strlen((char*)Dat);
 	}
 
 	BYTE* HeaderDat = MakeHttpHeader(ResultCode, DatLength, XmlJsonType);

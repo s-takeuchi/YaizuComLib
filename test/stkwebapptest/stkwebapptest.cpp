@@ -13,6 +13,8 @@
 #include "StkWebAppTest2.h"
 #include "StkWebAppTest3.h"
 #include "StkWebAppTest4.h"
+#include "StkWebAppTest5.h"
+
 
 #define THREADNUM 10
 
@@ -126,7 +128,7 @@ BOOL SendTestData(int Id, char* Dat)
 int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode, TCHAR Header[64] = NULL)
 {
 	char Tmp[256];
-	BYTE RecvDat[4096];
+	BYTE RecvDat[8192];
 	*ErrorCode = -1;
 
 	int RetC = StkSocket_Connect(Id);
@@ -142,7 +144,7 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, in
 	}
 	int RetR;
 	for (int Loop = 0; Loop < 10; Loop++) {
-		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, 205000, NULL, -1, FALSE);
+		RetR = StkSocket_Receive(Id, Id, RecvDat, 8192, 205000, NULL, -1, FALSE);
 		if (RetR > 0) {
 			RecvDat[RetR] = '\0';
 			break;
@@ -237,6 +239,13 @@ int ElemStkThreadMainSend(int Id)
 int ElemStkThreadMainSend2(int Id)
 {
 	int ErrorCode;
+
+	printf("StkWebAppTest2:GET /bigdata/ [{ \"AAA\":123 }] == 200");
+	if (SendTestData2(Id, "GET", "/bigdata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 200) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
 
 	printf("StkWebAppTest2:Invalid request 1 == 400");
 	if (SendTestData2(Id, NULL, NULL, "dummy", "", &ErrorCode) != 400 || ErrorCode != 1005) {
@@ -498,11 +507,15 @@ void ReqResTest2()
 	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, _T("localhost"), 8080);
+	StkWebAppTest5* Test5Hndl = new StkWebAppTest5();
+	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/bigdata/"), (StkWebAppExec*)Test5Hndl);
+
 	StartSpecifiedStkThreads(SendIds, 1);
 	Soc->TheLoop();
 	StopSpecifiedStkThreads(SendIds, 1);
-	delete Soc;
 
+	int Del1 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/bigdata/"));
+	delete Soc;
 	StkSocket_DeleteInfo(SendIds[0]);
 	DeleteStkThread(SendIds[0]);
 }
