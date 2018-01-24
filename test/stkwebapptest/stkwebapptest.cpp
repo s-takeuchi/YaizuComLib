@@ -240,13 +240,6 @@ int ElemStkThreadMainSend2(int Id)
 {
 	int ErrorCode;
 
-	printf("StkWebAppTest2:GET /bigdata/ [{ \"AAA\":123 }] == 500 buffer over flow");
-	if (SendTestData2(Id, "GET", "/bigdata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500) {
-		printf("... NG\r\n");
-		exit(0);
-	}
-	printf("... OK\r\n");
-
 	printf("StkWebAppTest2:Invalid request 1 == 400");
 	if (SendTestData2(Id, NULL, NULL, "dummy", "", &ErrorCode) != 400 || ErrorCode != 1005) {
 		printf("... NG\r\n");
@@ -423,6 +416,43 @@ int ElemStkThreadMainSend3(int Id)
 	return 0;
 }
 
+int ElemStkThreadMainSend4(int Id)
+{
+	int ErrorCode;
+
+	printf("StkWebAppTest4:GET /bigdata/ [{ \"AAA\":123 }] == 500 buffer over flow");
+	if (SendTestData2(Id, "GET", "/bigdata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500 || ErrorCode != 1006) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest4:GET /middledata/ [{ \"AAA\":123 }] == 500 buffer over flow");
+	if (SendTestData2(Id, "GET", "/middledata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500 || ErrorCode != 1006) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest4:GET /smalldata/ [{ \"AAA\":123 }] == 200 sufficient buffer allocated");
+	if (SendTestData2(Id, "GET", "/smalldata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 200) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	printf("StkWebAppTest4:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
+	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
+	Sleep(1000);
+
+	return 0;
+}
+
 void ReqResTest1()
 {
 	printf("StkWebAppTest1 ");
@@ -507,16 +537,13 @@ void ReqResTest2()
 	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, _T("localhost"), 8080);
-	Soc->SetSendBufSize(2000);
-	StkWebAppTest5* Test5Hndl = new StkWebAppTest5();
-	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/bigdata/"), (StkWebAppExec*)Test5Hndl);
 
 	StartSpecifiedStkThreads(SendIds, 1);
 	Soc->TheLoop();
 	StopSpecifiedStkThreads(SendIds, 1);
 
-	int Del1 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/bigdata/"));
 	delete Soc;
+
 	StkSocket_DeleteInfo(SendIds[0]);
 	DeleteStkThread(SendIds[0]);
 }
@@ -542,6 +569,41 @@ void ReqResTest3()
 	StopSpecifiedStkThreads(SendIds, 1);
 
 	int Del1 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/aaa/$/"));
+	delete Soc;
+
+	StkSocket_DeleteInfo(SendIds[0]);
+	DeleteStkThread(SendIds[0]);
+}
+
+void ReqResTest4()
+{
+	int Ids[1] = {11};
+	int SendIds[1] = {31};
+	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
+	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
+
+	wsprintf(Name, _T("Sender"));
+	wsprintf(Desc, _T("Description"));
+	AddStkThread(SendIds[0], Name, Desc, NULL, NULL, ElemStkThreadMainSend4, NULL, NULL);
+	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
+
+	StkWebApp* Soc = new StkWebApp(Ids, 1, _T("localhost"), 8080);
+	Soc->SetSendBufSize(2000);
+
+	StkWebAppTest5* Test5aHndl = new StkWebAppTest5();
+	StkWebAppTest5* Test5bHndl = new StkWebAppTest5();
+	StkWebAppTest5* Test5cHndl = new StkWebAppTest5();
+	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/bigdata/"), (StkWebAppExec*)Test5aHndl);
+	int Add2 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/middledata/"), (StkWebAppExec*)Test5bHndl);
+	int Add3 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/smalldata/"), (StkWebAppExec*)Test5cHndl);
+
+	StartSpecifiedStkThreads(SendIds, 1);
+	Soc->TheLoop();
+	StopSpecifiedStkThreads(SendIds, 1);
+
+	int Del1 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/bigdata/"));
+	int Del2 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/middledata/"));
+	int Del3 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/smalldata/"));
 	delete Soc;
 
 	StkSocket_DeleteInfo(SendIds[0]);
@@ -659,6 +721,7 @@ int main(int Argc, char* Argv[])
 {
 	AddDeleteStkWebAppTest();
 	AddDeleteReqHandlerTest();
+	ReqResTest4();
 	ReqResTest3();
 	ReqResTest2();
 	ReqResTest1();

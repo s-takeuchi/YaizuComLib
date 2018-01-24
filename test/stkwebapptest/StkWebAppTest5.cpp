@@ -9,7 +9,19 @@ StkObject* StkWebAppTest5::Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[
 	StkObject* RetObj = NULL;
 	if (StrStr(UrlPath, _T("/bigdata/")) != NULL) {
 		RetObj = new StkObject(_T("BigData"));
-		for (int Loop = 0; Loop < 100; Loop++) {
+		for (int Loop = 0; Loop < 150; Loop++) {
+			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), _T("Hello, world!!")));
+		}
+	}
+	if (StrStr(UrlPath, _T("/middledata/")) != NULL) {
+		RetObj = new StkObject(_T("MiddleData"));
+		for (int Loop = 0; Loop < 90; Loop++) {
+			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), _T("Hello, world!!")));
+		}
+	}
+	if (StrStr(UrlPath, _T("/smalldata/")) != NULL) {
+		RetObj = new StkObject(_T("SmallData"));
+		for (int Loop = 0; Loop < 50; Loop++) {
 			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), _T("Hello, world!!")));
 		}
 	}

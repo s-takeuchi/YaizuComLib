@@ -317,6 +317,11 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 			int Length = Obj->ToJson(XmlOrJson, SendBufSize);
 			if (Length == SendBufSize - 1) {
 				ResultCode = 500;
+				StkObject* ErrObj = MakeErrorResponse(1006);
+				TCHAR TmpBuf[1024] = _T("");
+				ErrObj->ToJson(TmpBuf, 1024);
+				Dat = WideCharToUtf8(TmpBuf);
+				DatLength = strlen((char*)Dat);
 				delete XmlOrJson;
 			} else {
 				Dat = WideCharToUtf8(XmlOrJson);
@@ -535,6 +540,8 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	MessageProc::AddEng(1004, _T("An invalid request is posted to URL\"/service/\"."));
 	MessageProc::AddJpn(1005, _T("不正なリクエストを受信しました。リクエストが壊れているおそれがあります。"));
 	MessageProc::AddEng(1005, _T("An invalid request is received. The request might be broken."));
+	MessageProc::AddJpn(1006, _T("データサイズが送信できるサイズの上限を超えました。"));
+	MessageProc::AddEng(1006, _T("Data size has exceeded the limit for sending."));
 
 	// Update array of StkWebApp
 	if (StkWebAppCount < MAX_IMPL_COUNT) {
