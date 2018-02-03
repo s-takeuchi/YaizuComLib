@@ -1,14 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkwebappcmd", "stkwebappcmd.vcproj", "{AA00280C-84AA-404A-88A9-0FCD89AB2BB3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{8061DCB2-52A6-462E-8955-FCFE6F7A7D41} = {8061DCB2-52A6-462E-8955-FCFE6F7A7D41}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkwebappcmd", "stkwebappcmd.vcxproj", "{AA00280C-84AA-404A-88A9-0FCD89AB2BB3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commonfunc", "..\commonfunc\commonfunc.vcproj", "{8061DCB2-52A6-462E-8955-FCFE6F7A7D41}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commonfunc", "..\commonfunc\commonfunc.vcxproj", "{8061DCB2-52A6-462E-8955-FCFE6F7A7D41}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stksocket", "..\stksocket\stksocket.vcproj", "{3839D168-00F8-420A-BAE6-AB290802FFC7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stksocket", "..\stksocket\stksocket.vcxproj", "{3839D168-00F8-420A-BAE6-AB290802FFC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {836B4815-DA10-4025-A1A0-63068A760F14}
 	EndGlobalSection
 EndGlobal
