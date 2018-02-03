@@ -280,7 +280,7 @@ void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 	StkObject* Elem4 = Elem3->GetNext();
 	int Elem4ElemCnt = Elem4->GetChildElementCount();
 	int Elem4AttrCnt = Elem4->GetAttributeCount();
-	wprintf(_T("%s#SingleElement Count..."), Name, AttrCount);
+	wprintf(_T("%s#SingleElement Count..."), Name);
 	if (Elem4ElemCnt == 0 && Elem4AttrCnt == 0) {
 		printf("OK\r\n");
 	} else {

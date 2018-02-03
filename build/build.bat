@@ -1,7 +1,7 @@
 @echo off
 
 set CURRENTPATH=%cd%
-set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\devenv.exe"
+set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe"
 set WKHTMLTOPDF="C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
 set PDFTK="C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
 set SEVENZIP="C:\Program Files\7-Zip\7z.exe"

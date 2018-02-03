@@ -1,12 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthreadtest", "stkthreadtest.vcproj", "{5A2C67A2-DC9E-4D93-BE46-9F55C3AA2ECA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C85C9417-1312-4A69-B254-B4F041A9D9C1} = {C85C9417-1312-4A69-B254-B4F041A9D9C1}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthreadtest", "stkthreadtest.vcxproj", "{5A2C67A2-DC9E-4D93-BE46-9F55C3AA2ECA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthread", "..\..\src\stkthread\stkthread.vcproj", "{C85C9417-1312-4A69-B254-B4F041A9D9C1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthread", "..\..\src\stkthread\stkthread.vcxproj", "{C85C9417-1312-4A69-B254-B4F041A9D9C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A3A27DE-DC60-4C0D-ACAA-F09CAA95E660}
 	EndGlobalSection
 EndGlobal

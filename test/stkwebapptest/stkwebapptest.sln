@@ -1,24 +1,19 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkwebapptest", "stkwebapptest.vcproj", "{003F9396-2AAD-4AF5-9B76-FDC4EC744647}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C85C9417-1312-4A69-B254-B4F041A9D9C1} = {C85C9417-1312-4A69-B254-B4F041A9D9C1}
-		{85C0E32C-8AB1-495D-9968-0ABDEBD671AE} = {85C0E32C-8AB1-495D-9968-0ABDEBD671AE}
-		{3839D168-00F8-420A-BAE6-AB290802FFC7} = {3839D168-00F8-420A-BAE6-AB290802FFC7}
-		{8061DCB2-52A6-462E-8955-FCFE6F7A7D41} = {8061DCB2-52A6-462E-8955-FCFE6F7A7D41}
-		{83E294F2-A071-4ECC-BAE2-B5F127DD537E} = {83E294F2-A071-4ECC-BAE2-B5F127DD537E}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkwebapptest", "stkwebapptest.vcxproj", "{003F9396-2AAD-4AF5-9B76-FDC4EC744647}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkwebapp", "..\..\src\stkwebapp\stkwebapp.vcproj", "{85C0E32C-8AB1-495D-9968-0ABDEBD671AE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkwebapp", "..\..\src\stkwebapp\stkwebapp.vcxproj", "{85C0E32C-8AB1-495D-9968-0ABDEBD671AE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthread", "..\..\src\stkthread\stkthread.vcproj", "{C85C9417-1312-4A69-B254-B4F041A9D9C1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkthread", "..\..\src\stkthread\stkthread.vcxproj", "{C85C9417-1312-4A69-B254-B4F041A9D9C1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stksocket", "..\..\src\stksocket\stksocket.vcproj", "{3839D168-00F8-420A-BAE6-AB290802FFC7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stksocket", "..\..\src\stksocket\stksocket.vcxproj", "{3839D168-00F8-420A-BAE6-AB290802FFC7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkdata", "..\..\src\stkdata\stkdata.vcproj", "{83E294F2-A071-4ECC-BAE2-B5F127DD537E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkdata", "..\..\src\stkdata\stkdata.vcxproj", "{83E294F2-A071-4ECC-BAE2-B5F127DD537E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commonfunc", "..\..\src\commonfunc\commonfunc.vcproj", "{8061DCB2-52A6-462E-8955-FCFE6F7A7D41}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commonfunc", "..\..\src\commonfunc\commonfunc.vcxproj", "{8061DCB2-52A6-462E-8955-FCFE6F7A7D41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,5 +48,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C96CF744-45AE-404D-B249-1445BFC763B9}
 	EndGlobalSection
 EndGlobal

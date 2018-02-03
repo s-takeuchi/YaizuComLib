@@ -93,7 +93,7 @@ int ConnectDisconnectUdpPort()
 		return -1;
 	}
 	StkSocket_DeleteInfo(22);
-	printf("OK\r\n", ParamInt2);
+	printf("OK\r\n");
 	return 0;
 }
 
@@ -577,7 +577,7 @@ DWORD WINAPI TestThreadProc0(LPVOID Param)
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
 				if (lstrcmp((TCHAR*)Buffer, _T("Hello, world!!")) == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					printf("OK [%S]\r\n", Buffer);
+					printf("OK [%S]\r\n", (TCHAR*)Buffer);
 					StkSocket_Send(0, 0, (BYTE*)_T("Reply Hello, world!!"), 50);
 					StkSocket_CloseAccept(0, 0, TRUE);
 					break;
@@ -597,7 +597,7 @@ DWORD WINAPI TestThreadProc0(LPVOID Param)
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
 				if (lstrcmp((TCHAR*)Buffer, _T("Dummy data!!")) == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					printf("OK [%S]\r\n", Buffer);
+					printf("OK [%S]\r\n", (TCHAR*)Buffer);
 					StkSocket_Send(0, 0, (BYTE*)_T("Reply Dummy data!!"), 50);
 					StkSocket_CloseAccept(0, 0, TRUE);
 					break;
@@ -714,7 +714,7 @@ DWORD WINAPI TestThreadProc2(LPVOID Param)
 			if (Ret > 0) {
 				printf("[Recv/Send2] : Appropriate string has been received by receiver...");
 				if (lstrcmp((TCHAR*)Buffer, _T("Hello, world!!")) == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					printf("OK [%S]\r\n", Buffer);
+					printf("OK [%S]\r\n", (TCHAR*)Buffer);
 					break;
 				} else {
 					printf("NG\r\n");
@@ -817,7 +817,7 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (lstrcmp((TCHAR*)Buffer, _T("Hello, world!!")) == 0 && Msg == STKSOCKET_LOG_UDPRECV) {
-				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...OK [%S]\r\n", Buffer);
+				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...OK [%S]\r\n", (TCHAR*)Buffer);
 				break;
 			} else {
 				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...NG\r\n");
@@ -887,7 +887,7 @@ DWORD WINAPI TestThreadProc5(LPVOID Param)
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (lstrcmp((TCHAR*)Buffer, _T("Shinya Takeuchi")) == 0 && Msg == STKSOCKET_LOG_UDPRECV) {
-				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...OK [%S]\r\n", Buffer);
+				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...OK [%S]\r\n", (TCHAR*)Buffer);
 				break;
 			} else {
 				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...NG\r\n");

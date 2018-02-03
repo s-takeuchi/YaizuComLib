@@ -1,12 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commonfunctest", "commonfunctest.vcproj", "{7CCD0B12-3A6F-4804-91DC-3C2F69993E1C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{8061DCB2-52A6-462E-8955-FCFE6F7A7D41} = {8061DCB2-52A6-462E-8955-FCFE6F7A7D41}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commonfunctest", "commonfunctest.vcxproj", "{7CCD0B12-3A6F-4804-91DC-3C2F69993E1C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commonfunc", "..\..\src\commonfunc\commonfunc.vcproj", "{8061DCB2-52A6-462E-8955-FCFE6F7A7D41}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commonfunc", "..\..\src\commonfunc\commonfunc.vcxproj", "{8061DCB2-52A6-462E-8955-FCFE6F7A7D41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74DA578F-33D7-4C6C-B9E0-51B6F47F5D6C}
 	EndGlobalSection
 EndGlobal
