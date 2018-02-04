@@ -4,11 +4,6 @@
 #include <shlwapi.h>
 #include "StkGeneric.h"
 
-const TCHAR* StkGeneric::S_UNKNOWN       = _T("UNKNOWN");
-const TCHAR* StkGeneric::S_WINDOWS_2000  = _T("WINDOWS 2000");
-const TCHAR* StkGeneric::S_WINDOWS_XP    = _T("WINDOWS XP");
-const TCHAR* StkGeneric::S_WINDOWS_VISTA = _T("WINDOWS VISTA");
-
 StkGeneric::StkGeneric()
 {
 }
@@ -48,33 +43,6 @@ BOOL StkGeneric::IsDuplicateAppExisting(HWND hwnd)
 		chwnd = GetNextWindow(chwnd, GW_HWNDNEXT);
 	} while (chwnd != NULL);
 	return FALSE;
-}
-
-int StkGeneric::GetOSVersion(TCHAR* OsVer)
-{
-	OSVERSIONINFO OsVerInfo;
-	OsVerInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&OsVerInfo);
-	int MaVer = OsVerInfo.dwMajorVersion;
-	int MiVer = OsVerInfo.dwMinorVersion;
-	if (MaVer == 5) {
-		if (MiVer == 0) {
-			lstrcpy(OsVer, S_WINDOWS_2000);
-			return WINDOWS_2000;
-		}
-		if (MiVer == 1) {
-			lstrcpy(OsVer, S_WINDOWS_XP);
-			return WINDOWS_XP;
-		}
-	}
-	if (MaVer == 6) {
-		if (MiVer == 0) {
-			lstrcpy(OsVer, S_WINDOWS_VISTA);
-			return WINDOWS_VISTA;
-		}
-	}
-	lstrcpy(OsVer, S_UNKNOWN);
-	return UNKNOWN;
 }
 
 // Get full path from the specified file name.
