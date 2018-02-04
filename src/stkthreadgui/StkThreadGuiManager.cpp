@@ -488,8 +488,8 @@ int StkThreadGuiManager::ShowStkThreadController(HWND ParentWnd, int ParentIconI
 	wcex.cbClsExtra    = 0;
 	wcex.cbWndExtra    = DLGWINDOWEXTRA;
 	wcex.hInstance     = DlgInstHndl;
-	wcex.hIcon         = LoadIcon(NULL, MAKEINTRESOURCE(IDI_APPLICATION));
-	wcex.hIconSm       = LoadIcon(NULL, MAKEINTRESOURCE(IDI_APPLICATION));
+	wcex.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
+	wcex.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
 	wcex.hCursor       = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
 	wcex.lpszMenuName  = NULL;
