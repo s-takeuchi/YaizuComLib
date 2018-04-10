@@ -10,7 +10,6 @@
 #include "StkWebApp.h"
 #include "StkWebAppExec.h"
 
-#define DATA_LEN_RECV 1000000
 #define MAX_THREAD_COUNT 64
 #define MAX_REQHANDLER_COUNT 1024
 #define MAX_IMPL_COUNT 8
@@ -34,6 +33,7 @@ public:
 	BOOL StopFlag;
 
 	int SendBufSize;
+	int RecvBufSize;
 
 public:
 	TCHAR* SkipHttpHeader(TCHAR*);
@@ -225,18 +225,19 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	if (Ret == -1) {
 		return NULL;
 	}
-	BYTE Dat[DATA_LEN_RECV];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, DATA_LEN_RECV, 200030, NULL, -1, FALSE);
+	BYTE *Dat = new BYTE[RecvBufSize];
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, 200030, NULL, -1, FALSE);
 	if (Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
 	}
-	if (Ret >= DATA_LEN_RECV) {
-		Dat[DATA_LEN_RECV - 1] = '\0';
+	if (Ret >= RecvBufSize) {
+		Dat[RecvBufSize - 1] = '\0';
 	} else {
 		Dat[Ret] = '\0';
 	}
 	TCHAR *DatWc = Uft8ToWideChar(Dat);
+	delete Dat;
 	if (DatWc == NULL) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		return NULL;
@@ -530,6 +531,7 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	pImpl->HandlerCount = 0;
 	pImpl->StopFlag = FALSE;
 	pImpl->SendBufSize = 1000000;
+	pImpl->RecvBufSize = 1000000;
 
 	// Message definition
 	MessageProc::AddJpn(1001, _T("クライアントからのリクエストに対応するAPIは定義されていません。"));
@@ -653,4 +655,14 @@ int StkWebApp::GetSendBufSize()
 void StkWebApp::SetSendBufSize(int Size)
 {
 	pImpl->SendBufSize = Size;
+}
+
+int StkWebApp::GetRecvBufSize()
+{
+	return pImpl->RecvBufSize;
+}
+
+void StkWebApp::SetRecvBufSize(int Size)
+{
+	pImpl->RecvBufSize = Size;
 }

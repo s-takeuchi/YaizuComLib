@@ -15,6 +15,8 @@ public:
 
 	int GetSendBufSize();
 	void SetSendBufSize(int);
+	int GetRecvBufSize();
+	void SetRecvBufSize(int);
 
 	int AddReqHandler(int, TCHAR[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
 	int DeleteReqHandler(int, TCHAR[StkWebAppExec::URL_PATH_LENGTH]);
