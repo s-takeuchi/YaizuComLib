@@ -441,6 +441,13 @@ int ElemStkThreadMainSend4(int Id)
 	}
 	printf("... OK\r\n");
 
+	printf("StkWebAppTest4:POST /smalldata/ [{ \"AAAAAAAAAABBBBBBBBBB\":\"CCCCCCCCCCDDDDDDDDDD\" }] == 400 read buffer over flow");
+	if (SendTestData2(Id, "POST", "/smalldata/", "{ \"AAAAAAAAAABBBBBBBBBB\":\"CCCCCCCCCCDDDDDDDDDD\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1002) {
+		printf("... NG\r\n");
+		exit(0);
+	}
+	printf("... OK\r\n");
+
 	printf("StkWebAppTest4:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
 		printf("... NG\r\n");
@@ -589,6 +596,7 @@ void ReqResTest4()
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, _T("localhost"), 8080);
 	Soc->SetSendBufSize(2000);
+	Soc->SetRecvBufSize(100);
 
 	StkWebAppTest5* Test5aHndl = new StkWebAppTest5();
 	StkWebAppTest5* Test5bHndl = new StkWebAppTest5();
