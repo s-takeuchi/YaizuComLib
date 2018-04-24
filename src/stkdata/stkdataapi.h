@@ -9,6 +9,7 @@
 
 int CreateTable(TableDef*);
 int DeleteTable(TCHAR*);
+int RenameTable(TCHAR*, TCHAR*);
 
 int LockTable(TCHAR*, int);
 int LockAllTable(int);

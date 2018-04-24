@@ -94,6 +94,8 @@ public:
 	int CreateTable(TableDef*);
 	// Delete table from main area
 	int DeleteTable(TCHAR*);
+	// Rename table name
+	int RenameTable(TCHAR*, TCHAR*);
 
 	// Lock table
 	int LockTable(TCHAR*, int);

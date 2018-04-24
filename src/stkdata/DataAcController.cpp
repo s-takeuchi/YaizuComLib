@@ -386,6 +386,27 @@ int DataAcController::DeleteTable(TCHAR* TableName)
 	return 0;
 }
 
+// Rename table name
+// [in] OldName : Old name
+// [in] NewName : New name
+// [out] int : Result Code (0: Sucess, -1: Error)
+int DataAcController::RenameTable(TCHAR* OldName, TCHAR* NewName)
+{
+	if (lstrcmp(NewName, _T("")) == 0) {
+		return -1;
+	}
+	int NewTableId = SearchTable(NewName);
+	if (NewTableId != -1) {
+		return -1;
+	}
+	int OldTableId = SearchTable(OldName);
+	if (OldTableId == -1) {
+		return -1;
+	}
+	lstrcpyn(m_TableName[OldTableId], NewName, TABLE_NAME_SIZE);
+	return 0;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Lock table

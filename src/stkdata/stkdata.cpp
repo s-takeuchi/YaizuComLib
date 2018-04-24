@@ -17,6 +17,11 @@ int DeleteTable(TCHAR* TableName)
 	return DataAcController::GetInstance()->DeleteTable(TableName);
 }
 
+int RenameTable(TCHAR* OldName, TCHAR* NewName)
+{
+	return DataAcController::GetInstance()->RenameTable(OldName, NewName);
+}
+
 int LockTable(TCHAR* TableName, int Type)
 {
 	return DataAcController::GetInstance()->LockTable(TableName, Type);
