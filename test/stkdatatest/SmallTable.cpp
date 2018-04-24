@@ -156,10 +156,94 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// DeleteTable(_T("SmallTable"))‚ª0‚ð•Ô‹p‚·‚é
+	// CreateTable‚ÅSmallTableƒe[ƒuƒ‹2(ID:Int) Max=100 ‚ð¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚é
+	printf("CreateTable‚ÅSmallTableƒe[ƒuƒ‹2(ID:Int) Max=100 ‚ð¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚é");
+	ColumnDefInt ColDefId2(_T("ID"));
+	TableDef TabDefPerson2(_T("SmallTable2"), 100);
+	TabDefPerson2.AddColumnDef(&ColDefId2);
+	if (CreateTable(&TabDefPerson2) != 0) {
+		printf("...[NG]\r\n");
+		return -1;
+	}
+	if (GetMaxNumOfRecords(_T("SmallTable2")) != 100) {
+		printf("...[NG]\r\n");
+		return -1;
+	}
+	printf("...[OK]\r\n");
+
+	// Rename table name (UnexistTable ---> RenamedTable)
+	printf("Rename table name (UnexistTable ---> RenamedTable)  Does the API return -1?");
+	if (RenameTable(_T("UnexistTable"), _T("RenamedTable")) != -1) {
+		printf("...[NG]\r\n");
+		return -1;
+	}
+	printf("...[OK]\r\n");
+
+	// Rename table name (SmallTable ---> SmallTable2)
+	printf("Rename table name (SmallTable ---> SmallTable2)  Does the API return -1?");
+	if (RenameTable(_T("SmallTable"), _T("SmallTable2")) != -1) {
+		printf("...[NG]\r\n");
+		return -1;
+	}
+	printf("...[OK]\r\n");
+
+	// Rename table name (SmallTable2 ---> SmallTable3)
+	printf("Rename table name (SmallTable2 ---> SmallTable3)  Does the API return 0?");
+	if (RenameTable(_T("SmallTable2"), _T("SmallTable3")) != 0) {
+		printf("...[NG]\r\n");
+		return -1;
+	}
+	printf("...[OK]\r\n");
+
+	// Check that SmallTable2 is renamed as SmallTable3.
+	printf("Check that SmallTable2 is renamed as SmallTable3.");
+	TCHAR TblNames[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
+	int TblCnt = GetTableName(TblNames);
+	if (lstrcmp(TblNames[0], _T("SmallTable")) != 0 && lstrcmp(TblNames[1], _T("SmallTable2")) != 0) {
+		printf("...[NG]\r\n");
+		return -1;
+	}
+	printf("...[OK]\r\n");
+
+	// Rename table name (SmallTable3 ---> SmallTable4)
+	printf("Rename table name (SmallTable3 ---> SmallTable4)  Does the API return 0?");
+	if (RenameTable(_T("SmallTable3"), _T("SmallTable4")) != 0) {
+		printf("...[NG]\r\n");
+		return -1;
+	}
+	printf("...[OK]\r\n");
+
+	// Rename table name (SmallTable ---> SmallTable5)
+	printf("Rename table name (SmallTable ---> SmallTable5)  Does the API return 0?");
+	if (RenameTable(_T("SmallTable"), _T("SmallTable5")) != 0) {
+		printf("...[NG]\r\n");
+		return -1;
+	}
+	printf("...[OK]\r\n");
+
+	// Check that SmallTable is renamed as SmallTable5.
+	printf("Check that SmallTable is renamed as SmallTable5.");
+	TblCnt = GetTableName(TblNames);
+	if (lstrcmp(TblNames[0], _T("SmallTable5")) != 0 && lstrcmp(TblNames[1], _T("SmallTable4")) != 0) {
+		printf("...[NG]\r\n");
+		return -1;
+	}
+	printf("...[OK]\r\n");
+
+	// DeleteTable(_T("SmallTable4"))‚ª0‚ð•Ô‹p‚·‚é
 	{
-		printf("DeleteTable(_T(\"SmallTable\"))‚ª0‚ð•Ô‹p‚·‚é");
-		if (DeleteTable(_T("SmallTable")) != 0) {
+		printf("DeleteTable(_T(\"SmallTable4\"))‚ª0‚ð•Ô‹p‚·‚é");
+		if (DeleteTable(_T("SmallTable4")) != 0) {
+			printf("...[NG]\r\n");
+			return -1;
+		}
+		printf("...[OK]\r\n");
+	}
+
+	// DeleteTable(_T("SmallTable5"))‚ª0‚ð•Ô‹p‚·‚é
+	{
+		printf("DeleteTable(_T(\"SmallTable5\"))‚ª0‚ð•Ô‹p‚·‚é");
+		if (DeleteTable(_T("SmallTable5")) != 0) {
 			printf("...[NG]\r\n");
 			return -1;
 		}
