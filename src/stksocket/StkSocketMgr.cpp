@@ -677,7 +677,7 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
 int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int FinishCondition, BYTE* VarDat, int VarDatSize, BOOL ForceStop)
 {
 	// Select—pFDSì¬
-	DWORD CurrWaitTime = 0;
+	DWORD CurrWaitTime = GetTickCount();
 	timeval Timeout;
 	Timeout.tv_sec = 0;
 	Timeout.tv_usec = 0;
@@ -718,7 +718,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				if ((FinishCondition >= 0 && FinishCondition <= 180000) || (FinishCondition >= 200001 && FinishCondition <= 380000)) {
 					int Expire = (FinishCondition >= 200001 && FinishCondition <= 380000)? FinishCondition - 200000 : FinishCondition;
 					DWORD CurrTime = GetTickCount();
-					if ((int)(CurrTime - CurrWaitTime) > Expire && CurrWaitTime != 0) {
+					if ((int)(CurrTime - CurrWaitTime) > Expire) {
 						if (Offset == 0) {
 							return -2;
 						} else {
