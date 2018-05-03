@@ -13,37 +13,6 @@
 BOOL FinishFlag = FALSE;
 int FindFlagCounter = 0;
 
-/*
-void AddExceptionForFilewall()
-{
-	PROCESS_INFORMATION pi;
-	STARTUPINFO si;
-	ZeroMemory(&si,sizeof(si));
-	si.cb=sizeof(si);
-	TCHAR Buf[256];
-	TCHAR CmdLine[512];
-	GetModuleFileName(NULL, Buf, 255);
-	wsprintf(CmdLine, _T("netsh firewall add allowedprogram \"%s\" StkSocketTest ENABLE"), Buf);
-	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
-	WaitForSingleObject(pi.hProcess, INFINITE);
-	CloseHandle(pi.hProcess);
-}
-
-void DeleteExceptionForFirewall()
-{
-	PROCESS_INFORMATION pi;
-	STARTUPINFO si;
-	ZeroMemory(&si,sizeof(si));
-	si.cb=sizeof(si);
-	TCHAR Buf[256];
-	TCHAR CmdLine[512];
-	GetModuleFileName(NULL, Buf, 255);
-	wsprintf(CmdLine, _T("netsh firewall delete allowedprogram \"%s\""), Buf);
-	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
-	WaitForSingleObject(pi.hProcess, INFINITE);
-	CloseHandle(pi.hProcess);
-}
-*/
 
 int ConnectDisconnectTcpPort()
 {
@@ -910,6 +879,36 @@ DWORD WINAPI TestThreadProc5(LPVOID Param)
 	return 0;
 }
 
+DWORD WINAPI TestThreadProc6(LPVOID Param)
+{
+	printf("[Recv/Send] : Keep waiting for closure of sender ...");
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_Open(0);
+	BYTE Buffer[10000];
+	BYTE CondStr[1000];
+	while (TRUE) {
+		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, 100, CondStr, 1000, FALSE);
+		if (Ret > 0) {
+			printf("NG\r\n");
+			exit(-1);
+		}
+		if (FinishFlag == TRUE) {
+			break;
+		}
+	}
+	StkSocket_Close(0, FALSE);
+	StkSocket_DeleteInfo(0);
+	printf("OK\r\n");
+	return 0;
+}
+
+DWORD WINAPI TestThreadProc7(LPVOID Param)
+{
+	Sleep(3000);
+	FinishFlag = TRUE;
+	return 0;
+}
+
 DWORD WINAPI TestThreadForAcceptRecv1(LPVOID Param)
 {
 	BYTE Buf[1000000];
@@ -1172,7 +1171,7 @@ void TestMultiAccept1()
 
 int main(int Argc, char* Argv[])
 {
-	//AddExceptionForFilewall();
+	DWORD TmpId;
 
 	printf("Test started\r\n");
 
@@ -1194,11 +1193,18 @@ int main(int Argc, char* Argv[])
 	if (TestAddDeleteSocketInfo() != 0) {
 		return -1;
 	}
-	DWORD TmpId;
 
 	FinishFlag = FALSE;
 	CreateThread(NULL, 0, &TestThreadProc0, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc1, NULL, 0, &TmpId);
+	while (FinishFlag == FALSE) {
+		Sleep(1000);
+	}
+	Sleep(1000);
+
+	FinishFlag = FALSE;
+	CreateThread(NULL, 0, &TestThreadProc6, NULL, 0, &TmpId);
+	CreateThread(NULL, 0, &TestThreadProc7, NULL, 0, &TmpId);
 	while (FinishFlag == FALSE) {
 		Sleep(1000);
 	}
