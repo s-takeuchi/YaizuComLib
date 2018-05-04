@@ -875,7 +875,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				continue;
 			}
 			int FetchSize;
-			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
+			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH || FinishCondition == RECV_FINISHCOND_STRING) {
 				// if HTTP termination rule is selected...
 				FetchSize = 1;
 			} else if (FinishCondition > 0) {
