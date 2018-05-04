@@ -785,11 +785,11 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 		int Ret = StkSocket_ReceiveUdp(0, 0, Buffer, 10000);
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-			if (lstrcmp((TCHAR*)Buffer, _T("Hello, world!!")) == 0 && Msg == STKSOCKET_LOG_UDPRECV) {
+			if (StrStr((TCHAR*)Buffer, _T("Hello, world!!")) != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
 				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...OK [%S]\r\n", (TCHAR*)Buffer);
 				break;
 			} else {
-				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...NG\r\n");
+				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...NG [%S:%d]\r\n", (TCHAR*)Buffer, Msg);
 				exit(-1);
 			}
 		}
@@ -801,8 +801,11 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 	Sleep(1000);
 
 	TCHAR Buf[10000];
-	lstrcpy(Buf, _T("Shinya Takeuchi"));
-	int Ret = StkSocket_SendUdp(0, 0, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+	for (int LoopSnd = 0; LoopSnd < 50; LoopSnd++) {
+		_snwprintf_s(Buf, 10000, _T("Shinya Takeuchi %d"), LoopSnd);
+		int Ret = StkSocket_SendUdp(0, 0, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+		Sleep(10);
+	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(TCHAR)) {
 		printf("[Recv/Send for UDP] : Receiver replied data...NG\r\n");
@@ -840,9 +843,12 @@ DWORD WINAPI TestThreadProc5(LPVOID Param)
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2001);
 
 	TCHAR Buf[10000];
-	lstrcpy(Buf, _T("Hello, world!!"));
 	StkSocket_Connect(1);
-	StkSocket_SendUdp(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+	for (int LoopSnd = 0; LoopSnd < 50; LoopSnd++) {
+		_snwprintf_s(Buf, 10000, _T("Hello, world!! %d"), LoopSnd);
+		StkSocket_SendUdp(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+		Sleep(10);
+	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(TCHAR)) {
 		printf("[Recv/Send for UDP] : Sender sent data...NG\r\n");
@@ -855,11 +861,11 @@ DWORD WINAPI TestThreadProc5(LPVOID Param)
 		int Ret = StkSocket_ReceiveUdp(1, 1, Buffer, 10000);
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-			if (lstrcmp((TCHAR*)Buffer, _T("Shinya Takeuchi")) == 0 && Msg == STKSOCKET_LOG_UDPRECV) {
+			if (StrStr((TCHAR*)Buffer, _T("Shinya Takeuchi")) != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
 				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...OK [%S]\r\n", (TCHAR*)Buffer);
 				break;
 			} else {
-				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...NG\r\n");
+				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...NG [%S:%d]\r\n", (TCHAR*)Buffer, Msg);
 				exit(-1);
 			}
 		}
@@ -1203,14 +1209,6 @@ int main(int Argc, char* Argv[])
 	Sleep(1000);
 
 	FinishFlag = FALSE;
-	CreateThread(NULL, 0, &TestThreadProc6, NULL, 0, &TmpId);
-	CreateThread(NULL, 0, &TestThreadProc7, NULL, 0, &TmpId);
-	while (FinishFlag == FALSE) {
-		Sleep(1000);
-	}
-	Sleep(1000);
-
-	FinishFlag = FALSE;
 	CreateThread(NULL, 0, &TestThreadProc2, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc3, NULL, 0, &TmpId);
 	while (FinishFlag == FALSE) {
@@ -1221,6 +1219,14 @@ int main(int Argc, char* Argv[])
 	FinishFlag = FALSE;
 	CreateThread(NULL, 0, &TestThreadProc4, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc5, NULL, 0, &TmpId);
+	while (FinishFlag == FALSE) {
+		Sleep(1000);
+	}
+	Sleep(1000);
+
+	FinishFlag = FALSE;
+	CreateThread(NULL, 0, &TestThreadProc6, NULL, 0, &TmpId);
+	CreateThread(NULL, 0, &TestThreadProc7, NULL, 0, &TmpId);
 	while (FinishFlag == FALSE) {
 		Sleep(1000);
 	}
