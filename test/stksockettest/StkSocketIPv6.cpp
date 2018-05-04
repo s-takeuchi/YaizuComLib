@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <string.h>
 #include <tchar.h>
 #include "..\..\src\stksocket\stksocket.h"
 #include "StkSocketIPv6.h"
 
 int StkSocketIPv6::ThreadStartCount = 0;
 int StkSocketIPv6::ThreadEndCount = 0;
+int StkSocketIPv6::ErrFlag = FALSE;
 
 DWORD WINAPI StkSocketIPv6::TestThreadForRecv(LPVOID Param)
 {
@@ -12,7 +14,17 @@ DWORD WINAPI StkSocketIPv6::TestThreadForRecv(LPVOID Param)
 	BYTE Buf[1000000];
 	while (TRUE) {
 		if (StkSocket_Accept(121) == 0) {
-			int Len = StkSocket_Receive(121, 121, Buf, 1000000, 9999999, NULL, 0, FALSE);
+			int Len = 0;
+			Len = StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 30, NULL, 0, FALSE);
+			Buf[Len] = '\0';
+			if (strcmp((char*)Buf, "Hello, world from #1\r\n") != 0) {
+				ErrFlag = TRUE;
+			}
+			Len = StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 0, NULL, 0, FALSE);
+			Buf[Len] = '\0';
+			if (strstr((char*)Buf, "Hello, world from #1\r\nHello, world from #1\r\nHello, world from #1\r\n") == 0) {
+				ErrFlag = TRUE;
+			}
 			StkSocket_CloseAccept(121, 121, FALSE);
 			break;
 		}
@@ -29,7 +41,7 @@ DWORD WINAPI StkSocketIPv6::TestThreadForSend(LPVOID Param)
 	Sleep(500);
 	StkSocket_Connect(201);
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Send(201, 201, (BYTE*)Buf, strlen(Buf) + 1);
+		StkSocket_Send(201, 201, (BYTE*)Buf, strlen(Buf));
 		Sleep(50);
 	}
 	StkSocket_Disconnect(201, 201, FALSE);
@@ -50,6 +62,8 @@ void StkSocketIPv6::TestIPv6()
 
 	ThreadStartCount = 0;
 	ThreadEndCount = 0;
+	ErrFlag = FALSE;
+
 	DWORD TmpId;
 	CreateThread(NULL, 0, &TestThreadForRecv, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadForSend, NULL, 0, &TmpId);
@@ -83,6 +97,14 @@ void StkSocketIPv6::TestIPv6()
 
 	StkSocket_DeleteInfo(121);
 	StkSocket_DeleteInfo(201);
+
+	printf("[StkSocketIPv6] : Check that appropriate data is reecived ... ");
+	if (ErrFlag) {
+		printf("NG\r\n");
+		exit(-1);
+	} else {
+		printf("OK\r\n");
+	}
 
 	StkSocket_ClearLog();
 }

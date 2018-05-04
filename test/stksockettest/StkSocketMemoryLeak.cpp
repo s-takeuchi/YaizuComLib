@@ -26,7 +26,7 @@ DWORD WINAPI StkSocketMemoryLeak::TestThreadForRecv(LPVOID Param)
 	BYTE Buf[1000000];
 	while (TRUE) {
 		if (StkSocket_Accept(121) == 0) {
-			int Len = StkSocket_Receive(121, 121, Buf, 1000000, 9999999, NULL, 0, FALSE);
+			int Len = StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 0, NULL, 0, FALSE);
 			StkSocket_CloseAccept(121, 121, FALSE);
 			break;
 		}

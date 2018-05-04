@@ -11,6 +11,9 @@ private:
 
 	static int ThreadStartCount;
 	static int ThreadEndCount;
+
+	static int ErrFlag;
+
 public:
 	void TestIPv6();
 	void TestIPv6Udp();

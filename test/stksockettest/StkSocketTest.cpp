@@ -542,7 +542,7 @@ DWORD WINAPI TestThreadProc0(LPVOID Param)
 	printf("[Recv/Send] : Appropriate string has been received by receiver...");
 	while (TRUE) {
 		if (StkSocket_Accept(0) == 0) {
-			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, 100, CondStr, 1000, FALSE);
+			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000, FALSE);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
 				if (lstrcmp((TCHAR*)Buffer, _T("Hello, world!!")) == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
@@ -562,7 +562,7 @@ DWORD WINAPI TestThreadProc0(LPVOID Param)
 	printf("[Recv/Send] : Appropriate string has been received by receiver...");
 	while (TRUE) {
 		if (StkSocket_Accept(0) == 0) {
-			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, 100, CondStr, 1000, FALSE);
+			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000, FALSE);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
 				if (lstrcmp((TCHAR*)Buffer, _T("Dummy data!!")) == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
@@ -615,7 +615,7 @@ DWORD WINAPI TestThreadProc1(LPVOID Param)
 	printf("[Recv/Send] : Sender received data...");
 	Ret = 0;
 	do {
-		Ret = StkSocket_Receive(1, 1, (BYTE*)Buf, 50, 100, NULL, 0, FALSE);
+		Ret = StkSocket_Receive(1, 1, (BYTE*)Buf, 50, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0, FALSE);
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (lstrcmp((TCHAR*)Buf, _T("Reply Hello, world!!")) != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
@@ -642,7 +642,7 @@ DWORD WINAPI TestThreadProc1(LPVOID Param)
 	printf("[Recv/Send] : Sender received data...");
 	Ret = 0;
 	do {
-		Ret = StkSocket_Receive(1, 1, (BYTE*)Buf, 50, 100, NULL, 0, FALSE);
+		Ret = StkSocket_Receive(1, 1, (BYTE*)Buf, 50, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0, FALSE);
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (lstrcmp((TCHAR*)Buf, _T("Reply Dummy data!!")) != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
@@ -678,7 +678,7 @@ DWORD WINAPI TestThreadProc2(LPVOID Param)
 
 	while (TRUE) {
 		if (StkSocket_Accept(0) == 0) {
-			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, 100, CondStr, 1000, FALSE);
+			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000, FALSE);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
 				printf("[Recv/Send2] : Appropriate string has been received by receiver...");
@@ -893,7 +893,7 @@ DWORD WINAPI TestThreadProc6(LPVOID Param)
 	BYTE Buffer[10000];
 	BYTE CondStr[1000];
 	while (TRUE) {
-		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, 100, CondStr, 1000, FALSE);
+		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000, FALSE);
 		if (Ret > 0) {
 			printf("NG\r\n");
 			exit(-1);
@@ -924,7 +924,7 @@ DWORD WINAPI TestThreadForAcceptRecv1(LPVOID Param)
 	srand(101);
 	while (TRUE) {
 		if (StkSocket_Accept(101) == 0) {
-			StkSocket_Receive(101, 101, Buf, 1000000, 100, NULL, 0, FALSE);
+			StkSocket_Receive(101, 101, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0, FALSE);
 			if (strstr((char*)Buf, "#1") != 0) S1Flag = TRUE;
 			if (strstr((char*)Buf, "#2") != 0) S2Flag = TRUE;
 			if (strstr((char*)Buf, "#3") != 0) S3Flag = TRUE;
@@ -947,7 +947,7 @@ DWORD WINAPI TestThreadForAcceptRecv2(LPVOID Param)
 	srand(102);
 	while (TRUE) {
 		if (StkSocket_Accept(102) == 0) {
-			StkSocket_Receive(102, 102, Buf, 1000000, 100, NULL, 0, FALSE);
+			StkSocket_Receive(102, 102, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0, FALSE);
 			if (strstr((char*)Buf, "#1") != 0) S1Flag = TRUE;
 			if (strstr((char*)Buf, "#2") != 0) S2Flag = TRUE;
 			if (strstr((char*)Buf, "#3") != 0) S3Flag = TRUE;
@@ -970,7 +970,7 @@ DWORD WINAPI TestThreadForAcceptRecv3(LPVOID Param)
 	srand(103);
 	while (TRUE) {
 		if (StkSocket_Accept(103) == 0) {
-			StkSocket_Receive(103, 103, Buf, 1000000, 100, NULL, 0, FALSE);
+			StkSocket_Receive(103, 103, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0, FALSE);
 			if (strstr((char*)Buf, "#1") != 0) S1Flag = TRUE;
 			if (strstr((char*)Buf, "#2") != 0) S2Flag = TRUE;
 			if (strstr((char*)Buf, "#3") != 0) S3Flag = TRUE;
