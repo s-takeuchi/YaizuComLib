@@ -108,21 +108,28 @@ BOOL SendTestData(int Id, char* Dat)
 		return FALSE;
 	}
 	int RetR;
-	for (int Loop = 0; Loop < 10; Loop++) {
+	while (TRUE) {
 		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, 205000, NULL, -1, FALSE);
 		if (RetR > 0) {
 			RecvDat[RetR] = '\0';
 			break;
 		}
+		if (RetR <= 0) {
+			break;
+		}
 	}
 	StkSocket_Disconnect(Id, Id, TRUE);
-	if (RetR <= 0) {
+	if (RetR < 0) {
 		return FALSE;
 	}
-	if (strstr((char*)RecvDat, "200 OK") == 0) {
-		return FALSE;
+	if (RetR == 0) {
+		return TRUE;
 	}
-	return CompObjs((BYTE*)Dat, (BYTE*)RecvDat);
+	if (RetR > 0 && strstr((char*)RecvDat, "200 OK") == 0) {
+		return FALSE;
+	} else {
+		return CompObjs((BYTE*)Dat, (BYTE*)RecvDat);
+	}
 }
 
 int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode, TCHAR Header[64] = NULL)
