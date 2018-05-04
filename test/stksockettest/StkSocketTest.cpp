@@ -1200,6 +1200,9 @@ int main(int Argc, char* Argv[])
 		return -1;
 	}
 
+	StkSocketTestHttp TestHttpObj;
+	TestHttpObj.TestHttpTermination();
+
 	FinishFlag = FALSE;
 	CreateThread(NULL, 0, &TestThreadProc0, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc1, NULL, 0, &TmpId);
@@ -1250,9 +1253,6 @@ int main(int Argc, char* Argv[])
 	StkSocketMemoryLeak objStkSocketMemoryLeak;
 	objStkSocketMemoryLeak.CheckLeakTcp();
 	objStkSocketMemoryLeak.CheckLeakUdp();
-
-	StkSocketTestHttp TestHttpObj;
-	TestHttpObj.TestHttpTermination();
 
 	printf("Test completed\r\n");
 

@@ -815,6 +815,11 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 	return -1;
 }
 
+// FinishCondition >  0 : Exit method after receiving data the size meets with the specified length
+// FinishCondition =  0 : Exit method after receiving data
+// FinishCondition = -1 : Exit method if the specified string appears in the received data
+// FinishCondition = -2 : Exit method if closure by peer detected
+// FinishCondition = -3 : Exit method after receiving data the size meets with Content-Length in HTTP header
 int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, BYTE* VarDat, int VarDatSize, BOOL ForceStop)
 {
 	// Select—pFDSì¬
@@ -856,10 +861,9 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 					// There was a stopping thread request.
 					return 0;
 				}
-				if ((FinishCondition >= 0 && FinishCondition <= 180000) || (FinishCondition >= 200001 && FinishCondition <= 380000)) {
-					int Expire = (FinishCondition >= 200001 && FinishCondition <= 380000) ? FinishCondition - 200000 : FinishCondition;
+				if (FinishCondTimeout > 0) {
 					DWORD CurrTime = GetTickCount();
-					if ((int)(CurrTime - CurrWaitTime) > Expire) {
+					if ((int)(CurrTime - CurrWaitTime) > FinishCondTimeout) {
 						if (Offset == 0) {
 							return -2;
 						} else {
@@ -871,9 +875,15 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				continue;
 			}
 			int FetchSize;
-			if (FinishCondition >= 200001 && FinishCondition <= 380000) {
+			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
 				// if HTTP termination rule is selected...
 				FetchSize = 1;
+			} else if (FinishCondition > 0) {
+				if (BufferSize > FinishCondition) {
+					FetchSize = FinishCondition - Offset;
+				} else {
+					FetchSize = BufferSize - Offset;
+				}				
 			} else {
 				// Otherwise
 				FetchSize = BufferSize - Offset;
@@ -894,23 +904,23 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
 				return Offset;
 			}
-			if (FinishCondition < 0 && Offset >= VarDatSize) {
+			if (FinishCondition == RECV_FINISHCOND_STRING && Offset >= VarDatSize) {
 				if (memcmp(Buffer + Offset - VarDatSize, VarDat, VarDatSize) == 0) {
 					PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
 					return Offset;
 				}
 			}
-			if (FinishCondition >= 10000001 && FinishCondition <= 19999999 && FinishCondition - 10000000 <= Offset) {
+			if (FinishCondition > 0 && FinishCondition <= Offset) {
 				// If the finish condition is set as checking data length and exceeded the configured length...
 				PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
 				return Offset;
 			}
-			if (Ret > 0 && FinishCondition == 0) {
+			if (Ret > 0 && FinishCondition == RECV_FINISHCOND_UNCONDITIONAL) {
 				// If the finish condition is set as unconditionally...
 				PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
 				return Offset;
 			}
-			if (FinishCondition >= 200001 && FinishCondition <= 380000) {
+			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
 				// if HTTP termination rule is selected...
 				if ((Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\n') ||
 					(Buffer[Offset - 4] == '\r' && Buffer[Offset - 3] == '\n' && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') ||
@@ -940,14 +950,14 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 								PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
 								return Offset;
 							} else {
-								FinishCondition = 10000000 + ContLen + Offset;
+								FinishCondition = ContLen + Offset;
 							}
 						}
 					}
 					continue;
 				}
 			}
-			if (Ret > 0 && FinishCondition == 9999999) {
+			if (Ret > 0 && FinishCondition == RECV_FINISHCOND_PEERCLOSURE) {
 				// If the finish condition is set as socket close detection...
 			}
 		}

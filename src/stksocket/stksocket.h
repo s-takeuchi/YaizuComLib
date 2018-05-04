@@ -36,6 +36,11 @@
 #define STKSOCKET_LOG_SUCCESSCS         1019 // Success Create-Socket
 #define STKSOCKET_LOG_UDPSOCKCLOSE      1020
 
+#define STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL   0
+#define STKSOCKET_RECV_FINISHCOND_STRING         -1
+#define STKSOCKET_RECV_FINISHCOND_PEERCLOSURE    -2
+#define STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH  -3
+
 int StkSocket_AddInfo(int, int, int, TCHAR[256], int);
 int StkSocket_DeleteInfo(int);
 int StkSocket_GetInfo(int, int*, int*, int*, TCHAR[256], int*, BOOL*);
