@@ -226,9 +226,10 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		return NULL;
 	}
 	BYTE *Dat = new BYTE[RecvBufSize];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, 200030, NULL, -1, FALSE);
-	if (Ret == -1 || Ret == -2) {
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, -1, FALSE);
+	if (Ret == 0 || Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
+		delete Dat;
 		return NULL;
 	}
 	if (Ret >= RecvBufSize) {
