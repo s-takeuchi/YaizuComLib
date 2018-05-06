@@ -55,7 +55,6 @@ int StkSocket_Disconnect(int, int, BOOL);
 int StkSocket_Accept(int);
 int StkSocket_CloseAccept(int, int, BOOL);
 
-int StkSocket_Receive(int, int, BYTE*, int, int, BYTE*, int, BOOL);
 int StkSocket_Receive(int, int, BYTE*, int, int, int, BYTE*, int, BOOL);
 int StkSocket_Send(int, int, BYTE*, int);
 int StkSocket_ReceiveUdp(int, int, BYTE*, int);

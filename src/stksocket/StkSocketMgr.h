@@ -112,7 +112,6 @@ public:
 	int CloseAccept(int, int, BOOL);
 
 	// データ受信(TCP)
-	int Receive(int, int, BYTE*, int, int, BYTE*, int, BOOL);
 	int Receive(int, int, BYTE*, int, int, int, BYTE*, int, BOOL);
 	// データ送信(TCP)
 	int Send(int, int, BYTE*, int);

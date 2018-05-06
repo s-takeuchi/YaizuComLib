@@ -112,7 +112,7 @@ void StopProcesses()
 		StkSocket_Send(1, 1, (BYTE*)SendDat, strlen((char*)SendDat));
 		int RetR;
 		for (int Loop = 0; Loop < 10; Loop++) {
-			RetR = StkSocket_Receive(1, 1, RecvDat, 1024, 205000, NULL, -1, FALSE);
+			RetR = StkSocket_Receive(1, 1, RecvDat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1, FALSE);
 			if (RetR > 0) {
 				break;
 			}

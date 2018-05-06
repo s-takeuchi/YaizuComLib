@@ -50,11 +50,6 @@ int StkSocket_CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
 	return StkSocketMgr::GetInstance()->CloseAccept(Id, LogId, WaitForPeerClose);
 }
 
-int StkSocket_Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int FinishCondition, BYTE* VarDat, int VarDatSize, BOOL ForceStop)
-{
-	return StkSocketMgr::GetInstance()->Receive(Id, LogId, Buffer, BufferSize, FinishCondition, VarDat, VarDatSize, ForceStop);
-}
-
 int StkSocket_Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, BYTE* VarDat, int VarDatSize, BOOL ForceStop)
 {
 	return StkSocketMgr::GetInstance()->Receive(Id, LogId, Buffer, BufferSize, FinishCondition, FinishCondTimeout, VarDat, VarDatSize, ForceStop);
