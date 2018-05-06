@@ -929,7 +929,9 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 					Buffer[Offset] = '\0';
 					BYTE* ContLenPtr = (BYTE*)strstr((char*)Buffer, "Content-Length:");
 					if (ContLenPtr == NULL) {
-						// If Content-Length is not presented.
+						// If Content-Length is not presented. May be GET request
+						PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
+						return Offset;
 					} else {
 						ContLenPtr += 15;
 						BYTE* ContLenEndPtr;

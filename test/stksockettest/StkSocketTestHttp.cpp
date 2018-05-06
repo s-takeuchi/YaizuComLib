@@ -88,19 +88,20 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 {
 	BYTE Dat[1024];
-	BYTE TestData[9][256] = {
+	BYTE TestData[10][256] = {
 		"TestTestTest\0",
-		"POST / HTTP/1.1\nContent-Type: text/html\n\nTestTestTest",
+		"POST / HTTP/1.1\nContent-Type: text/html\n\n",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:\n\n",
 		"Content-Length:\n\n",
 		"POST / HTTP/1.1\nContent-Length: 0\nContent-Type: text/html\n\n",
-		"\n\nContent-Length: 10\n\naa",
+		"Content-Length: 10\n\naa",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length: 4\n\nTest",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:TestTestTestTestTest\n\n",
-		"\n\nContent-Length: 4\n\naa"
+		"Content-Length: 4\n\naa",
+		"\n\r\n\r",
 	};
 
-	for (int Loop = 0; Loop < 9; Loop++) {
+	for (int Loop = 0; Loop < 10; Loop++) {
 		while (TRUE) {
 			Sleep(10);
 			int TcB = GetTickCount();
@@ -121,9 +122,10 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 			int TcE = GetTickCount();
 			int Tc = (TcE - TcB) / 1000;
 			printf("<%d> ", Tc);
-			if ((Loop == 0 && Tc != 3) || (Loop == 1 && Tc != 3) || (Loop == 2 && Tc != 0) ||
+			if ((Loop == 0 && Tc != 3) || (Loop == 1 && Tc != 0) || (Loop == 2 && Tc != 0) ||
 				(Loop == 3 && Tc != 0) || (Loop == 4 && Tc != 0) || (Loop == 5 && Tc != 3) ||
-				(Loop == 6 && Tc != 0) || (Loop == 7 && Tc != 3) || (Loop == 8 && Tc != 3)) {
+				(Loop == 6 && Tc != 0) || (Loop == 7 && Tc != 3) || (Loop == 8 && Tc != 3) ||
+				(Loop == 9 && Tc != 0)) {
 				printf("NG\r\n");
 				exit(0);
 			}
@@ -151,19 +153,20 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 {
 	BYTE Dat[1024];
-	BYTE TestData[9][256] = {
+	BYTE TestData[10][256] = {
 		"TestTestTest\0",
 		"POST / HTTP/1.1\nContent-Type: text/html\n\nTestTestTest",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:\n\nTestTestTest",
 		"Content-Length:\n\n",
 		"POST / HTTP/1.1\nContent-Length: 0\nContent-Type: text/html\n\n",
-		"\n\nContent-Length: 10\n\naa",
+		"Content-Length: 10\n\naa",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length: 4\n\nTestTestTestTestTest",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:TestTestTestTestTest\n\n",
-		"\n\nContent-Length: 4\n\naa"
+		"Content-Length: 4\n\naa",
+		"\n\r\n\raaaaa"
 	};
 
-	for (int Loop = 0; Loop < 9; Loop++) {
+	for (int Loop = 0; Loop < 10; Loop++) {
 		strcpy_s((char*)Dat, 1024, (char*)TestData[Loop]);
 
 		Sleep(3000);
