@@ -144,6 +144,24 @@ URL"/service/"に"{ "Operation" : "Stop" }"がPOSTされるまで，本メソッ
 </table>
 <hr/>
 
+<p>int GetTimeoutInterval()</p>
+受信処理は何らかのデータを受信した後，そのデータが完結していない場合(データサイズがHTTPヘッダのContent-Lengthに達していない場合)，次のデータの受信を待ちます。
+受信待ち処理のタイムアウト時間をミリ秒で返します。<br/>
+<table class="tblstyle">
+<tr><td>戻り値</td><td>タイムアウト時間(ミリ秒)</td></tr>
+</table>
+<hr/>
+
+<p>void SetTimeoutInterval(int Interval)</p>
+受信処理は何らかのデータを受信した後，そのデータが完結していない場合(データサイズがHTTPヘッダのContent-Lengthに達していない場合)，次のデータの受信を待ちます。
+受信待ち処理のタイムアウト時間をミリ秒で設定します。<br/>デフォルト値は3,000ミリ秒です。</br>
+<table class="tblstyle">
+<tr><td>Interval[入力]</td><td>タイムアウト時間(ミリ秒)<br/></td></tr>
+</table>
+<hr/>
+
+
+
 </div><p>
 
 

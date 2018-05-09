@@ -18,6 +18,9 @@ public:
 	int GetRecvBufSize();
 	void SetRecvBufSize(int);
 
+	int GetTimeoutInterval();
+	void SetTimeoutInterval(int);
+
 	int AddReqHandler(int, TCHAR[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
 	int DeleteReqHandler(int, TCHAR[StkWebAppExec::URL_PATH_LENGTH]);
 

@@ -35,6 +35,8 @@ public:
 	int SendBufSize;
 	int RecvBufSize;
 
+	int TimeoutInterval;
+
 public:
 	TCHAR* SkipHttpHeader(TCHAR*);
 
@@ -226,7 +228,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		return NULL;
 	}
 	BYTE *Dat = new BYTE[RecvBufSize];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, -1, FALSE);
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, TimeoutInterval, NULL, -1, FALSE);
 	if (Ret == 0 || Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		delete Dat;
@@ -533,6 +535,7 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, TCHAR* HostName, int TargetPort)
 	pImpl->StopFlag = FALSE;
 	pImpl->SendBufSize = 1000000;
 	pImpl->RecvBufSize = 1000000;
+	pImpl->TimeoutInterval = 3000;
 
 	// Message definition
 	MessageProc::AddJpn(1001, _T("クライアントからのリクエストに対応するAPIは定義されていません。"));
@@ -666,4 +669,14 @@ int StkWebApp::GetRecvBufSize()
 void StkWebApp::SetRecvBufSize(int Size)
 {
 	pImpl->RecvBufSize = Size;
+}
+
+int StkWebApp::GetTimeoutInterval()
+{
+	return pImpl->TimeoutInterval;
+}
+
+void StkWebApp::SetTimeoutInterval(int Interval)
+{
+	pImpl->TimeoutInterval = Interval;
 }
