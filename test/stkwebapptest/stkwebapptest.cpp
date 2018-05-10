@@ -132,7 +132,7 @@ BOOL SendTestData(int Id, char* Dat)
 	}
 }
 
-int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode, TCHAR Header[64] = NULL)
+int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode, TCHAR Header[64] = NULL, int ContLen = -1)
 {
 	char Tmp[256];
 	BYTE RecvDat[8192];
@@ -143,8 +143,10 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, in
 
 	if (Method == NULL && Url == NULL) {
 		sprintf_s(Tmp, 256, "%s", Dat);
-	} else {
+	} else if (ContLen == -1) {
 		sprintf_s(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, strlen(Dat), ContType, Dat);
+	} else {
+		sprintf_s(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, ContLen, ContType, Dat);
 	}
 	if ((RetS = StkSocket_Send(Id, Id, (BYTE*)Tmp, strlen((char*)Tmp))) <= 0) {
 		return -1;
@@ -303,6 +305,29 @@ int ElemStkThreadMainSend2(int Id)
 	}
 	printf("... OK\r\n");
 
+	// Timeout detection start
+	{
+		TCHAR Header[64];
+
+		int Ret = 0;
+		DWORD StartTime = 0;
+		DWORD EndTime = 0;
+
+		printf("StkWebAppTest2:Invalid Content-Length (Timeout default 3000 milliseconds)");
+		StartTime = GetTickCount();
+		if ((Ret = SendTestData2(Id, "POST", "/test/", "{ \"Test\" : \"1\" }\n", "application/json", &ErrorCode, Header, 1024)) != 404 || ErrorCode != 1001) {
+			printf("... NG\r\n");
+			exit(0);
+		}
+		EndTime = GetTickCount();
+		if ((EndTime - StartTime) < 3000 || (EndTime - StartTime) > 4000) {
+			printf("... NG\r\n");
+			exit(0);
+		}
+		printf("... OK\r\n");
+	}
+	// Timeout detection end
+
 	printf("StkWebAppTest2:POST /service/ [{ \"Operation\" : \"Start\" }] == 400");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Start\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1004) {
 		printf("... NG\r\n");
@@ -410,6 +435,29 @@ int ElemStkThreadMainSend3(int Id)
 		exit(0);
 	}
 	printf("... OK\r\n");
+
+	// Timeout detection start
+	{
+		TCHAR Header[64];
+
+		int Ret = 0;
+		DWORD StartTime = 0;
+		DWORD EndTime = 0;
+
+		printf("StkWebAppTest3:Invalid Content-Length (Timeout 5000 milliseconds)");
+		StartTime = GetTickCount();
+		if ((Ret = SendTestData2(Id, "GET", "/aaa/200/", "{ \"Test\" : \"1\" }\n", "application/json", &ErrorCode, Header, 1024)) != 200 || ErrorCode != -1) {
+			printf("... NG\r\n");
+			exit(0);
+		}
+		EndTime = GetTickCount();
+		if ((EndTime - StartTime) < 5000 || (EndTime - StartTime) > 6000) {
+			printf("... NG\r\n");
+			exit(0);
+		}
+		printf("... OK\r\n");
+	}
+	// Timeout detection end
 
 	printf("StkWebAppTest3:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
@@ -575,6 +623,7 @@ void ReqResTest3()
 	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, _T("localhost"), 8080);
+	Soc->SetTimeoutInterval(5000);
 	StkWebAppTest4* Test4Hndl = new StkWebAppTest4();
 	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, _T("/aaa/$/"), (StkWebAppExec*)Test4Hndl);
 
