@@ -40,6 +40,7 @@
 #define STKSOCKET_RECV_FINISHCOND_STRING         -1
 #define STKSOCKET_RECV_FINISHCOND_PEERCLOSURE    -2
 #define STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH  -3
+#define STKSOCKET_RECV_FINISHCOND_TIMEOUT        -4
 
 int StkSocket_AddInfo(int, int, int, TCHAR[256], int);
 int StkSocket_DeleteInfo(int);

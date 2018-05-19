@@ -78,6 +78,7 @@ public:
 	static const int RECV_FINISHCOND_STRING        = -1;
 	static const int RECV_FINISHCOND_PEERCLOSURE   = -2;
 	static const int RECV_FINISHCOND_CONTENTLENGTH = -3;
+	static const int RECV_FINISHCOND_TIMEOUT       = -4;
 
 	// Get this instance
 	static StkSocketMgr* GetInstance();

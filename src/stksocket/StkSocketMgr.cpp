@@ -821,6 +821,9 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 			if (Ret > 0 && FinishCondition == RECV_FINISHCOND_PEERCLOSURE) {
 				// If the finish condition is set as socket close detection...
 			}
+			if (FinishCondition == RECV_FINISHCOND_TIMEOUT) {
+				// If the finish condition is set as detecting timeout...
+			}
 		}
 	}
 	// ココでエラーログを出力してはいけない。他の送信要素のソケットからの返信待ちの場合必ずエラーが発生する
