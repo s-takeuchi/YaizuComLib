@@ -679,6 +679,7 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
 // FinishCondition = -1 : Exit method if the specified string appears in the received data
 // FinishCondition = -2 : Exit method if closure by peer detected
 // FinishCondition = -3 : Exit method after receiving data the size meets with Content-Length in HTTP header
+// FinishCondition = -4 : Exit method if timeout is detected
 int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, BYTE* VarDat, int VarDatSize, BOOL ForceStop)
 {
 	// SelectópFDSçÏê¨
