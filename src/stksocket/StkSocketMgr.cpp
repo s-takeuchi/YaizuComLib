@@ -293,6 +293,21 @@ int StkSocketMgr::GetSocketInfo(int Index, int* TargetId, int* SockType, int* Ac
 	return 0;
 }
 
+int StkSocketMgr::GetSocketInfo(int TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+{
+	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
+		if (SocketInfo[Loop].ElementId == TargetId) {
+			*SockType = SocketInfo[Loop].SocketType;
+			*ActionType = SocketInfo[Loop].ActionType;
+			lstrcpy(TargetAddr, SocketInfo[Loop].HostOrIpAddr);
+			*TargetPort = SocketInfo[Loop].Port;
+			*CopiedFlag = SocketInfo[Loop].CopiedSocketFlag;
+			return 0;
+		}
+	}
+	return -1;
+}
+
 void StkSocketMgr::CloseSocketWaitForPeerClose(SOCKET Target)
 {
 	shutdown(Target, SD_SEND);

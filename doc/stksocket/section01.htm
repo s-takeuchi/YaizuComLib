@@ -81,7 +81,12 @@ int StkSocket_DeleteInfo(int TargetId)
 ソケット情報を取得します。<p>
 <u>シグネチャ</u>
 <div class="topic">
+<p>
 int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+</p>
+<p>
+int StkSocket_GetInfo(int TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+</p>
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
@@ -89,6 +94,16 @@ int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, 
 <tr><th>引数</th><th>入出力</th><th>説明</th></tr>
 <tr><td>Index</td><td>入力</td><td>取得するソケット情報のインデックス(0から開始の連番)</td></tr>
 <tr><td>TargetId</td><td>出力</td><td>ソケット情報を特定するためのIDを格納するアドレス</td></tr>
+<tr><td>SockType</td><td>出力</td><td>ソケットの種別を格納するアドレス</td></tr>
+<tr><td>ActionType</td><td>出力</td><td>動作種別を格納するアドレス</td></tr>
+<tr><td>TargetAddr</td><td>出力</td><td>IPアドレスまたはホスト名を格納するアドレス</td></tr>
+<tr><td>TargetPort</td><td>出力</td><td>ポート番号を格納するアドレス</td></tr>
+<tr><td>CopiedFlag</td><td>出力</td><td>StkSocket_CopyInfoでコピーされたかどうかを示すフラグを格納するアドレス</td></tr>
+</table>
+<p>
+<table class="tblstyle">
+<tr><th>引数</th><th>入出力</th><th>説明</th></tr>
+<tr><td>TargetId</td><td>入力</td><td>取得するソケット情報のID</td></tr>
 <tr><td>SockType</td><td>出力</td><td>ソケットの種別を格納するアドレス</td></tr>
 <tr><td>ActionType</td><td>出力</td><td>動作種別を格納するアドレス</td></tr>
 <tr><td>TargetAddr</td><td>出力</td><td>IPアドレスまたはホスト名を格納するアドレス</td></tr>

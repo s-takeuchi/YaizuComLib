@@ -15,6 +15,11 @@ int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, 
 	return StkSocketMgr::GetInstance()->GetSocketInfo(Index, TargetId, SockType, ActionType, TargetAddr, TargetPort, CopiedFlag);
 }
 
+int StkSocket_GetInfo(int TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+{
+	return StkSocketMgr::GetInstance()->GetSocketInfo(TargetId, SockType, ActionType, TargetAddr, TargetPort, CopiedFlag);
+}
+
 int StkSocket_CopyInfo(int NewId, int ExistingId)
 {
 	return StkSocketMgr::GetInstance()->CopySocketInfo(NewId, ExistingId);

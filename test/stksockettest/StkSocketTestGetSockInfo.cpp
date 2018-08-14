@@ -48,6 +48,28 @@ int StkSocketTestGetSockInfo::TestAddDel()
 		int TargetPort;
 		BOOL CopiedFlag;
 		int Ret;
+
+		Ret = StkSocket_GetInfo(21, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
+		if (Ret != 0) {
+			printf("NG[1]\r\n");
+			return -1;
+		}
+		Ret = StkSocket_GetInfo(25, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
+		if (Ret != 0) {
+			printf("NG[1]\r\n");
+			return -1;
+		}
+		Ret = StkSocket_GetInfo(20, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
+		if (Ret != -1) {
+			printf("NG[1]\r\n");
+			return -1;
+		}
+		Ret = StkSocket_GetInfo(26, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
+		if (Ret != -1) {
+			printf("NG[1]\r\n");
+			return -1;
+		}
+
 		Ret = StkSocket_GetInfo(0, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret == -1 || TargetId < 21 || TargetId > 25) {
 			printf("NG[1]\r\n");
