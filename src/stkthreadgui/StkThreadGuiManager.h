@@ -15,7 +15,6 @@ private:
 	static const int MAX_NUM_OF_THREADS = 1000;
 
 	static VOID CALLBACK ReplaceStatus(HWND, UINT, UINT_PTR, DWORD);
-	static INT_PTR CALLBACK OutputProc(HWND, UINT, WPARAM, LPARAM);
 	static LRESULT CALLBACK StkThreadProc(HWND, UINT, WPARAM, LPARAM);
 	static BOOL CALLBACK SetStkThreadFontProc(HWND, LPARAM);
 
