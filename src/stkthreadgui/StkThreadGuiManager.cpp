@@ -365,6 +365,7 @@ void StkThreadGuiManager::ReplaceStatus(int Index, int St)
 		LvItm.pszText = _T("Stopping");
 	}
 	ListView_SetItem(ListWndHndl, &LvItm);
+	UpdateWindow(ListWndHndl);
 }
 
 // Add recourd into List-View
