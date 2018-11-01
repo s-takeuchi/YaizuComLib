@@ -62,6 +62,7 @@ int StkSocket_Send(int, int, BYTE*, int);
 int StkSocket_ReceiveUdp(int, int, BYTE*, int);
 int StkSocket_SendUdp(int, int, BYTE*, int);
 int StkSocket_GetUdpMaxMessageSize(int);
+int StkSocket_ForceStop(int);
 
 void StkSocket_TakeLastLog(int*, int*, TCHAR*, TCHAR*, int*, int*);
 void StkSocket_TakeFirstLog(int*, int*, TCHAR*, TCHAR*, int*, int*);

@@ -176,6 +176,7 @@ int StkSocketMgr::AddSocketInfo(int TargetId, int SockType, int ActionType, TCHA
 	SocketInfo[NumOfSocketInfo].AcceptedSock = NULL;
 	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = FALSE;
 	SocketInfo[NumOfSocketInfo].CopySourceId = -1;
+	SocketInfo[NumOfSocketInfo].ForceStop = FALSE;
 	lstrcpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, TargetAddr);
 	NumOfSocketInfo++;
 
@@ -230,6 +231,7 @@ int StkSocketMgr::CopySocketInfo(int NewId, int ExistingId)
 	SocketInfo[NumOfSocketInfo].AcceptedSock = NULL;
 	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = TRUE;
 	SocketInfo[NumOfSocketInfo].CopySourceId = ExistingId;
+	SocketInfo[NumOfSocketInfo].ForceStop = SocketInfo[FndIndex].ForceStop;
 	lstrcpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, SocketInfo[FndIndex].HostOrIpAddr);
 	NumOfSocketInfo++;
 
@@ -732,7 +734,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 			select(0, &RecFds, NULL, NULL, &Timeout);
 			if (!FD_ISSET(TmpSock, &RecFds)) {
 				// Timeout occurrence and no data received
-				if (ForceStop == TRUE) {
+				if (SocketInfo[Loop].ForceStop == TRUE) {
 					// There was a stopping thread request.
 					return 0;
 				}
@@ -909,6 +911,20 @@ int StkSocketMgr::GetUdpMaxMessageSize(int Id)
 			int OptVal;
 			getsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_MAX_MSG_SIZE, (char*)&OptVal, &OptLen);
 			return OptVal;
+		}
+	}
+	return -1;
+}
+
+// Stop forcedly
+// Id [in] : Target ID
+// Return : 0:ID found, -1:ID not found
+int StkSocketMgr::ForceStop(int Id)
+{
+	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
+		if (SocketInfo[Loop].ElementId == Id) {
+			SocketInfo[Loop].ForceStop = TRUE;
+			return 0;
 		}
 	}
 	return -1;

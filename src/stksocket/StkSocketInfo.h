@@ -42,4 +42,6 @@ struct StkSocketInfo
 	// If CopiedSocketFlag is true, Element ID of copy source is set. Otherwise -1 is set.
 	int CopySourceId;
 
+	// Force stop flag
+	bool ForceStop;
 };
