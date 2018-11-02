@@ -228,7 +228,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		return NULL;
 	}
 	BYTE *Dat = new BYTE[RecvBufSize];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, TimeoutInterval, NULL, -1, FALSE);
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, TimeoutInterval, NULL, -1);
 	if (Ret == 0 || Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, TRUE);
 		delete Dat;

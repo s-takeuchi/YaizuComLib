@@ -16,31 +16,31 @@ DWORD WINAPI StkSocketIPv6::TestThreadForRecv(LPVOID Param)
 		if (StkSocket_Accept(121) == 0) {
 			int Len = 0;
 
-			Len = StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 30, NULL, 0, FALSE);
+			Len = StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 30, NULL, 0);
 			Buf[Len] = '\0';
 			if (strcmp((char*)Buf, "Hello, world from #1\r\n") != 0) {
 				ErrFlag = TRUE;
 			}
 
-			Len = StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_STRING, 0, (BYTE*)"world", 5, FALSE);
+			Len = StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_STRING, 0, (BYTE*)"world", 5);
 			Buf[Len] = '\0';
 			if (strcmp((char*)Buf, "Hello, world") != 0) {
 				ErrFlag = TRUE;
 			}
 
-			Len = StkSocket_Receive(121, 121, Buf, 1000000, 10, 0, NULL, -1, FALSE);
+			Len = StkSocket_Receive(121, 121, Buf, 1000000, 10, 0, NULL, -1);
 			Buf[Len] = '\0';
 			if (strcmp((char*)Buf, " from #1\r\n") != 0) {
 				ErrFlag = TRUE;
 			}
 
-			Len = StkSocket_Receive(121, 121, Buf, 12, 30, 0, NULL, -1, FALSE);
+			Len = StkSocket_Receive(121, 121, Buf, 12, 30, 0, NULL, -1);
 			Buf[Len] = '\0';
 			if (strcmp((char*)Buf, "Hello, world") != 0) {
 				ErrFlag = TRUE;
 			}
 
-			Len = StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 0, NULL, 0, FALSE);
+			Len = StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 0, NULL, 0);
 			Buf[Len] = '\0';
 			if (strstr((char*)Buf, "Hello, world from #1\r\nHello, world from #1\r\nHello, world from #1\r\n") == 0) {
 				ErrFlag = TRUE;

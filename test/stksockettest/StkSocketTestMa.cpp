@@ -13,7 +13,7 @@ DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Recv1(LPVOID Param)
 	while (TRUE) {
 		if (StkSocket_Accept(121) == 0) {
 			while (StkSocket_GetStatus(121) == STKSOCKET_STATUS_ACCEPT) {
-				StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0, FALSE);
+				StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
 				Sleep(100);
 			}
 			StkSocket_CloseAccept(121, 121, FALSE);
@@ -32,7 +32,7 @@ DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Recv2(LPVOID Param)
 	while (TRUE) {
 		if (StkSocket_Accept(122) == 0) {
 			while (StkSocket_GetStatus(122) == STKSOCKET_STATUS_ACCEPT) {
-				StkSocket_Receive(122, 122, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0, FALSE);
+				StkSocket_Receive(122, 122, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
 				Sleep(100);
 			}
 			StkSocket_CloseAccept(122, 122, FALSE);
@@ -51,7 +51,7 @@ DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Recv3(LPVOID Param)
 	while (TRUE) {
 		if (StkSocket_Accept(123) == 0) {
 			while (StkSocket_GetStatus(123) == STKSOCKET_STATUS_ACCEPT) {
-				StkSocket_Receive(123, 123, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0, FALSE);
+				StkSocket_Receive(123, 123, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
 				Sleep(100);
 			}
 			StkSocket_CloseAccept(123, 123, FALSE);

@@ -109,7 +109,7 @@ BOOL SendTestData(int Id, char* Dat)
 	}
 	int RetR;
 	while (TRUE) {
-		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1, FALSE);
+		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1);
 		if (RetR > 0) {
 			RecvDat[RetR] = '\0';
 			break;
@@ -153,7 +153,7 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, in
 	}
 	int RetR;
 	for (int Loop = 0; Loop < 10; Loop++) {
-		RetR = StkSocket_Receive(Id, Id, RecvDat, 8192, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1, FALSE);
+		RetR = StkSocket_Receive(Id, Id, RecvDat, 8192, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1);
 		if (RetR > 0) {
 			RecvDat[RetR] = '\0';
 			break;
