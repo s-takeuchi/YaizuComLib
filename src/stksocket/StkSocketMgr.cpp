@@ -736,7 +736,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 				// Timeout occurrence and no data received
 				if (SocketInfo[Loop].ForceStop == TRUE) {
 					// There was a stopping thread request.
-					return 0;
+					return Offset;
 				}
 				if (FinishCondTimeout > 0) {
 					DWORD CurrTime = GetTickCount();

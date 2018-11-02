@@ -915,6 +915,43 @@ DWORD WINAPI TestThreadProc7(LPVOID Param)
 	return 0;
 }
 
+DWORD WINAPI TestThreadProc8(LPVOID Param)
+{
+	printf("[Recv/Send] : Receiver method out detected with timeout=0...");
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_Open(0);
+	BYTE Buffer[10000];
+	BYTE CondStr[1000];
+
+	while (TRUE) {
+		if (StkSocket_Accept(0) == 0) {
+			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_TIMEOUT, 0, CondStr, 1000);
+			if (Ret > 0) {
+				break;
+			}
+		}
+	}
+	StkSocket_DeleteInfo(0);
+	printf("OK\r\n");
+	FinishFlag = TRUE;
+	return 0;
+}
+
+DWORD WINAPI TestThreadProc9(LPVOID Param)
+{
+	Sleep(1000);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2001);
+	TCHAR Buf[10000];
+
+	lstrcpy(Buf, _T("Hello, world!!"));
+	StkSocket_Connect(1);
+	StkSocket_Send(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+	Sleep(3000);
+	StkSocket_ForceStop(0);
+	StkSocket_DeleteInfo(1);
+	return 0;
+}
+
 DWORD WINAPI TestThreadForAcceptRecv1(LPVOID Param)
 {
 	BYTE Buf[1000000];
@@ -1230,6 +1267,14 @@ int main(int Argc, char* Argv[])
 	FinishFlag = FALSE;
 	CreateThread(NULL, 0, &TestThreadProc6, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc7, NULL, 0, &TmpId);
+	while (FinishFlag == FALSE) {
+		Sleep(1000);
+	}
+	Sleep(1000);
+
+	FinishFlag = FALSE;
+	CreateThread(NULL, 0, &TestThreadProc8, NULL, 0, &TmpId);
+	CreateThread(NULL, 0, &TestThreadProc9, NULL, 0, &TmpId);
 	while (FinishFlag == FALSE) {
 		Sleep(1000);
 	}
