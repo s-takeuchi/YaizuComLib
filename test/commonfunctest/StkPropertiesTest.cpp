@@ -1,6 +1,6 @@
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
+#include <windows.h>
+#include <tchar.h>
+#include <stdio.h>
 #include "..\..\src\commonfunc\StkProperties.h"
 
 void StkPropertiesTest()
@@ -11,7 +11,7 @@ void StkPropertiesTest()
 	printf("StkPropertiesTest started.\n");
 
 	printf("Program is loading property file \"propertytest1.prop\" (zero byte data) ...");
-	Ret = StkProp.GetProperties(L"propertytest1.prop");
+	Ret = StkProp.GetProperties(_T("propertytest1.prop"));
 	if (Ret == 0) {
 		printf("Success\n");
 	} else {
@@ -20,7 +20,7 @@ void StkPropertiesTest()
 	}
 
 	printf("Program is loading property file \"propertytest2.prop\"...");
-	Ret = StkProp.GetProperties(L"propertytest2.prop");
+	Ret = StkProp.GetProperties(_T("propertytest2.prop"));
 	if (Ret == 0) {
 		printf("Success\n");
 	} else {
@@ -29,7 +29,7 @@ void StkPropertiesTest()
 	}
 
 	printf("Program is loading property file \"propertytest3.prop\"...");
-	Ret = StkProp.GetProperties(L"propertytest3.prop");
+	Ret = StkProp.GetProperties(_T("propertytest3.prop"));
 	if (Ret == 0) {
 		printf("Success\n");
 	} else {
@@ -38,7 +38,7 @@ void StkPropertiesTest()
 	}
 
 	printf("Program trys to load unexisting property file \"propertytest4.prop\"...");
-	Ret = StkProp.GetProperties(L"propertytest4.prop");
+	Ret = StkProp.GetProperties(_T("propertytest4.prop"));
 	if (Ret == -1) {
 		printf("Success\n");
 	} else {

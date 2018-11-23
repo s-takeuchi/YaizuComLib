@@ -1,12 +1,5 @@
-#include <cwchar>
-#include <cstdio>
-#include <filesystem>
-
-#ifdef WIN32
-#include <Windows.h>
-#else
-#include <unistd.h>
-#endif
+#include <windows.h>
+#include <tchar.h>
 #include "StkProperties.h"
 
 class StkProperties::Impl
@@ -16,7 +9,7 @@ public:
 	char PropertyValue[256][256];
 	int NumOfProperties;
 
-	int GetFullPathFromFileName(const wchar_t*, wchar_t[FILENAME_MAX]);
+	int GetFullPathFromFileName(TCHAR*, TCHAR[MAX_PATH]);
 };
 
 StkProperties::StkProperties()
@@ -31,75 +24,66 @@ StkProperties::~StkProperties()
 }
 
 // Get full path from the specified file name.
-// file_name [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
-// full_path [out] : Acquired full path for the specified file.
+// FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
+// FullPath [out] : Acquired full path for the specified file.
 // Return : 0:Success, -1:Failure
-int StkProperties::Impl::GetFullPathFromFileName(const wchar_t* file_name, wchar_t full_path[FILENAME_MAX])
+int StkProperties::Impl::GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH])
 {
-#ifdef WIN32
-	GetModuleFileName(NULL, full_path, FILENAME_MAX - 1);
-	std::filesystem::path cur_path = full_path;
-#else
-	char c_full_path[FILENAME_MAX];
-	readlink("/proc/self/exe", c_full_path, sizeof(c_full_path) - 1);
-	std::filesystem::path cur_path = c_full_path;
-#endif
-	std::filesystem::path new_path = cur_path.parent_path() / file_name;
-	wcscpy(full_path, new_path.c_str());
-
+	GetModuleFileName(NULL, FullPath, MAX_PATH - 1);
+	LPTSTR Addr = NULL;
+	for (Addr = FullPath + lstrlen(FullPath); Addr >= FullPath; Addr--) {
+		if (*Addr == '\\') {
+			break;
+		}
+	}
+	if (Addr == FullPath) {
+		return -1;
+	}
+	Addr++;
+	lstrcpy(Addr, FileName);
 	return 0;
 }
 
 // Get properties from the specified file name
 // FileName [in] : Target file name which you want to get properties. Do not specify path. The file is searched from Module existing folder.
 // Return : Result code 0:Success, -1:Failure
-int StkProperties::GetProperties(const wchar_t* FileName)
+int StkProperties::GetProperties(TCHAR* FileName)
 {
-	wchar_t Buf[FILENAME_MAX];
-	std::filesystem::path presented_path = FileName;
-	if (presented_path.is_absolute()) {
-		wcscpy(Buf, FileName);
-	} else {
-		pImpl->GetFullPathFromFileName(FileName, Buf);
+	TCHAR Buf[MAX_PATH];
+	pImpl->GetFullPathFromFileName(FileName, Buf);
+
+	HANDLE ReadFileHndl = CreateFile(Buf, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
+		return -1;
 	}
 
-	uintmax_t filesize = 0;
-	try {
-		filesize = std::filesystem::file_size(Buf);
-	} catch (std::filesystem::filesystem_error ex) {
+	LARGE_INTEGER ExistingFileSize;
+	GetFileSizeEx(ReadFileHndl, &ExistingFileSize);
+	if (ExistingFileSize.QuadPart >= 1000000) {
+		CloseHandle(ReadFileHndl);
 		return -1;
 	}
-	if (filesize >= 1000000) {
-		return -1;
-	}
-	if (filesize == 0) {
+	if (ExistingFileSize.QuadPart == 0) {
+		CloseHandle(ReadFileHndl);
 		return 0;
 	}
+	int WorkDatLength = (int)ExistingFileSize.QuadPart;
+	BYTE* WorkDat = new BYTE[WorkDatLength + 1];
+	DWORD TmpSize = 0;
 
-	char c_filename[FILENAME_MAX];
-
-#ifdef WIN32
-	setlocale(LC_CTYPE, "Japanese_Japan.932");
-#else
-	setlocale(LC_CTYPE, "ja_JP.utf8");
-#endif
-
-	wcstombs(c_filename, Buf, FILENAME_MAX);
-
-	FILE *fp = fopen(c_filename, "r");
-	if (fp == NULL) {
+	if (ReadFile(ReadFileHndl, (LPVOID)WorkDat, WorkDatLength, &TmpSize, NULL) == 0) {
+		CloseHandle(ReadFileHndl);
+		delete WorkDat;
 		return -1;
 	}
-	char* work_dat = new char[(int)filesize + 1];
-	size_t actual_filesize = fread(work_dat, sizeof(char), (size_t)filesize, fp);
-	work_dat[actual_filesize] = '\0';
-	work_dat[filesize] = '\0';
-	fclose(fp);
+	WorkDat[WorkDatLength] = '\0';
+
+	CloseHandle(ReadFileHndl);
 
 	// set line
 	char PropertyLine[64][256];
-	char* WorkDatAddr = work_dat;
-	char* WorkDatEnd = work_dat + filesize;
+	BYTE* WorkDatAddr = WorkDat;
+	BYTE* WorkDatEnd = WorkDat + WorkDatLength;
 	int Loop;
 	for (Loop = 0; Loop < 64; Loop++) {
 		for (; WorkDatAddr < WorkDatEnd; WorkDatAddr++) {
@@ -127,7 +111,7 @@ int StkProperties::GetProperties(const wchar_t* FileName)
 		WorkDatAddr++;
 	}
 	Loop++;
-	delete work_dat;
+	delete WorkDat;
 
 	// Acquire property name and value
 	for (int PrLoop = 0; PrLoop < Loop; PrLoop++) {
@@ -152,14 +136,14 @@ int StkProperties::GetProperties(const wchar_t* FileName)
 			continue;
 		}
 		// If same property name has already been registered, proceed to next line.
-		bool Found = false;
+		BOOL Found = FALSE;
 		for (int Lp = 0; Lp < pImpl->NumOfProperties; Lp++) {
 			if (strcmp(pImpl->PropertyName[Lp], pImpl->PropertyName[pImpl->NumOfProperties]) == 0) {
-				Found = true;
+				Found = TRUE;
 				break;
 			}
 		}
-		if (Found == true) {
+		if (Found == TRUE) {
 			continue;
 		}
 

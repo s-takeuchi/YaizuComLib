@@ -10,9 +10,9 @@ int StkStringParserTest();
 
 int main(int argc, char *argv[])
 {
-	StkPropertiesTest();
 	StkStringParserTest();
 	StkObjectTest();
+	StkPropertiesTest();
 	MsgProcTest();
 
 	////////////////////////////////////////////////////////////////////////
