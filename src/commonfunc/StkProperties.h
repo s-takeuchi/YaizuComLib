@@ -10,7 +10,7 @@ public:
 	StkProperties();
 	virtual ~StkProperties();
 
-	int GetProperties(TCHAR*);
+	int GetProperties(const wchar_t *);
 	int GetPropertyInt(char*, int*);
 	int GetPropertyStr(char*, char[256]);
 };
