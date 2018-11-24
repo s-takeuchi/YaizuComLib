@@ -59,10 +59,10 @@ BOOL CompObjs(BYTE* Dat, BYTE* RecvDat)
 {
 	BOOL Ret = TRUE;
 	int ErrCode;
-	TCHAR SendDatW[4096];
-	wsprintf(SendDatW, _T("%S"), Dat);
-	TCHAR RecvDatW[4096];
-	wsprintf(RecvDatW, _T("%S"), RecvDat);
+	TCHAR SendDatW[1000000];
+	_snwprintf_s(SendDatW, 1000000, _TRUNCATE, _T("%S"), Dat);
+	TCHAR RecvDatW[1000000];
+	_snwprintf_s(RecvDatW, 1000000, _TRUNCATE, _T("%S"), RecvDat);
 	TCHAR* Skip = FindNewLine(RecvDatW);
 	StkObject* SendObj = NULL;
 	StkObject* RecvObj = NULL;
@@ -85,9 +85,28 @@ BOOL CompObjs(BYTE* Dat, BYTE* RecvDat)
 	return Ret;
 }
 
+StkObject* MakeLargeTestData(TCHAR Name[64], int Width, int Height, int CurrentLevel = 0)
+{
+	StkObject* Obj = new StkObject(Name);
+	if (CurrentLevel > Height) {
+		Obj->AppendChildElement(new StkObject(L"Aaa", 12345));
+		Obj->AppendChildElement(new StkObject(L"Bbb", 67890));
+		Obj->AppendChildElement(new StkObject(L"Ccc", 123.45f));
+		Obj->AppendChildElement(new StkObject(L"Ddd", 678.90f));
+		Obj->AppendChildElement(new StkObject(L"Eee", L"abcdefghijklmnopqrstuvwxyz0123456789"));
+	} else {
+		for (int Loop = 0; Loop < Width; Loop++) {
+			TCHAR Buf[25];
+			wsprintf(Buf, L"Elem_%d:%d", CurrentLevel, Loop);
+			Obj->AppendChildElement(MakeLargeTestData(Buf, Width, Height, CurrentLevel + 1));
+		}
+	}
+	return Obj;
+}
+
 BOOL SendTestData(int Id, char* Dat)
 {
-	BYTE RecvDat[4096];
+	BYTE RecvDat[1000000];
 	StkSocket_Connect(Id);
 
 	char TmpHeader[256];
@@ -109,13 +128,14 @@ BOOL SendTestData(int Id, char* Dat)
 	}
 	int RetR;
 	while (TRUE) {
-		RetR = StkSocket_Receive(Id, Id, RecvDat, 4096, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1);
+		RetR = StkSocket_Receive(Id, Id, RecvDat, 1000000, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1);
 		if (RetR > 0) {
 			RecvDat[RetR] = '\0';
 			break;
 		}
 		if (RetR <= 0) {
-			break;
+			printf("... NG (Ret=%d)\r\n", RetR);
+			exit(0);
 		}
 	}
 	StkSocket_Disconnect(Id, Id, TRUE);
@@ -515,9 +535,29 @@ int ElemStkThreadMainSend4(int Id)
 	return 0;
 }
 
-void ReqResTest1()
+int ElemStkThreadMainSend5(int Id)
 {
-	printf("StkWebAppTest1 ");
+	BOOL Ret;
+	wchar_t TestObjWstr[1000000];
+	char TestObjStr[1000000];
+	StkObject* TestObj = MakeLargeTestData(L"testObject", 3, 3);
+	TestObj->ToJson(TestObjWstr, 1000000);
+	sprintf_s(TestObjStr, 1000000, "%S", TestObjWstr);
+	int l = strlen(TestObjStr);
+	Ret = SendTestData(Id, TestObjStr);
+	SendTestDataCount++;
+	delete TestObj;
+	if (Ret == false) {
+		SendTestDataFailed = true;
+	}
+
+	return 0;
+}
+
+void ReqResTest1(bool LargeFlag)
+{
+	printf("StkWebAppTest1:one minute performance ");
+	LargeFlag == true ? printf("Large ") : printf("Small ");
 
 	int Ids[10] = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 	int SendIds[10] = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40};
@@ -527,7 +567,11 @@ void ReqResTest1()
 	for (int Loop = 0; Loop < THREADNUM; Loop++) {
 		wsprintf(Name, _T("Send-%d"), Loop);
 		wsprintf(Desc, _T("Description-%d"), Loop);
-		AddStkThread(SendIds[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainSend, NULL, NULL);
+		if (LargeFlag) {
+			AddStkThread(SendIds[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainSend5, NULL, NULL);
+		} else {
+			AddStkThread(SendIds[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainSend, NULL, NULL);
+		}
 		StkSocket_AddInfo(SendIds[Loop], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("localhost"), 8080);
 	}
 
@@ -798,7 +842,8 @@ int main(int Argc, char* Argv[])
 	ReqResTest4();
 	ReqResTest3();
 	ReqResTest2();
-	ReqResTest1();
+	ReqResTest1(true);
+	ReqResTest1(false);
 
 	return 0;
 }
