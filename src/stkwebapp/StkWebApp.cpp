@@ -246,9 +246,21 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		return NULL;
 	}
 
-	//// Acquire METHOD and URL path begin ////
+	// Acquire HTTP header
+	TCHAR* Req = SkipHttpHeader(DatWc);
+	if (Req == DatWc) {
+		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
+		delete DatWc;
+		return NULL;
+	}
+	int HttpHeaderLen = Req - DatWc + 1;
+	wchar_t* HttpHeader = new wchar_t[HttpHeaderLen];
+	memcpy(HttpHeader, DatWc, HttpHeaderLen * sizeof(wchar_t));
+	HttpHeader[HttpHeaderLen - 1] = L'\0';
+
+	// Acquire METHOD and URL path
 	TCHAR MethodStr[16];
-	StkStringParser::ParseInto3Params(DatWc, _T("# # HTTP#"), _T('#'), MethodStr, 16, UrlPath, StkWebAppExec::URL_PATH_LENGTH, NULL, -1);
+	StkStringParser::ParseInto3Params(HttpHeader, _T("# # HTTP#"), _T('#'), MethodStr, 16, UrlPath, StkWebAppExec::URL_PATH_LENGTH, NULL, -1);
 	if (lstrcmp(MethodStr, _T("GET")) == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_GET;
 	} else if (lstrcmp(MethodStr, _T("HEAD")) == 0) {
@@ -262,35 +274,34 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	} else {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
 		delete DatWc;
+		delete HttpHeader;
 		return NULL;
 	}
-	//// Acquire METHOD and URL path end ////
 
-	//// Acquire a locale begin ////
-	lstrcpy(Locale, _T(""));
-	StkStringParser::ParseInto2Params(DatWc, _T("#Accept-Language: #"), _T('#'), NULL, 0, Locale, 3);
-    //// Acquire a locale end   ////
-
-	TCHAR* Req = SkipHttpHeader(DatWc);
+	// Check whether the presented body is consist of JSON
 	*XmlJsonType = StkObject::Analyze(Req);
 	if (*XmlJsonType == -1 || *XmlJsonType == 1) {
 		delete DatWc;
+		delete HttpHeader;
 		return NULL;
 	}
-
-	//// Acquire ContentType begin ////
 	{
 		TCHAR Buf[1024];
 		TCHAR ContentType[32];
-		StkStringParser::ParseInto3Params(DatWc, _T("#Content-Type: #\n#"), _T('#'), Buf, 1024, ContentType, 32, NULL, -1);
+		StkStringParser::ParseInto3Params(HttpHeader, _T("#Content-Type: #\n#"), _T('#'), Buf, 1024, ContentType, 32, NULL, -1);
 		if (StrStr(ContentType, _T("application/json")) == NULL && lstrcmp(ContentType, _T("")) != 0) {
 			*XmlJsonType = -1;
 			delete DatWc;
+			delete HttpHeader;
 			return NULL;
 		}
 	}
-	//// Acquire ContentType end ////
 
+	// Acquire a locale
+	lstrcpy(Locale, _T(""));
+	StkStringParser::ParseInto2Params(HttpHeader, _T("#Accept-Language: #"), _T('#'), NULL, 0, Locale, 3);
+
+	// Create JSON object
 	int ErrorCode = 0;
 	StkObject* ReqObj = NULL;
 	if (*XmlJsonType == 2) {
@@ -298,6 +309,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	} else if (*XmlJsonType == 0) {
 	}
 	delete DatWc;
+	delete HttpHeader;
 	return ReqObj;
 }
 
