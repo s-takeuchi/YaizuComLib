@@ -223,6 +223,24 @@ StkObject* MakeTestData3(TCHAR Name[64], int Width, int Height, int CurrentLevel
 	return Obj;
 }
 
+StkObject* MakeTestData4(TCHAR Name[64], int Width, int Height, int CurrentLevel = 0)
+{
+	StkObject* Obj = new StkObject(Name);
+	if (CurrentLevel > Height) {
+		Obj->AppendChildElement(new StkObject(L"Aaa", L"“Œ¼“ì–k"));
+		Obj->AppendChildElement(new StkObject(L"Bbb", L"t‰ÄH“~"));
+		Obj->AppendChildElement(new StkObject(L"Ccc", L"é³–£é±é²"));
+		Obj->AppendChildElement(new StkObject(L"Ddd", L"Ä“÷’èH"));
+	} else {
+		for (int Loop = 0; Loop < Width; Loop++) {
+			TCHAR Buf[25];
+			wsprintf(Buf, _T("ElemRecursive"), CurrentLevel, Loop);
+			Obj->AppendChildElement(MakeTestData4(Buf, Width, Height, CurrentLevel + 1));
+		}
+	}
+	return Obj;
+}
+
 void GeneralTestCase1(StkObject* Elem1, TCHAR* Name)
 {
 	int Len1 = Elem1->GetFirstChildElement()->GetArrayLength();
@@ -440,6 +458,26 @@ void GeneralTestCase3()
 	printf("OK\r\n");
 	delete Obj6a;
 	delete Obj6b;
+
+	wprintf(_T("GeneralCheck3#Test of Equals 4th Array of recursive object ..."));
+	StkObject* Elem4 = MakeTestData4(_T("RecursiveArray"), 2, 3);
+	wchar_t JsonStr[1000000] = L"";
+	wchar_t XmlStr[1000000] = L"";
+	Elem4->ToJson(JsonStr, 1000000);
+	Elem4->ToXml(XmlStr, 1000000);
+	delete Elem4;
+	int ErrorCode = 0;
+	StkObject* NewObjJson = StkObject::CreateObjectFromJson(JsonStr, &ErrorCode);
+	StkObject* NewObjXml = StkObject::CreateObjectFromXml(XmlStr, &ErrorCode);
+	if (!NewObjXml->Equals(NewObjJson) || !NewObjJson->Equals(NewObjXml)) {
+		delete NewObjXml;
+		delete NewObjJson;
+		printf("NG\r\n");
+		exit(0);
+	}
+	delete NewObjXml;
+	delete NewObjJson;
+	printf("OK\r\n");
 }
 
 void GeneralTestCase4()

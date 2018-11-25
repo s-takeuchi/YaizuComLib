@@ -1138,8 +1138,11 @@ int StkObject::ToJson(TCHAR* Msg, int MsgLength, int Indent, BOOL ArrayFlag)
 			int StrLen = pImpl->JsonEncodeSize((TCHAR*)pImpl->Value);
 			TCHAR* TmpStr = new TCHAR[StrLen + 1];
 			pImpl->JsonEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
-			TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : \"%s\""), pImpl->Name, TmpStr);
-			Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
+			Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
+			Length += pImpl->AddString(&Msg[Length], EndPoint, pImpl->Name);
+			Length += pImpl->AddString(&Msg[Length], EndPoint, L"\" : \"");
+			Length += pImpl->AddString(&Msg[Length], EndPoint, TmpStr);
+			Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
 			delete TmpStr;
 		}
 		if (pImpl->Next != NULL) {
@@ -1177,11 +1180,15 @@ int StkObject::ToJson(TCHAR* Msg, int MsgLength, int Indent, BOOL ArrayFlag)
 			TCHAR* TmpStr = new TCHAR[StrLen + 1];
 			pImpl->JsonEncode((TCHAR*)pImpl->Value, TmpStr, StrLen + 1);
 			if (ArrayFlag == FALSE) {
-				TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : \"%s\""), pImpl->Name, TmpStr);
-				Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
+				Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
+				Length += pImpl->AddString(&Msg[Length], EndPoint, pImpl->Name);
+				Length += pImpl->AddString(&Msg[Length], EndPoint, L"\" : \"");
+				Length += pImpl->AddString(&Msg[Length], EndPoint, TmpStr);
+				Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
 			} else {
-				TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\""), TmpStr);
-				Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
+				Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
+				Length += pImpl->AddString(&Msg[Length], EndPoint, TmpStr);
+				Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
 			}
 			delete TmpStr;
 		}
@@ -1198,8 +1205,9 @@ int StkObject::ToJson(TCHAR* Msg, int MsgLength, int Indent, BOOL ArrayFlag)
 				if (*pImpl->Name == _T('\0')) {
 					Length += pImpl->AddString(&Msg[Length], EndPoint, L"{\r\n");
 				} else {
-					TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : {\r\n"), pImpl->Name);
-					Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
+					Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
+					Length += pImpl->AddString(&Msg[Length], EndPoint, pImpl->Name);
+					Length += pImpl->AddString(&Msg[Length], EndPoint, L"\" : {\r\n");
 				}
 			}
 		} else {
@@ -1243,8 +1251,9 @@ int StkObject::ToJson(TCHAR* Msg, int MsgLength, int Indent, BOOL ArrayFlag)
 					for (int Loop = 0; Loop < Indent + 2; Loop++) {
 						Length += pImpl->AddString(&Msg[Length], EndPoint, L" ");
 					}
-					TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, _T("\"%s\" : [\r\n"), CurName);
-					Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
+					Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
+					Length += pImpl->AddString(&Msg[Length], EndPoint, CurName);
+					Length += pImpl->AddString(&Msg[Length], EndPoint, L"\" : [\r\n");
 				}
 			}
 
