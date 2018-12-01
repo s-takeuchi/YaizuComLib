@@ -10,15 +10,15 @@ echo Testing libraries
 echo;
 
 echo Building stksockettest.sln...
-%DEVENV% "..\test\stksockettest\stksockettest.sln" /rebuild Release 
+%MSBUILD% "..\test\stksockettest\stksockettest.sln" /t:clean;build /p:Configuration=Release
 echo Building stkdatatest.sln...
-%DEVENV% "..\test\stkdatatest\stkdatatest.sln" /rebuild Release
+%MSBUILD% "..\test\stkdatatest\stkdatatest.sln" /t:clean;build /p:Configuration=Release
 echo Building stkthreadtest.sln...
-%DEVENV% "..\test\stkthreadtest\stkthreadtest.sln" /rebuild Release
+%MSBUILD% "..\test\stkthreadtest\stkthreadtest.sln" /t:clean;build /p:Configuration=Release
 echo Building commonfunctest.sln...
-%DEVENV% "..\test\commonfunctest\commonfunctest.sln" /rebuild Release
+%MSBUILD% "..\test\commonfunctest\commonfunctest.sln" /t:clean;build /p:Configuration=Release
 echo Building stkwebapptest.sln...
-%DEVENV% "..\test\stkwebapptest\stkwebapptest.sln" /rebuild Release
+%MSBUILD% "..\test\stkwebapptest\stkwebapptest.sln" /t:clean;build /p:Configuration=Release
 
 echo ---------------------------------------
 echo stksockettest.exe --- stksockettest.txt
