@@ -1,39 +1,38 @@
 #include <windows.h>
-#include <tchar.h>
 #include <shlwapi.h>
 #include "StkStringParser.h"
 
-int StkStringParser::ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1)
+int StkStringParser::ParseInto1Param(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, NULL, -1, NULL, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len)
+int StkStringParser::ParseInto1Param(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, NULL, -1, NULL, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2)
+int StkStringParser::ParseInto2Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, NULL, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len)
+int StkStringParser::ParseInto2Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, OutStr2, OutStr2Len, NULL, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3)
+int StkStringParser::ParseInto3Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, OutStr3, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len, TCHAR* OutStr3, int OutStr3Len)
+int StkStringParser::ParseInto3Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, OutStr2, OutStr2Len, OutStr3, OutStr3Len, NULL, -1);
 }
 
-int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3, TCHAR* OutStr4)
+int StkStringParser::ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3, wchar_t* OutStr4)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, OutStr3, -1, OutStr4, -1);
 }
@@ -49,19 +48,19 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 // Return: Result code (0: Number of parameters to be set differs from the number of targets,
 //                      1: Number of parameters to be set is same as the number of targets,
 //                     -1: Invalid OriginStrWk or FormatWk was presented)
-int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len, TCHAR* OutStr3, int OutStr3Len, TCHAR* OutStr4, int OutStr4Len)
+int StkStringParser::ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len, wchar_t* OutStr4, int OutStr4Len)
 {
 	if (OutStr1 != NULL) {
-		lstrcpy(OutStr1, _T(""));
+		lstrcpy(OutStr1, L"");
 	}
 	if (OutStr2 != NULL) {
-		lstrcpy(OutStr2, _T(""));
+		lstrcpy(OutStr2, L"");
 	}
 	if (OutStr3 != NULL) {
-		lstrcpy(OutStr3, _T(""));
+		lstrcpy(OutStr3, L"");
 	}
 	if (OutStr4 != NULL) {
-		lstrcpy(OutStr4, _T(""));
+		lstrcpy(OutStr4, L"");
 	}
 
 	// Check the presented input parameters
@@ -92,20 +91,20 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 
 	// Make work variables and configure them
 	// Note that 0xFF20 of UTF-16 is internally used as delimiter code.
-	TCHAR* OriginStrWk = new TCHAR[OriginStrLen + 3];
-	TCHAR* FormatWk = new TCHAR[FormatLen + 3];
+	wchar_t* OriginStrWk = new wchar_t[OriginStrLen + 3];
+	wchar_t* FormatWk = new wchar_t[FormatLen + 3];
 	FormatWk[0] = 0xff20;
 	OriginStrWk[0] = 0xff20;
 	lstrcpy(&OriginStrWk[1], OriginStr);
 	lstrcpy(&FormatWk[1], Format);
 	FormatWk[FormatLen + 1] = 0xff20;
 	OriginStrWk[OriginStrLen + 1] = 0xff20;
-	FormatWk[FormatLen + 2] = _T('\0');
-	OriginStrWk[OriginStrLen + 2] = _T('\0');
+	FormatWk[FormatLen + 2] = L'\0';
+	OriginStrWk[OriginStrLen + 2] = L'\0';
 
 	// Configure SearchPtr and SearchEndPtr
-	TCHAR* SearchPtr[5] = {NULL, NULL, NULL, NULL, NULL};
-	TCHAR* SearchEndPtr[5] = {NULL, NULL, NULL, NULL, NULL};
+	wchar_t* SearchPtr[5] = {NULL, NULL, NULL, NULL, NULL};
+	wchar_t* SearchEndPtr[5] = {NULL, NULL, NULL, NULL, NULL};
 	int SearchPtrIndex = 0;
 	SearchPtr[SearchPtrIndex] = FormatWk;
 	SearchPtrIndex++;
@@ -123,20 +122,20 @@ int StkStringParser::ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Tar
 	SearchEndPtr[SearchPtrIndex - 1] = &FormatWk[Loop];
 
 	// Make SearchString from SearchPtr and SearchEndPtr
-	TCHAR* SearchString[5];
+	wchar_t* SearchString[5];
 	for (Loop = 0; Loop < 5; Loop++) {
-		SearchString[Loop] = new TCHAR[SearchEndPtr[Loop] - SearchPtr[Loop] + 2];
+		SearchString[Loop] = new wchar_t[SearchEndPtr[Loop] - SearchPtr[Loop] + 2];
 		if (SearchPtr[Loop] != NULL && SearchEndPtr[Loop] != NULL) {
 			lstrcpyn(SearchString[Loop], SearchPtr[Loop], SearchEndPtr[Loop] - SearchPtr[Loop] + 1);
 		} else {
-			lstrcpy(SearchString[Loop], _T(""));
+			lstrcpy(SearchString[Loop], L"");
 		}
 	}
 
 	// Make OutStrs
-	TCHAR* OutputBegin[4];
-	TCHAR* OutputEnd[4];
-	TCHAR* CurrStr;
+	wchar_t* OutputBegin[4];
+	wchar_t* OutputEnd[4];
+	wchar_t* CurrStr;
 	int NumberOfParamSet = 0;
 	for (Loop = 0; Loop < 4; Loop++) {
 		if (Loop == 0) {

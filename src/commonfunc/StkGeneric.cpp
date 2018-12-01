@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tchar.h>
 #include <stdio.h>
 #include <shlwapi.h>
 #include "StkGeneric.h"
@@ -24,10 +23,10 @@ StkGeneric* StkGeneric::GetInstance()
 	return f;
 }
 
-BOOL StkGeneric::IsDuplicateAppExisting(HWND hwnd)
+bool StkGeneric::IsDuplicateAppExisting(HWND hwnd)
 {
-	TCHAR or[64];
-	TCHAR ws[64];
+	wchar_t or[64];
+	wchar_t ws[64];
 
 	GetWindowText(hwnd, or, 64);
 	HWND chwnd = GetTopWindow(NULL);
@@ -38,18 +37,18 @@ BOOL StkGeneric::IsDuplicateAppExisting(HWND hwnd)
 			i++;
 		}
 		if (i >= 2) {
-			return TRUE;
+			return true;
 		}
 		chwnd = GetNextWindow(chwnd, GW_HWNDNEXT);
 	} while (chwnd != NULL);
-	return FALSE;
+	return false;
 }
 
 // Get full path from the specified file name.
 // FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
 // FullPath [out] : Acquired full path for the specified file.
 // Return : 0:Success, -1:Failure
-int StkGeneric::GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH])
+int StkGeneric::GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[MAX_PATH])
 {
 	GetModuleFileName(NULL, FullPath, MAX_PATH - 1);
 	LPTSTR Addr = NULL;
@@ -70,11 +69,11 @@ int StkGeneric::GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH
 // FileName [in] : Full path which contains file name.
 // FullPath [out] : Acquired full path for the specified file.
 // Return : 0:Success, -1:Failure
-int StkGeneric::GetFullPathWithoutFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH]) {
+int StkGeneric::GetFullPathWithoutFileName(wchar_t* FileName, wchar_t FullPath[MAX_PATH]) {
 	if (FileName == NULL || FullPath == NULL) {
 		return -1;
 	}
-	if (lstrcmp(FileName, _T("")) == 0) {
+	if (lstrcmp(FileName, L"") == 0) {
 		return -1;
 	}
 	lstrcpy(FullPath, FileName);
@@ -95,9 +94,9 @@ int StkGeneric::GetFullPathWithoutFileName(TCHAR* FileName, TCHAR FullPath[MAX_P
 // Get file size of the specified file name
 // FileName [in] : File name which you want to get the file size. Do not specify path. The file is searched from Module existing folder.
 // Return : Size of the specified file. If an error occurred, -1 is returned. (The value is casted into int.)
-int StkGeneric::GetFileSize(TCHAR* FileName)
+int StkGeneric::GetFileSize(wchar_t* FileName)
 {
-	TCHAR Buf[MAX_PATH];
+	wchar_t Buf[MAX_PATH];
 	GetFullPathFromFileName(FileName, Buf);
 
 	HANDLE ReadFileHndl = CreateFile(Buf, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -125,18 +124,18 @@ void StkGeneric::GetLocalTimeStr(char LocalTimeStr[32])
 
 // Acquire local time as a string.
 // LocalTimeStr [out] : Acquired time of local sysytem
-void StkGeneric::GetLocalTimeWStr(TCHAR LocalTimeStr[32])
+void StkGeneric::GetLocalTimeWStr(wchar_t LocalTimeStr[32])
 {
 	SYSTEMTIME Systime;
 	GetLocalTime(&Systime);
-	TCHAR *Mon[] = {_T("Jan"), _T("Feb"), _T("Mar"), _T("Apr"), _T("May"), _T("Jun"), _T("Jul"), _T("Aug"), _T("Sep"), _T("Oct"), _T("Nov"), _T("Dec")};
-	wsprintf(LocalTimeStr, _T("%s %d %d %02d:%02d:%02d"), Mon[Systime.wMonth - 1], Systime.wDay, Systime.wYear, Systime.wHour, Systime.wMinute, Systime.wSecond);
+	wchar_t *Mon[] = {L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec"};
+	wsprintf(LocalTimeStr, L"%s %d %d %02d:%02d:%02d", Mon[Systime.wMonth - 1], Systime.wDay, Systime.wYear, Systime.wHour, Systime.wMinute, Systime.wSecond);
 }
 
 // Returns word size of escaped JSON data.
 // InMsg [in] : Original string
 // Return : Word size of escaped JSON data.
-int StkGeneric::JsonEncodeSize(TCHAR* InMsg)
+int StkGeneric::JsonEncodeSize(wchar_t* InMsg)
 {
 	int Size = 0;
 	int InMsgLen = lstrlen(InMsg);
@@ -156,10 +155,10 @@ int StkGeneric::JsonEncodeSize(TCHAR* InMsg)
 // InData [in] : Zero terminate string
 // OutData [out] : Converted string is registered.
 // OutDataLen [in] : Length of OutData
-void StkGeneric::JsonEncode(TCHAR* InData, TCHAR* OutData, int OutDataLen)
+void StkGeneric::JsonEncode(wchar_t* InData, wchar_t* OutData, int OutDataLen)
 {
-	TCHAR* CurInPtr = InData;
-	TCHAR* CurOutPtr = OutData;
+	wchar_t* CurInPtr = InData;
+	wchar_t* CurOutPtr = OutData;
 	for (;;) {
 		if (*CurInPtr == '\0') {
 			*CurOutPtr = '\0';
@@ -194,7 +193,7 @@ void StkGeneric::JsonEncode(TCHAR* InData, TCHAR* OutData, int OutDataLen)
 // Returns word size of escaped HTML text.
 // InMsg [in] : Original string
 // Return : Word size of escaped HTML text.
-int StkGeneric::HtmlEncodeSize(TCHAR* InMsg)
+int StkGeneric::HtmlEncodeSize(wchar_t* InMsg)
 {
 	int Size = 0;
 	int InMsgLen = lstrlen(InMsg);
@@ -212,7 +211,7 @@ int StkGeneric::HtmlEncodeSize(TCHAR* InMsg)
 // InMsg [in] : Zero terminate string
 // OutMsg [out] : Converted string is registered.
 // SizeOfOutMsg [in] : Length of OutData
-void StkGeneric::HtmlEncode(TCHAR* InMsg, TCHAR* OutMsg, int SizeOfOutMsg)
+void StkGeneric::HtmlEncode(wchar_t* InMsg, wchar_t* OutMsg, int SizeOfOutMsg)
 {
 	int OutMsgIndex = 0;
 	int InMsgLen = lstrlen(InMsg);
@@ -220,28 +219,28 @@ void StkGeneric::HtmlEncode(TCHAR* InMsg, TCHAR* OutMsg, int SizeOfOutMsg)
 		if (InMsg[Loop] == '<') {
 			if (OutMsgIndex + 4 >= SizeOfOutMsg)
 				break;
-			lstrcpy(&OutMsg[OutMsgIndex], _T("&lt;"));
+			lstrcpy(&OutMsg[OutMsgIndex], L"&lt;");
 			OutMsgIndex += 4;
 			continue;
 		}
 		if (InMsg[Loop] == '>') {
 			if (OutMsgIndex + 4 >= SizeOfOutMsg)
 				break;
-			lstrcpy(&OutMsg[OutMsgIndex], _T("&gt;"));
+			lstrcpy(&OutMsg[OutMsgIndex], L"&gt;");
 			OutMsgIndex += 4;
 			continue;
 		}
 		if (InMsg[Loop] == '&') {
 			if (OutMsgIndex + 5 >= SizeOfOutMsg)
 				break;
-			lstrcpy(&OutMsg[OutMsgIndex], _T("&amp;"));
+			lstrcpy(&OutMsg[OutMsgIndex], L"&amp;");
 			OutMsgIndex += 5;
 			continue;
 		}
 		if (InMsg[Loop] == '\"') {
 			if (OutMsgIndex + 6 >= SizeOfOutMsg)
 				break;
-			lstrcpy(&OutMsg[OutMsgIndex], _T("&quot;"));
+			lstrcpy(&OutMsg[OutMsgIndex], L"&quot;");
 			OutMsgIndex += 6;
 			continue;
 		}
@@ -257,32 +256,32 @@ void StkGeneric::HtmlEncode(TCHAR* InMsg, TCHAR* OutMsg, int SizeOfOutMsg)
 // InMsg [in] : Zero terminate string
 // OutMsg [out] : Converted string is registered.
 // SizeOfOutMsg [in] : Length of OutData
-void StkGeneric::HtmlDecode(TCHAR* InMsg, TCHAR* OutMsg, int SizeOfOutMsg)
+void StkGeneric::HtmlDecode(wchar_t* InMsg, wchar_t* OutMsg, int SizeOfOutMsg)
 {
 	int OutMsgIndex = 0;
 	int InMsgLen = lstrlen(InMsg);
 	for (int Loop = 0; Loop < InMsgLen; Loop++) {
 		if (OutMsgIndex + 1 >= SizeOfOutMsg)
 			break;
-		if (StrStr(&InMsg[Loop], _T("&lt;")) == &InMsg[Loop]) {
+		if (StrStr(&InMsg[Loop], L"&lt;") == &InMsg[Loop]) {
 			OutMsg[OutMsgIndex] = '<';
 			OutMsgIndex++;
 			Loop += 3;
 			continue;
 		}
-		if (StrStr(&InMsg[Loop], _T("&gt;")) == &InMsg[Loop]) {
+		if (StrStr(&InMsg[Loop], L"&gt;") == &InMsg[Loop]) {
 			OutMsg[OutMsgIndex] = '>';
 			OutMsgIndex++;
 			Loop += 3;
 			continue;
 		}
-		if (StrStr(&InMsg[Loop], _T("&amp;")) == &InMsg[Loop]) {
+		if (StrStr(&InMsg[Loop], L"&amp;") == &InMsg[Loop]) {
 			OutMsg[OutMsgIndex] = '&';
 			OutMsgIndex++;
 			Loop += 4;
 			continue;
 		}
-		if (StrStr(&InMsg[Loop], _T("&quot;")) == &InMsg[Loop]) {
+		if (StrStr(&InMsg[Loop], L"&quot;") == &InMsg[Loop]) {
 			OutMsg[OutMsgIndex] = '\"';
 			OutMsgIndex++;
 			Loop += 5;

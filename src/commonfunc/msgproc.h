@@ -1,6 +1,5 @@
 #pragma once
 #include <windows.h>
-#include <tchar.h>
 
 class MessageProc
 {
@@ -19,18 +18,18 @@ public:
 
 	static void SetLocaleMode(int);
 
-	static TCHAR* GetMsg(int);
-	static TCHAR* GetMsgEng(int);
-	static TCHAR* GetMsgJpn(int);
-	static BYTE* GetMsgSjis(int);
-	static BYTE* GetMsgSjisEng(int);
-	static BYTE* GetMsgSjisJpn(int);
-	static BYTE* GetMsgUtf8(int);
-	static BYTE* GetMsgUtf8Eng(int);
-	static BYTE* GetMsgUtf8Jpn(int);
+	static wchar_t* GetMsg(int);
+	static wchar_t* GetMsgEng(int);
+	static wchar_t* GetMsgJpn(int);
+	static unsigned char* GetMsgSjis(int);
+	static unsigned char* GetMsgSjisEng(int);
+	static unsigned char* GetMsgSjisJpn(int);
+	static unsigned char* GetMsgUtf8(int);
+	static unsigned char* GetMsgUtf8Eng(int);
+	static unsigned char* GetMsgUtf8Jpn(int);
 
-	static void AddEng(int, TCHAR*);
-	static void AddJpn(int, TCHAR*);
+	static void AddEng(int, wchar_t*);
+	static void AddJpn(int, wchar_t*);
 	static void DelEng(int);
 	static void DelJpn(int);
 

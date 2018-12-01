@@ -44,29 +44,29 @@ public:
 	static const int ERROR_JSON_INVALID_ARRAY_STRUCTURE = -206;
 	static const int ERROR_JSON_NO_ROOT_ELEMENT = -207;
 
-	StkObject(TCHAR*);
-	StkObject(TCHAR*, int);
-	StkObject(TCHAR*, float);
-	StkObject(TCHAR*, TCHAR*);
+	StkObject(wchar_t*);
+	StkObject(wchar_t*, int);
+	StkObject(wchar_t*, float);
+	StkObject(wchar_t*, wchar_t*);
 	virtual ~StkObject();
 
 	StkObject* Clone();
-	BOOL Equals(StkObject*);
+	bool Equals(StkObject*);
 	StkObject* Contains(StkObject*);
 	int GetArrayLength();
 	int GetChildElementCount();
 	int GetAttributeCount();
 
-	TCHAR* GetName();
+	wchar_t* GetName();
 	int GetType();
 	void SetType(int); // DO NOT USE THIS API.
 
 	int GetIntValue();
 	float GetFloatValue();
-	TCHAR* GetStringValue();
+	wchar_t* GetStringValue();
 	void SetIntValue(int);
 	void SetFloatValue(float);
-	void SetStringValue(TCHAR*);
+	void SetStringValue(wchar_t*);
 
 	StkObject* GetFirstChildElement();
 	StkObject* GetLastChildElement();
@@ -78,10 +78,10 @@ public:
 	void AppendAttribute(StkObject*);
 	void SetNext(StkObject*); // DO NOT USE THIS API. USE Append* API INSTEAD.
 
-	void ToXml(TCHAR*, int, int Indent = 0); // DO NOT SPECIFY 3RD PARAMETER.
-	int ToJson(TCHAR*, int, int Indent = 0, BOOL ArrayFlag = FALSE); // DO NOT SPECIFY 3RD AND 4TH PARAMETERS.
+	void ToXml(wchar_t*, int, int Indent = 0); // DO NOT SPECIFY 3RD PARAMETER.
+	int ToJson(wchar_t*, int, int Indent = 0, bool ArrayFlag = FALSE); // DO NOT SPECIFY 3RD AND 4TH PARAMETERS.
 
-	static int Analyze(TCHAR*);
-	static StkObject* CreateObjectFromXml(TCHAR*, int*);
-	static StkObject* CreateObjectFromJson(TCHAR*, int*, StkObject* Obj = NULL); // DO NOT SPECIFY 3RD PARAMETER.
+	static int Analyze(wchar_t*);
+	static StkObject* CreateObjectFromXml(wchar_t*, int*);
+	static StkObject* CreateObjectFromJson(wchar_t*, int*, StkObject* Obj = NULL); // DO NOT SPECIFY 3RD PARAMETER.
 };

@@ -15,12 +15,12 @@ public:
 
 	int Mode;
 
-	TCHAR* StkMsg[MAX_MSG_COUNT][2];
-	BYTE* StkMsgSjis[MAX_MSG_COUNT][2];
-	BYTE* StkMsgUtf8[MAX_MSG_COUNT][2];
+	wchar_t* StkMsg[MAX_MSG_COUNT][2];
+	unsigned char* StkMsgSjis[MAX_MSG_COUNT][2];
+	unsigned char* StkMsgUtf8[MAX_MSG_COUNT][2];
 
-	void Eng(int, TCHAR*);
-	void Jpn(int, TCHAR*);
+	void Eng(int, wchar_t*);
+	void Jpn(int, wchar_t*);
 
 	void InitMsg();
 	void AllClear();
@@ -33,9 +33,9 @@ MessageProc* MessageProc::Impl::Instance = NULL;
 int MessageProc::Impl::GetLocale()
 {
 	if (Mode == MessageProc::LOCALE_MODE_WIN32) {
-		TCHAR Buf[256];
+		wchar_t Buf[256];
 		GetLocaleInfo(GetUserDefaultLCID(), LOCALE_SENGLANGUAGE, Buf, 256);
-		if (lstrcmp(Buf, _T("Japanese")) == 0) { // "XXX" or "Japanese"
+		if (lstrcmp(Buf, L"Japanese") == 0) { // "XXX" or "Japanese"
 			return MessageProc::Impl::MLANG_JAPANESE;
 		}
 		return MessageProc::Impl::MLANG_ENGLISH;
@@ -63,13 +63,13 @@ int MessageProc::Impl::GetLocale()
 	return MessageProc::Impl::MLANG_ENGLISH;
 }
 
-void MessageProc::Impl::Eng(int Id, TCHAR* Msg)
+void MessageProc::Impl::Eng(int Id, wchar_t* Msg)
 {
 	if (StkMsg[Id][ENG] != NULL) {
 		delete StkMsg[Id][ENG];
 	}
 	int WcBufLen = lstrlen(Msg);
-	StkMsg[Id][ENG] = new TCHAR[WcBufLen + 1];
+	StkMsg[Id][ENG] = new wchar_t[WcBufLen + 1];
 	lstrcpyn(StkMsg[Id][ENG], Msg, WcBufLen + 1);
 
 	int MltBufLen;
@@ -78,7 +78,7 @@ void MessageProc::Impl::Eng(int Id, TCHAR* Msg)
 		delete StkMsgSjis[Id][ENG];
 	}
 	MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
-	StkMsgSjis[Id][ENG] = (BYTE*)new CHAR[MltBufLen];
+	StkMsgSjis[Id][ENG] = (unsigned char*)new CHAR[MltBufLen];
 	if (WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)StkMsgSjis[Id][ENG], MltBufLen, NULL, NULL) != 0) {
 		StkMsgSjis[Id][ENG][MltBufLen - 1] = 0;
 	}
@@ -87,19 +87,19 @@ void MessageProc::Impl::Eng(int Id, TCHAR* Msg)
 		delete StkMsgUtf8[Id][ENG];
 	}
 	MltBufLen = WideCharToMultiByte(CP_UTF8, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
-	StkMsgUtf8[Id][ENG] = (BYTE*)new CHAR[MltBufLen];
+	StkMsgUtf8[Id][ENG] = (unsigned char*)new CHAR[MltBufLen];
 	if (WideCharToMultiByte(CP_UTF8, 0, Msg, -1, (LPSTR)StkMsgUtf8[Id][ENG], MltBufLen, NULL, NULL) != 0) {
 		StkMsgUtf8[Id][ENG][MltBufLen - 1] = 0;
 	}
 }
 
-void MessageProc::Impl::Jpn(int Id, TCHAR* Msg)
+void MessageProc::Impl::Jpn(int Id, wchar_t* Msg)
 {
 	if (StkMsg[Id][JPN] != NULL) {
 		delete StkMsg[Id][JPN];
 	}
 	int WcBufLen = lstrlen(Msg);
-	StkMsg[Id][JPN] = new TCHAR[WcBufLen + 1];
+	StkMsg[Id][JPN] = new wchar_t[WcBufLen + 1];
 	lstrcpyn(StkMsg[Id][JPN], Msg, WcBufLen + 1);
 
 	int MltBufLen;
@@ -108,7 +108,7 @@ void MessageProc::Impl::Jpn(int Id, TCHAR* Msg)
 		delete StkMsgSjis[Id][JPN];
 	}
 	MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
-	StkMsgSjis[Id][JPN] = (BYTE*)new CHAR[MltBufLen];
+	StkMsgSjis[Id][JPN] = (unsigned char*)new CHAR[MltBufLen];
 	if (WideCharToMultiByte(CP_THREAD_ACP, 0, Msg, -1, (LPSTR)StkMsgSjis[Id][JPN], MltBufLen, NULL, NULL) != 0) {
 		StkMsgSjis[Id][JPN][MltBufLen - 1] = 0;
 	}
@@ -117,7 +117,7 @@ void MessageProc::Impl::Jpn(int Id, TCHAR* Msg)
 		delete StkMsgUtf8[Id][JPN];
 	}
 	MltBufLen = WideCharToMultiByte(CP_UTF8, 0, Msg, -1, (LPSTR)NULL, 0, NULL, NULL);
-	StkMsgUtf8[Id][JPN] = (BYTE*)new CHAR[MltBufLen];
+	StkMsgUtf8[Id][JPN] = (unsigned char*)new CHAR[MltBufLen];
 	if (WideCharToMultiByte(CP_UTF8, 0, Msg, -1, (LPSTR)StkMsgUtf8[Id][JPN], MltBufLen, NULL, NULL) != 0) {
 		StkMsgUtf8[Id][JPN][MltBufLen - 1] = 0;
 	}
@@ -187,7 +187,7 @@ void MessageProc::SetLocaleMode(int SpecifiedMode)
 	Impl::Instance->pImpl->Mode = SpecifiedMode;
 }
 
-TCHAR* MessageProc::GetMsg(int Id)
+wchar_t* MessageProc::GetMsg(int Id)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -195,7 +195,7 @@ TCHAR* MessageProc::GetMsg(int Id)
 	return Impl::Instance->pImpl->StkMsg[Id][Impl::Instance->pImpl->GetLocale()];
 }
 
-TCHAR* MessageProc::GetMsgEng(int Id)
+wchar_t* MessageProc::GetMsgEng(int Id)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -203,7 +203,7 @@ TCHAR* MessageProc::GetMsgEng(int Id)
 	return Impl::Instance->pImpl->StkMsg[Id][MessageProc::Impl::MLANG_ENGLISH];
 }
 
-TCHAR* MessageProc::GetMsgJpn(int Id)
+wchar_t* MessageProc::GetMsgJpn(int Id)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -211,7 +211,7 @@ TCHAR* MessageProc::GetMsgJpn(int Id)
 	return Impl::Instance->pImpl->StkMsg[Id][MessageProc::Impl::MLANG_JAPANESE];
 }
 
-BYTE* MessageProc::GetMsgSjis(int Id)
+unsigned char* MessageProc::GetMsgSjis(int Id)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -219,7 +219,7 @@ BYTE* MessageProc::GetMsgSjis(int Id)
 	return Impl::Instance->pImpl->StkMsgSjis[Id][Impl::Instance->pImpl->GetLocale()];
 }
 
-BYTE* MessageProc::GetMsgSjisEng(int Id)
+unsigned char* MessageProc::GetMsgSjisEng(int Id)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -227,7 +227,7 @@ BYTE* MessageProc::GetMsgSjisEng(int Id)
 	return Impl::Instance->pImpl->StkMsgSjis[Id][MessageProc::Impl::MLANG_ENGLISH];
 }
 
-BYTE* MessageProc::GetMsgSjisJpn(int Id)
+unsigned char* MessageProc::GetMsgSjisJpn(int Id)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -235,7 +235,7 @@ BYTE* MessageProc::GetMsgSjisJpn(int Id)
 	return Impl::Instance->pImpl->StkMsgSjis[Id][MessageProc::Impl::MLANG_JAPANESE];
 }
 
-BYTE* MessageProc::GetMsgUtf8(int Id)
+unsigned char* MessageProc::GetMsgUtf8(int Id)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -243,7 +243,7 @@ BYTE* MessageProc::GetMsgUtf8(int Id)
 	return Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::Instance->pImpl->GetLocale()];
 }
 
-BYTE* MessageProc::GetMsgUtf8Eng(int Id)
+unsigned char* MessageProc::GetMsgUtf8Eng(int Id)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -251,7 +251,7 @@ BYTE* MessageProc::GetMsgUtf8Eng(int Id)
 	return Impl::Instance->pImpl->StkMsgUtf8[Id][MessageProc::Impl::MLANG_ENGLISH];
 }
 
-BYTE* MessageProc::GetMsgUtf8Jpn(int Id)
+unsigned char* MessageProc::GetMsgUtf8Jpn(int Id)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -259,7 +259,7 @@ BYTE* MessageProc::GetMsgUtf8Jpn(int Id)
 	return Impl::Instance->pImpl->StkMsgUtf8[Id][MessageProc::Impl::MLANG_JAPANESE];
 }
 
-void MessageProc::AddEng(int Id, TCHAR* Msg)
+void MessageProc::AddEng(int Id, wchar_t* Msg)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -267,7 +267,7 @@ void MessageProc::AddEng(int Id, TCHAR* Msg)
 	Impl::Instance->pImpl->Eng(Id, Msg);
 }
 
-void MessageProc::AddJpn(int Id, TCHAR* Msg)
+void MessageProc::AddJpn(int Id, wchar_t* Msg)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();

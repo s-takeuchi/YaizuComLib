@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tchar.h>
 #include "StkProperties.h"
 
 class StkProperties::Impl
@@ -9,7 +8,7 @@ public:
 	char PropertyValue[256][256];
 	int NumOfProperties;
 
-	int GetFullPathFromFileName(TCHAR*, TCHAR[MAX_PATH]);
+	int GetFullPathFromFileName(wchar_t*, wchar_t[MAX_PATH]);
 };
 
 StkProperties::StkProperties()
@@ -27,7 +26,7 @@ StkProperties::~StkProperties()
 // FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
 // FullPath [out] : Acquired full path for the specified file.
 // Return : 0:Success, -1:Failure
-int StkProperties::Impl::GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH])
+int StkProperties::Impl::GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[MAX_PATH])
 {
 	GetModuleFileName(NULL, FullPath, MAX_PATH - 1);
 	LPTSTR Addr = NULL;
@@ -47,9 +46,9 @@ int StkProperties::Impl::GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath
 // Get properties from the specified file name
 // FileName [in] : Target file name which you want to get properties. Do not specify path. The file is searched from Module existing folder.
 // Return : Result code 0:Success, -1:Failure
-int StkProperties::GetProperties(TCHAR* FileName)
+int StkProperties::GetProperties(wchar_t* FileName)
 {
-	TCHAR Buf[MAX_PATH];
+	wchar_t Buf[MAX_PATH];
 	pImpl->GetFullPathFromFileName(FileName, Buf);
 
 	HANDLE ReadFileHndl = CreateFile(Buf, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -136,14 +135,14 @@ int StkProperties::GetProperties(TCHAR* FileName)
 			continue;
 		}
 		// If same property name has already been registered, proceed to next line.
-		BOOL Found = FALSE;
+		bool Found = false;
 		for (int Lp = 0; Lp < pImpl->NumOfProperties; Lp++) {
 			if (strcmp(pImpl->PropertyName[Lp], pImpl->PropertyName[pImpl->NumOfProperties]) == 0) {
-				Found = TRUE;
+				Found = true;
 				break;
 			}
 		}
-		if (Found == TRUE) {
+		if (Found == true) {
 			continue;
 		}
 

@@ -11,18 +11,18 @@ public:
 	static StkGeneric* GetInstance();
 	virtual ~StkGeneric();
 
-	BOOL IsDuplicateAppExisting(HWND);
-	int GetFullPathFromFileName(TCHAR*, TCHAR[MAX_PATH]);
-	int GetFullPathWithoutFileName(TCHAR*, TCHAR[MAX_PATH]);
-	int GetFileSize(TCHAR*);
+	bool IsDuplicateAppExisting(HWND);
+	int GetFullPathFromFileName(wchar_t*, wchar_t[MAX_PATH]);
+	int GetFullPathWithoutFileName(wchar_t*, wchar_t[MAX_PATH]);
+	int GetFileSize(wchar_t*);
 
 	void GetLocalTimeStr(char[32]);
-	void GetLocalTimeWStr(TCHAR[32]);
+	void GetLocalTimeWStr(wchar_t[32]);
 
-	int JsonEncodeSize(TCHAR*);
-	void JsonEncode(TCHAR*, TCHAR*, int);
+	int JsonEncodeSize(wchar_t*);
+	void JsonEncode(wchar_t*, wchar_t*, int);
 
-	int HtmlEncodeSize(TCHAR*);
-	void HtmlEncode(TCHAR*, TCHAR*, int);
-	void HtmlDecode(TCHAR*, TCHAR*, int);
+	int HtmlEncodeSize(wchar_t*);
+	void HtmlEncode(wchar_t*, wchar_t*, int);
+	void HtmlDecode(wchar_t*, wchar_t*, int);
 };
