@@ -1,7 +1,7 @@
 @echo off
 
 set CURRENTPATH=%cd%
-set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe"
+set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
 set WKHTMLTOPDF="C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
 set PDFTK="C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
 set SEVENZIP="C:\Program Files\7-Zip\7z.exe"
@@ -20,7 +20,7 @@ echo (3) PDFtk Server 2.02
 echo (4) 7-Zip 9.20
 echo (5) Line Counter
 
-if not exist %DEVENV% exit
+if not exist %MSBUILD% exit
 if not exist %WKHTMLTOPDF% exit
 if not exist %PDFTK% exit
 if not exist %SEVENZIP% exit
@@ -150,7 +150,7 @@ date /T >> buildver.txt
 time /T >> buildver.txt
 
 echo Building stksocket.sln...
-%DEVENV% "..\src\stksocket\stksocket.sln" /rebuild Release 
+%MSBUILD% "..\src\stksocket\stksocket.sln" /t:clean;build /p:Configuration=Release
 copy "..\src\stksocket\stksocket.h" deployment
 copy "..\src\stksocket\Release\stksocket.lib" deployment
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.lib
@@ -162,7 +162,7 @@ del ..\build\deployment\stksocket.h
 del ..\build\deployment\stksocket.pdf
 
 echo Building commonfunc.sln...
-%DEVENV% "..\src\commonfunc\commonfunc.sln" /rebuild Release 
+%MSBUILD% "..\src\commonfunc\commonfunc.sln" /t:clean;build /p:Configuration=Release
 copy "..\src\commonfunc\msgproc.h" deployment
 copy "..\src\commonfunc\StkGeneric.h" deployment
 copy "..\src\commonfunc\StkProperties.h" deployment
@@ -186,7 +186,7 @@ del ..\build\deployment\StkStringParser.h
 del ..\build\deployment\commonfunc.pdf
 
 echo Building stkthread.sln...
-%DEVENV% "..\src\stkthread\stkthread.sln" /rebuild Release 
+%MSBUILD% "..\src\stkthread\stkthread.sln" /t:clean;build /p:Configuration=Release
 copy "..\src\stkthread\stkthread.h" deployment
 copy "..\src\stkthread\Release\stkthread.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.lib
@@ -198,7 +198,7 @@ del ..\build\deployment\stkthread.h
 del ..\build\deployment\stkthread.pdf
 
 echo Building stkthreadgui.sln...
-%DEVENV% "..\src\stkthreadgui\stkthreadgui.sln" /rebuild Release 
+%MSBUILD% "..\src\stkthreadgui\stkthreadgui.sln" /t:clean;build /p:Configuration=Release
 copy "..\src\stkthreadgui\stkthreadgui.h" deployment
 copy "..\src\stkthreadgui\Release\stkthreadgui.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.lib
@@ -210,7 +210,7 @@ del ..\build\deployment\stkthreadgui.h
 del ..\build\deployment\stkthreadgui.pdf
 
 echo Building stkdata.sln...
-%DEVENV% "..\src\stkdata\stkdata.sln" /rebuild Release
+%MSBUILD% "..\src\stkdata\stkdata.sln" /t:clean;build /p:Configuration=Release
 copy "..\src\stkdata\Release\stkdata.lib" deployment
 copy "..\src\stkdata\stkdata.h" deployment
 copy "..\src\stkdata\stkdataapi.h" deployment
@@ -225,7 +225,7 @@ del ..\build\deployment\stkdataapi.h
 del ..\build\deployment\stkdata.pdf
 
 echo Building stkdatagui.sln...
-%DEVENV% "..\src\stkdatagui\stkdatagui.sln" /rebuild Release
+%MSBUILD% "..\src\stkdatagui\stkdatagui.sln" /t:clean;build /p:Configuration=Release
 copy "..\src\stkdatagui\Release\stkdatagui.exe" deployment
 %SEVENZIP% a ..\build\deployment\stkdatagui.zip ..\build\deployment\stkdatagui.exe
 %SEVENZIP% a ..\build\deployment\stkdatagui.zip ..\build\deployment\stkdatagui.pdf
@@ -234,9 +234,9 @@ del ..\build\deployment\stkdatagui.exe
 del ..\build\deployment\stkdatagui.pdf
 
 echo Building stkwebapp.sln and stkwebappcmd.sln...
-%DEVENV% "..\src\stkwebapp\stkwebapp.sln" /rebuild Release
+%MSBUILD% "..\src\stkwebapp\stkwebapp.sln" /t:clean;build /p:Configuration=Release
 copy "..\src\stkwebapp\Release\stkwebapp.lib" deployment
-%DEVENV% "..\src\stkwebapp\stkwebappcmd.sln" /rebuild Release
+%MSBUILD% "..\src\stkwebapp\stkwebappcmd.sln" /t:clean;build /p:Configuration=Release
 copy "..\src\stkwebapp\Release\stkwebappcmd.exe" deployment
 copy "..\src\stkwebapp\StkWebApp.h" deployment
 copy "..\src\stkwebapp\StkWebAppExec.h" deployment
