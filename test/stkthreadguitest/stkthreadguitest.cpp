@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
+#include <cstring>
 #include "..\..\src\stkthread\stkthread.h"
 #include "..\..\src\stkthreadgui\stkthreadgui.h"
 
@@ -86,10 +87,21 @@ int main(int Argc, char* Argv[])
 	}
 	printf("全スレッド開始→停止を押してください。ログ出力が100文字以内であることを確認しダイアログを閉じてください。\r\n");
 	ShowStkThreadController(NULL, 0, _T("Test"));
+	wchar_t LogBuf[20000];
+	GetStkThreadLog(LogBuf, 10);
+	if (lstrcmp(LogBuf, L"ProcAfter") != 0) {
+		printf("Error : Log does not start with 'ProcAfter'.\r\n");
+		exit(0);
+	}
 
 	ChangeStkThreadLogSize(1);
 	printf("全スレッド開始→停止を押してください。ログ出力が前回と変化無いことを確認しダイアログを閉じてください。\r\n");
 	ShowStkThreadController(NULL, 0, _T("Test"));
+	GetStkThreadLog(LogBuf, 12000);
+	if (wcsstr(LogBuf, L"ProcAfter") == 0) {
+		printf("Error : Log does not start with 'ProcAfter'.\r\n");
+		exit(0);
+	}
 
 	ChangeStkThreadLogSize(50000);
 	printf("ログ出力量が拡張されていることを確認しダイアログを閉じてください。\r\n");

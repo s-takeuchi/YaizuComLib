@@ -72,10 +72,6 @@ void StkThreadGuiLogging::AddLogWithThreadInfo(TCHAR* Name, TCHAR* Message)
 
 void StkThreadGuiLogging::GetLog(TCHAR* Out, int Length)
 {
-	if (Length > MaxLogSize) {
-		Out[0] = '\0';
-		return;
-	}
 	lstrcpyn(Out, Log, Length);
 
 	return;

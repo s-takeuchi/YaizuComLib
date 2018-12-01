@@ -168,6 +168,7 @@ StopAllStkThreadsメソッドは内部的にStkThread.LibのStopSpecifiedStkThre
 <h3 ID="1.4.13">1.4.13 void ChangeStkThreadLogSize(int Size)</h3>
 <div class="topic">
 ログ出力領域のサイズ(WORD数;TCHARの要素数)を変更します。<br>
+100よりも小さな値を指定しても，最低値100が設定されます。<br>
 デフォルトは10,000文字です。<br>
 <table class="tblstyle">
 <tr><td>Size [入力]</td><td>ログ出力領域のサイズ(WORD数;TCHARの要素数)</td></tr>
