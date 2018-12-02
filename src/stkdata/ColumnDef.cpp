@@ -1,11 +1,10 @@
 #include <windows.h>
-#include <tchar.h>
 #include "stkdata.h"
 
 // Constructor
 ColumnDef::ColumnDef()
 {
-	lstrcpy(m_ColumnName, _T(""));
+	lstrcpy(m_ColumnName, L"");
 	m_ColumnType = -1;
 }
 
@@ -15,17 +14,17 @@ ColumnDef::~ColumnDef()
 }
 
 // Set column name
-// [in] TCHAR* : Column name
-void ColumnDef::SetColumnName(TCHAR* ColumnName)
+// [in] wchar_t* : Column name
+void ColumnDef::SetColumnName(wchar_t* ColumnName)
 {
 	if (lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE) == NULL) {
-		lstrcpy(m_ColumnName, _T(""));
+		lstrcpy(m_ColumnName, L"");
 	}
 }
 
 // Get column name
-// [out] TCHAR* : Column name
-TCHAR* ColumnDef::GetColumnName()
+// [out] wchar_t* : Column name
+wchar_t* ColumnDef::GetColumnName()
 {
 	return m_ColumnName;
 }

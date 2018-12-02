@@ -8,36 +8,36 @@
 
 
 int CreateTable(TableDef*);
-int DeleteTable(TCHAR*);
-int RenameTable(TCHAR*, TCHAR*);
+int DeleteTable(wchar_t*);
+int RenameTable(wchar_t*, wchar_t*);
 
-int LockTable(TCHAR*, int);
+int LockTable(wchar_t*, int);
 int LockAllTable(int);
-int UnlockTable(TCHAR*);
+int UnlockTable(wchar_t*);
 int UnlockAllTable();
 
 int InsertRecord(RecordData*);
-int DeleteRecord(TCHAR*);
+int DeleteRecord(wchar_t*);
 int DeleteRecord(RecordData*);
 int UpdateRecord(RecordData*, RecordData*);
-RecordData* GetRecord(TCHAR*);
+RecordData* GetRecord(wchar_t*);
 RecordData* GetRecord(RecordData*);
 
-int AzSortRecord(TCHAR*, TCHAR*);
-int ZaSortRecord(TCHAR*, TCHAR*);
+int AzSortRecord(wchar_t*, wchar_t*);
+int ZaSortRecord(wchar_t*, wchar_t*);
 
-int GetColumnCount(TCHAR*);
-int GetColumnSize(TCHAR*, TCHAR*);
-int GetColumnName(TCHAR*, TCHAR[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE]);
-int GetColumnType(TCHAR*, TCHAR*);
+int GetColumnCount(wchar_t*);
+int GetColumnSize(wchar_t*, wchar_t*);
+int GetColumnName(wchar_t*, wchar_t[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE]);
+int GetColumnType(wchar_t*, wchar_t*);
 int GetTableCount();
-int GetTableName(TCHAR [MAX_TABLE_NUMBER][TABLE_NAME_SIZE]);
-int GetTableSize(TCHAR*);
-int GetMaxNumOfRecords(TCHAR*);
-int GetNumOfRecords(TCHAR*);
-int GetTableVersion(TCHAR*);
+int GetTableName(wchar_t [MAX_TABLE_NUMBER][TABLE_NAME_SIZE]);
+int GetTableSize(wchar_t*);
+int GetMaxNumOfRecords(wchar_t*);
+int GetNumOfRecords(wchar_t*);
+int GetTableVersion(wchar_t*);
 
-int SaveData(TCHAR*);
-int LoadData(TCHAR*);
-int AutoSave(TCHAR*, int, BOOL);
+int SaveData(wchar_t*);
+int LoadData(wchar_t*);
+int AutoSave(wchar_t*, int, bool);
 

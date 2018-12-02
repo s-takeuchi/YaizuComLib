@@ -2,7 +2,7 @@
 #include "stkdata.h"
 
 // Constructor
-ColumnDataInt::ColumnDataInt(TCHAR* ColumnName, int Value)
+ColumnDataInt::ColumnDataInt(wchar_t* ColumnName, int Value)
 {
 	lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE);
 	m_ColumnType = COLUMN_TYPE_INT;
@@ -10,7 +10,7 @@ ColumnDataInt::ColumnDataInt(TCHAR* ColumnName, int Value)
 	m_Value = Value;
 }
 
-ColumnDataInt::ColumnDataInt(TCHAR* ColumnName, int Value, int CompOpe)
+ColumnDataInt::ColumnDataInt(wchar_t* ColumnName, int Value, int CompOpe)
 {
 	*this = ColumnDataInt(ColumnName, Value);
 	m_ComparisonOperator = CompOpe;

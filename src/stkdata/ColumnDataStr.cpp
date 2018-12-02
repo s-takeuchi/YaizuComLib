@@ -3,7 +3,7 @@
 #include "stkdata.h"
 
 // Constructor
-ColumnDataStr::ColumnDataStr(TCHAR* ColumnName, char* Value)
+ColumnDataStr::ColumnDataStr(wchar_t* ColumnName, char* Value)
 {
 	lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE);
 	m_ColumnType = COLUMN_TYPE_STR;
@@ -15,7 +15,7 @@ ColumnDataStr::ColumnDataStr(TCHAR* ColumnName, char* Value)
 	}
 }
 
-ColumnDataStr::ColumnDataStr(TCHAR* ColumnName, char* Value, int CompOpe)
+ColumnDataStr::ColumnDataStr(wchar_t* ColumnName, char* Value, int CompOpe)
 {
 	*this = ColumnDataStr(ColumnName, Value);
 	m_ComparisonOperator = CompOpe;

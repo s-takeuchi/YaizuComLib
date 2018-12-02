@@ -1,22 +1,21 @@
 #include <windows.h>
-#include <tchar.h>
 #include <string.h>
 #include "stkdata.h"
 
 // Constructor
-ColumnDataWStr::ColumnDataWStr(TCHAR* ColumnName, TCHAR* Value)
+ColumnDataWStr::ColumnDataWStr(wchar_t* ColumnName, wchar_t* Value)
 {
 	lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE);
 	m_ColumnType = COLUMN_TYPE_WSTR;
 	m_ComparisonOperator = COMP_EQUAL;
 	if (Value == NULL) {
-		lstrcpyn(m_Value, _T(""), 256);
+		lstrcpyn(m_Value, L"", 256);
 	} else {
 		lstrcpyn(m_Value, Value, 256);
 	}
 }
 
-ColumnDataWStr::ColumnDataWStr(TCHAR* ColumnName, TCHAR* Value, int CompOpe)
+ColumnDataWStr::ColumnDataWStr(wchar_t* ColumnName, wchar_t* Value, int CompOpe)
 {
 	*this = ColumnDataWStr(ColumnName, Value);
 	m_ComparisonOperator = CompOpe;
@@ -27,7 +26,7 @@ ColumnDataWStr::~ColumnDataWStr()
 {
 }
 
-TCHAR* ColumnDataWStr::GetValue()
+wchar_t* ColumnDataWStr::GetValue()
 {
 	return m_Value;
 }

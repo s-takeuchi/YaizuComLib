@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <memory.h>
-#include <tchar.h>
 #include <shlwapi.h>
 #include "DataAcController.h"
 #include "stkdata.h"
@@ -56,11 +55,11 @@ void DataAcController::ClearParameter(int TableId)
 {
 	int Loop;
 
-	lstrcpy(m_TableName[TableId], _T(""));
+	lstrcpy(m_TableName[TableId], L"");
 	m_RecordSize[TableId] = 0;
 	m_RecordCount[TableId] = 0;
 	for (Loop = 0; Loop < MAX_COLUMN_NUMBER; Loop++) {
-		lstrcpy(m_ColumnName[TableId][Loop], _T(""));
+		lstrcpy(m_ColumnName[TableId][Loop], L"");
 		m_ColumnOffset[TableId][Loop] = -1;
 		m_ColumnType[TableId][Loop] = -1;
 		m_ColumnSize[TableId][Loop] = -1;
@@ -76,7 +75,7 @@ int DataAcController::GetFreeTableId()
 	for (Loop = 0; Loop < MAX_TABLE_NUMBER; Loop++) {
 		if (m_TableAddr[Loop] == NULL &&
 			m_TableSize[Loop] == 0 &&
-			lstrcmp(m_TableName[Loop], _T("")) == 0) {
+			lstrcmp(m_TableName[Loop], L"") == 0) {
 			return Loop;
 		}
 	}
@@ -84,9 +83,9 @@ int DataAcController::GetFreeTableId()
 }
 
 // Search the table which has the specified table name.
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] int : Table Id (-1: Table does not found.)
-int DataAcController::SearchTable(TCHAR* TableName)
+int DataAcController::SearchTable(wchar_t* TableName)
 {
 	int Loop;
 	for (Loop = 0; Loop < MAX_TABLE_NUMBER; Loop++) {
@@ -98,12 +97,12 @@ int DataAcController::SearchTable(TCHAR* TableName)
 }
 
 // Get column index
-// [in] TCHAR* : Table name
-// [in] TCHAR* : Column name
+// [in] wchar_t* : Table name
+// [in] wchar_t* : Column name
 // [out] int : Column index (-1:Not found)
-int DataAcController::GetColumnIndex(TCHAR* TableName, TCHAR* ColumnName)
+int DataAcController::GetColumnIndex(wchar_t* TableName, wchar_t* ColumnName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -162,7 +161,7 @@ int DataAcController::FreeDataArea(int TableId)
 	if (TableId < 0 || TableId >= MAX_TABLE_NUMBER) {
 		return -1;
 	}
-	BOOL Result = VirtualFree(m_TableAddr[TableId], 0, MEM_RELEASE);
+	bool Result = VirtualFree(m_TableAddr[TableId], 0, MEM_RELEASE);
 	if (Result == 0) {
 		return -1;
 	}
@@ -182,7 +181,7 @@ int DataAcController::CommitDataArea(int TableId)
 	}
 	if (m_TableAddr[TableId] == NULL ||
 		m_TableSize[TableId] == 0 ||
-		lstrcmp(m_TableName[TableId], _T("")) == 0) {
+		lstrcmp(m_TableName[TableId], L"") == 0) {
 		return -1;
 	}
 	SIZE_T Size = m_TableSize[TableId];
@@ -204,10 +203,10 @@ int DataAcController::DecommitDataArea(int TableId)
 	}
 	if (m_TableAddr[TableId] == NULL ||
 		m_TableSize[TableId] == 0 ||
-		lstrcmp(m_TableName[TableId], _T("")) == 0) {
+		lstrcmp(m_TableName[TableId], L"") == 0) {
 		return -1;
 	}
-	BOOL Result = VirtualFree(m_TableAddr[TableId], 0, MEM_DECOMMIT);
+	bool Result = VirtualFree(m_TableAddr[TableId], 0, MEM_DECOMMIT);
 	if (Result == 0) {
 		return -1;
 	}
@@ -215,11 +214,11 @@ int DataAcController::DecommitDataArea(int TableId)
 }
 
 // Commit data area
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] int : Result Code (0: Sucess, -1: Error)
-int DataAcController::CommitDataArea(TCHAR* TableName)
+int DataAcController::CommitDataArea(wchar_t* TableName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -234,11 +233,11 @@ int DataAcController::CommitDataArea(TCHAR* TableName)
 }
 
 // Decommit data area
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] int : Result Code (0: Sucess, -1: Error)
-int DataAcController::DecommitDataArea(TCHAR* TableName)
+int DataAcController::DecommitDataArea(wchar_t* TableName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -260,8 +259,8 @@ int DataAcController::DecommitDataArea(TCHAR* TableName)
 int DataAcController::CreateTable(TableDef* TabDef)
 {
 	// Check whether specified TableDef has already been existed.
-	TCHAR* TableName = TabDef->GetTableName();
-	if (lstrcmp(TableName, _T("")) == 0) {
+	wchar_t* TableName = TabDef->GetTableName();
+	if (lstrcmp(TableName, L"") == 0) {
 		return -2;
 	}
 	int TableId = SearchTable(TableName);
@@ -295,7 +294,7 @@ int DataAcController::CreateTable(TableDef* TabDef)
 		if (CurrentColDef == NULL) {
 			continue;
 		}
-		if (lstrcmp(CurrentColDef->GetColumnName(), _T("")) == 0) {
+		if (lstrcmp(CurrentColDef->GetColumnName(), L"") == 0) {
 			ClearParameter(TableId);
 			return -2;
 		}
@@ -323,8 +322,8 @@ int DataAcController::CreateTable(TableDef* TabDef)
 				ClearParameter(TableId);
 				return -2;
 			}
-			AllocSize += (StrLen * sizeof(TCHAR));
-			m_ColumnSize[TableId][Loop] = (StrLen * sizeof(TCHAR));
+			AllocSize += (StrLen * sizeof(wchar_t));
+			m_ColumnSize[TableId][Loop] = (StrLen * sizeof(wchar_t));
 			m_ColumnType[TableId][Loop] = COLUMN_TYPE_WSTR;
 		} else if (CurrentColDef->GetColumnType() == COLUMN_TYPE_BIN) {
 			int StrLen = ((ColumnDefBin*)CurrentColDef)->GetMaxLength();
@@ -362,11 +361,11 @@ int DataAcController::CreateTable(TableDef* TabDef)
 }
 
 // Delete table
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] int : Result Code (0: Sucess, -1: Memory unallocation error, -2: Parameter error, -3: Decommit error)
-int DataAcController::DeleteTable(TCHAR* TableName)
+int DataAcController::DeleteTable(wchar_t* TableName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -2;
 	}
 	int TableId = SearchTable(TableName);
@@ -390,9 +389,9 @@ int DataAcController::DeleteTable(TCHAR* TableName)
 // [in] OldName : Old name
 // [in] NewName : New name
 // [out] int : Result Code (0: Sucess, -1: Error)
-int DataAcController::RenameTable(TCHAR* OldName, TCHAR* NewName)
+int DataAcController::RenameTable(wchar_t* OldName, wchar_t* NewName)
 {
-	if (lstrcmp(NewName, _T("")) == 0) {
+	if (lstrcmp(NewName, L"") == 0) {
 		return -1;
 	}
 	int NewTableId = SearchTable(NewName);
@@ -410,12 +409,12 @@ int DataAcController::RenameTable(TCHAR* OldName, TCHAR* NewName)
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Lock table
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [in] int    : Lock type (LOCK_SHARE or LOCK_EXCLUSIVE)
 // [out] int : Result Code (0: Sucess, -1: Locking error)
-int DataAcController::LockTable(TCHAR* TableName, int LockType)
+int DataAcController::LockTable(wchar_t* TableName, int LockType)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -427,7 +426,7 @@ int DataAcController::LockTable(TCHAR* TableName, int LockType)
 	}
 
 	EnterCriticalSection(&Cs4Lock);
-	while (TRUE) {
+	while (true) {
 		if (m_TableLock[TableId] >= 0 && LockType == LOCK_SHARE) {
 			m_TableLock[TableId]++;
 			break;
@@ -455,11 +454,11 @@ int DataAcController::LockTable(TCHAR* TableName, int LockType)
 }
 
 // Unlock table
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] int : Result Code (0: Sucess, -1: Locking error)
-int DataAcController::UnlockTable(TCHAR* TableName)
+int DataAcController::UnlockTable(wchar_t* TableName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -488,7 +487,7 @@ int DataAcController::LockAllTable(int LockType)
 
 	// Check whether the table has already been locked.
 	for (LoopTbl = 0; LoopTbl < MAX_TABLE_NUMBER; LoopTbl++) {
-		if (lstrcmp(m_TableName[LoopTbl], _T("")) == 0) {
+		if (lstrcmp(m_TableName[LoopTbl], L"") == 0) {
 			continue;
 		}
 		LockTable(m_TableName[LoopTbl], LockType);
@@ -504,7 +503,7 @@ int DataAcController::UnlockAllTable()
 
 	// Check whether the table has already been locked.
 	for (LoopTbl = 0; LoopTbl < MAX_TABLE_NUMBER; LoopTbl++) {
-		if (lstrcmp(m_TableName[LoopTbl], _T("")) == 0) {
+		if (lstrcmp(m_TableName[LoopTbl], L"") == 0) {
 			continue;
 		}
 		UnlockTable(m_TableName[LoopTbl]);
@@ -524,8 +523,8 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 	}
 
 	do {
-		TCHAR* TableName = RecDat->GetTableName();
-		if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+		wchar_t* TableName = RecDat->GetTableName();
+		if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 			return -1;
 		}
 		int TableId = SearchTable(TableName);
@@ -536,7 +535,7 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 			return -1;
 		}
 
-		BYTE* Addr = (BYTE*)m_TableAddr[TableId];
+		unsigned char* Addr = (unsigned char*)m_TableAddr[TableId];
 		Addr = Addr + (m_RecordCount[TableId] * m_RecordSize[TableId]);
 		int Loop = 0;
 		for (Loop = 0; Loop < m_ColumnCount[TableId]; Loop++) {
@@ -580,16 +579,16 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 						return -1;
 					}
 					ColumnDataWStr* ColDatWStr = (ColumnDataWStr*)ColDat;
-					TCHAR* Value = (TCHAR*)ColDatWStr->GetValue();
-					TCHAR* ValueStore = (TCHAR*)Addr;
-					lstrcpyn(ValueStore, Value, m_ColumnSize[TableId][Loop] / sizeof(TCHAR));
+					wchar_t* Value = (wchar_t*)ColDatWStr->GetValue();
+					wchar_t* ValueStore = (wchar_t*)Addr;
+					lstrcpyn(ValueStore, Value, m_ColumnSize[TableId][Loop] / sizeof(wchar_t));
 				} else if (ColDat->GetColumnType() == COLUMN_TYPE_BIN) {
 					if (m_ColumnType[TableId][Loop] != COLUMN_TYPE_BIN) {
 						return -1;
 					}
 					ColumnDataBin* ColDatBin = (ColumnDataBin*)ColDat;
-					TCHAR* Value = (TCHAR*)ColDatBin->GetValue();
-					TCHAR* ValueStore = (TCHAR*)Addr;
+					wchar_t* Value = (wchar_t*)ColDatBin->GetValue();
+					wchar_t* ValueStore = (wchar_t*)Addr;
 					CopyMemory(ValueStore, Value, m_ColumnSize[TableId][Loop]);
 				}
 				Addr += m_ColumnSize[TableId][Loop];
@@ -609,11 +608,11 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 }
 
 // Get record
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] RecordData* : Pointer to the records (NULL:Error)
-RecordData* DataAcController::GetRecord(TCHAR* TableName)
+RecordData* DataAcController::GetRecord(wchar_t* TableName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return NULL;
 	}
 	int TableId = SearchTable(TableName);
@@ -624,7 +623,7 @@ RecordData* DataAcController::GetRecord(TCHAR* TableName)
 		return NULL;
 	}
 
-	BYTE* Addr = (BYTE*)m_TableAddr[TableId];
+	unsigned char* Addr = (unsigned char*)m_TableAddr[TableId];
 	ColumnData* ColDat;
 	RecordData* RecDat;
 	RecordData* PrevRecDat = NULL;
@@ -641,7 +640,7 @@ RecordData* DataAcController::GetRecord(TCHAR* TableName)
 			PrevRecDat->SetNextRecord(RecDat);
 		}
 		for (LoopCol = 0; LoopCol < m_ColumnCount[TableId]; LoopCol++) {
-			TCHAR* ColNam = m_ColumnName[TableId][LoopCol];
+			wchar_t* ColNam = m_ColumnName[TableId][LoopCol];
 			if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_INT) {
 				INT32* Value = (INT32*)Addr;
 				ColDat = new ColumnDataInt(ColNam, *Value);
@@ -652,10 +651,10 @@ RecordData* DataAcController::GetRecord(TCHAR* TableName)
 				char* Value = (char*)Addr;
 				ColDat = new ColumnDataStr(ColNam, Value);
 			} else if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_WSTR) {
-				TCHAR* Value = (TCHAR*)Addr;
+				wchar_t* Value = (wchar_t*)Addr;
 				ColDat = new ColumnDataWStr(ColNam, Value);
 			} else if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_BIN) {
-				BYTE* Value = (BYTE*)Addr;
+				unsigned char* Value = (unsigned char*)Addr;
 				ColDat = new ColumnDataBin(ColNam, Value, m_ColumnSize[TableId][LoopCol]);
 			}
 			RecDat->AddColumn(ColDat);
@@ -676,11 +675,11 @@ RecordData* DataAcController::GetRecord(RecordData* RecDatReq)
 }
 
 // Delete all records of the specified table
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::DeleteRecord(TCHAR* TableName)
+int DataAcController::DeleteRecord(wchar_t* TableName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -749,8 +748,8 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 	RecordData* FrstRecDatRes = NULL;
 
 	do {
-		TCHAR* TableName = RecDatReq->GetTableName();
-		if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+		wchar_t* TableName = RecDatReq->GetTableName();
+		if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 			*RetCode = -1;
 			return NULL;
 		}
@@ -771,7 +770,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 			}
 		}
 
-		BYTE* Addr = (BYTE*)m_TableAddr[TableId];
+		unsigned char* Addr = (unsigned char*)m_TableAddr[TableId];
 
 		// Search records by the presented condition.
 		int RecCnt = m_RecordCount[TableId];
@@ -782,18 +781,18 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 
 			// check records by the presented condition(Columns).
 			int FoundColCnt = 0;
-			BOOL ProceedNextReq = FALSE;
+			bool ProceedNextReq = false;
 			for (LoopCol = 0; LoopCol < ColCnt; LoopCol++) {
 				ColumnData* CurColReq = RecDatReq->GetColumn(LoopCol);
 				int ColIndx = GetColumnIndex(TableName, CurColReq->GetColumnName());
 				// If unknown column name was presented, proceed to next record of the request.
 				if (ColIndx == -1) {
-					ProceedNextReq = TRUE;
+					ProceedNextReq = true;
 					break;
 				}
 				// If column type is not matched, proceed to next record of the request.
 				if (CurColReq->GetColumnType() != m_ColumnType[TableId][ColIndx]) {
-					ProceedNextReq = TRUE;
+					ProceedNextReq = true;
 					break;
 				}
 				// Compare value
@@ -829,7 +828,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 						FoundColCnt++;
 					}
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_WSTR) {
-					TCHAR* Value = (TCHAR*)(Addr + m_ColumnOffset[TableId][ColIndx]);
+					wchar_t* Value = (wchar_t*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataWStr* CurColWStrReq = (ColumnDataWStr*)CurColReq;
 					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && lstrcmp(Value, CurColWStrReq->GetValue()) == 0) ||
 						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && lstrcmp(Value, CurColWStrReq->GetValue()) != 0) ||
@@ -838,7 +837,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 						FoundColCnt++;
 					}
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_BIN) {
-					BYTE* Value = (BYTE*)(Addr + m_ColumnOffset[TableId][ColIndx]);
+					unsigned char* Value = (unsigned char*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataBin* CurColBinReq = (ColumnDataBin*)CurColReq;
 					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && memcmp(Value, CurColBinReq->GetValue(), m_ColumnSize[TableId][ColIndx]) == 0) ||
 						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && memcmp(Value, CurColBinReq->GetValue(), m_ColumnSize[TableId][ColIndx]) != 0)) {
@@ -846,7 +845,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 					}
 				}
 			}
-			if (ProceedNextReq == TRUE) {
+			if (ProceedNextReq == true) {
 				break;
 			}
 
@@ -863,7 +862,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 					}
 					ColumnData* NewColDat;
 					for (LoopCol = 0; LoopCol < m_ColumnCount[TableId]; LoopCol++) {
-						TCHAR* ColNam = m_ColumnName[TableId][LoopCol];
+						wchar_t* ColNam = m_ColumnName[TableId][LoopCol];
 						if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_INT) {
 							INT32* Value = (INT32*)Addr;
 							NewColDat = new ColumnDataInt(ColNam, *Value);
@@ -874,10 +873,10 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 							char* Value = (char*)Addr;
 							NewColDat = new ColumnDataStr(ColNam, Value);
 						} else if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_WSTR) {
-							TCHAR* Value = (TCHAR*)Addr;
+							wchar_t* Value = (wchar_t*)Addr;
 							NewColDat = new ColumnDataWStr(ColNam, Value);
 						} else if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_BIN) {
-							BYTE* Value = (BYTE*)Addr;
+							unsigned char* Value = (unsigned char*)Addr;
 							NewColDat = new ColumnDataBin(ColNam, Value, m_ColumnSize[TableId][LoopCol]);
 						}
 						RecDatRes->AddColumn(NewColDat);
@@ -903,7 +902,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 					}
 					int LoopUdt;
 					int ColCntUdt = RecDatUdt->GetColumnCount();
-					BOOL UdtFlag = FALSE;
+					bool UdtFlag = false;
 					for (LoopUdt = 0; LoopUdt < ColCntUdt; LoopUdt++) {
 						ColumnData* ColDatUdt = RecDatUdt->GetColumn(LoopUdt);
 						if (ColDatUdt == NULL) {
@@ -922,7 +921,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 							INT32 Value = (INT32)ColDatInt->GetValue();
 							INT32* ValueStore = (INT32*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
 							*ValueStore = Value;
-							UdtFlag = TRUE;
+							UdtFlag = true;
 						} else if (ColDatUdt->GetColumnType() == COLUMN_TYPE_FLOAT) { 
 							if (m_ColumnType[TableId][CurColIdx] != COLUMN_TYPE_FLOAT) {
 								continue;
@@ -931,7 +930,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 							FLOAT Value = (FLOAT)ColDatFloat->GetValue();
 							FLOAT* ValueStore = (FLOAT*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
 							*ValueStore = Value;
-							UdtFlag = TRUE;
+							UdtFlag = true;
 						} else if (ColDatUdt->GetColumnType() == COLUMN_TYPE_STR) {
 							if (m_ColumnType[TableId][CurColIdx] != COLUMN_TYPE_STR) {
 								continue;
@@ -943,28 +942,28 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 							//strncpy_sの代わりにCopyMemoryを使用することはできない。CopyMemoryの場合
 							//制限長いっぱいの文字列をコピーしたときに終端に\0が付加されない。
 							CheckAndChangeChar(ValueStore, ValueStore + m_ColumnSize[TableId][CurColIdx] - 1);
-							UdtFlag = TRUE;
+							UdtFlag = true;
 						} else if (ColDatUdt->GetColumnType() == COLUMN_TYPE_WSTR) {
 							if (m_ColumnType[TableId][CurColIdx] != COLUMN_TYPE_WSTR) {
 								continue;
 							}
 							ColumnDataWStr* ColDatWStr = (ColumnDataWStr*)ColDatUdt;
-							TCHAR* Value = (TCHAR*)ColDatWStr->GetValue();
-							TCHAR* ValueStore = (TCHAR*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
-							lstrcpyn(ValueStore, Value, m_ColumnSize[TableId][CurColIdx] / sizeof(TCHAR));
-							UdtFlag = TRUE;
+							wchar_t* Value = (wchar_t*)ColDatWStr->GetValue();
+							wchar_t* ValueStore = (wchar_t*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
+							lstrcpyn(ValueStore, Value, m_ColumnSize[TableId][CurColIdx] / sizeof(wchar_t));
+							UdtFlag = true;
 						} else if (ColDatUdt->GetColumnType() == COLUMN_TYPE_BIN) {
 							if (m_ColumnType[TableId][CurColIdx] != COLUMN_TYPE_BIN) {
 								continue;
 							}
 							ColumnDataBin* ColDatBin = (ColumnDataBin*)ColDatUdt;
-							BYTE* Value = (BYTE*)ColDatBin->GetValue();
-							BYTE* ValueStore = (BYTE*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
+							unsigned char* Value = (unsigned char*)ColDatBin->GetValue();
+							unsigned char* ValueStore = (unsigned char*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
 							memcpy(ValueStore, Value, m_ColumnSize[TableId][CurColIdx]);
-							UdtFlag = TRUE;
+							UdtFlag = true;
 						}
 					}
-					if (UdtFlag == TRUE) {
+					if (UdtFlag == true) {
 						IncrementTableVersion(TableId);
 					}
 					Addr += m_RecordSize[TableId];
@@ -985,14 +984,14 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Sort records
-// [in] TCHAR* : Target column name for sorting
-// [in] TCHAR* : Table name
-// [in] BOOL : TRUE="A to Z", FALSE="Z to A"
+// [in] wchar_t* : Target column name for sorting
+// [in] wchar_t* : Table name
+// [in] bool : true="A to Z", false="Z to A"
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::SortRecord(TCHAR* TableName, TCHAR* ColumnName, BOOL Flag)
+int DataAcController::SortRecord(wchar_t* TableName, wchar_t* ColumnName, bool Flag)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0 ||
-		ColumnName == NULL || lstrcmp(ColumnName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0 ||
+		ColumnName == NULL || lstrcmp(ColumnName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -1006,7 +1005,7 @@ int DataAcController::SortRecord(TCHAR* TableName, TCHAR* ColumnName, BOOL Flag)
 	m_CompareColOffset = m_ColumnOffset[TableId][ColumnId];
 	m_CompareColType   = m_ColumnType[TableId][ColumnId];
 	m_CompareColSize   = m_ColumnSize[TableId][ColumnId];
-	if (Flag == TRUE) {
+	if (Flag == true) {
 		qsort(m_TableAddr[TableId], m_RecordCount[TableId], m_RecordSize[TableId], AzSortCompare);
 	} else {
 		qsort(m_TableAddr[TableId], m_RecordCount[TableId], m_RecordSize[TableId], ZaSortCompare);
@@ -1015,21 +1014,21 @@ int DataAcController::SortRecord(TCHAR* TableName, TCHAR* ColumnName, BOOL Flag)
 }
 
 // Sort records (A to Z)
-// [in] TCHAR* : Target column name for sorting
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Target column name for sorting
+// [in] wchar_t* : Table name
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::AzSortRecord(TCHAR* TableName, TCHAR* ColumnName)
+int DataAcController::AzSortRecord(wchar_t* TableName, wchar_t* ColumnName)
 {
-	return SortRecord(TableName, ColumnName, TRUE);
+	return SortRecord(TableName, ColumnName, true);
 }
 
 // Sort records (Z to A)
-// [in] TCHAR* : Target column name for sorting
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Target column name for sorting
+// [in] wchar_t* : Table name
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::ZaSortRecord(TCHAR* TableName, TCHAR* ColumnName)
+int DataAcController::ZaSortRecord(wchar_t* TableName, wchar_t* ColumnName)
 {
-	return SortRecord(TableName, ColumnName, FALSE);
+	return SortRecord(TableName, ColumnName, false);
 }
 
 // Compare function for quick sort
@@ -1038,8 +1037,8 @@ int DataAcController::ZaSortRecord(TCHAR* TableName, TCHAR* ColumnName)
 int DataAcController::AzSortCompare(const void *Arg1, const void *Arg2)
 {
 	if (m_CompareColType == COLUMN_TYPE_INT) {
-		INT32* Addr1 = (INT32*)((BYTE*)Arg1 + m_CompareColOffset);
-		INT32* Addr2 = (INT32*)((BYTE*)Arg2 + m_CompareColOffset);
+		INT32* Addr1 = (INT32*)((unsigned char*)Arg1 + m_CompareColOffset);
+		INT32* Addr2 = (INT32*)((unsigned char*)Arg2 + m_CompareColOffset);
 		if (*Addr1 < *Addr2) {
 			return -1;
 		}
@@ -1048,8 +1047,8 @@ int DataAcController::AzSortCompare(const void *Arg1, const void *Arg2)
 		}
 		return 0;
 	} else if (m_CompareColType == COLUMN_TYPE_FLOAT) {
-		FLOAT* Addr1 = (FLOAT*)((BYTE*)Arg1 + m_CompareColOffset);
-		FLOAT* Addr2 = (FLOAT*)((BYTE*)Arg2 + m_CompareColOffset);
+		FLOAT* Addr1 = (FLOAT*)((unsigned char*)Arg1 + m_CompareColOffset);
+		FLOAT* Addr2 = (FLOAT*)((unsigned char*)Arg2 + m_CompareColOffset);
 		if (*Addr1 < *Addr2) {
 			return -1;
 		}
@@ -1058,18 +1057,18 @@ int DataAcController::AzSortCompare(const void *Arg1, const void *Arg2)
 		}
 		return 0;
 	} else if (m_CompareColType == COLUMN_TYPE_STR) {
-		char* Addr1 = (char*)((BYTE*)Arg1 + m_CompareColOffset);
-		char* Addr2 = (char*)((BYTE*)Arg2 + m_CompareColOffset);
+		char* Addr1 = (char*)((unsigned char*)Arg1 + m_CompareColOffset);
+		char* Addr2 = (char*)((unsigned char*)Arg2 + m_CompareColOffset);
 		int Ret = strcmp(Addr1, Addr2);
 		return Ret;
 	} else if (m_CompareColType == COLUMN_TYPE_WSTR) {
-		TCHAR* Addr1 = (TCHAR*)((BYTE*)Arg1 + m_CompareColOffset);
-		TCHAR* Addr2 = (TCHAR*)((BYTE*)Arg2 + m_CompareColOffset);
+		wchar_t* Addr1 = (wchar_t*)((unsigned char*)Arg1 + m_CompareColOffset);
+		wchar_t* Addr2 = (wchar_t*)((unsigned char*)Arg2 + m_CompareColOffset);
 		int Ret = lstrcmp(Addr1, Addr2);
 		return Ret;
 	} else if (m_CompareColType == COLUMN_TYPE_BIN) {
-		void* Addr1 = (void*)((BYTE*)Arg1 + m_CompareColOffset);
-		void* Addr2 = (void*)((BYTE*)Arg2 + m_CompareColOffset);
+		void* Addr1 = (void*)((unsigned char*)Arg1 + m_CompareColOffset);
+		void* Addr2 = (void*)((unsigned char*)Arg2 + m_CompareColOffset);
 		int Ret = memcmp(Addr1, Addr2, m_CompareColSize);
 		return Ret;
 	}
@@ -1082,8 +1081,8 @@ int DataAcController::AzSortCompare(const void *Arg1, const void *Arg2)
 int DataAcController::ZaSortCompare(const void *Arg1, const void *Arg2)
 {
 	if (m_CompareColType == COLUMN_TYPE_INT) {
-		INT32* Addr1 = (INT32*)((BYTE*)Arg1 + m_CompareColOffset);
-		INT32* Addr2 = (INT32*)((BYTE*)Arg2 + m_CompareColOffset);
+		INT32* Addr1 = (INT32*)((unsigned char*)Arg1 + m_CompareColOffset);
+		INT32* Addr2 = (INT32*)((unsigned char*)Arg2 + m_CompareColOffset);
 		if (*Addr1 < *Addr2) {
 			return 1;
 		}
@@ -1092,8 +1091,8 @@ int DataAcController::ZaSortCompare(const void *Arg1, const void *Arg2)
 		}
 		return 0;
 	} else if (m_CompareColType == COLUMN_TYPE_FLOAT) {
-		FLOAT* Addr1 = (FLOAT*)((BYTE*)Arg1 + m_CompareColOffset);
-		FLOAT* Addr2 = (FLOAT*)((BYTE*)Arg2 + m_CompareColOffset);
+		FLOAT* Addr1 = (FLOAT*)((unsigned char*)Arg1 + m_CompareColOffset);
+		FLOAT* Addr2 = (FLOAT*)((unsigned char*)Arg2 + m_CompareColOffset);
 		if (*Addr1 < *Addr2) {
 			return 1;
 		}
@@ -1102,18 +1101,18 @@ int DataAcController::ZaSortCompare(const void *Arg1, const void *Arg2)
 		}
 		return 0;
 	} else if (m_CompareColType == COLUMN_TYPE_STR) {
-		char* Addr1 = (char*)((BYTE*)Arg1 + m_CompareColOffset);
-		char* Addr2 = (char*)((BYTE*)Arg2 + m_CompareColOffset);
+		char* Addr1 = (char*)((unsigned char*)Arg1 + m_CompareColOffset);
+		char* Addr2 = (char*)((unsigned char*)Arg2 + m_CompareColOffset);
 		int Ret = strcmp(Addr2, Addr1);
 		return Ret;
 	} else if (m_CompareColType == COLUMN_TYPE_WSTR) {
-		TCHAR* Addr1 = (TCHAR*)((BYTE*)Arg1 + m_CompareColOffset);
-		TCHAR* Addr2 = (TCHAR*)((BYTE*)Arg2 + m_CompareColOffset);
+		wchar_t* Addr1 = (wchar_t*)((unsigned char*)Arg1 + m_CompareColOffset);
+		wchar_t* Addr2 = (wchar_t*)((unsigned char*)Arg2 + m_CompareColOffset);
 		int Ret = lstrcmp(Addr2, Addr1);
 		return Ret;
 	} else if (m_CompareColType == COLUMN_TYPE_BIN) {
-		void* Addr1 = (void*)((BYTE*)Arg1 + m_CompareColOffset);
-		void* Addr2 = (void*)((BYTE*)Arg2 + m_CompareColOffset);
+		void* Addr1 = (void*)((unsigned char*)Arg1 + m_CompareColOffset);
+		void* Addr2 = (void*)((unsigned char*)Arg2 + m_CompareColOffset);
 		int Ret = memcmp(Addr2, Addr1, m_CompareColSize);
 		return Ret;
 	}
@@ -1123,11 +1122,11 @@ int DataAcController::ZaSortCompare(const void *Arg1, const void *Arg2)
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Get column count
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] int : Column count (-1:Not found)
-int DataAcController::GetColumnCount(TCHAR* TableName)
+int DataAcController::GetColumnCount(wchar_t* TableName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -1138,12 +1137,12 @@ int DataAcController::GetColumnCount(TCHAR* TableName)
 }
 
 //Get column name
-// [in] TCHAR* : Table name
-// [in] TCHAR[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE] : Column names which are acquired.
+// [in] wchar_t* : Table name
+// [in] wchar_t[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE] : Column names which are acquired.
 // [out] int : Found column name count
-int DataAcController::GetColumnName(TCHAR* TableName, TCHAR ColumnNames[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE])
+int DataAcController::GetColumnName(wchar_t* TableName, wchar_t ColumnNames[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE])
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -1153,7 +1152,7 @@ int DataAcController::GetColumnName(TCHAR* TableName, TCHAR ColumnNames[MAX_COLU
 
 	int CurPos = 0;
 	for (int Loop = 0; Loop < MAX_COLUMN_NUMBER; Loop++) {
-		if (lstrcmp(m_ColumnName[TableId][Loop], _T("")) == 0) {
+		if (lstrcmp(m_ColumnName[TableId][Loop], L"") == 0) {
 			continue;
 		}
 		lstrcpyn(ColumnNames[CurPos], m_ColumnName[TableId][Loop], COLUMN_NAME_SIZE);
@@ -1163,12 +1162,12 @@ int DataAcController::GetColumnName(TCHAR* TableName, TCHAR ColumnNames[MAX_COLU
 }
 
 // Get column size
-// [in] TCHAR* : Table name
-// [in] TCHAR* : Column name
+// [in] wchar_t* : Table name
+// [in] wchar_t* : Column name
 // [out] int : Column size (-1:Not found)
-int DataAcController::GetColumnSize(TCHAR* TableName, TCHAR* ColumnName)
+int DataAcController::GetColumnSize(wchar_t* TableName, wchar_t* ColumnName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -1183,12 +1182,12 @@ int DataAcController::GetColumnSize(TCHAR* TableName, TCHAR* ColumnName)
 }
 
 // Get column type
-// [in] TCHAR* : Table name
-// [in] TCHAR* : Column name
+// [in] wchar_t* : Table name
+// [in] wchar_t* : Column name
 // [out] int : Column type
-int DataAcController::GetColumnType(TCHAR* TableName, TCHAR* ColumnName)
+int DataAcController::GetColumnType(wchar_t* TableName, wchar_t* ColumnName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -1211,7 +1210,7 @@ int DataAcController::GetTableCount()
 	for (Loop = 0; Loop < MAX_TABLE_NUMBER; Loop++) {
 		if (m_TableAddr[Loop] != NULL &&
 			m_TableSize[Loop] != 0 &&
-			lstrcmp(m_TableName[Loop], _T("")) != 0) {
+			lstrcmp(m_TableName[Loop], L"") != 0) {
 			TableCnt++;
 		}
 	}
@@ -1219,13 +1218,13 @@ int DataAcController::GetTableCount()
 }
 
 //Get table name
-// [in] TCHAR[MAX_TABLE_NUMBER][TABLE_NAME_SIZE] : Table names which are acquired.
+// [in] wchar_t[MAX_TABLE_NUMBER][TABLE_NAME_SIZE] : Table names which are acquired.
 // [out] int : Found table name count
-int DataAcController::GetTableName(TCHAR TableNames[MAX_TABLE_NUMBER][TABLE_NAME_SIZE])
+int DataAcController::GetTableName(wchar_t TableNames[MAX_TABLE_NUMBER][TABLE_NAME_SIZE])
 {
 	int CurPos = 0;
 	for (int Loop = 0; Loop < MAX_TABLE_NUMBER; Loop++) {
-		if (lstrcmp(m_TableName[Loop], _T("")) == 0) {
+		if (lstrcmp(m_TableName[Loop], L"") == 0) {
 			continue;
 		}
 		lstrcpyn(TableNames[CurPos], m_TableName[Loop], TABLE_NAME_SIZE);
@@ -1235,11 +1234,11 @@ int DataAcController::GetTableName(TCHAR TableNames[MAX_TABLE_NUMBER][TABLE_NAME
 }
 
 //Get table size
-// [in] TCHAR* : Table name for acquiring the size
+// [in] wchar_t* : Table name for acquiring the size
 // [out] int : Size of the table
-int DataAcController::GetTableSize(TCHAR* TableName)
+int DataAcController::GetTableSize(wchar_t* TableName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -1250,11 +1249,11 @@ int DataAcController::GetTableSize(TCHAR* TableName)
 }
 
 // Get table version
-// [in] : TCHAR* : TableName
+// [in] : wchar_t* : TableName
 // [out] : int : The version of the specified table
-int DataAcController::GetTableVersion(TCHAR* TableName)
+int DataAcController::GetTableVersion(wchar_t* TableName)
 {
-	if (TableName == NULL || lstrcmp(TableName, _T("")) == 0) {
+	if (TableName == NULL || lstrcmp(TableName, L"") == 0) {
 		return -1;
 	}
 	int TableId = SearchTable(TableName);
@@ -1265,9 +1264,9 @@ int DataAcController::GetTableVersion(TCHAR* TableName)
 }
 
 //Get max number of records
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] int : Max number of records
-int DataAcController::GetMaxNumOfRecords(TCHAR* TableName)
+int DataAcController::GetMaxNumOfRecords(wchar_t* TableName)
 {
 	int Idx = SearchTable(TableName);
 	if (Idx == -1) {
@@ -1277,9 +1276,9 @@ int DataAcController::GetMaxNumOfRecords(TCHAR* TableName)
 }
 
 //Get number of records
-// [in] TCHAR* : Table name
+// [in] wchar_t* : Table name
 // [out] int : number of records
-int DataAcController::GetNumOfRecords(TCHAR* TableName)
+int DataAcController::GetNumOfRecords(wchar_t* TableName)
 {
 	int Idx = SearchTable(TableName);
 	if (Idx == -1) {
@@ -1292,14 +1291,14 @@ int DataAcController::GetNumOfRecords(TCHAR* TableName)
 
 // Save data
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::SaveData(TCHAR* FilePath)
+int DataAcController::SaveData(wchar_t* FilePath)
 {
 	int LoopTbl;
 	int LoopClm;
 
 	// Check whether the table has already been locked.
 	for (LoopTbl = 0; LoopTbl < MAX_TABLE_NUMBER; LoopTbl++) {
-		if (lstrcmp(m_TableName[LoopTbl], _T("")) == 0) {
+		if (lstrcmp(m_TableName[LoopTbl], L"") == 0) {
 			continue;
 		}
 		if (m_TableLock[LoopTbl] == 0) {
@@ -1311,7 +1310,7 @@ int DataAcController::SaveData(TCHAR* FilePath)
 	if (FilePath == NULL) {
 		return -1;
 	}
-	if (lstrcmp(FilePath, _T("")) == 0) {
+	if (lstrcmp(FilePath, L"") == 0) {
 		return -1;
 	}
 
@@ -1323,8 +1322,8 @@ int DataAcController::SaveData(TCHAR* FilePath)
 
 	DWORD NumOfByteWrite;
 	// Write key code
-	TCHAR KeyCode[16];
-	lstrcpyn(KeyCode, _T("StkData_0100"), 16);
+	wchar_t KeyCode[16];
+	lstrcpyn(KeyCode, L"StkData_0100", 16);
 	if (WriteFile(FileHndl, (LPCVOID)KeyCode, sizeof(KeyCode), &NumOfByteWrite, NULL) == 0) {
 		CloseHandle(FileHndl);
 		return -1;
@@ -1336,12 +1335,12 @@ int DataAcController::SaveData(TCHAR* FilePath)
 		return -1;
 	}
 	for (LoopTbl = 0; LoopTbl < MAX_TABLE_NUMBER; LoopTbl++) {
-		if (lstrcmp(m_TableName[LoopTbl], _T("")) == 0) {
+		if (lstrcmp(m_TableName[LoopTbl], L"") == 0) {
 			continue;
 		}
 
 		// Write table name
-		TCHAR TableName[TABLE_NAME_SIZE];
+		wchar_t TableName[TABLE_NAME_SIZE];
 		lstrcpyn(TableName, m_TableName[LoopTbl], TABLE_NAME_SIZE);
 		if (WriteFile(FileHndl, (LPCVOID)TableName, sizeof(TableName), &NumOfByteWrite, NULL) == 0) {
 			CloseHandle(FileHndl);
@@ -1361,7 +1360,7 @@ int DataAcController::SaveData(TCHAR* FilePath)
 		}
 		for (LoopClm = 0; LoopClm < ColumnCount; LoopClm++) {
 			// Write column name
-			TCHAR ColumnName[COLUMN_NAME_SIZE];
+			wchar_t ColumnName[COLUMN_NAME_SIZE];
 			lstrcpyn(ColumnName, m_ColumnName[LoopTbl][LoopClm], COLUMN_NAME_SIZE);
 			if (WriteFile(FileHndl, (LPCVOID)ColumnName, sizeof(ColumnName), &NumOfByteWrite, NULL) == 0) {
 				CloseHandle(FileHndl);
@@ -1406,14 +1405,14 @@ int DataAcController::SaveData(TCHAR* FilePath)
 
 // Load data
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::LoadData(TCHAR* FilePath)
+int DataAcController::LoadData(wchar_t* FilePath)
 {
 	int LoopTbl;
 	int LoopClm;
 
 	// Check whether the table has already been locked.
 	for (LoopTbl = 0; LoopTbl < MAX_TABLE_NUMBER; LoopTbl++) {
-		if (lstrcmp(m_TableName[LoopTbl], _T("")) == 0) {
+		if (lstrcmp(m_TableName[LoopTbl], L"") == 0) {
 			continue;
 		}
 		if (m_TableLock[LoopTbl] != -1) {
@@ -1425,12 +1424,12 @@ int DataAcController::LoadData(TCHAR* FilePath)
 	if (FilePath == NULL) {
 		return -1;
 	}
-	if (lstrcmp(FilePath, _T("")) == 0) {
+	if (lstrcmp(FilePath, L"") == 0) {
 		return -1;
 	}
 
 	//Delete all tables
-	TCHAR DelTblName[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
+	wchar_t DelTblName[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
 	int DelTblCnt = GetTableName(DelTblName);
 	for (LoopTbl = 0; LoopTbl < DelTblCnt; LoopTbl++) {
 		DeleteTable(DelTblName[LoopTbl]);
@@ -1445,12 +1444,12 @@ int DataAcController::LoadData(TCHAR* FilePath)
 
 	DWORD NumOfByteRead;
 	// Read key code
-	TCHAR KeyCode[16];
+	wchar_t KeyCode[16];
 	if (ReadFile(FileHndl, (LPVOID)KeyCode, sizeof(KeyCode), &NumOfByteRead, NULL) == 0) {
 		CloseHandle(FileHndl);
 		return -1;
 	}
-	if (lstrcmp(KeyCode, _T("StkData_0100")) != 0) {
+	if (lstrcmp(KeyCode, L"StkData_0100") != 0) {
 		CloseHandle(FileHndl);
 		return -1;
 	}
@@ -1462,7 +1461,7 @@ int DataAcController::LoadData(TCHAR* FilePath)
 	}
 	for (LoopTbl = 0; LoopTbl < TableCount; LoopTbl++) {
 		// Read table name
-		TCHAR TableName[TABLE_NAME_SIZE];
+		wchar_t TableName[TABLE_NAME_SIZE];
 		if (ReadFile(FileHndl, (LPVOID)TableName, sizeof(TableName), &NumOfByteRead, NULL) == 0) {
 			CloseHandle(FileHndl);
 			return -1;
@@ -1484,7 +1483,7 @@ int DataAcController::LoadData(TCHAR* FilePath)
 		ColumnDef* NewColumn[MAX_COLUMN_NUMBER];
 		for (LoopClm = 0; LoopClm < ColumnCount; LoopClm++) {
 			// Read column name
-			TCHAR ColumnName[COLUMN_NAME_SIZE];
+			wchar_t ColumnName[COLUMN_NAME_SIZE];
 			if (ReadFile(FileHndl, (LPVOID)ColumnName, sizeof(ColumnName), &NumOfByteRead, NULL) == 0) {
 				CloseHandle(FileHndl);
 				return -1;
@@ -1508,7 +1507,7 @@ int DataAcController::LoadData(TCHAR* FilePath)
 					NewTable.AddColumnDef(NewColmnStr);
 					NewColumn[LoopClm] = (ColumnDef*)NewColmnStr;
 				} else if (ColumnType == COLUMN_TYPE_WSTR) {
-					ColumnDefWStr* NewColmnWStr = new ColumnDefWStr(ColumnName, ColumnSize / sizeof(TCHAR));
+					ColumnDefWStr* NewColmnWStr = new ColumnDefWStr(ColumnName, ColumnSize / sizeof(wchar_t));
 					NewTable.AddColumnDef(NewColmnWStr);
 					NewColumn[LoopClm] = (ColumnDef*)NewColmnWStr;
 				} else if (ColumnType == COLUMN_TYPE_BIN) {
@@ -1568,8 +1567,8 @@ DWORD DataAcController::AutoSaveThreadProc()
 {
 	int PrevTblCnt = 0;
 	int PrevTblVer[MAX_TABLE_NUMBER];
-	BOOL ChgFlag = FALSE;
-	while (TRUE) {
+	bool ChgFlag = false;
+	while (true) {
 		Sleep(AutoSaveInterval);
 		// If auto save has been cancelled, break the while process.
 		if (AutoSaveInterval == -1) {
@@ -1577,37 +1576,37 @@ DWORD DataAcController::AutoSaveThreadProc()
 		}
 
 		// If table has been changed from the previous, SaveData() is called.
-		TCHAR TblName[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
+		wchar_t TblName[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
 		int TblCnt = GetTableName(TblName);
 		if (PrevTblCnt == TblCnt) {
 			int TblVer[MAX_TABLE_NUMBER];
 			for (int Loop = 0; Loop < TblCnt; Loop++) {
 				TblVer[Loop] = GetTableVersion(TblName[Loop]);
 				if (PrevTblVer[Loop] != TblVer[Loop]) {
-					ChgFlag = TRUE;
+					ChgFlag = true;
 					PrevTblVer[Loop] = TblVer[Loop];
 				}
 			}
 		} else {
-			ChgFlag = TRUE;
+			ChgFlag = true;
 			PrevTblCnt = TblCnt;
 			for (int Loop = 0; Loop < TblCnt; Loop++) {
 				PrevTblVer[Loop] = GetTableVersion(TblName[Loop]);
 			}
 		}
-		if (ChgFlag == TRUE) {
-			ChgFlag = FALSE;
+		if (ChgFlag == true) {
+			ChgFlag = false;
 			LockAllTable(LOCK_SHARE);
-			SaveData((TCHAR*)AutoSaveFilePath);
+			SaveData((wchar_t*)AutoSaveFilePath);
 			UnlockAllTable();
 		}
 	}
 	return 0;
 }
 
-int DataAcController::AutoSave(TCHAR* FilePath, int Sec, BOOL Flag)
+int DataAcController::AutoSave(wchar_t* FilePath, int Sec, bool Flag)
 {
-	static BOOL Switch = FALSE;
+	static bool Switch = false;
 
 	EnterCriticalSection(&Cs4AutoSave);
 	if (Flag == Switch) {
@@ -1619,13 +1618,13 @@ int DataAcController::AutoSave(TCHAR* FilePath, int Sec, BOOL Flag)
 		return -1;
 	}
 
-	if (Flag == TRUE) {
-		Switch = TRUE;
+	if (Flag == true) {
+		Switch = true;
 		AutoSaveInterval = Sec * 1000;
 		lstrcpyn(AutoSaveFilePath, FilePath, 256);
 		CreateThread(NULL, 0, AutoSaveThreadProcDummy, this, 0, &AutoSaveThreadId);
 	} else {
-		Switch = FALSE;
+		Switch = false;
 		AutoSaveInterval = -1;
 	}
 	LeaveCriticalSection(&Cs4AutoSave);

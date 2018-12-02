@@ -13,7 +13,7 @@ public:
 	static DataAcController* StkDataInstance;
 
 private:
-	TCHAR  m_TableName[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
+	wchar_t  m_TableName[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
 	LPVOID m_TableAddr[MAX_TABLE_NUMBER];
 	SIZE_T m_TableSize[MAX_TABLE_NUMBER];
 	int    m_TableLock[MAX_TABLE_NUMBER];
@@ -22,7 +22,7 @@ private:
 	SIZE_T m_RecordSize[MAX_TABLE_NUMBER];
 	int    m_RecordCount[MAX_TABLE_NUMBER];
 
-	TCHAR  m_ColumnName[MAX_TABLE_NUMBER][MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE];
+	wchar_t  m_ColumnName[MAX_TABLE_NUMBER][MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE];
 	int    m_ColumnOffset[MAX_TABLE_NUMBER][MAX_COLUMN_NUMBER];
 	int    m_ColumnType[MAX_TABLE_NUMBER][MAX_COLUMN_NUMBER];
 	int    m_ColumnSize[MAX_TABLE_NUMBER][MAX_COLUMN_NUMBER];
@@ -50,14 +50,14 @@ private:
 	// Get free table ID which was found first.
 	int GetFreeTableId();
 	// Search the table which has the specified table name.
-	int SearchTable(TCHAR*);
+	int SearchTable(wchar_t*);
 	// Get column index
-	int GetColumnIndex(TCHAR*, TCHAR*);
+	int GetColumnIndex(wchar_t*, wchar_t*);
 	// Check and change characters
 	void CheckAndChangeChar(char* Start, char* End);
 
 	// Sort records
-	int SortRecord(TCHAR*, TCHAR*, BOOL);
+	int SortRecord(wchar_t*, wchar_t*, bool);
 	// Compare function for quick sort
 	static int AzSortCompare(const void*, const void*);
 	static int ZaSortCompare(const void*, const void*);
@@ -71,9 +71,9 @@ private:
 	// Decommit the reserved area
 	int DecommitDataArea(int);
 	// Commit the reserved area
-	int CommitDataArea(TCHAR*);
+	int CommitDataArea(wchar_t*);
 	// Decommit the reserved area
-	int DecommitDataArea(TCHAR*);
+	int DecommitDataArea(wchar_t*);
 
 	// Common record operation
 	RecordData* CommonRecordOperation(int, RecordData*, RecordData*, int*);
@@ -82,7 +82,7 @@ private:
 
 	int AutoSaveInterval;
 	ULONG AutoSaveThreadId;
-	TCHAR AutoSaveFilePath[256];
+	wchar_t AutoSaveFilePath[256];
 	DWORD AutoSaveThreadProc();
 	static DWORD WINAPI AutoSaveThreadProcDummy(LPVOID);
 
@@ -93,59 +93,59 @@ public:
 	// Create table into main area
 	int CreateTable(TableDef*);
 	// Delete table from main area
-	int DeleteTable(TCHAR*);
+	int DeleteTable(wchar_t*);
 	// Rename table name
-	int RenameTable(TCHAR*, TCHAR*);
+	int RenameTable(wchar_t*, wchar_t*);
 
 	// Lock table
-	int LockTable(TCHAR*, int);
+	int LockTable(wchar_t*, int);
 	int LockAllTable(int);
 	// Unlock table
-	int UnlockTable(TCHAR*);
+	int UnlockTable(wchar_t*);
 	int UnlockAllTable();
 
 	// Insert Record
 	int InsertRecord(RecordData*);
 	// Delete all records of the specified table
-	int DeleteRecord(TCHAR*);
+	int DeleteRecord(wchar_t*);
 	// Delete records which are matched by the specified condition
 	int DeleteRecord(RecordData*);
 	// Update Record
 	int UpdateRecord(RecordData*, RecordData*);
 	// Get all records of the specified table
-	RecordData* GetRecord(TCHAR*);
+	RecordData* GetRecord(wchar_t*);
 	// Get records which are matched by the specified condition
 	RecordData* GetRecord(RecordData*);
 
 	// Sort records
-	int AzSortRecord(TCHAR*, TCHAR*);
-	int ZaSortRecord(TCHAR*, TCHAR*);
+	int AzSortRecord(wchar_t*, wchar_t*);
+	int ZaSortRecord(wchar_t*, wchar_t*);
 
 	// Get column count
-	int GetColumnCount(TCHAR*);
+	int GetColumnCount(wchar_t*);
 	// Get column size
-	int GetColumnSize(TCHAR*, TCHAR*);
+	int GetColumnSize(wchar_t*, wchar_t*);
 	//Get column name
-	int GetColumnName(TCHAR*, TCHAR[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE]);
+	int GetColumnName(wchar_t*, wchar_t[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE]);
 	// Get column type
-	int GetColumnType(TCHAR*, TCHAR*);
+	int GetColumnType(wchar_t*, wchar_t*);
 	// Get table count
 	int GetTableCount();
 	//Get table name
-	int GetTableName(TCHAR [MAX_TABLE_NUMBER][TABLE_NAME_SIZE]);
+	int GetTableName(wchar_t [MAX_TABLE_NUMBER][TABLE_NAME_SIZE]);
 	// Get table size
-	int GetTableSize(TCHAR*);
+	int GetTableSize(wchar_t*);
 	//Get max number of records
-	int GetMaxNumOfRecords(TCHAR*);
+	int GetMaxNumOfRecords(wchar_t*);
 	//Get number of records
-	int GetNumOfRecords(TCHAR*);
+	int GetNumOfRecords(wchar_t*);
 	// Get table version
-	int GetTableVersion(TCHAR*);
+	int GetTableVersion(wchar_t*);
 
 	// Save data
-	int SaveData(TCHAR*);
+	int SaveData(wchar_t*);
 	// Load data
-	int LoadData(TCHAR*);
+	int LoadData(wchar_t*);
 	// Auto save data
-	int AutoSave(TCHAR*, int, BOOL);
+	int AutoSave(wchar_t*, int, bool);
 };

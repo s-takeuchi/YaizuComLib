@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tchar.h>
 #include "stkdata.h"
 
 // Constructor
@@ -9,10 +8,10 @@ ColumnDefStr::ColumnDefStr()
 }
 
 // Constructor
-ColumnDefStr::ColumnDefStr(TCHAR* ColumnName, int MaxLength)
+ColumnDefStr::ColumnDefStr(wchar_t* ColumnName, int MaxLength)
 {
 	if (lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE) == NULL) {
-		lstrcpy(m_ColumnName, _T(""));
+		lstrcpy(m_ColumnName, L"");
 	}
 	m_ColumnType = COLUMN_TYPE_STR;
 	m_MaxLength = MaxLength;

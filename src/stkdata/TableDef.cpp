@@ -1,11 +1,10 @@
 #include <windows.h>
-#include <tchar.h>
 #include "stkdata.h"
 
 // Constructor
 TableDef::TableDef()
 {
-	lstrcpy(m_TableName, _T(""));
+	lstrcpy(m_TableName, L"");
 	for (int Loop = 0; Loop < MAX_COLUMN_NUMBER; Loop++) {
 		m_Column[Loop] = NULL;
 	}
@@ -14,7 +13,7 @@ TableDef::TableDef()
 }
 
 // Constructor
-TableDef::TableDef(TCHAR* TableName, int MaxRecord)
+TableDef::TableDef(wchar_t* TableName, int MaxRecord)
 {
 	for (int Loop = 0; Loop < MAX_COLUMN_NUMBER; Loop++) {
 		m_Column[Loop] = NULL;
@@ -22,7 +21,7 @@ TableDef::TableDef(TCHAR* TableName, int MaxRecord)
 	m_NumberOfColumn = 0;
 	m_MaxRecord = MaxRecord;
 	if (lstrcpyn(m_TableName, TableName, TABLE_NAME_SIZE) == NULL) {
-		lstrcpy(m_TableName, _T(""));
+		lstrcpy(m_TableName, L"");
 	}
 }
 
@@ -32,17 +31,17 @@ TableDef::~TableDef()
 }
 
 // Set table name
-// [in] TCHAR* : Table Name
-void TableDef::SetTableName(TCHAR* TableName)
+// [in] wchar_t* : Table Name
+void TableDef::SetTableName(wchar_t* TableName)
 {
 	if (lstrcpyn(m_TableName, TableName, TABLE_NAME_SIZE) == NULL) {
-		lstrcpy(m_TableName, _T(""));
+		lstrcpy(m_TableName, L"");
 	}
 }
 
 // Get table name
-// [out] TCHAR* : Table name
-TCHAR* TableDef::GetTableName()
+// [out] wchar_t* : Table name
+wchar_t* TableDef::GetTableName()
 {
 	return m_TableName;
 }
