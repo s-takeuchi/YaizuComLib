@@ -24,15 +24,15 @@ HICON IconHndlrB;
 
 // Selected table information
 int SelectedTable = 0;
-TCHAR SelectedTableName[16];
+wchar_t SelectedTableName[16];
 
 // Window title
-TCHAR WindowTitle[64];
+wchar_t WindowTitle[64];
 
 // Selected filtering conditions
 int SelectedComboItemIdx[5];
-TCHAR SelectedComboItemClm[5][16];
-TCHAR SelectedComboItemWStr[5][256];
+wchar_t SelectedComboItemClm[5][16];
+wchar_t SelectedComboItemWStr[5][256];
 
 // Selected update record
 RecordData* UpdtRecDat = NULL;
@@ -40,20 +40,17 @@ RecordData* UpdtRecDat = NULL;
 // Flag for displaying file access menu item (Save As, Open)
 BOOL FileAccessFlag = FALSE;
 
-TCHAR TooltipDataNew[] = _T("New");
-TCHAR TooltipDataOpen[] = _T("Open");
-TCHAR TooltipDataSave[] = _T("Save");
-TCHAR TooltipOperationInsert[] = _T("Insert");
-TCHAR TooltipOperationDelete[] = _T("Delete");
-TCHAR TooltipOperationUpdate[] = _T("Update");
+wchar_t TooltipDataNew[] = L"New";
+wchar_t TooltipDataOpen[] = L"Open";
+wchar_t TooltipDataSave[] = L"Save";
+wchar_t TooltipOperationInsert[] = L"Insert";
+wchar_t TooltipOperationDelete[] = L"Delete";
+wchar_t TooltipOperationUpdate[] = L"Update";
 
 // Functions
-void RefreshTableMenu(HWND, TCHAR*);
-void CreateTable();
-void DeleteTable();
+void RefreshTableMenu(HWND, wchar_t*);
 RecordData* GetCheckedRecord(HWND);
 void DeleteRecord(HWND);
-void ChangeData();
 void ViewData(BOOL);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK InsertDlg(HWND, UINT, WPARAM, LPARAM);
@@ -62,12 +59,12 @@ LRESULT CALLBACK UpdateDlg(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK CreateTableDlg(HWND, UINT, WPARAM, LPARAM);
 LRESULT SpecifyColumn(HWND, UINT, WPARAM, LPARAM, BOOL);
 void ChangeWindowTitle(HWND);
-void ShowStkDataWindow(TCHAR*, HWND);
-int GetOpenFileName(HWND, TCHAR*);
-int GetSaveFileName(HWND, TCHAR*);
+void ShowStkDataWindow(wchar_t*, HWND);
+int GetOpenFileName(HWND, wchar_t*);
+int GetSaveFileName(HWND, wchar_t*);
 void EnableFileAccessFlag();
 void DisableFileAccessFlag();
-int SwitchSortRecord(TCHAR*, TCHAR*);
+int SwitchSortRecord(wchar_t*, wchar_t*);
 
 // DLL entry point
 BOOL WINAPI DllMain(HANDLE hinstDLL, DWORD dwReason, LPVOID lpvReserved)
@@ -81,12 +78,12 @@ BOOL WINAPI DllMain(HANDLE hinstDLL, DWORD dwReason, LPVOID lpvReserved)
 }
 
 // Display open file dialog and acquire the file name which is specified on the dialog.
-// [in] TCHAR* : Acquired file name
+// [in] wchar_t* : Acquired file name
 // [out] int : Result code (0: Sucess, -1: Error)
-int GetOpenFileName(HWND WinHndl, TCHAR* FileName)
+int GetOpenFileName(HWND WinHndl, wchar_t* FileName)
 {
-	TCHAR File[32768] = _T("");
-	TCHAR Title[256] = _T("");
+	wchar_t File[32768] = L"";
+	wchar_t Title[256] = L"";
 	OPENFILENAME Ofn;
 	ZeroMemory(&Ofn, sizeof(OPENFILENAME));
 	Ofn.lStructSize = sizeof(OPENFILENAME);
@@ -95,9 +92,9 @@ int GetOpenFileName(HWND WinHndl, TCHAR* FileName)
 	Ofn.nMaxFile = 300;
 	Ofn.lpstrFileTitle =Title;
 	Ofn.nMaxFileTitle = 300;
-	Ofn.lpstrInitialDir = _T(".");
-	Ofn.lpstrFilter = _T("Data file(*.std)\0*.std\0Data file(*.dat)\0*.dat\0\0");
-	Ofn.lpstrTitle = _T("Select data file [Open]");
+	Ofn.lpstrInitialDir = L".";
+	Ofn.lpstrFilter = L"Data file(*.std)\0*.std\0Data file(*.dat)\0*.dat\0\0";
+	Ofn.lpstrTitle = L"Select data file [Open]";
 	Ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 	int Ret = ::GetOpenFileName(&Ofn);
 	lstrcpy(FileName, Ofn.lpstrFile);
@@ -105,12 +102,12 @@ int GetOpenFileName(HWND WinHndl, TCHAR* FileName)
 }
 
 // Display save file dialog and acquire the file name which is specified on the dialog.
-// [in] TCHAR* : Acquired file name
+// [in] wchar_t* : Acquired file name
 // [out] int : Result code (0: Sucess, -1: Error)
-int GetSaveFileName(HWND WinHndl, TCHAR* FileName)
+int GetSaveFileName(HWND WinHndl, wchar_t* FileName)
 {
-	TCHAR File[32768] = _T("");
-	TCHAR Title[256] = _T("");
+	wchar_t File[32768] = L"";
+	wchar_t Title[256] = L"";
 	OPENFILENAME Ofn;
 	ZeroMemory(&Ofn, sizeof(OPENFILENAME));
 	Ofn.lStructSize = sizeof(OPENFILENAME);
@@ -119,16 +116,16 @@ int GetSaveFileName(HWND WinHndl, TCHAR* FileName)
 	Ofn.nMaxFile = 300;
 	Ofn.lpstrFileTitle =Title;
 	Ofn.nMaxFileTitle = 300;
-	Ofn.lpstrDefExt = _T("std");
-	Ofn.lpstrInitialDir = _T(".");
-	Ofn.lpstrFilter = _T("Data file(*.std)\0*.std\0Data file(*.dat)\0*.dat\0\0");
-	Ofn.lpstrTitle = _T("Select data file [Save As]");
+	Ofn.lpstrDefExt = L"std";
+	Ofn.lpstrInitialDir = L".";
+	Ofn.lpstrFilter = L"Data file(*.std)\0*.std\0Data file(*.dat)\0*.dat\0\0";
+	Ofn.lpstrTitle = L"Select data file [Save As]";
 	int Ret = ::GetSaveFileName(&Ofn);
 	lstrcpy(FileName, Ofn.lpstrFile);
 	return Ret;
 }
 
-void ShowStkDataWindow(TCHAR* AppName, HWND pWnd)
+void ShowStkDataWindow(wchar_t* AppName, HWND pWnd)
 {
 	HWND hWnd;
 
@@ -191,11 +188,11 @@ void DeleteRecord(HWND WndHndl)
 {
 	RecordData* RecDat = GetCheckedRecord(WndHndl);
 	if (RecDat != NULL) {
-		if (MessageBox(WndHndl, _T("Are you sure you want to delete the selected record(s) ?"), _T("Notice!"), MB_OKCANCEL) == IDCANCEL) {
+		if (MessageBox(WndHndl, L"Are you sure you want to delete the selected record(s) ?", L"Notice!", MB_OKCANCEL) == IDCANCEL) {
 			return;
 		}
 	} else {
-		MessageBox(WndHndl, _T("No record has been selected."), _T("Notice!"), MB_OK);
+		MessageBox(WndHndl, L"No record has been selected.", L"Notice!", MB_OK);
 		return;
 	}
 	LockTable(SelectedTableName, LOCK_EXCLUSIVE);
@@ -213,7 +210,7 @@ RecordData* GetCheckedRecord(HWND WndHndl)
 
 	RecordData* FrstRecDat = NULL;
 	RecordData* PrevRecDat = NULL;
-	TCHAR ColName[32][16];
+	wchar_t ColName[32][16];
 	int ColCnt = GetColumnName(SelectedTableName, ColName);
 	for (LoopRec = 0; LoopRec < RecCnt; LoopRec++) {
 		BOOL ChkSt = ListView_GetCheckState(ListWndHndl, LoopRec);
@@ -223,14 +220,14 @@ RecordData* GetCheckedRecord(HWND WndHndl)
 		ColumnData* ColDat[32];
 		int FndCnt = 0;
 		for (LoopCol = 0; LoopCol < ColCnt; LoopCol++) {
-			TCHAR Buf[256];
+			wchar_t Buf[256];
 			ListView_GetItemText(ListWndHndl, LoopRec, LoopCol + 1, Buf, 256);
 			if (GetColumnType(SelectedTableName, ColName[LoopCol]) == COLUMN_TYPE_INT) {
 				int Dat = StrToInt(Buf);
 				ColDat[FndCnt] = new ColumnDataInt(ColName[LoopCol], Dat);
 			} else if (GetColumnType(SelectedTableName, ColName[LoopCol]) == COLUMN_TYPE_FLOAT) {
 				float Dat;
-				swscanf_s(Buf, _T("%g"), &Dat);
+				swscanf_s(Buf, L"%g", &Dat);
 				ColDat[FndCnt] = new ColumnDataFloat(ColName[LoopCol], Dat);
 			} else if (GetColumnType(SelectedTableName, ColName[LoopCol]) == COLUMN_TYPE_STR) {
 				char LocBuf[256];
@@ -259,7 +256,7 @@ LRESULT CALLBACK InsertDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 {
 	int WmId    = LOWORD(wParam); 
 	int WmEvent = HIWORD(wParam);
-	static TCHAR StrBuf[32][256];
+	static wchar_t StrBuf[32][256];
 
 	// Initialize dialog
 	if (message == WM_INITDIALOG) {
@@ -268,7 +265,7 @@ LRESULT CALLBACK InsertDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 
 		int Loop;
 
-		TCHAR ColName[32][16];
+		wchar_t ColName[32][16];
 		int ColCnt =  GetColumnName(SelectedTableName, ColName);
 		SetDlgItemText(hDlg, IDC_ED_TABLE, SelectedTableName);
 		for (Loop = 0; Loop < ColCnt; Loop++) {
@@ -276,15 +273,15 @@ LRESULT CALLBACK InsertDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 			if (GetColumnType(SelectedTableName, ColName[Loop]) == COLUMN_TYPE_BIN) {
 				// バイナリ型カラムの場合，値入力不可とする。
 				SendDlgItemMessage(hDlg, IDC_EDIT1 + Loop, EM_SETREADONLY, TRUE, 0);
-				SetDlgItemText(hDlg, IDC_EDIT1 + Loop, _T("<<binary data>>"));
-				lstrcpy(StrBuf[Loop], _T("bin"));
+				SetDlgItemText(hDlg, IDC_EDIT1 + Loop, L"<<binary data>>");
+				lstrcpy(StrBuf[Loop], L"bin");
 			} else {
-				lstrcpy(StrBuf[Loop], _T(""));
+				lstrcpy(StrBuf[Loop], L"");
 			}
 		}
 		for (; Loop < 32; Loop++) {
 			SendDlgItemMessage(hDlg, IDC_EDIT1 + Loop, EM_SETREADONLY, TRUE, 0);
-			lstrcpy(StrBuf[Loop], _T(""));
+			lstrcpy(StrBuf[Loop], L"");
 		}
 		return TRUE;
 	}
@@ -300,11 +297,11 @@ LRESULT CALLBACK InsertDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 	// Insert button was clicked.
 	if (message == WM_COMMAND && WmId == IDOK) {
 		int Loop;
-		TCHAR ColumnName[16];
+		wchar_t ColumnName[16];
 		ColumnData* ColDat[32];
 		int ColCnt = 0;
 		for (Loop = 0; Loop < 32; Loop++) {
-			if (StrBuf[Loop] == NULL || lstrcmp(StrBuf[Loop], _T("")) == 0) {
+			if (StrBuf[Loop] == NULL || lstrcmp(StrBuf[Loop], L"") == 0) {
 				continue;
 			}
 			GetDlgItemText(hDlg, Loop + IDC_ED_ATTR1, ColumnName, 16);
@@ -314,7 +311,7 @@ LRESULT CALLBACK InsertDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 				ColDat[ColCnt] = new ColumnDataInt(ColumnName, LocInt);
 			} else if (Type == COLUMN_TYPE_FLOAT) {
 				float LocFloat;
-				swscanf_s(StrBuf[Loop], _T("%g"), &LocFloat);
+				swscanf_s(StrBuf[Loop], L"%g", &LocFloat);
 				ColDat[ColCnt] = new ColumnDataFloat(ColumnName, LocFloat);
 			} else if (Type == COLUMN_TYPE_STR) {
 				char LocBuf[256];
@@ -357,14 +354,14 @@ LRESULT CALLBACK CreateTableDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		SendMessage(hDlg, WM_SETICON, ICON_BIG, (LPARAM)IconHndlrB);
 
 		for (int LoopCmb = IDC_COMBO1; LoopCmb <= IDC_COMBO32; LoopCmb++) {
-			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 0, (LPARAM)_T("Integer"));
-			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 1, (LPARAM)_T("String"));
-			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 2, (LPARAM)_T("WString"));
-			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 3, (LPARAM)_T("Binary"));
-			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 4, (LPARAM)_T("Float"));
+			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 0, (LPARAM)L"Integer");
+			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 1, (LPARAM)L"String");
+			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 2, (LPARAM)L"WString");
+			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 3, (LPARAM)L"Binary");
+			SendDlgItemMessage(hDlg, LoopCmb, CB_INSERTSTRING, 4, (LPARAM)L"Float");
 			SendDlgItemMessage(hDlg, LoopCmb, CB_SETCURSEL, 0, 0);
 			SendDlgItemMessage(hDlg, IDC_EDIT1 + (LoopCmb - IDC_COMBO1), EM_SETREADONLY, TRUE, 0);
-			SetDlgItemText(hDlg, IDC_EDIT1 + (LoopCmb - IDC_COMBO1), _T("32"));
+			SetDlgItemText(hDlg, IDC_EDIT1 + (LoopCmb - IDC_COMBO1), L"32");
 		}
 
 	}
@@ -386,35 +383,35 @@ LRESULT CALLBACK CreateTableDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	if (message == WM_COMMAND && WmId == IDOK) {
 
 		// Validation-1 : Check table name
-		TCHAR TableName[32];
+		wchar_t TableName[32];
 		GetDlgItemText(hDlg, IDC_ED_TABLE, TableName, 32);
-		if (lstrcmp(TableName, _T("")) == 0) {
-			MessageBox(hDlg, _T("No table name is presented."), _T("Notice!"), MB_OK);
+		if (lstrcmp(TableName, L"") == 0) {
+			MessageBox(hDlg, L"No table name is presented.", L"Notice!", MB_OK);
 			return TRUE;
 		}
 
 		// Validation-2 : Check size
-		TCHAR TableSizeBuf[32];
+		wchar_t TableSizeBuf[32];
 		int TableSize = 0;
 		GetDlgItemText(hDlg, IDC_ED_SIZE, TableSizeBuf, 32);
 		TableSize = StrToInt(TableSizeBuf);
 		if (TableSize <= 0 || TableSize >= MAX_RECORD) {
-			MessageBox(hDlg, _T("The max number of records is invalid."), _T("Notice!"), MB_OK);
+			MessageBox(hDlg, L"The max number of records is invalid.", L"Notice!", MB_OK);
 			return TRUE;
 		}
 
 		// Validation-3 : Check presented column name
 		BOOL NoAttrFlag = TRUE;
 		for (int LoopAtr = IDC_ED_ATTR1; LoopAtr <= IDC_ED_ATTR32; LoopAtr++) {
-			TCHAR Buf[16];
+			wchar_t Buf[16];
 			GetDlgItemText(hDlg, LoopAtr, Buf, 16);
 			Buf[15] = NULL;
-			if (lstrcmp(Buf, _T("")) != 0) {
+			if (lstrcmp(Buf, L"") != 0) {
 				NoAttrFlag = FALSE;
 			}
 		}
 		if (NoAttrFlag == TRUE) {
-			MessageBox(hDlg, _T("No column information is presented."), _T("Notice!"), MB_OK);
+			MessageBox(hDlg, L"No column information is presented.", L"Notice!", MB_OK);
 			return TRUE;
 		}
 
@@ -422,18 +419,18 @@ LRESULT CALLBACK CreateTableDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		for (int LoopCmb = IDC_COMBO1; LoopCmb <= IDC_COMBO32; LoopCmb++) {
 			int ComboItemIdx = (int)SendDlgItemMessage(hDlg, LoopCmb, CB_GETCURSEL, 0, 0);
 			if (ComboItemIdx != 0) {
-				TCHAR Buf[32];
+				wchar_t Buf[32];
 				GetDlgItemText(hDlg, IDC_EDIT1 + (LoopCmb - IDC_COMBO1), Buf, 32);
 				int Val = StrToInt(Buf);
 				if ((ComboItemIdx == 1 || ComboItemIdx == 2) && (Val < 2 || Val > 256)) {
-					TCHAR ErrMsg[256];
-					wsprintf(ErrMsg, _T("The presented value is invalid.(Length of #%d)\r\nSpecify a length value in from 2 to 256."), LoopCmb - IDC_COMBO1 + 1);
-					MessageBox(hDlg, ErrMsg, _T("Notice!"), MB_OK);
+					wchar_t ErrMsg[256];
+					wsprintf(ErrMsg, L"The presented value is invalid.(Length of #%d)\r\nSpecify a length value in from 2 to 256.", LoopCmb - IDC_COMBO1 + 1);
+					MessageBox(hDlg, ErrMsg, L"Notice!", MB_OK);
 					return TRUE;
 				} else if (ComboItemIdx == 3 && (Val < 1 || Val > 10000000)) {
-					TCHAR ErrMsg[256];
-					wsprintf(ErrMsg, _T("The presented value is invalid.(Length of #%d)\r\nSpecify a length value in from 1 to 10000000."), LoopCmb - IDC_COMBO1 + 1);
-					MessageBox(hDlg, ErrMsg, _T("Notice!"), MB_OK);
+					wchar_t ErrMsg[256];
+					wsprintf(ErrMsg, L"The presented value is invalid.(Length of #%d)\r\nSpecify a length value in from 1 to 10000000.", LoopCmb - IDC_COMBO1 + 1);
+					MessageBox(hDlg, ErrMsg, L"Notice!", MB_OK);
 					return TRUE;
 				}
 			}
@@ -443,25 +440,25 @@ LRESULT CALLBACK CreateTableDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		TableDef* Tbl = new TableDef(TableName, TableSize);
 		ColumnDef* Clm;
 		for (int Loop = 0; Loop <= 32; Loop++) {
-			TCHAR Buf[16];
+			wchar_t Buf[16];
 			GetDlgItemText(hDlg, Loop + IDC_ED_ATTR1, Buf, 16);
 			Buf[15] = NULL;
-			if (lstrcmp(Buf, _T("")) != 0) {
+			if (lstrcmp(Buf, L"") != 0) {
 				int SelCur = (int)SendDlgItemMessage(hDlg, Loop + IDC_COMBO1, CB_GETCURSEL, 0, 0);
 				if (SelCur == 0) { // Integerが選択された
 					Clm = new ColumnDefInt(Buf);
 				} else if (SelCur == 1) { // Stringが選択された
-					TCHAR BufStrSize[32];
+					wchar_t BufStrSize[32];
 					GetDlgItemText(hDlg, IDC_EDIT1 + Loop, BufStrSize, 32);
 					int Val = StrToInt(BufStrSize);
 					Clm = new ColumnDefStr(Buf, Val);
 				} else if (SelCur == 2) { // WStringが選択された
-					TCHAR BufStrSize[32];
+					wchar_t BufStrSize[32];
 					GetDlgItemText(hDlg, IDC_EDIT1 + Loop, BufStrSize, 32);
 					int Val = StrToInt(BufStrSize);
 					Clm = new ColumnDefWStr(Buf, Val);
 				} else if (SelCur == 3) { // Binaryが選択された
-					TCHAR BufBinSize[32];
+					wchar_t BufBinSize[32];
 					GetDlgItemText(hDlg, IDC_EDIT1 + Loop, BufBinSize, 32);
 					int Val = StrToInt(BufBinSize);
 					Clm = new ColumnDefBin(Buf, Val);
@@ -472,7 +469,7 @@ LRESULT CALLBACK CreateTableDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 			}
 		}
 		if (CreateTable(Tbl) != 0) {
-			MessageBox(hDlg, _T("Failed to create table."), _T("Notice!"), MB_OK);
+			MessageBox(hDlg, L"Failed to create table.", L"Notice!", MB_OK);
 			return TRUE;
 		}
 
@@ -521,16 +518,16 @@ LRESULT SpecifyColumn(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, BOO
 			if (UpdtFlag == FALSE) {
 				for (LoopCmb = 0; LoopCmb < 5; LoopCmb++) {
 					SelectedComboItemIdx[LoopCmb] = 0;
-					lstrcpyn(SelectedComboItemClm[LoopCmb], _T(""), 16);
-					lstrcpyn(SelectedComboItemWStr[LoopCmb], _T(""), 256);
+					lstrcpyn(SelectedComboItemClm[LoopCmb], L"", 16);
+					lstrcpyn(SelectedComboItemWStr[LoopCmb], L"", 256);
 				}
 			}
 			Init = FALSE;
 		}
-		TCHAR ColName[32][16];
+		wchar_t ColName[32][16];
 		int ColCnt = GetColumnName(SelectedTableName, ColName);
 		for (LoopCmb = IDC_F_COMBO1; LoopCmb <= IDC_F_COMBO5; LoopCmb++) {
-			SendDlgItemMessage(hDlg, LoopCmb, CB_ADDSTRING, 0, (LPARAM)_T("n/s"));
+			SendDlgItemMessage(hDlg, LoopCmb, CB_ADDSTRING, 0, (LPARAM)L"n/s");
 			for (LoopCol = 0; LoopCol < ColCnt; LoopCol++) {
 				SendDlgItemMessage(hDlg, LoopCmb, CB_ADDSTRING, 0, (LPARAM)ColName[LoopCol]);
 			}
@@ -546,18 +543,18 @@ LRESULT SpecifyColumn(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, BOO
 				SendDlgItemMessage(hDlg, IDC_F_EDIT1 + (LoopCmb - IDC_F_COMBO1), EM_SETREADONLY, TRUE, 0);
 			}
 		}
-		TCHAR Title[1024];
+		wchar_t Title[1024];
 		HWND BtnHndl = GetDlgItem(hDlg, IDOK);
 		HWND ClrHndl = GetDlgItem(hDlg, ID_BUTTON_F_CLEAR);
 		if (UpdtFlag == FALSE) {
-			wsprintf(Title, _T("Specify the filtering criteria, then click [OK].\r\nTable Name : %s"), SelectedTableName);
-			SetWindowText(hDlg, _T("Filtering"));
-			SetWindowText(BtnHndl, _T("Filtering"));
+			wsprintf(Title, L"Specify the filtering criteria, then click [OK].\r\nTable Name : %s", SelectedTableName);
+			SetWindowText(hDlg, L"Filtering");
+			SetWindowText(BtnHndl, L"Filtering");
 			EnableWindow(ClrHndl, TRUE);
 		} else {
-			wsprintf(Title, _T("Specify the update column, then click [OK].\r\nTable Name : %s"), SelectedTableName);
-			SetWindowText(hDlg, _T("Update"));
-			SetWindowText(BtnHndl, _T("Update"));
+			wsprintf(Title, L"Specify the update column, then click [OK].\r\nTable Name : %s", SelectedTableName);
+			SetWindowText(hDlg, L"Update");
+			SetWindowText(BtnHndl, L"Update");
 			EnableWindow(ClrHndl, FALSE);
 		}
 		SetDlgItemText(hDlg, IDC_F_TITLE, Title);
@@ -568,7 +565,7 @@ LRESULT SpecifyColumn(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, BOO
 	if (message == WM_COMMAND && WmEvent == CBN_SELCHANGE) {
 		if (WmId >= IDC_F_COMBO1 && WmId <= IDC_F_COMBO5) {
 			int ComboItemIdx = (int)SendDlgItemMessage(hDlg, WmId, CB_GETCURSEL, 0, 0);
-			TCHAR ColName[16];
+			wchar_t ColName[16];
 			SendDlgItemMessage(hDlg, WmId, CB_GETLBTEXT, ComboItemIdx, (LPARAM)ColName);
 			if (ComboItemIdx != 0 && GetColumnType(SelectedTableName, ColName) != COLUMN_TYPE_BIN) {
 				SendDlgItemMessage(hDlg, IDC_F_EDIT1 + (WmId - IDC_F_COMBO1), EM_SETREADONLY, FALSE, 0);
@@ -576,9 +573,9 @@ LRESULT SpecifyColumn(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, BOO
 				SendDlgItemMessage(hDlg, IDC_F_EDIT1 + (WmId - IDC_F_COMBO1), EM_SETREADONLY, TRUE, 0);
 			}
 			if (GetColumnType(SelectedTableName, ColName) == COLUMN_TYPE_BIN) {
-				SetDlgItemText(hDlg, IDC_F_EDIT1 + (WmId - IDC_F_COMBO1), _T("<<binary data>>"));
+				SetDlgItemText(hDlg, IDC_F_EDIT1 + (WmId - IDC_F_COMBO1), L"<<binary data>>");
 			} else {
-				SetDlgItemText(hDlg, IDC_F_EDIT1 + (WmId - IDC_F_COMBO1), _T(""));
+				SetDlgItemText(hDlg, IDC_F_EDIT1 + (WmId - IDC_F_COMBO1), L"");
 			}
 		}
 		return TRUE;
@@ -589,7 +586,7 @@ LRESULT SpecifyColumn(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, BOO
 		int LoopCmb;
 		for (LoopCmb = 0; LoopCmb < 5; LoopCmb++) {
 			SendDlgItemMessage(hDlg, LoopCmb + IDC_F_COMBO1, CB_SETCURSEL, 0, 0);
-			SetDlgItemText(hDlg, LoopCmb + IDC_F_EDIT1, _T(""));
+			SetDlgItemText(hDlg, LoopCmb + IDC_F_EDIT1, L"");
 			SendDlgItemMessage(hDlg, LoopCmb + IDC_F_EDIT1, EM_SETREADONLY, TRUE, 0);
 		}
 		return TRUE;
@@ -600,7 +597,7 @@ LRESULT SpecifyColumn(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, BOO
 		if (UpdtFlag == FALSE) {
 			int Loop;
 			for (Loop = 0; Loop < 5; Loop++) {
-				TCHAR Buf[256];
+				wchar_t Buf[256];
 				GetDlgItemText(hDlg, IDC_F_EDIT1 + Loop, Buf, 256);
 				lstrcpyn(SelectedComboItemWStr[Loop], Buf, 256);
 				SelectedComboItemIdx[Loop] = (int)SendDlgItemMessage(hDlg, IDC_F_COMBO1 + Loop, CB_GETCURSEL, 0, 0);
@@ -612,8 +609,8 @@ LRESULT SpecifyColumn(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, BOO
 			ColumnData* ColDat[5];
 
 			for (Loop = 0; Loop < 5; Loop++) {
-				TCHAR BufClm[16];
-				TCHAR BufDat[256];
+				wchar_t BufClm[16];
+				wchar_t BufDat[256];
 				char BufData[256];
 				int IntData;
 				float FloatData;
@@ -630,7 +627,7 @@ LRESULT SpecifyColumn(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, BOO
 					IntData = StrToInt(BufDat);
 					ColDat[ColCnt] = new ColumnDataInt(BufClm, IntData);
 				} else if (Type == COLUMN_TYPE_FLOAT) {
-					swscanf_s(BufDat, _T("%g"), &FloatData);
+					swscanf_s(BufDat, L"%g", &FloatData);
 					ColDat[ColCnt] = new ColumnDataFloat(BufClm, FloatData);
 				} else if (Type == COLUMN_TYPE_STR) {
 					sprintf_s(BufData, 256, "%S", BufDat);
@@ -672,7 +669,7 @@ LRESULT CALLBACK UpdateDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	static TCHAR FileName[32768] = _T("");
+	static wchar_t FileName[32768] = L"";
 	static HWND hwndToolbar = NULL;
 	int WmId, WmEvent;
 	static LPTOOLTIPTEXT lptip;
@@ -739,7 +736,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int ClientWidth  = ClientRect.right - ClientRect.left + 1;
 			int ClientHeight = ClientRect.bottom - ClientRect.top - (ToolBarRect.bottom - ToolBarRect.top);
 
-			ListWndHndl = CreateWindowEx(0, WC_LISTVIEW, _T(""), WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL, 0, ToolBarRect.bottom - ToolBarRect.top, ClientWidth, ClientHeight, hWnd, (HMENU)ID_LISTVIEW, InstHndl, NULL);
+			ListWndHndl = CreateWindowEx(0, WC_LISTVIEW, L"", WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL, 0, ToolBarRect.bottom - ToolBarRect.top, ClientWidth, ClientHeight, hWnd, (HMENU)ID_LISTVIEW, InstHndl, NULL);
 			ListView_SetExtendedListViewStyle(ListWndHndl, LVS_EX_CHECKBOXES | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
 			RefreshTableMenu(hWnd, NULL);
 			ChangeWindowTitle(hWnd);
@@ -774,8 +771,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int LoopCmb;
 			for (LoopCmb = 0; LoopCmb < 5; LoopCmb++) {
 				SelectedComboItemIdx[LoopCmb] = 0;
-				lstrcpyn(SelectedComboItemClm[LoopCmb], _T(""), 16);
-				lstrcpyn(SelectedComboItemWStr[LoopCmb], _T(""), 256);
+				lstrcpyn(SelectedComboItemClm[LoopCmb], L"", 16);
+				lstrcpyn(SelectedComboItemWStr[LoopCmb], L"", 256);
 			}
 			ViewData(FALSE);
 			ChangeWindowTitle(hWnd);
@@ -792,13 +789,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		// File new
 		if (WmId == ID_DATA_NEW) {
-			lstrcpy(FileName, _T(""));
-			TCHAR TableNames[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
+			lstrcpy(FileName, L"");
+			wchar_t TableNames[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
 			int TableNameCnt = GetTableName(TableNames);
 			for (int Loop = 0; Loop < TableNameCnt; Loop++) {
 				DeleteTable(TableNames[Loop]);
 			}
-			lstrcpy(SelectedTableName, _T(""));
+			lstrcpy(SelectedTableName, L"");
 			RefreshTableMenu(hWnd, NULL);
 			ChangeWindowTitle(hWnd);
 			ViewData(FALSE);
@@ -806,7 +803,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		// File open
 		if (WmId == ID_DATA_OPEN) {
-			TCHAR FileNameA[32768] = _T("");
+			wchar_t FileNameA[32768] = L"";
 			if (GetOpenFileName(hWnd, FileNameA) == 0) {
 				break;
 			}
@@ -823,8 +820,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		// File save
 		if (WmId == ID_DATA_SAVE) {
-			if (lstrcmp(FileName, _T("")) == 0) {
-				TCHAR FileNameA[32768] = _T("");
+			if (lstrcmp(FileName, L"") == 0) {
+				wchar_t FileNameA[32768] = L"";
 				if (GetSaveFileName(hWnd, FileNameA) == 0) {
 					break;
 				}
@@ -841,7 +838,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		// File save as
 		if (WmId == ID_DATA_SAVEAS) {
-			TCHAR FileNameA[32768] = _T("");
+			wchar_t FileNameA[32768] = L"";
 			if (GetSaveFileName(hWnd, FileNameA) == 0) {
 				break;
 			}
@@ -878,7 +875,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (WmId == ID_OPERATION_UPDATE) {
 			RecordData* RecDat = GetCheckedRecord(hWnd);
 			if (RecDat == NULL) {
-				MessageBox(hWnd, _T("No record has been selected."), _T("Notice!"), MB_OK);
+				MessageBox(hWnd, L"No record has been selected.", L"Notice!", MB_OK);
 				break;
 			}
 			DialogBox(InstHndl, MAKEINTRESOURCE(IDD_COLUMN), hWnd, (DLGPROC)UpdateDlg);
@@ -906,12 +903,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		// Delete table
 		if (WmId == ID_OPERATION_DELETETABLE) {
-			if (MessageBox(hWnd, _T("Are you sure you want to delete the current table?"), _T("Notice!"), MB_OKCANCEL) == IDCANCEL) {
+			if (MessageBox(hWnd, L"Are you sure you want to delete the current table?", L"Notice!", MB_OKCANCEL) == IDCANCEL) {
 				break;
 			}
 			DeleteTable(SelectedTableName);
 			if (GetTableCount() == 0) {
-				lstrcpy(SelectedTableName, _T(""));
+				lstrcpy(SelectedTableName, L"");
 			}
 			RefreshTableMenu(hWnd, NULL);
 			ChangeWindowTitle(hWnd);
@@ -921,31 +918,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		// Show table information
 		if (WmId == ID_OPERATION_SHOWTABLEINFO) {
-			if (lstrcmp(SelectedTableName, _T("")) == 0) {
+			if (lstrcmp(SelectedTableName, L"") == 0) {
 				break;
 			}
-			TCHAR Buf[4096];
-			TCHAR Buf2[256];
-			lstrcpy(Buf, _T("Table name = "));
+			wchar_t Buf[4096];
+			wchar_t Buf2[256];
+			lstrcpy(Buf, L"Table name = ");
 			lstrcat(Buf, SelectedTableName);
-			wsprintf(Buf2, _T("\r\nMax number of records = %d\r\nNumber of records = %d"), 
+			wsprintf(Buf2, L"\r\nMax number of records = %d\r\nNumber of records = %d",
 				GetMaxNumOfRecords(SelectedTableName), GetNumOfRecords(SelectedTableName));
 			lstrcat(Buf, Buf2);
-			lstrcat(Buf, _T("\r\n\r\n"));
-			TCHAR ColName[32][16];
+			lstrcat(Buf, L"\r\n\r\n");
+			wchar_t ColName[32][16];
 			int ColCnt = GetColumnName(SelectedTableName, ColName);
 			for (int Loop = 0; Loop < ColCnt; Loop++) {
 				int CType = GetColumnType(SelectedTableName, ColName[Loop]);
 				if (CType == COLUMN_TYPE_INT) {
-					wsprintf(Buf2, _T("%02d: %s [Integer]\r\n"), Loop, ColName[Loop]);
+					wsprintf(Buf2, L"%02d: %s [Integer]\r\n", Loop, ColName[Loop]);
 				} else if (CType == COLUMN_TYPE_FLOAT) {
-					wsprintf(Buf2, _T("%02d: %s [Float]\r\n"), Loop, ColName[Loop]);
+					wsprintf(Buf2, L"%02d: %s [Float]\r\n", Loop, ColName[Loop]);
 				} else if (CType == COLUMN_TYPE_STR) {
-					wsprintf(Buf2, _T("%02d: %s [String(%d)]\r\n"), Loop, ColName[Loop], GetColumnSize(SelectedTableName, ColName[Loop]));
+					wsprintf(Buf2, L"%02d: %s [String(%d)]\r\n", Loop, ColName[Loop], GetColumnSize(SelectedTableName, ColName[Loop]));
 				} else if (CType == COLUMN_TYPE_WSTR) {
-					wsprintf(Buf2, _T("%02d: %s [WString(%d)]\r\n"), Loop, ColName[Loop], GetColumnSize(SelectedTableName, ColName[Loop]) / sizeof(TCHAR));
+					wsprintf(Buf2, L"%02d: %s [WString(%d)]\r\n", Loop, ColName[Loop], GetColumnSize(SelectedTableName, ColName[Loop]) / sizeof(wchar_t));
 				} else if (CType == COLUMN_TYPE_BIN) {
-					wsprintf(Buf2, _T("%02d: %s [Binary(%d)]\r\n"), Loop, ColName[Loop], GetColumnSize(SelectedTableName, ColName[Loop]));
+					wsprintf(Buf2, L"%02d: %s [Binary(%d)]\r\n", Loop, ColName[Loop], GetColumnSize(SelectedTableName, ColName[Loop]));
 				}
 				lstrcat(Buf, Buf2);
 			}
@@ -985,7 +982,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (Lview->hdr.code == LVN_COLUMNCLICK) {
 				int Index = Lview->iSubItem;
 				LVCOLUMN LvCol;
-				TCHAR ClmName[16];
+				wchar_t ClmName[16];
 				LvCol.mask = LVCF_TEXT;
 				LvCol.pszText = ClmName;
 				LvCol.cchTextMax = 16;
@@ -1007,8 +1004,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 // This function refreshes the window menu.
 // [in] HWND : Window handle
-// [in] TCHAR* : Selected table name by window menu
-void RefreshTableMenu(HWND WinHndl, TCHAR* SelTableName)
+// [in] wchar_t* : Selected table name by window menu
+void RefreshTableMenu(HWND WinHndl, wchar_t* SelTableName)
 {
 	MENUITEMINFO MItemInfo;
 	HMENU SubMenuHndl = CreateMenu();
@@ -1025,10 +1022,10 @@ void RefreshTableMenu(HWND WinHndl, TCHAR* SelTableName)
 	int Loop;
 	int Pos = 0;
 	SelectedTable = 0;
-	TCHAR TableName[16][16];
+	wchar_t TableName[16][16];
 	int TblCnt =GetTableName(TableName);
 	for (Loop = 0; Loop < TblCnt; Loop++) {
-		if (lstrcmp(TableName[Loop], _T("")) == 0) {
+		if (lstrcmp(TableName[Loop], L"") == 0) {
 			continue;
 		}
 
@@ -1103,13 +1100,13 @@ void ViewData(BOOL Init)
 	LvColm.fmt = LVCFMT_LEFT;
 	if (NumOfCol == 0) {
 		LvColm.cx = 30;
-		LvColm.pszText = _T("");
+		LvColm.pszText = L"";
 		LvColm.iSubItem = 0;
 		ListView_InsertColumn(ListWndHndl, 0, &LvColm);
 	}
 
 	// Insert columns (2nd and later column)
-	TCHAR ColName[32][16];
+	wchar_t ColName[32][16];
 	int ColCnt = GetColumnName(SelectedTableName, ColName);	
 	for (Loop = 0; Loop < ColCnt; Loop++) {
 		LvColm.cx = 100;
@@ -1135,7 +1132,7 @@ void ViewData(BOOL Init)
 				RqColDat[FoundFltrCond] = new ColumnDataInt(SelectedComboItemClm[LoopFltr], Val);
 			} else if (ColType == COLUMN_TYPE_FLOAT) {
 				float Val;
-				swscanf_s(SelectedComboItemWStr[LoopFltr], _T("%g"), &Val);
+				swscanf_s(SelectedComboItemWStr[LoopFltr], L"%g", &Val);
 				RqColDat[FoundFltrCond] = new ColumnDataFloat(SelectedComboItemClm[LoopFltr], Val);
 			} else if (ColType == COLUMN_TYPE_STR) {
 				char Buf[256];
@@ -1163,7 +1160,7 @@ void ViewData(BOOL Init)
 	RecordData *CurRecDat = RtRecDat;
 	while(CurRecDat != NULL) {
 		LvItem.mask = LVIF_TEXT;
-		LvItem.pszText = _T("");
+		LvItem.pszText = L"";
 		LvItem.iItem = Loop;
 		LvItem.iSubItem = 0;
 		ListView_InsertItem(ListWndHndl, &LvItem);
@@ -1172,24 +1169,24 @@ void ViewData(BOOL Init)
 		int LoopRtColDat;
 		for (LoopRtColDat = 0; LoopRtColDat < RtColDatCnt; LoopRtColDat++) {
 			ColumnData* RtColDat = CurRecDat->GetColumn(LoopRtColDat);
-			TCHAR Val[256];
+			wchar_t Val[256];
 			if (RtColDat->GetColumnType() == COLUMN_TYPE_INT) {
 				ColumnDataInt* RtColDatInt = (ColumnDataInt*)RtColDat;
 				int RtVal = RtColDatInt->GetValue();
-				wsprintf(Val, _T("%d"), RtVal);
+				wsprintf(Val, L"%d", RtVal);
 			} else if (RtColDat->GetColumnType() == COLUMN_TYPE_FLOAT) {
 				ColumnDataFloat* RtColDatFloat = (ColumnDataFloat*)RtColDat;
 				float RtVal = RtColDatFloat->GetValue();
-				_stprintf_s(Val, _T("%.8e"), RtVal);
+				_stprintf_s(Val, L"%.8e", RtVal);
 			} else if (RtColDat->GetColumnType() == COLUMN_TYPE_STR) {
 				ColumnDataStr* RtColDatStr = (ColumnDataStr*)RtColDat;
 				char* RtVal = RtColDatStr->GetValue();
-				wsprintf(Val, _T("%S"), RtVal);
+				wsprintf(Val, L"%S", RtVal);
 			} else if (RtColDat->GetColumnType() == COLUMN_TYPE_WSTR) {
 				ColumnDataWStr* RtColDatWStr = (ColumnDataWStr*)RtColDat;
 				lstrcpy(Val, RtColDatWStr->GetValue());
 			} else if (RtColDat->GetColumnType() == COLUMN_TYPE_BIN) {
-				lstrcpy(Val, _T("<<binary data>>"));
+				lstrcpy(Val, L"<<binary data>>");
 			}
 
 			LvItem.pszText = Val;
@@ -1206,24 +1203,24 @@ void ViewData(BOOL Init)
 
 void ChangeWindowTitle(HWND WndHndl)
 {
-	TCHAR WinTitle[64];
+	wchar_t WinTitle[64];
 	lstrcpy(WinTitle, WindowTitle);
-	if (SelectedTableName != NULL && lstrcmp(SelectedTableName, _T("")) != 0) {
-		lstrcat(WinTitle, _T("  ["));
+	if (SelectedTableName != NULL && lstrcmp(SelectedTableName, L"") != 0) {
+		lstrcat(WinTitle, L"  [");
 		lstrcat(WinTitle, SelectedTableName);
-		lstrcat(WinTitle, _T("]"));
+		lstrcat(WinTitle, L"]");
 	}
 	SetWindowText(WndHndl, WinTitle);
 }
 
-int SwitchSortRecord(TCHAR* TableName, TCHAR* ColumnName)
+int SwitchSortRecord(wchar_t* TableName, wchar_t* ColumnName)
 {
-	static TCHAR PrevTableName[16];
-	static TCHAR PrevColumnName[16];
+	static wchar_t PrevTableName[16];
+	static wchar_t PrevColumnName[16];
 	static int PrevCompare = 0; // -1:Previous compare is [A to Z]. 1:Previous compare is [Z to A].
 	if (PrevCompare == 0) {
-		lstrcpy(PrevTableName, _T(""));
-		lstrcpy(PrevColumnName, _T(""));
+		lstrcpy(PrevTableName, L"");
+		lstrcpy(PrevColumnName, L"");
 		PrevCompare = -1;
 	}
 
@@ -1251,7 +1248,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 {
 	InstHndl = hInstance;
 	EnableFileAccessFlag();
-	lstrcpy(WindowTitle, _T("StkData GUI"));
+	lstrcpy(WindowTitle, L"StkData GUI");
 	ShowStkDataWindow(WindowTitle, NULL);
 	return 0;
 }
