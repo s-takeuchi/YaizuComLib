@@ -20,11 +20,11 @@ ColumnDataクラスの派生クラスとして定義されます。
 <H3>4.12.1 ColumnDataWStrのメンバ変数</H3>
 private<BR>
 <TABLE BORDER="1">
-<TR><TD>TCHAR</TD><TD>m_Value[256]</TD><TD>ワイド文字列型カラムのデータ</TD></TR>
+<TR><TD>wchar_t</TD><TD>m_Value[256]</TD><TD>ワイド文字列型カラムのデータ</TD></TR>
 </TABLE><P>
 
 <H3>4.12.2 ColumnDataWStrの関数</H3>
-(1) ColumnDataWStr(TCHAR* ColumnName, TCHAR* Val)<BR>
+(1) ColumnDataWStr(wchar_t* ColumnName, wchar_t* Val)<BR>
 <div class=spc>
 コンストラクタ。Valの値256文字分をm_Valueにコピーする。
 <TABLE BORDER="1">
@@ -33,7 +33,7 @@ private<BR>
 </TABLE>
 </div><P>
 
-(2) ColumnDataWStr(TCHAR* ColumnName, TCHAR* Val, int CompOpe)<BR>
+(2) ColumnDataWStr(wchar_t* ColumnName, wchar_t* Val, int CompOpe)<BR>
 <div class=spc>
 コンストラクタ。Valの値256文字分をm_Valueにコピーする。
 <TABLE BORDER="1">
@@ -48,7 +48,7 @@ private<BR>
 デストラクタ。
 </div><P>
 
-(4) TCHAR* GetValue()<BR>
+(4) wchar_t* GetValue()<BR>
 <div class=spc>
 ワイド文字列型カラムのデータを取得する。
 <TABLE BORDER="1">

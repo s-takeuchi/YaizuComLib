@@ -20,7 +20,7 @@ StkDataのレコードにアクセスするためのクラス（データモデ�
 private<BR>
 <TABLE BORDER="1">
 <TR><TD>int</TD><TD>m_CurrentColumnNum</TD><TD>インスタンスを構成する実際のカラム数</TD></TR>
-<TR><TD>TCHAR</TD><TD>m_TableName[TABLE_NAME_SIZE]</TD><TD>テーブル名</TD></TR>
+<TR><TD>wchar_t</TD><TD>m_TableName[TABLE_NAME_SIZE]</TD><TD>テーブル名</TD></TR>
 <TR><TD>ColumnData*</TD><TD>m_ColumnData[MAX_COLUMN_NUMBER]</TD><TD>カラムを格納する配列</TD></TR>
 <TR><TD>RecordData*</TD><TD>m_NextRecord</TD><TD>次のRecordDataへのポインタ<BR>NULL:次のRecordDataは存在しません</TD></TR>
 </TABLE><P>
@@ -31,7 +31,7 @@ private<BR>
 デフォルトコンストラクタ。
 </div><P>
 
-(2) RecordData(TCHAR TableName[TABLE_NAME_SIZE], ColumnData** ColDat, int NumOfColDat)<BR>
+(2) RecordData(wchar_t TableName[TABLE_NAME_SIZE], ColumnData** ColDat, int NumOfColDat)<BR>
 <div class=spc>
 コンストラクタ。指定したカラムを含むRecordDataインスタンスを生成します。
 <TABLE BORDER="1">
@@ -80,7 +80,7 @@ ColIndex番目に追加したカラムを取得します。
 </TABLE>
 </div><P>
 
-(7) ColumnData* GetColumn(TCHAR* ColName)<BR>
+(7) ColumnData* GetColumn(wchar_t* ColName)<BR>
 <div class=spc>
 指定した名称のカラムを取得します。
 <TABLE BORDER="1">
@@ -94,7 +94,7 @@ ColIndex番目に追加したカラムを取得します。
 RecordDataに設定されているカラムの数を返します。
 </div><P>
 
-(9) void SetTableName(TCHAR* TableName)<BR>
+(9) void SetTableName(wchar_t* TableName)<BR>
 <div class=spc>
 テーブル名を指定します。TableNameが16文字(NULL含む)を超えた場合，17文字目以降の文字は切り取られます。
 <TABLE BORDER="1">
@@ -102,7 +102,7 @@ RecordDataに設定されているカラムの数を返します。
 </TABLE>
 </div><P>
 
-(10) TCHAR* GetTableName()<BR>
+(10) wchar_t* GetTableName()<BR>
 <div class=spc>
 テーブル名を取得します。
 <TABLE BORDER="1">

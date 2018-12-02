@@ -18,7 +18,7 @@
 <H3>4.1.1 TableDefのメンバ変数</H3>
 private<BR>
 <TABLE BORDER="1">
-<TR><TD>TCHAR</TD><TD>m_TableName[TABLE_NAME_SIZE]</TD><TD>テーブル名</TD></TR>
+<TR><TD>wchar_t</TD><TD>m_TableName[TABLE_NAME_SIZE]</TD><TD>テーブル名</TD></TR>
 <TR><TD>ColumnDef*</TD><TD>m_Column[MAX_COLUMN_NUMBER]</TD><TD>カラムの定義を格納する配列</TD></TR>
 <TR><TD>int</TD><TD>m_NumberOfColumn</TD><TD>インスタンスを構成する実際のカラム数</TD></TR>
 <TR><TD>int</TD><TD>m_MaxRecord</TD><TD>登録可能最大レコード数</TD></TR>
@@ -30,7 +30,7 @@ private<BR>
 デフォルトコンストラクタ。
 </div><P>
 
-(2) TableDef(TCHAR* TableName, int MaxRecord)<BR>
+(2) TableDef(wchar_t* TableName, int MaxRecord)<BR>
 <div class=spc>
 コンストラクタ。<BR>
 <TABLE BORDER="1">
@@ -44,7 +44,7 @@ private<BR>
 デストラクタ。
 </div><P>
 
-(4) void SetTableName(TCHAR* TableName)<BR>
+(4) void SetTableName(wchar_t* TableName)<BR>
 <div class=spc>
 テーブル名を指定します。TableNameが16文字(NULL含む)を超えた場合，17文字目以降の文字は切り取られます。
 <TABLE BORDER="1">
@@ -52,7 +52,7 @@ private<BR>
 </TABLE>
 </div><P>
 
-(5) TCHAR* GetTableName()<BR>
+(5) wchar_t* GetTableName()<BR>
 <div class=spc>
 テーブル名を取得します。
 <TABLE BORDER="1">

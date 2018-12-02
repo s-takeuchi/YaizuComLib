@@ -20,7 +20,7 @@ StkDataのデータのレコード内カラムにアクセスするためのク�
 
 protected<BR>
 <TABLE BORDER="1">
-<TR><TD>TCHAR</TD><TD>m_ColumnName[COLUMN_NAME_SIZE]</TD><TD>カラム名</TD></TR>
+<TR><TD>wchar_t</TD><TD>m_ColumnName[COLUMN_NAME_SIZE]</TD><TD>カラム名</TD></TR>
 <TR><TD>int</TD><TD>m_ColumnType</TD><TD>カラム種別</TD></TR>
 <tr><td>int</td><td>m_ComparisonOperator</TD><TD>比較種別</TD></TR>
 </TABLE><P>
@@ -36,7 +36,7 @@ protected<BR>
 デストラクタ。
 </div><P>
 
-(3) void SetColumnName(TCHAR* ColumnName)<BR>
+(3) void SetColumnName(wchar_t* ColumnName)<BR>
 <div class=spc>
 カラム名を指定します。ColumnNameが16文字(NULL含む)を超えた場合，17文字目以降の文字は切り取られます。
 <TABLE BORDER="1">
@@ -44,7 +44,7 @@ protected<BR>
 </TABLE>
 </div><P>
 
-(4) TCHAR* GetColumnName()<BR>
+(4) wchar_t* GetColumnName()<BR>
 <div class=spc>
 カラム名を取得します。
 <TABLE BORDER="1">
