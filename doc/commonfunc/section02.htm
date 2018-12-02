@@ -41,17 +41,17 @@ ex.) MessageProc::GetMsg(100);<br>
 MessageProcクラスが提供するAPI一覧を以下に示します。<p>
 <table class="tblstyle">
 <tr><td>static void SetLocaleMode(int)</td><td>GetMsg, GetMsgSjis, GetMsgUft8 APIが返すメッセージおよびラベルのロケールを決定するモードを指定します。</td></tr>
-<tr><td>static TCHAR* GetMsg(int)</td><td>UTF-16エンコーディングしたメッセージまたはラベルを返却します。</td></tr>
-<tr><td>static TCHAR* GetMsgEng(int)</td><td>UTF-16エンコーディングした英語メッセージまたは英語ラベルを返却します。</td></tr>
-<tr><td>static TCHAR* GetMsgJpn(int)</td><td>UTF-16エンコーディングした日本語メッセージまたは日本語ラベルを返却します。</td></tr>
+<tr><td>static wchar_t* GetMsg(int)</td><td>UTF-16エンコーディングしたメッセージまたはラベルを返却します。</td></tr>
+<tr><td>static wchar_t* GetMsgEng(int)</td><td>UTF-16エンコーディングした英語メッセージまたは英語ラベルを返却します。</td></tr>
+<tr><td>static wchar_t* GetMsgJpn(int)</td><td>UTF-16エンコーディングした日本語メッセージまたは日本語ラベルを返却します。</td></tr>
 <tr><td>static BYTE* GetMsgSjis(int)</td><td>SJISエンコーディングしたメッセージまたはラベルを返却します。</td></tr>
 <tr><td>static BYTE* GetMsgSjisEng(int)</td><td>SJISエンコーディングした英語メッセージまたは英語ラベルを返却します。</td></tr>
 <tr><td>static BYTE* GetMsgSjisJpn(int)</td><td>SJISエンコーディングした日本語メッセージまたは日本語ラベルを返却します。</td></tr>
 <tr><td>static BYTE* GetMsgUtf8(int)</td><td>UTF-8エンコーディングしたメッセージまたはラベルを返却します。</td></tr>
 <tr><td>static BYTE* GetMsgUtf8Eng(int)</td><td>UTF-8エンコーディングした英語メッセージまたは英語ラベルを返却します。</td></tr>
 <tr><td>static BYTE* GetMsgUtf8Jpn(int)</td><td>UTF-8エンコーディングした日本語メッセージまたは日本語ラベルを返却します。</td></tr>
-<tr><td>static void AddEng(int, TCHAR*)</td><td>指定した英語メッセージまたは英語ラベルを追加します。</td></tr>
-<tr><td>static void AddJpn(int, TCHAR*)</td><td>指定した日本語メッセージまたは日本語ラベルを追加します。</td></tr>
+<tr><td>static void AddEng(int, wchar_t*)</td><td>指定した英語メッセージまたは英語ラベルを追加します。</td></tr>
+<tr><td>static void AddJpn(int, wchar_t*)</td><td>指定した日本語メッセージまたは日本語ラベルを追加します。</td></tr>
 <tr><td>static void DelEng(int)</td><td>指定した英語メッセージまたは英語ラベルを削除します。</td></tr>
 <tr><td>static void DelJpn(int)</td><td>指定した日本語メッセージまたは日本語ラベルを削除します。</td></tr>
 <tr><td>static void ClearAllMsg()</td><td>すべてのメッセージを削除します。</td></tr>
@@ -78,7 +78,7 @@ int LOCALE_MODE_JAPANESE(11) : 日本語ロケールを設定<br>
 
 
 
-<H2 ID="2.5">2.5 TCHAR* GetMsg(int Id)</H2>
+<H2 ID="2.5">2.5 wchar_t* GetMsg(int Id)</H2>
 <div class="topic">
 UTF-16エンコーディングしたメッセージまたはラベルを返却します。<br>
 <table class="tblstyle">
@@ -89,7 +89,7 @@ UTF-16エンコーディングしたメッセージまたはラベルを返却�
 
 
 
-<H2 ID="2.6">2.6 TCHAR* GetMsgEng(int Id)</H2>
+<H2 ID="2.6">2.6 wchar_t* GetMsgEng(int Id)</H2>
 <div class="topic">
 UTF-16エンコーディングした英語メッセージまたは英語ラベルを返却します。<br>
 <table class="tblstyle">
@@ -100,7 +100,7 @@ UTF-16エンコーディングした英語メッセージまたは英語ラベ�
 
 
 
-<H2 ID="2.7">2.7 TCHAR* GetMsgJpn(int Id)</H2>
+<H2 ID="2.7">2.7 wchar_t* GetMsgJpn(int Id)</H2>
 <div class="topic">
 UTF-16エンコーディングした日本語メッセージまたは日本語ラベルを返却します。<br>
 <table class="tblstyle">
@@ -177,7 +177,7 @@ UTF-8エンコーディングした日本語メッセージまたは日本語ラ
 
 
 
-<H2 ID="2.14">2.14 void AddEng(int Id, TCHAR* Msg)</H2>
+<H2 ID="2.14">2.14 void AddEng(int Id, wchar_t* Msg)</H2>
 <div class="topic">
 指定した英語メッセージまたは英語ラベルを追加します。<br>
 <table class="tblstyle">
@@ -189,7 +189,7 @@ UTF-8エンコーディングした日本語メッセージまたは日本語ラ
 
 
 
-<H2 ID="2.15">2.15 void AddJpn(int Id, TCHAR* Msg)</H2>
+<H2 ID="2.15">2.15 void AddJpn(int Id, wchar_t* Msg)</H2>
 <div class="topic">
 指定した日本語メッセージまたは日本語ラベルを追加します。<br>
 <table class="tblstyle">

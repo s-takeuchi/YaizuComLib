@@ -39,7 +39,7 @@ Hence, You need to call this function before you call other functions of StkGene
 <TABLE BORDER="1">
 <TR>
 <TD>Function</TD>
-<TD>BOOL IsDuplicateAppExisting(HWND)</TD>
+<TD>bool IsDuplicateAppExisting(HWND)</TD>
 </TR>
 <TR>
 <TD>Description</TD>
@@ -55,9 +55,9 @@ HWND: Window handler of the program which calls this function.
 </TR>
 <TR>
 <TD>Out</TD>
-<TD>BOOL: <BR>
-TRUE - Duplicated program has already been running.<BR>
-FALSE - No duplicated program is running.
+<TD>bool: <BR>
+true - Duplicated program has already been running.<BR>
+false - No duplicated program is running.
 </TD>
 </TR>
 </TABLE>
@@ -65,7 +65,7 @@ FALSE - No duplicated program is running.
 
 
 
-<H2 ID="1.1">1.1 int GetFileSize(TCHAR* FileName)</H2>
+<H2 ID="1.1">1.1 int GetFileSize(wchar_t* FileName)</H2>
 <div class="topic">
 指定したファイルのファイルサイズ(バイト)を返します。<br>
 FileNameにはファイルパスではなく，ファイル名を指定する必要があります。GetFileSizeは，現在のモジュールが存在するフォルダ内で
@@ -79,7 +79,7 @@ FileNameにはファイルパスではなく，ファイル名を指定する必
 
 
 
-<H2 ID="1.5">1.5 int GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH])</H2>
+<H2 ID="1.5">1.5 int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[MAX_PATH])</H2>
 <div class="topic">
 このAPIを呼び出すモジュールと同一のディレクトリに存在するファイルのフルパスを返却します。<br>
 <table class="tblstyle">
@@ -91,7 +91,7 @@ FileNameにはファイルパスではなく，ファイル名を指定する必
 
 
 
-<H2 ID="1.6">1.6 int GetFullPathWithoutFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH])</H2>
+<H2 ID="1.6">1.6 int GetFullPathWithoutFileName(wchar_t* FileName, wchar_t FullPath[MAX_PATH])</H2>
 <div class="topic">
 指定したファイル名を含むフルパスから，ファイル名を除外したフルパスを取得します。<br>
 <table class="tblstyle">

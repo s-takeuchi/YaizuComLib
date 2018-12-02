@@ -34,16 +34,16 @@ StkStringParserの機能を利用するために，クライアントプログ�
 <div class="topic">
 StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 <table class="tblstyle">
-<tr><td>static int ParseInto1Param(TCHAR*, TCHAR*, TCHAR, TCHAR*)</td><td>与えられた文字列を構文解析し，最大1個の文字列を取得します。</td></tr>
-<tr><td>static int ParseInto2Params(TCHAR*, TCHAR*, TCHAR, TCHAR*, TCHAR*)</td><td>与えられた文字列を構文解析し，最大2個の文字列を取得します。</td></tr>
-<tr><td>static int ParseInto3Params(TCHAR*, TCHAR*, TCHAR, TCHAR*, TCHAR*, TCHAR*)</td><td>与えられた文字列を構文解析し，最大3個の文字列を取得します。</td></tr>
-<tr><td>static int ParseInto4Params(TCHAR*, TCHAR*, TCHAR, TCHAR*, TCHAR*, TCHAR*, TCHAR*)</td><td>与えられた文字列を構文解析し，最大4個の文字列を取得します。</td></tr>
+<tr><td>static int ParseInto1Param(wchar_t*, wchar_t*, wchar_t, wchar_t*)</td><td>与えられた文字列を構文解析し，最大1個の文字列を取得します。</td></tr>
+<tr><td>static int ParseInto2Params(wchar_t*, wchar_t*, wchar_t, wchar_t*, wchar_t*)</td><td>与えられた文字列を構文解析し，最大2個の文字列を取得します。</td></tr>
+<tr><td>static int ParseInto3Params(wchar_t*, wchar_t*, wchar_t, wchar_t*, wchar_t*, wchar_t*)</td><td>与えられた文字列を構文解析し，最大3個の文字列を取得します。</td></tr>
+<tr><td>static int ParseInto4Params(wchar_t*, wchar_t*, wchar_t, wchar_t*, wchar_t*, wchar_t*, wchar_t*)</td><td>与えられた文字列を構文解析し，最大4個の文字列を取得します。</td></tr>
 </table><p>
 </div><p>
 
 
 
-<H2 ID="5.4">5.4 int ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1)</H2>
+<H2 ID="5.4">5.4 int ParseInto1Param(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1)</H2>
 <div class="topic">
 内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, NULL, -1, NULL, -1, NULL, -1) を呼び出します。<br>
 詳細は，ParseInto4Paramsを参照のこと。
@@ -51,7 +51,7 @@ StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 
 
 
-<H2 ID="5.5">5.5 int ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2)</H2>
+<H2 ID="5.5">5.5 int ParseInto2Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2)</H2>
 <div class="topic">
 内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, NULL, -1, NULL, -1) を呼び出します。<br>
 詳細は，ParseInto4Paramsを参照のこと。
@@ -59,7 +59,7 @@ StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 
 
 
-<H2 ID="5.6">5.6 int ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3)</H2>
+<H2 ID="5.6">5.6 int ParseInto3Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3)</H2>
 <div class="topic">
 内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, OutStr3, -1, NULL, -1) を呼び出します。<br>
 詳細は，ParseInto4Paramsを参照のこと。
@@ -67,7 +67,7 @@ StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 
 
 
-<H2 ID="5.7">5.7 int ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3, TCHAR* OutStr4)</H2>
+<H2 ID="5.7">5.7 int ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3, wchar_t* OutStr4)</H2>
 <div class="topic">
 内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, OutStr3, -1, OutStr4, -1) を呼び出します。<br>
 詳細は，ParseInto4Paramsを参照のこと。
@@ -75,7 +75,7 @@ StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 
 
 
-<H2 ID="5.8">5.8 int ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len)</H2>
+<H2 ID="5.8">5.8 int ParseInto1Param(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len)</H2>
 <div class="topic">
 内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, NULL, -1, NULL, -1, NULL, -1) を呼び出します。<br>
 詳細は，ParseInto4Paramsを参照のこと。
@@ -83,7 +83,7 @@ StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 
 
 
-<H2 ID="5.9">5.9 int ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len)</H2>
+<H2 ID="5.9">5.9 int ParseInto2Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len)</H2>
 <div class="topic">
 内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, OutStr2, OutStr2Len, NULL, -1, NULL, -1) を呼び出します。<br>
 詳細は，ParseInto4Paramsを参照のこと。
@@ -91,7 +91,7 @@ StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 
 
 
-<H2 ID="5.10">5.10 int ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len, TCHAR* OutStr3, int OutStr3Len)</H2>
+<H2 ID="5.10">5.10 int ParseInto3Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len)</H2>
 <div class="topic">
 内部処理として，ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, OutStr2, OutStr2Len, OutStr3, OutStr3Len, NULL, -1) を呼び出します。<br>
 詳細は，ParseInto4Paramsを参照のこと。
@@ -99,7 +99,7 @@ StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 
 
 
-<H2 ID="5.11">5.11 int ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len, TCHAR* OutStr3, int OutStr3Len, TCHAR* OutStr4, int OutStr4Len)</H2>
+<H2 ID="5.11">5.11 int ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len, wchar_t* OutStr4, int OutStr4Len)</H2>
 <div class="topic">
 与えられた文字列を構文解析し，最大4個の文字列を取得します。<br>
 <table class="tblstyle">

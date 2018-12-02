@@ -14,9 +14,9 @@
 <div class="topic">
 
 <A HREF="section01.htm" target ="showframe">1. StkGeneric</A><BR>
-<A HREF="section01.htm#1.1" target ="showframe">1.1 int GetFileSize(TCHAR* FileName)</A><br>
-<A HREF="section01.htm#1.5" target ="showframe">1.5 int GetFullPathFromFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH])</A><br>
-<A HREF="section01.htm#1.6" target ="showframe">1.6 int GetFullPathWithoutFileName(TCHAR* FileName, TCHAR FullPath[MAX_PATH])</A><br>
+<A HREF="section01.htm#1.1" target ="showframe">1.1 int GetFileSize(wchar_t* FileName)</A><br>
+<A HREF="section01.htm#1.5" target ="showframe">1.5 int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[MAX_PATH])</A><br>
+<A HREF="section01.htm#1.6" target ="showframe">1.6 int GetFullPathWithoutFileName(wchar_t* FileName, wchar_t FullPath[MAX_PATH])</A><br>
 <p>
 
 <A HREF="section02.htm" target ="showframe">2. MessageProc</A><BR>
@@ -24,17 +24,17 @@
 <A HREF="section02.htm#2.2" target ="showframe">2.2 MessageProcの使用方法</A><br>
 <A HREF="section02.htm#2.3" target ="showframe">2.3 API一覧</A><br>
 <A HREF="section02.htm#2.4" target ="showframe">2.4 void SetLocaleMode(int SpecifiedMode)</A><br>
-<A HREF="section02.htm#2.5" target ="showframe">2.5 TCHAR* GetMsg(int Id)</A><br>
-<A HREF="section02.htm#2.6" target ="showframe">2.6 TCHAR* GetMsgEng(int Id)</A><br>
-<A HREF="section02.htm#2.7" target ="showframe">2.7 TCHAR* GetMsgJpn(int Id)</A><br>
+<A HREF="section02.htm#2.5" target ="showframe">2.5 wchar_t* GetMsg(int Id)</A><br>
+<A HREF="section02.htm#2.6" target ="showframe">2.6 wchar_t* GetMsgEng(int Id)</A><br>
+<A HREF="section02.htm#2.7" target ="showframe">2.7 wchar_t* GetMsgJpn(int Id)</A><br>
 <A HREF="section02.htm#2.8" target ="showframe">2.8 BYTE* GetMsgSjis(int Id)</A><br>
 <A HREF="section02.htm#2.9" target ="showframe">2.9 BYTE* GetMsgSjisEng(int Id)</A><br>
 <A HREF="section02.htm#2.10" target ="showframe">2.10 BYTE* GetMsgSjisJpn(int Id)</A><br>
 <A HREF="section02.htm#2.11" target ="showframe">2.11 BYTE* GetMsgUtf8(int Id)</A><br>
 <A HREF="section02.htm#2.12" target ="showframe">2.12 BYTE* GetMsgUtf8Eng(int Id)</A><br>
 <A HREF="section02.htm#2.13" target ="showframe">2.13 BYTE* GetMsgUtf8Jpn(int Id)</A><br>
-<A HREF="section02.htm#2.14" target ="showframe">2.14 void AddEng(int Id, TCHAR* Msg)</A><br>
-<A HREF="section02.htm#2.15" target ="showframe">2.15 void AddJpn(int Id, TCHAR* Msg)</A><br>
+<A HREF="section02.htm#2.14" target ="showframe">2.14 void AddEng(int Id, wchar_t* Msg)</A><br>
+<A HREF="section02.htm#2.15" target ="showframe">2.15 void AddJpn(int Id, wchar_t* Msg)</A><br>
 <A HREF="section02.htm#2.16" target ="showframe">2.16 void DelEng(int Id)</A><br>
 <A HREF="section02.htm#2.17" target ="showframe">2.17 void DelJpn(int Id)</A><br>
 <A HREF="section02.htm#2.18" target ="showframe">2.18 void ClearAllMsg()</A><br>
@@ -43,7 +43,7 @@
 <A HREF="section03.htm" target ="showframe">3. StkProperties</A><BR>
 <A HREF="section03.htm#3.1" target ="showframe">3.1 StkProperties概要</A><br>
 <A HREF="section03.htm#3.2" target ="showframe">3.2 StkPropertiesの使用方法</A><br>
-<A HREF="section03.htm#3.3" target ="showframe">3.3 int GetProperties(TCHAR* FileName)</A><br>
+<A HREF="section03.htm#3.3" target ="showframe">3.3 int GetProperties(wchar_t* FileName)</A><br>
 <A HREF="section03.htm#3.4" target ="showframe">3.4 int GetPropertyInt(char* PropName, int* Value)</A><br>
 <A HREF="section03.htm#3.5" target ="showframe">3.5 int GetPropertyStr(char* PropName, char Value[256])</A><br>
 <p>
@@ -52,25 +52,25 @@
 <A HREF="section04.htm#4.1" target ="showframe">4.1 StkObject概要</A><br>
 <A HREF="section04.htm#4.2" target ="showframe">4.2 StkObjectの使用方法</A><br>
 <A HREF="section04.htm#4.3" target ="showframe">4.3 API一覧</A><br>
-<A HREF="section04.htm#4.4" target ="showframe">4.4 StkObject(TCHAR* Name)</A><br>
-<A HREF="section04.htm#4.5" target ="showframe">4.5 StkObject(TCHAR* Name, int IntValue)</A><br>
-<A HREF="section04.htm#4.6" target ="showframe">4.6 StkObject(TCHAR* Name, float FloatValue)</A><br>
-<A HREF="section04.htm#4.7" target ="showframe">4.7 StkObject(TCHAR* Name, TCHAR* StringValue)</A><br>
+<A HREF="section04.htm#4.4" target ="showframe">4.4 StkObject(wchar_t* Name)</A><br>
+<A HREF="section04.htm#4.5" target ="showframe">4.5 StkObject(wchar_t* Name, int IntValue)</A><br>
+<A HREF="section04.htm#4.6" target ="showframe">4.6 StkObject(wchar_t* Name, float FloatValue)</A><br>
+<A HREF="section04.htm#4.7" target ="showframe">4.7 StkObject(wchar_t* Name, wchar_t* StringValue)</A><br>
 <A HREF="section04.htm#4.8" target ="showframe">4.8 ~StkObject()</A><br>
 <A HREF="section04.htm#4.9" target ="showframe">4.9 StkObject* Clone()</A><br>
-<A HREF="section04.htm#4.10" target ="showframe">4.10 BOOL Equals(StkObject* StkObj)</A><br>
+<A HREF="section04.htm#4.10" target ="showframe">4.10 bool Equals(StkObject* StkObj)</A><br>
 <A HREF="section04.htm#4.11" target ="showframe">4.11 StkObject* Contains(StkObject* StkObj)</A><br>
 <A HREF="section04.htm#4.12" target ="showframe">4.12 int GetArrayLength()</A><br>
 <A HREF="section04.htm#4.13" target ="showframe">4.13 int GetChildElementCount()</A><br>
 <A HREF="section04.htm#4.14" target ="showframe">4.14 int GetAttributeCount()</A><br>
-<A HREF="section04.htm#4.15" target ="showframe">4.15 TCHAR* GetName()</A><br>
+<A HREF="section04.htm#4.15" target ="showframe">4.15 wchar_t* GetName()</A><br>
 <A HREF="section04.htm#4.16" target ="showframe">4.16 int GetType()</A><br>
 <A HREF="section04.htm#4.17" target ="showframe">4.17 int GetIntValue()</A><br>
 <A HREF="section04.htm#4.18" target ="showframe">4.18 float GetFloatValue()</A><br>
-<A HREF="section04.htm#4.19" target ="showframe">4.19 TCHAR* GetStringValue()</A><br>
+<A HREF="section04.htm#4.19" target ="showframe">4.19 wchar_t* GetStringValue()</A><br>
 <A HREF="section04.htm#4.20" target ="showframe">4.20 void SetIntValue(int IntValue)</A><br>
 <A HREF="section04.htm#4.21" target ="showframe">4.21 void SetFloatValue(float)</A><br>
-<A HREF="section04.htm#4.22" target ="showframe">4.22 void SetStringValue(TCHAR* StringValue)</A><br>
+<A HREF="section04.htm#4.22" target ="showframe">4.22 void SetStringValue(wchar_t* StringValue)</A><br>
 <A HREF="section04.htm#4.23" target ="showframe">4.23 StkObject* GetFirstChildElement()</A><br>
 <A HREF="section04.htm#4.24" target ="showframe">4.24 StkObject* GetLastChildElement()</A><br>
 <A HREF="section04.htm#4.25" target ="showframe">4.25 StkObject* GetFirstAttribute()</A><br>
@@ -78,25 +78,25 @@
 <A HREF="section04.htm#4.27" target ="showframe">4.27 StkObject* GetNext()</A><br>
 <A HREF="section04.htm#4.28" target ="showframe">4.28 void AppendChildElement(StkObject* ChildObj)</A><br>
 <A HREF="section04.htm#4.29" target ="showframe">4.29 void AppendAttribute(StkObject* AttrObj)</A><br>
-<A HREF="section04.htm#4.30" target ="showframe">4.30 void ToXml(TCHAR* StrXml, int Size)</A><br>
-<A HREF="section04.htm#4.31" target ="showframe">4.31 int ToJson(TCHAR* StrJson, int Size)</A><br>
-<A HREF="section04.htm#4.32" target ="showframe">4.32 StkObject* CreateObjectFromXml(TCHAR* StrXml, int* ErrorCode)</A><br>
-<A HREF="section04.htm#4.33" target ="showframe">4.33 StkObject* CreateObjectFromJson(TCHAR* StrJson, int* ErrorCode)</A><br>
-<A HREF="section04.htm#4.34" target ="showframe">4.34 static int Analyze(TCHAR*)</A><br>
+<A HREF="section04.htm#4.30" target ="showframe">4.30 void ToXml(wchar_t* StrXml, int Size)</A><br>
+<A HREF="section04.htm#4.31" target ="showframe">4.31 int ToJson(wchar_t* StrJson, int Size)</A><br>
+<A HREF="section04.htm#4.32" target ="showframe">4.32 StkObject* CreateObjectFromXml(wchar_t* StrXml, int* ErrorCode)</A><br>
+<A HREF="section04.htm#4.33" target ="showframe">4.33 StkObject* CreateObjectFromJson(wchar_t* StrJson, int* ErrorCode)</A><br>
+<A HREF="section04.htm#4.34" target ="showframe">4.34 static int Analyze(wchar_t*)</A><br>
 <p>
 
 <A HREF="section05.htm" target ="showframe">5. StkStringParser</A><BR>
 <A HREF="section05.htm#5.1" target ="showframe">5.1 StkStringParser概要</A><br>
 <A HREF="section05.htm#5.2" target ="showframe">5.2 StkStringParserの使用方法</A><br>
 <A HREF="section05.htm#5.3" target ="showframe">5.3 API一覧</A><br>
-<A HREF="section05.htm#5.4" target ="showframe">5.4 int ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1)</A><br>
-<A HREF="section05.htm#5.5" target ="showframe">5.5 int ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2)</A><br>
-<A HREF="section05.htm#5.6" target ="showframe">5.6 int ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3)</A><br>
-<A HREF="section05.htm#5.7" target ="showframe">5.7 int ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, TCHAR* OutStr2, TCHAR* OutStr3, TCHAR* OutStr4)</A><br>
-<A HREF="section05.htm#5.8" target ="showframe">5.8 int ParseInto1Param(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len)</A><br>
-<A HREF="section05.htm#5.9" target ="showframe">5.9 int ParseInto2Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len)</A><br>
-<A HREF="section05.htm#5.10" target ="showframe">5.10 int ParseInto3Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len, TCHAR* OutStr3, int OutStr3Len)</A><br>
-<A HREF="section05.htm#5.11" target ="showframe">5.11 int ParseInto4Params(TCHAR* OriginStr, TCHAR* Format, TCHAR Target, TCHAR* OutStr1, int OutStr1Len, TCHAR* OutStr2, int OutStr2Len, TCHAR* OutStr3, int OutStr3Len, TCHAR* OutStr4, int OutStr4Len)</A><br>
+<A HREF="section05.htm#5.4" target ="showframe">5.4 int ParseInto1Param(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1)</A><br>
+<A HREF="section05.htm#5.5" target ="showframe">5.5 int ParseInto2Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2)</A><br>
+<A HREF="section05.htm#5.6" target ="showframe">5.6 int ParseInto3Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3)</A><br>
+<A HREF="section05.htm#5.7" target ="showframe">5.7 int ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3, wchar_t* OutStr4)</A><br>
+<A HREF="section05.htm#5.8" target ="showframe">5.8 int ParseInto1Param(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len)</A><br>
+<A HREF="section05.htm#5.9" target ="showframe">5.9 int ParseInto2Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len)</A><br>
+<A HREF="section05.htm#5.10" target ="showframe">5.10 int ParseInto3Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len)</A><br>
+<A HREF="section05.htm#5.11" target ="showframe">5.11 int ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len, wchar_t* OutStr4, int OutStr4Len)</A><br>
 <p>
 
 </div>
