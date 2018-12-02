@@ -24,8 +24,8 @@ private:
 	// Logging information
 	int Log[MAX_NUM_OF_LOG];
 	int LogId[MAX_NUM_OF_LOG];
-	TCHAR LogParamStr1[MAX_NUM_OF_LOG][256];
-	TCHAR LogParamStr2[MAX_NUM_OF_LOG][256];
+	wchar_t LogParamStr1[MAX_NUM_OF_LOG][256];
+	wchar_t LogParamStr2[MAX_NUM_OF_LOG][256];
 	int LogParamInt1[MAX_NUM_OF_LOG];
 	int LogParamInt2[MAX_NUM_OF_LOG];
 	int NumOfLogs;
@@ -40,7 +40,7 @@ private:
 	~StkSocketMgr();
 
 	// Logging method
-	void PutLog(int, int, TCHAR*, TCHAR*, int, int);
+	void PutLog(int, int, wchar_t*, wchar_t*, int, int);
 
 	// Safe socket close
 	void CloseSocketWaitForPeerClose(SOCKET);
@@ -84,43 +84,43 @@ public:
 	static StkSocketMgr* GetInstance();
 
 	// Logging method
-	void TakeLastLog(int*, int*, TCHAR*, TCHAR*, int*, int*);
-	void TakeFirstLog(int*, int*, TCHAR*, TCHAR*, int*, int*);
+	void TakeLastLog(int*, int*, wchar_t*, wchar_t*, int*, int*);
+	void TakeFirstLog(int*, int*, wchar_t*, wchar_t*, int*, int*);
 	int GetNumOfLogs();
 	void ClearLog();
 
 	// Add socket information
-	int AddSocketInfo(int, int, int, TCHAR[256], int);
+	int AddSocketInfo(int, int, int, wchar_t[256], int);
 	// Copy the socket information for new ACCEPT
 	int CopySocketInfo(int, int);
 	// Delete socket information
 	int DeleteSocketInfo(int);
 	// Get socket information
-	int GetSocketInfo(int, int*, int*, int*, TCHAR[256], int*, BOOL*);
-	int GetSocketInfo(int, int*, int*, TCHAR[256], int*, BOOL*);
+	int GetSocketInfo(int, int*, int*, int*, wchar_t[256], int*, bool*);
+	int GetSocketInfo(int, int*, int*, wchar_t[256], int*, bool*);
 
 	// Socket open/close
 	int OpenSocket(int);
-	int CloseSocket(int, BOOL);
+	int CloseSocket(int, bool);
 
 	// 他ノードへの接続
 	int ConnectSocket(int);
 	// 他ノードへの接続切断
-	int DisconnectSocket(int, int, BOOL);
+	int DisconnectSocket(int, int, bool);
 
 	// acceptする
 	int Accept(int);
 	// acceptしたソケットをクローズする
-	int CloseAccept(int, int, BOOL);
+	int CloseAccept(int, int, bool);
 
 	// データ受信(TCP)
-	int Receive(int, int, BYTE*, int, int, int, BYTE*, int);
+	int Receive(int, int, unsigned char*, int, int, int, unsigned char*, int);
 	// データ送信(TCP)
-	int Send(int, int, BYTE*, int);
+	int Send(int, int, unsigned char*, int);
 	// データ受信(UDP)
-	int ReceiveUdp(int, int, BYTE*, int);
+	int ReceiveUdp(int, int, unsigned char*, int);
 	// データ送信(UDP)
-	int SendUdp(int, int, BYTE*, int);
+	int SendUdp(int, int, unsigned char*, int);
 
 	// Acquire UDP max message size
 	int GetUdpMaxMessageSize(int);

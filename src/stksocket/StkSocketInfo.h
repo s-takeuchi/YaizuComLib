@@ -1,7 +1,6 @@
 #pragma once
 #include <winsock2.h>
 #include <windows.h>
-#include <tchar.h>
 
 struct StkSocketInfo
 {
@@ -29,7 +28,7 @@ struct StkSocketInfo
 
 	// ホスト名またはIPアドレス
 	// Receiverの場合待ち受け，Senderの場合接続先
-	TCHAR HostOrIpAddr[256];
+	wchar_t HostOrIpAddr[256];
 	// In case of UDP receiver, last accessed IP address is stored.
 	sockaddr_storage LastAccessedAddr;
 
@@ -38,7 +37,7 @@ struct StkSocketInfo
 	int Port;
 
 	// Flag which shows whether this socket is copied socket or not.
-	BOOL CopiedSocketFlag;
+	bool CopiedSocketFlag;
 	// If CopiedSocketFlag is true, Element ID of copy source is set. Otherwise -1 is set.
 	int CopySourceId;
 

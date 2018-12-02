@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <tchar.h>
 #include "..\..\src\stksocket\stksocket.h"
 #include "StkSocketTestMa.h"
 
@@ -9,14 +8,14 @@ int StkSocketTestMa::ThreadEndCount = 0;
 DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Recv1(LPVOID Param)
 {
 	ThreadStartCount++;
-	BYTE Buf[1000000];
-	while (TRUE) {
+	unsigned char Buf[1000000];
+	while (true) {
 		if (StkSocket_Accept(121) == 0) {
 			while (StkSocket_GetStatus(121) == STKSOCKET_STATUS_ACCEPT) {
 				StkSocket_Receive(121, 121, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
 				Sleep(100);
 			}
-			StkSocket_CloseAccept(121, 121, FALSE);
+			StkSocket_CloseAccept(121, 121, false);
 			break;
 		}
 		Sleep(100);
@@ -28,14 +27,14 @@ DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Recv1(LPVOID Param)
 DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Recv2(LPVOID Param)
 {
 	ThreadStartCount++;
-	BYTE Buf[1000000];
-	while (TRUE) {
+	unsigned char Buf[1000000];
+	while (true) {
 		if (StkSocket_Accept(122) == 0) {
 			while (StkSocket_GetStatus(122) == STKSOCKET_STATUS_ACCEPT) {
 				StkSocket_Receive(122, 122, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
 				Sleep(100);
 			}
-			StkSocket_CloseAccept(122, 122, FALSE);
+			StkSocket_CloseAccept(122, 122, false);
 			break;
 		}
 		Sleep(100);
@@ -47,14 +46,14 @@ DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Recv2(LPVOID Param)
 DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Recv3(LPVOID Param)
 {
 	ThreadStartCount++;
-	BYTE Buf[1000000];
-	while (TRUE) {
+	unsigned char Buf[1000000];
+	while (true) {
 		if (StkSocket_Accept(123) == 0) {
 			while (StkSocket_GetStatus(123) == STKSOCKET_STATUS_ACCEPT) {
 				StkSocket_Receive(123, 123, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
 				Sleep(100);
 			}
-			StkSocket_CloseAccept(123, 123, FALSE);
+			StkSocket_CloseAccept(123, 123, false);
 			break;
 		}
 		Sleep(100);
@@ -71,10 +70,10 @@ DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Send1(LPVOID Param)
 	Sleep(1000);
 	StkSocket_Connect(201);
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Send(201, 201, (BYTE*)Buf, strlen(Buf) + 1);
+		StkSocket_Send(201, 201, (unsigned char*)Buf, strlen(Buf) + 1);
 		Sleep(100);
 	}
-	StkSocket_Disconnect(201, 201, FALSE);
+	StkSocket_Disconnect(201, 201, false);
 
 	ThreadEndCount++;
 	return 0;
@@ -88,10 +87,10 @@ DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Send2(LPVOID Param)
 	Sleep(1000);
 	StkSocket_Connect(202);
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Send(202, 202, (BYTE*)Buf, strlen(Buf) + 1);
+		StkSocket_Send(202, 202, (unsigned char*)Buf, strlen(Buf) + 1);
 		Sleep(100);
 	}
-	StkSocket_Disconnect(202, 202, FALSE);
+	StkSocket_Disconnect(202, 202, false);
 
 	ThreadEndCount++;
 	return 0;
@@ -105,10 +104,10 @@ DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Send3(LPVOID Param)
 	Sleep(1000);
 	StkSocket_Connect(203);
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Send(203, 203, (BYTE*)Buf, strlen(Buf) + 1);
+		StkSocket_Send(203, 203, (unsigned char*)Buf, strlen(Buf) + 1);
 		Sleep(100);
 	}
-	StkSocket_Disconnect(203, 203, FALSE);
+	StkSocket_Disconnect(203, 203, false);
 
 	ThreadEndCount++;
 	return 0;
@@ -117,7 +116,7 @@ DWORD WINAPI StkSocketTestMa::TestThreadForAccept2Send3(LPVOID Param)
 void StkSocketTestMa::TestMultiAccept2()
 {
 	printf("[StkSocketTestMa::TestMultiAccept2] : Create socket --> Status validation [open] ... ");
-	StkSocket_AddInfo(121, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2202);
+	StkSocket_AddInfo(121, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2202);
 	StkSocket_Open(121);
 	StkSocket_CopyInfo(122, 121);
 	StkSocket_CopyInfo(123, 121);
@@ -129,11 +128,11 @@ void StkSocketTestMa::TestMultiAccept2()
 	}
 	printf("OK\r\n");
 
-	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
+	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2202);
 	StkSocket_Open(201);
-	StkSocket_AddInfo(202, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
+	StkSocket_AddInfo(202, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2202);
 	StkSocket_Open(202);
-	StkSocket_AddInfo(203, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
+	StkSocket_AddInfo(203, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2202);
 	StkSocket_Open(203);
 
 	ThreadStartCount = 0;
@@ -174,7 +173,7 @@ void StkSocketTestMa::TestMultiAccept2()
 	printf("OK\r\n");
 	Sleep(500);
 
-	StkSocket_Close(122, FALSE);
+	StkSocket_Close(122, false);
 	printf("[StkSocketTestMa::TestMultiAccept2] : Target socket status is showing STKSOCKET_STATUS_CLOSE ... ");
 	if (StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_ACCEPT ||
@@ -185,7 +184,7 @@ void StkSocketTestMa::TestMultiAccept2()
 	printf("OK\r\n");
 	Sleep(500);
 
-	StkSocket_Close(121, FALSE);
+	StkSocket_Close(121, false);
 	printf("[StkSocketTestMa::TestMultiAccept2] : All receiver status are showing STKSOCKET_STATUS_CLOSE ... ");
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
@@ -220,7 +219,7 @@ void StkSocketTestMa::TestMultiAccept2()
 void StkSocketTestMa::TestMultiAccept3()
 {
 	printf("[StkSocketTestMa::TestMultiAccept3] : Create/Copy socket --> Status validation [close] ... ");
-	StkSocket_AddInfo(121, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2202);
+	StkSocket_AddInfo(121, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2202);
 	StkSocket_CopyInfo(122, 121);
 	StkSocket_CopyInfo(123, 121);
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
@@ -242,7 +241,7 @@ void StkSocketTestMa::TestMultiAccept3()
 	printf("OK\r\n");
 
 	printf("[StkSocketTestMa::TestMultiAccept3] : Check the copied sockets are also closed after source socket closed ... ");
-	StkSocket_Close(121, TRUE);
+	StkSocket_Close(121, true);
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
@@ -272,11 +271,11 @@ void StkSocketTestMa::TestMultiAccept3()
 	printf("OK\r\n");
 
 	printf("[StkSocketTestMa::TestMultiAccept3] : Run threads ... ");
-	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
+	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2202);
 	StkSocket_Open(201);
-	StkSocket_AddInfo(202, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
+	StkSocket_AddInfo(202, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2202);
 	StkSocket_Open(202);
-	StkSocket_AddInfo(203, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2202);
+	StkSocket_AddInfo(203, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2202);
 	StkSocket_Open(203);
 
 	ThreadStartCount = 0;
@@ -319,7 +318,7 @@ void StkSocketTestMa::TestMultiAccept3()
 	Sleep(500);
 
 	printf("[StkSocketTestMa::TestMultiAccept3] : Check only copied socket is closed ... ");
-	StkSocket_Close(122, TRUE);
+	StkSocket_Close(122, true);
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_ACCEPT ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_ACCEPT) {
@@ -329,7 +328,7 @@ void StkSocketTestMa::TestMultiAccept3()
 	printf("OK\r\n");
 
 	printf("[StkSocketTestMa::TestMultiAccept3] : Check all copied socket is closed after source socket is closed ... ");
-	StkSocket_Close(121, TRUE);
+	StkSocket_Close(121, true);
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {

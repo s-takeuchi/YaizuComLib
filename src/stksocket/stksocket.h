@@ -42,29 +42,29 @@
 #define STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH  -3
 #define STKSOCKET_RECV_FINISHCOND_TIMEOUT        -4
 
-int StkSocket_AddInfo(int, int, int, TCHAR[256], int);
+int StkSocket_AddInfo(int, int, int, wchar_t[256], int);
 int StkSocket_DeleteInfo(int);
-int StkSocket_GetInfo(int, int*, int*, int*, TCHAR[256], int*, BOOL*);
-int StkSocket_GetInfo(int, int*, int*, TCHAR[256], int*, BOOL*);
+int StkSocket_GetInfo(int, int*, int*, int*, wchar_t[256], int*, bool*);
+int StkSocket_GetInfo(int, int*, int*, wchar_t[256], int*, bool*);
 int StkSocket_CopyInfo(int, int);
 int StkSocket_GetNumOfStkInfos();
 int StkSocket_GetStatus(int);
 
 int StkSocket_Open(int);
-int StkSocket_Close(int, BOOL);
+int StkSocket_Close(int, bool);
 int StkSocket_Connect(int);
-int StkSocket_Disconnect(int, int, BOOL);
+int StkSocket_Disconnect(int, int, bool);
 int StkSocket_Accept(int);
-int StkSocket_CloseAccept(int, int, BOOL);
+int StkSocket_CloseAccept(int, int, bool);
 
-int StkSocket_Receive(int, int, BYTE*, int, int, int, BYTE*, int);
-int StkSocket_Send(int, int, BYTE*, int);
-int StkSocket_ReceiveUdp(int, int, BYTE*, int);
-int StkSocket_SendUdp(int, int, BYTE*, int);
+int StkSocket_Receive(int, int, unsigned char*, int, int, int, unsigned char*, int);
+int StkSocket_Send(int, int, unsigned char*, int);
+int StkSocket_ReceiveUdp(int, int, unsigned char*, int);
+int StkSocket_SendUdp(int, int, unsigned char*, int);
 int StkSocket_GetUdpMaxMessageSize(int);
 int StkSocket_ForceStop(int);
 
-void StkSocket_TakeLastLog(int*, int*, TCHAR*, TCHAR*, int*, int*);
-void StkSocket_TakeFirstLog(int*, int*, TCHAR*, TCHAR*, int*, int*);
+void StkSocket_TakeLastLog(int*, int*, wchar_t*, wchar_t*, int*, int*);
+void StkSocket_TakeFirstLog(int*, int*, wchar_t*, wchar_t*, int*, int*);
 int StkSocket_GetNumOfLogs();
 void StkSocket_ClearLog();

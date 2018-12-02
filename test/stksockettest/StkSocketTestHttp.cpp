@@ -1,16 +1,15 @@
 #include <stdio.h>
-#include <tchar.h>
 #include "..\..\src\stksocket\stksocket.h"
 #include "StkSocketTestHttp.h"
 
-BOOL StkSocketTestHttp::FinishSendTest = FALSE;
-BOOL StkSocketTestHttp::FinishRecvTest = FALSE;
+bool StkSocketTestHttp::FinishSendTest = false;
+bool StkSocketTestHttp::FinishRecvTest = false;
 
 DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination1(LPVOID Param)
 {
-	BYTE Dat[1024];
+	unsigned char Dat[1024];
 
-	while (TRUE) {
+	while (true) {
 		Sleep(10);
 		int Ret = StkSocket_Accept(100);
 		if (Ret == -1) {
@@ -32,22 +31,22 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination1(LPVOID Param)
 		strcat_s((char*)Dat, 1024, "Content-Type: text/html\n");
 		strcat_s((char*)Dat, 1024, "\n");
 		strcat_s((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
-		int RetS = StkSocket_Send(100, 100, (BYTE*)Dat, strlen((char*)Dat) + 1);
+		int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, strlen((char*)Dat) + 1);
 		if (RetS <= 0) {
 			printf("NG\r\n");
 			exit(0);
 		}
-		StkSocket_CloseAccept(100, 100, TRUE);
+		StkSocket_CloseAccept(100, 100, true);
 		break;
 	}
 
-	FinishRecvTest = TRUE;
+	FinishRecvTest = true;
 	return 0;
 }
 
 DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 {
-	BYTE Dat[1024];
+	unsigned char Dat[1024];
 
 	strcpy_s((char*)Dat, 1024, "");
 	strcat_s((char*)Dat, 1024, "POST / HTTP/1.1\n");
@@ -58,7 +57,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 
 	Sleep(3000);
 	StkSocket_Connect(101);
-	int RetS = StkSocket_Send(101, 101, (BYTE*)Dat, strlen((char*)Dat) + 1);
+	int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, strlen((char*)Dat) + 1);
 	if (RetS <= 0) {
 		printf("NG\r\n");
 		exit(0);
@@ -71,7 +70,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 		}
 		Sleep(100);
 	}
-	StkSocket_Disconnect(101, 101, TRUE);
+	StkSocket_Disconnect(101, 101, true);
 	if (RetR <= 0) {
 		printf("NG\r\n");
 		exit(0);
@@ -81,14 +80,14 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 		exit(0);
 	}
 
-	FinishSendTest = TRUE;
+	FinishSendTest = true;
 	return 0;
 }
 
 DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 {
-	BYTE Dat[1024];
-	BYTE TestData[10][256] = {
+	unsigned char Dat[1024];
+	unsigned char TestData[10][256] = {
 		"TestTestTest\0",
 		"POST / HTTP/1.1\nContent-Type: text/html\n\n",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:\n\n",
@@ -102,7 +101,7 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 	};
 
 	for (int Loop = 0; Loop < 10; Loop++) {
-		while (TRUE) {
+		while (true) {
 			Sleep(10);
 			int TcB = GetTickCount();
 			int Ret = StkSocket_Accept(100);
@@ -136,24 +135,24 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 			strcat_s((char*)Dat, 1024, "Content-Length: 51\n");
 			strcat_s((char*)Dat, 1024, "\n");
 			strcat_s((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
-			int RetS = StkSocket_Send(100, 100, (BYTE*)Dat, strlen((char*)Dat) + 1);
+			int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, strlen((char*)Dat) + 1);
 			if (RetS <= 0) {
 				printf("NG\r\n");
 				exit(0);
 			}
-			StkSocket_CloseAccept(100, 100, TRUE);
+			StkSocket_CloseAccept(100, 100, true);
 			break;
 		}
 	}
 
-	FinishRecvTest = TRUE;
+	FinishRecvTest = true;
 	return 0;
 }
 
 DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 {
-	BYTE Dat[1024];
-	BYTE TestData[10][256] = {
+	unsigned char Dat[1024];
+	unsigned char TestData[10][256] = {
 		"TestTestTest\0",
 		"POST / HTTP/1.1\nContent-Type: text/html\n\nTestTestTest",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:\n\nTestTestTest",
@@ -171,7 +170,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 
 		Sleep(3000);
 		StkSocket_Connect(101);
-		int RetS = StkSocket_Send(101, 101, (BYTE*)Dat, strlen((char*)Dat) + 1);
+		int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, strlen((char*)Dat) + 1);
 		if (RetS <= 0) {
 			printf("NG\r\n");
 			exit(0);
@@ -184,7 +183,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 			}
 			Sleep(100);
 		}
-		StkSocket_Disconnect(101, 101, TRUE);
+		StkSocket_Disconnect(101, 101, true);
 		if (RetR <= 0) {
 			printf("NG\r\n");
 			exit(0);
@@ -195,7 +194,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 		}
 	}
 
-	FinishSendTest = TRUE;
+	FinishSendTest = true;
 	return 0;
 }
 
@@ -203,32 +202,32 @@ void StkSocketTestHttp::TestHttpTermination()
 {
 	DWORD TmpId;
 
-	StkSocket_AddInfo(100, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2100);
+	StkSocket_AddInfo(100, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2100);
 	StkSocket_Open(100);
-	StkSocket_AddInfo(101, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2100);
+	StkSocket_AddInfo(101, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2100);
 
 	printf("[StkSocketTestHttp]:Normal case ... ");
-	FinishRecvTest = FALSE;
-	FinishSendTest = FALSE;
+	FinishRecvTest = false;
+	FinishSendTest = false;
 	CreateThread(NULL, 0, &TestRecvHttpTermination1, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestSendHttpTermination1, NULL, 0, &TmpId);
-	while (FinishRecvTest != TRUE || FinishSendTest != TRUE) {
+	while (FinishRecvTest != true || FinishSendTest != true) {
 		Sleep(100);
 	}
 	printf("OK\r\n");
 
 	printf("[StkSocketTestHttp]:Abnormal case (no Content-Length) ... ");
-	FinishRecvTest = FALSE;
-	FinishSendTest = FALSE;
+	FinishRecvTest = false;
+	FinishSendTest = false;
 	CreateThread(NULL, 0, &TestRecvHttpTermination2, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestSendHttpTermination2, NULL, 0, &TmpId);
-	while (FinishRecvTest != TRUE || FinishSendTest != TRUE) {
+	while (FinishRecvTest != true || FinishSendTest != true) {
 		Sleep(100);
 	}
 	printf("OK\r\n");
 
 	StkSocket_DeleteInfo(101);
-	StkSocket_Close(100, TRUE);
+	StkSocket_Close(100, true);
 	StkSocket_DeleteInfo(100);
 	StkSocket_ClearLog();
 }

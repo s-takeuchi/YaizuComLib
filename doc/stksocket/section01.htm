@@ -18,7 +18,7 @@
 このAPIはスレッドセーフではありません。StkSocketの他のAPIと同時に呼び出したときの動作は保証されていません。<p>
 <u>シグネチャ</u>
 <div class="topic">
-int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, TCHAR TargetAddr[256], int TargetPort)
+int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, wchar_t TargetAddr[256], int TargetPort)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
@@ -82,10 +82,10 @@ int StkSocket_DeleteInfo(int TargetId)
 <u>シグネチャ</u>
 <div class="topic">
 <p>
-int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
 </p>
 <p>
-int StkSocket_GetInfo(int TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+int StkSocket_GetInfo(int TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
 </p>
 </div><p>
 <u>引数の説明</u>
@@ -541,7 +541,7 @@ int StkSocket_GetUdpMaxMessageSize(int Id)
 StkSocketの最初のログを取得する。<p>
 <u>シグネチャ</u>
 <div class="topic">
-void StkSocket_TakeFirstLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
+void StkSocket_TakeFirstLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
@@ -564,7 +564,7 @@ void StkSocket_TakeFirstLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, 
 StkSocketの最終ログを取得する。<p>
 <u>シグネチャ</u>
 <div class="topic">
-void StkSocket_TakeLastLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
+void StkSocket_TakeLastLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">

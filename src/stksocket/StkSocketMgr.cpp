@@ -34,7 +34,7 @@ StkSocketMgr::~StkSocketMgr()
 	WSACleanup();
 }
 
-void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int TmpLogParamInt1, int TmpLogParamInt2)
+void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int TmpLogParamInt1, int TmpLogParamInt2)
 {
 	EnterCriticalSection(&Cs4Log);
 	if (NumOfLogs == MAX_NUM_OF_LOG) {
@@ -58,7 +58,7 @@ void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, TCHAR* TmpLogParamStr1, TCHA
 	LeaveCriticalSection(&Cs4Log);
 }
 
-void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
+void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
 {
 	if (NumOfLogs <= 0) {
 		*TmpLog = 0;
@@ -80,14 +80,14 @@ void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr
 
 	Log[NumOfLogs] = 0;
 	LogId[NumOfLogs] = 0;
-	lstrcpy(LogParamStr1[NumOfLogs], _T(""));
-	lstrcpy(LogParamStr2[NumOfLogs], _T(""));
+	lstrcpy(LogParamStr1[NumOfLogs], L"");
+	lstrcpy(LogParamStr2[NumOfLogs], L"");
 	LogParamInt1[NumOfLogs] = 0;
 	LogParamInt2[NumOfLogs] = 0;
 	LeaveCriticalSection(&Cs4Log);
 }
 
-void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
+void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
 {
 	if (NumOfLogs <= 0) {
 		*TmpLog = 0;
@@ -117,8 +117,8 @@ void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamSt
 	NumOfLogs--;
 	Log[NumOfLogs] = 0;
 	LogId[NumOfLogs] = 0;
-	lstrcpy(LogParamStr1[NumOfLogs], _T(""));
-	lstrcpy(LogParamStr2[NumOfLogs], _T(""));
+	lstrcpy(LogParamStr1[NumOfLogs], L"");
+	lstrcpy(LogParamStr2[NumOfLogs], L"");
 	LogParamInt1[NumOfLogs] = 0;
 	LogParamInt2[NumOfLogs] = 0;
 	LeaveCriticalSection(&Cs4Log);
@@ -135,8 +135,8 @@ void StkSocketMgr::ClearLog()
 	for (int Loop = 0; Loop < MAX_NUM_OF_LOG; Loop++) {
 		Log[Loop] = 0;
 		LogId[Loop] = 0;
-		lstrcpy(LogParamStr1[Loop], _T(""));
-		lstrcpy(LogParamStr2[Loop], _T(""));
+		lstrcpy(LogParamStr1[Loop], L"");
+		lstrcpy(LogParamStr2[Loop], L"");
 		LogParamInt1[Loop] = 0;
 		LogParamInt2[Loop] = 0;
 	}
@@ -150,7 +150,7 @@ void StkSocketMgr::ClearLog()
 // TargetAddr [in] : Host name or IP address
 // TargetPort [in] : Port number
 // Return : 0:Success, -1:Failure
-int StkSocketMgr::AddSocketInfo(int TargetId, int SockType, int ActionType, TCHAR TargetAddr[256], int TargetPort)
+int StkSocketMgr::AddSocketInfo(int TargetId, int SockType, int ActionType, wchar_t TargetAddr[256], int TargetPort)
 {
 	// Check for maximum number of StkSocketInfos
 	if (NumOfSocketInfo >= MAX_SOCKET_NUMBER) {
@@ -174,9 +174,9 @@ int StkSocketMgr::AddSocketInfo(int TargetId, int SockType, int ActionType, TCHA
 	SocketInfo[NumOfSocketInfo].Port = TargetPort;
 	SocketInfo[NumOfSocketInfo].Sock = NULL;
 	SocketInfo[NumOfSocketInfo].AcceptedSock = NULL;
-	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = FALSE;
+	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = false;
 	SocketInfo[NumOfSocketInfo].CopySourceId = -1;
-	SocketInfo[NumOfSocketInfo].ForceStop = FALSE;
+	SocketInfo[NumOfSocketInfo].ForceStop = false;
 	lstrcpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, TargetAddr);
 	NumOfSocketInfo++;
 
@@ -214,7 +214,7 @@ int StkSocketMgr::CopySocketInfo(int NewId, int ExistingId)
 		return -1;
 	}
 	// Check the original socket is copied socket.
-	if (SocketInfo[FndIndex].CopiedSocketFlag == TRUE) {
+	if (SocketInfo[FndIndex].CopiedSocketFlag == true) {
 		return -1;
 	}
 
@@ -229,7 +229,7 @@ int StkSocketMgr::CopySocketInfo(int NewId, int ExistingId)
 	SocketInfo[NumOfSocketInfo].Port = SocketInfo[FndIndex].Port;
 	SocketInfo[NumOfSocketInfo].Sock = SocketInfo[FndIndex].Sock;
 	SocketInfo[NumOfSocketInfo].AcceptedSock = NULL;
-	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = TRUE;
+	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = true;
 	SocketInfo[NumOfSocketInfo].CopySourceId = ExistingId;
 	SocketInfo[NumOfSocketInfo].ForceStop = SocketInfo[FndIndex].ForceStop;
 	lstrcpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, SocketInfo[FndIndex].HostOrIpAddr);
@@ -250,19 +250,19 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 		return -1;
 	}
 	// Check the specified ID is existing.
-	BOOL FoundFlag = FALSE;
+	bool FoundFlag = false;
 	int Loop;
 	for (Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (TargetId == SocketInfo[Loop].ElementId) {
-			FoundFlag = TRUE;
+			FoundFlag = true;
 			break;
 		}
 	}
-	if (FoundFlag == FALSE) {
+	if (FoundFlag == false) {
 		return -1;
 	}
 
-	CloseSocket(TargetId, TRUE);
+	CloseSocket(TargetId, true);
 	if (NumOfSocketInfo >= 1) {
 		SocketInfo[Loop].SocketType = SocketInfo[NumOfSocketInfo - 1].SocketType;
 		SocketInfo[Loop].ActionType = SocketInfo[NumOfSocketInfo - 1].ActionType;
@@ -281,7 +281,7 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 	return 0;
 }
 
-int StkSocketMgr::GetSocketInfo(int Index, int* TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+int StkSocketMgr::GetSocketInfo(int Index, int* TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, bool* CopiedFlag)
 {
 	if (Index < 0 || Index >= NumOfSocketInfo) {
 		return -1;
@@ -295,7 +295,7 @@ int StkSocketMgr::GetSocketInfo(int Index, int* TargetId, int* SockType, int* Ac
 	return 0;
 }
 
-int StkSocketMgr::GetSocketInfo(int TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+int StkSocketMgr::GetSocketInfo(int TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, bool* CopiedFlag)
 {
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == TargetId) {
@@ -315,7 +315,7 @@ void StkSocketMgr::CloseSocketWaitForPeerClose(SOCKET Target)
 	shutdown(Target, SD_SEND);
 	int Timeo = 10000;
 	setsockopt(Target, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Timeo, sizeof(int));
-	while (TRUE) {
+	while (true) {
 		char Buf[10000];
 		int Ret = recv(Target, Buf, 10000, 0);
 		if (Ret == 0 || Ret == SOCKET_ERROR) {
@@ -350,7 +350,7 @@ int StkSocketMgr::ConnectSocket(int Id)
 			sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
 			int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 			if (Ret != 0) {
-				PutLog(LOG_NAMESOLVEERR, Id, _T(""), _T(""), 0, WSAGetLastError());
+				PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, WSAGetLastError());
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 				return -1;
 			}
@@ -378,21 +378,21 @@ int StkSocketMgr::ConnectSocket(int Id)
 
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
 				if (connect(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen) == SOCKET_ERROR) {
-					PutLog(LOG_CONNERROR, Id, _T(""), _T(""), 0, WSAGetLastError());
+					PutLog(LOG_CONNERROR, Id, L"", L"", 0, WSAGetLastError());
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					closesocket(SocketInfo[Loop].Sock);
 					freeaddrinfo(ResAddr);
 					return -1;
 				}
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
-				PutLog(LOG_SUCCESSCSC, Id, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+				PutLog(LOG_SUCCESSCSC, Id, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 				freeaddrinfo(ResAddr);
 				break;
 			} else {
 				int Yes = 1;
 				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_BROADCAST, (char *)&Yes, sizeof(Yes));
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
-				PutLog(LOG_SUCCESSCS, Id, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+				PutLog(LOG_SUCCESSCS, Id, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 				freeaddrinfo(ResAddr);
 				break;
 			}
@@ -401,7 +401,7 @@ int StkSocketMgr::ConnectSocket(int Id)
 	return 0;
 }
 
-int StkSocketMgr::DisconnectSocket(int Id, int LogId, BOOL WaitForPeerClose)
+int StkSocketMgr::DisconnectSocket(int Id, int LogId, bool WaitForPeerClose)
 {
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == Id && SocketInfo[Loop].Status == StkSocketInfo::STATUS_OPEN) {
@@ -418,9 +418,9 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, BOOL WaitForPeerClose)
 			SocketInfo[Loop].Sock = NULL;
 			SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_DGRAM) {
-				PutLog(LOG_UDPSOCKCLOSE, LogId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+				PutLog(LOG_UDPSOCKCLOSE, LogId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 			} else {
-				PutLog(LOG_SOCKCLOSE, LogId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+				PutLog(LOG_SOCKCLOSE, LogId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 			}
 			break;
 		}
@@ -444,7 +444,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 			// If the SocketInfo is created by StkSocket_CopyInfo, -1 only status is changed.
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM &&
 				SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER &&
-				SocketInfo[Loop].CopiedSocketFlag == TRUE) {
+				SocketInfo[Loop].CopiedSocketFlag == true) {
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 				return 0;
 			}
@@ -462,7 +462,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
 				int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 				if (Ret != 0) {
-					PutLog(LOG_NAMESOLVEERR, TargetId, _T(""), _T(""), 0, WSAGetLastError());
+					PutLog(LOG_NAMESOLVEERR, TargetId, L"", L"", 0, WSAGetLastError());
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					return -1;
 				}
@@ -478,9 +478,9 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				int RetBind = bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen);
 				if (RetBind == SOCKET_ERROR) {
 					if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
-						PutLog(LOG_BINDLISTENERR, TargetId, _T(""), _T(""), 0, WSAGetLastError());
+						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, WSAGetLastError());
 					} else {
-						PutLog(LOG_BINDERR, TargetId, _T(""), _T(""), 0, WSAGetLastError());
+						PutLog(LOG_BINDERR, TargetId, L"", L"", 0, WSAGetLastError());
 					}
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					closesocket(SocketInfo[Loop].Sock);
@@ -491,7 +491,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 					// LISTENに失敗したらソケットをクローズする
 					int RetListen = listen(SocketInfo[Loop].Sock, 5);
 					if (RetListen == SOCKET_ERROR) {
-						PutLog(LOG_BINDLISTENERR, TargetId, _T(""), _T(""), 0, WSAGetLastError());
+						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, WSAGetLastError());
 						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 						closesocket(SocketInfo[Loop].Sock);
 						freeaddrinfo(ResAddr);
@@ -503,7 +503,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				// Change the status of copied socket information
 				if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
 					for (int CpyLoop = 0; CpyLoop < NumOfSocketInfo; CpyLoop++) {
-						if (SocketInfo[CpyLoop].CopiedSocketFlag == TRUE && SocketInfo[CpyLoop].CopySourceId == TargetId) {
+						if (SocketInfo[CpyLoop].CopiedSocketFlag == true && SocketInfo[CpyLoop].CopySourceId == TargetId) {
 							SocketInfo[CpyLoop].Status = StkSocketInfo::STATUS_OPEN;
 							SocketInfo[CpyLoop].Sock = SocketInfo[Loop].Sock;
 						}
@@ -511,8 +511,8 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				}
 
 				// For avoiding bind failuer "Address in use"
-				BOOL Yes = 1;
-				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&Yes, sizeof(BOOL));
+				bool Yes = 1;
+				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&Yes, sizeof(bool));
 				// Timeout setting
 				int Timeo = 10000;
 				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Timeo, sizeof(int));
@@ -522,10 +522,10 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_RCVBUF, (const char *)&Buffr, sizeof(int));
 				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_SNDBUF, (const char *)&Buffr, sizeof(int));
 				if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
-					PutLog(LOG_SUCCESSCSBNLS, TargetId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+					PutLog(LOG_SUCCESSCSBNLS, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 				} else {
 					int MgsLen = GetUdpMaxMessageSize(TargetId);
-					PutLog(LOG_SUCCESSCSBN, TargetId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, MgsLen);
+					PutLog(LOG_SUCCESSCSBN, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, MgsLen);
 				}
 				freeaddrinfo(ResAddr);
 				return 0;
@@ -541,12 +541,12 @@ int StkSocketMgr::OpenSocket(int TargetId)
 }
 
 // Socketのクローズ
-int StkSocketMgr::CloseSocket(int TargetId, BOOL WaitForPeerClose)
+int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 {
 	// Find socket descriptor
 	int FndSock = -1;
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
-		if (SocketInfo[Loop].ElementId == TargetId && SocketInfo[Loop].CopiedSocketFlag == FALSE) {
+		if (SocketInfo[Loop].ElementId == TargetId && SocketInfo[Loop].CopiedSocketFlag == false) {
 			FndSock = SocketInfo[Loop].Sock;
 		}
 	}
@@ -554,16 +554,16 @@ int StkSocketMgr::CloseSocket(int TargetId, BOOL WaitForPeerClose)
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		// If the type is neither TCP and UDP...
 		if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
-			BOOL AcceptSockFnd = FALSE;
+			bool AcceptSockFnd = false;
 
-			BOOL Cond1 = (SocketInfo[Loop].CopiedSocketFlag == TRUE &&
+			bool Cond1 = (SocketInfo[Loop].CopiedSocketFlag == true &&
 							SocketInfo[Loop].ElementId != TargetId &&
 							SocketInfo[Loop].Sock == FndSock &&
 							SocketInfo[Loop].Status == StkSocketInfo::STATUS_ACCEPT);
-			BOOL Cond2 = (SocketInfo[Loop].CopiedSocketFlag == TRUE &&
+			bool Cond2 = (SocketInfo[Loop].CopiedSocketFlag == true &&
 							SocketInfo[Loop].ElementId == TargetId &&
 							SocketInfo[Loop].Status == StkSocketInfo::STATUS_ACCEPT);
-			BOOL Cond3 = (SocketInfo[Loop].CopiedSocketFlag == FALSE &&
+			bool Cond3 = (SocketInfo[Loop].CopiedSocketFlag == false &&
 							SocketInfo[Loop].ElementId == TargetId &&
 							SocketInfo[Loop].Status == StkSocketInfo::STATUS_ACCEPT);
 
@@ -578,22 +578,22 @@ int StkSocketMgr::CloseSocket(int TargetId, BOOL WaitForPeerClose)
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 				// If the target is 'copied' StkSocket or If the current element is 'copied' StkSocket associating to 'added' StkSocket of the target.
 				if (Cond1 || Cond2) {
-					PutLog(LOG_CLOSEACCEPTSOCK, SocketInfo[Loop].ElementId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+					PutLog(LOG_CLOSEACCEPTSOCK, SocketInfo[Loop].ElementId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 				}
 				//If the target is 'added' StkSocket
 				if (Cond3) {
-					AcceptSockFnd = TRUE;
+					AcceptSockFnd = true;
 				}
 			}
 
-			BOOL CondC1 = (SocketInfo[Loop].CopiedSocketFlag == TRUE &&
+			bool CondC1 = (SocketInfo[Loop].CopiedSocketFlag == true &&
 							SocketInfo[Loop].ElementId != TargetId &&
 							SocketInfo[Loop].Sock == FndSock &&
 							SocketInfo[Loop].Status == StkSocketInfo::STATUS_OPEN);
-			BOOL CondC2 = (SocketInfo[Loop].CopiedSocketFlag == TRUE &&
+			bool CondC2 = (SocketInfo[Loop].CopiedSocketFlag == true &&
 							SocketInfo[Loop].ElementId == TargetId &&
 							SocketInfo[Loop].Status == StkSocketInfo::STATUS_OPEN);
-			BOOL CondC3 = (SocketInfo[Loop].CopiedSocketFlag == FALSE &&
+			bool CondC3 = (SocketInfo[Loop].CopiedSocketFlag == false &&
 							SocketInfo[Loop].ElementId == TargetId &&
 							SocketInfo[Loop].Status == StkSocketInfo::STATUS_OPEN);
 
@@ -607,10 +607,10 @@ int StkSocketMgr::CloseSocket(int TargetId, BOOL WaitForPeerClose)
 				closesocket(SocketInfo[Loop].Sock);
 				SocketInfo[Loop].Sock = NULL;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
-				if (AcceptSockFnd == FALSE) {
-					PutLog(LOG_SOCKCLOSE, TargetId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+				if (AcceptSockFnd == false) {
+					PutLog(LOG_SOCKCLOSE, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 				} else {
-					PutLog(LOG_CLOSEACCLISNSOCK, TargetId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+					PutLog(LOG_CLOSEACCLISNSOCK, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 				}
 			}
 		} else if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_DGRAM) {
@@ -621,7 +621,7 @@ int StkSocketMgr::CloseSocket(int TargetId, BOOL WaitForPeerClose)
 				closesocket(SocketInfo[Loop].Sock);
 				SocketInfo[Loop].Sock = NULL;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
-				PutLog(LOG_UDPSOCKCLOSE, TargetId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+				PutLog(LOG_UDPSOCKCLOSE, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 			}
 		} else {
 			return -1;
@@ -666,14 +666,14 @@ int StkSocketMgr::Accept(int Id)
 			setsockopt(SocketInfo[Loop].AcceptedSock, SOL_SOCKET, SO_RCVBUF, (const char *)&Buffr, sizeof(int));
 			setsockopt(SocketInfo[Loop].AcceptedSock, SOL_SOCKET, SO_SNDBUF, (const char *)&Buffr, sizeof(int));
 
-			PutLog(LOG_CREATEACCEPTSOCK, Id, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+			PutLog(LOG_CREATEACCEPTSOCK, Id, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 			break;
 		}
 	}
 	return 0;
 }
 
-int StkSocketMgr::CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
+int StkSocketMgr::CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 {
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == Id && SocketInfo[Loop].Status == StkSocketInfo::STATUS_ACCEPT) {
@@ -684,7 +684,7 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
 			}
 			SocketInfo[Loop].AcceptedSock = NULL;
 			SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
-			PutLog(LOG_CLOSEACCEPTSOCK, LogId, SocketInfo[Loop].HostOrIpAddr, _T(""), SocketInfo[Loop].Port, 0);
+			PutLog(LOG_CLOSEACCEPTSOCK, LogId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 			return 0;
 		}
 	}
@@ -697,7 +697,7 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
 // FinishCondition = -2 : Exit method if closure by peer detected
 // FinishCondition = -3 : Exit method after receiving data the size meets with Content-Length in HTTP header
 // FinishCondition = -4 : Exit method if timeout is detected
-int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, BYTE* VarDat, int VarDatSize)
+int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, unsigned char* VarDat, int VarDatSize)
 {
 	// Select用FDS作成
 	DWORD CurrWaitTime = GetTickCount();
@@ -727,14 +727,14 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 			continue;
 		}
 		int Offset = 0;
-		while (TRUE) {
+		while (true) {
 			FD_ZERO(&RecFds);
 			FD_SET(TmpSock, &RecFds);
 			// 一定時間待ったあとAcceptedSockに接続があるか確認する
 			select(0, &RecFds, NULL, NULL, &Timeout);
 			if (!FD_ISSET(TmpSock, &RecFds)) {
 				// Timeout occurrence and no data received
-				if (SocketInfo[Loop].ForceStop == TRUE) {
+				if (SocketInfo[Loop].ForceStop == true) {
 					// There was a stopping thread request.
 					return Offset;
 				}
@@ -744,7 +744,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 						if (Offset == 0) {
 							return -2;
 						} else {
-							PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
+							PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 							return Offset;
 						}
 					}
@@ -768,7 +768,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 			int Ret = recv(TmpSock, (char*)Buffer + Offset, FetchSize, 0);
 			CurrWaitTime = GetTickCount();
 			if (Ret == SOCKET_ERROR) {
-				PutLog(LOG_RECVERROR, LogId, _T(""), _T(""), 0, WSAGetLastError());
+				PutLog(LOG_RECVERROR, LogId, L"", L"", 0, WSAGetLastError());
 				return Ret;
 			}
 			if (Ret == 0 && Offset == 0) {
@@ -778,23 +778,23 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 			Offset += Ret;
 			if (Ret == 0 && Offset > 0) {
 				// 接続先ソケットがクローズした場合Ret=0となる
-				PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
+				PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 				return Offset;
 			}
 			if (FinishCondition == RECV_FINISHCOND_STRING && Offset >= VarDatSize) {
 				if (memcmp(Buffer + Offset - VarDatSize, VarDat, VarDatSize) == 0) {
-					PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
+					PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 					return Offset;
 				}
 			}
 			if (FinishCondition > 0 && FinishCondition <= Offset) {
 				// If the finish condition is set as checking data length and exceeded the configured length...
-				PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
+				PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 				return Offset;
 			}
 			if (Ret > 0 && FinishCondition == RECV_FINISHCOND_UNCONDITIONAL) {
 				// If the finish condition is set as unconditionally...
-				PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
+				PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 				return Offset;
 			}
 			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
@@ -804,17 +804,17 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 					(Buffer[Offset - 4] == '\n' && Buffer[Offset - 3] == '\r' && Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\r')) {
 					// If double new-line-code was detected...
 					Buffer[Offset] = '\0';
-					BYTE* ContLenPtr = (BYTE*)strstr((char*)Buffer, "Content-Length:");
+					unsigned char* ContLenPtr = (unsigned char*)strstr((char*)Buffer, "Content-Length:");
 					if (ContLenPtr == NULL) {
 						// If Content-Length is not presented. May be GET request
-						PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
+						PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 						return Offset;
 					} else {
 						ContLenPtr += 15;
-						BYTE* ContLenEndPtr;
-						if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\r\n")) == NULL) {
-							if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\n\r")) == NULL) {
-								if ((ContLenEndPtr = (BYTE*)strstr((char*)ContLenPtr, "\n")) == NULL) {
+						unsigned char* ContLenEndPtr;
+						if ((ContLenEndPtr = (unsigned char*)strstr((char*)ContLenPtr, "\r\n")) == NULL) {
+							if ((ContLenEndPtr = (unsigned char*)strstr((char*)ContLenPtr, "\n\r")) == NULL) {
+								if ((ContLenEndPtr = (unsigned char*)strstr((char*)ContLenPtr, "\n")) == NULL) {
 									// If new-line-code after Content-Length is not found. (It may be an impossible situation.)
 									continue;
 								}
@@ -826,7 +826,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 							int ContLen = atoi(TmpBuf);
 							if (ContLen == 0) {
 								// If inappropriate value or zero is set for Content-Length.
-								PutLog(RecvLog, LogId, _T(""), _T(""), Offset, 0);
+								PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 								return Offset;
 							} else {
 								FinishCondition = ContLen + Offset;
@@ -848,7 +848,7 @@ int StkSocketMgr::Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int F
 	return -1;
 }
 
-int StkSocketMgr::ReceiveUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
+int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 {
 	// Select用FDS作成
 	timeval Timeout;
@@ -881,17 +881,17 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
 		int SenderAddrLen = sizeof(SenderAddr);
 		int Ret = recvfrom(TmpSock, (char*)Buffer, BufferSize, 0, (sockaddr*)&SenderAddr, &SenderAddrLen);
 		if (Ret == SOCKET_ERROR) {
-			PutLog(LOG_RECVERROR, LogId, _T(""), _T(""), 0, WSAGetLastError());
+			PutLog(LOG_RECVERROR, LogId, L"", L"", 0, WSAGetLastError());
 			return Ret;
 		}
 		memcpy(&SocketInfo[Loop].LastAccessedAddr, &SenderAddr, SenderAddrLen);
 		if (Ret == 0) {
 			// 接続先ソケットがクローズした場合Ret=0となる
-			PutLog(LOG_UDPRECV, LogId, _T(""), _T(""), Ret, 0);
+			PutLog(LOG_UDPRECV, LogId, L"", L"", Ret, 0);
 			return Ret;
 		}
 		if (Ret > 0) {
-			PutLog(LOG_UDPRECV, LogId, _T(""), _T(""), Ret, 0);
+			PutLog(LOG_UDPRECV, LogId, L"", L"", Ret, 0);
 			return Ret;
 		}
 		return -1;
@@ -923,7 +923,7 @@ int StkSocketMgr::ForceStop(int Id)
 {
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == Id) {
-			SocketInfo[Loop].ForceStop = TRUE;
+			SocketInfo[Loop].ForceStop = true;
 			return 0;
 		}
 	}
@@ -940,7 +940,7 @@ int StkSocketMgr::GetStatus(int TargetId)
 	return -1;
 }
 
-int StkSocketMgr::Send(int Id, int LogId, BYTE* Buffer, int BufferSize)
+int StkSocketMgr::Send(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 {
 	int ErrCode = 0;
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
@@ -950,10 +950,10 @@ int StkSocketMgr::Send(int Id, int LogId, BYTE* Buffer, int BufferSize)
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER) {
 			int Ret = send(SocketInfo[Loop].AcceptedSock, (char*)Buffer, BufferSize, 0);
 			if (Ret == SOCKET_ERROR) {
-				PutLog(LOG_SENDERROR, LogId, _T(""), _T(""), 0, WSAGetLastError());
+				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, WSAGetLastError());
 				return Ret;
 			}
-			PutLog(LOG_ACPTSEND, LogId, _T(""), _T(""), BufferSize, 0);
+			PutLog(LOG_ACPTSEND, LogId, L"", L"", BufferSize, 0);
 			return Ret;
 		} else if (SocketInfo[Loop].ElementId == Id &&
 			SocketInfo[Loop].Status == StkSocketInfo::STATUS_OPEN &&
@@ -961,10 +961,10 @@ int StkSocketMgr::Send(int Id, int LogId, BYTE* Buffer, int BufferSize)
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_SENDER) {
 			int Ret = send(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0);
 			if (Ret == SOCKET_ERROR) {
-				PutLog(LOG_SENDERROR, LogId, _T(""), _T(""), 0, WSAGetLastError());
+				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, WSAGetLastError());
 				return Ret;
 			}
-			PutLog(LOG_CNCTSEND, LogId, _T(""), _T(""), BufferSize, 0);
+			PutLog(LOG_CNCTSEND, LogId, L"", L"", BufferSize, 0);
 			return Ret;
 		}
 	}
@@ -972,7 +972,7 @@ int StkSocketMgr::Send(int Id, int LogId, BYTE* Buffer, int BufferSize)
 	return -1;
 }
 
-int StkSocketMgr::SendUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
+int StkSocketMgr::SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 {
 	addrinfo Hints;
 	addrinfo* ResAddr = NULL;
@@ -1001,7 +1001,7 @@ int StkSocketMgr::SendUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
 				sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
 				int RetMethod = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 				if (RetMethod != 0) {
-					PutLog(LOG_NAMESOLVEERR, Id, _T(""), _T(""), 0, WSAGetLastError());
+					PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, WSAGetLastError());
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					closesocket(SocketInfo[Loop].Sock);
 					return -1;
@@ -1014,10 +1014,10 @@ int StkSocketMgr::SendUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
 			}
 
 			if (Ret == SOCKET_ERROR) {
-				PutLog(LOG_SENDERROR, LogId, _T(""), _T(""), 0, WSAGetLastError());
+				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, WSAGetLastError());
 				return Ret;
 			}
-			PutLog(LOG_UDPSEND, LogId, _T(""), _T(""), BufferSize, 0);
+			PutLog(LOG_UDPSEND, LogId, L"", L"", BufferSize, 0);
 			return Ret;
 		}
 	}

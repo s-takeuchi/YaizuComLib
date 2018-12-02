@@ -1,6 +1,6 @@
 #include "StkSocketMgr.h"
 
-int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, TCHAR TargetAddr[256], int TargetPort)
+int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, wchar_t TargetAddr[256], int TargetPort)
 {
 	return StkSocketMgr::GetInstance()->AddSocketInfo(TargetId, SockType, ActionType, TargetAddr, TargetPort);
 }
@@ -10,12 +10,12 @@ int StkSocket_DeleteInfo(int TargetId)
 	return StkSocketMgr::GetInstance()->DeleteSocketInfo(TargetId);
 }
 
-int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, bool* CopiedFlag)
 {
 	return StkSocketMgr::GetInstance()->GetSocketInfo(Index, TargetId, SockType, ActionType, TargetAddr, TargetPort, CopiedFlag);
 }
 
-int StkSocket_GetInfo(int TargetId, int* SockType, int* ActionType, TCHAR TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+int StkSocket_GetInfo(int TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, bool* CopiedFlag)
 {
 	return StkSocketMgr::GetInstance()->GetSocketInfo(TargetId, SockType, ActionType, TargetAddr, TargetPort, CopiedFlag);
 }
@@ -30,7 +30,7 @@ int StkSocket_Open(int TargetId)
 	return StkSocketMgr::GetInstance()->OpenSocket(TargetId);
 }
 
-int StkSocket_Close(int TargetId, BOOL WaitForPeerClose)
+int StkSocket_Close(int TargetId, bool WaitForPeerClose)
 {
 	return StkSocketMgr::GetInstance()->CloseSocket(TargetId, WaitForPeerClose);
 }
@@ -40,7 +40,7 @@ int StkSocket_Connect(int Id)
 	return StkSocketMgr::GetInstance()->ConnectSocket(Id);
 }
 
-int StkSocket_Disconnect(int Id, int LogId, BOOL WaitForPeerClose)
+int StkSocket_Disconnect(int Id, int LogId, bool WaitForPeerClose)
 {
 	return StkSocketMgr::GetInstance()->DisconnectSocket(Id, LogId, WaitForPeerClose);
 }
@@ -50,27 +50,27 @@ int StkSocket_Accept(int Id)
 	return StkSocketMgr::GetInstance()->Accept(Id);
 }
 
-int StkSocket_CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
+int StkSocket_CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 {
 	return StkSocketMgr::GetInstance()->CloseAccept(Id, LogId, WaitForPeerClose);
 }
 
-int StkSocket_Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, BYTE* VarDat, int VarDatSize)
+int StkSocket_Receive(int Id, int LogId, unsigned char* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, unsigned char* VarDat, int VarDatSize)
 {
 	return StkSocketMgr::GetInstance()->Receive(Id, LogId, Buffer, BufferSize, FinishCondition, FinishCondTimeout, VarDat, VarDatSize);
 }
 
-int StkSocket_Send(int Id, int LogId, BYTE* Buffer, int BufferSize)
+int StkSocket_Send(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 {
 	return StkSocketMgr::GetInstance()->Send(Id, LogId, Buffer, BufferSize);
 }
 
-int StkSocket_ReceiveUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
+int StkSocket_ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 {
 	return StkSocketMgr::GetInstance()->ReceiveUdp(Id, LogId, Buffer, BufferSize);
 }
 
-int StkSocket_SendUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
+int StkSocket_SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 {
 	return StkSocketMgr::GetInstance()->SendUdp(Id, LogId, Buffer, BufferSize);
 }
@@ -90,12 +90,12 @@ int StkSocket_GetNumOfStkInfos()
 	return StkSocketMgr::GetInstance()->GetNumOfStkInfos();
 }
 
-void StkSocket_TakeLastLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
+void StkSocket_TakeLastLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
 {
 	return StkSocketMgr::GetInstance()->TakeLastLog(TmpLog, TmpLogId, TmpLogParamStr1, TmpLogParamStr2, TmpLogParamInt1, TmpLogParamInt2);
 }
 
-void StkSocket_TakeFirstLog(int* TmpLog, int* TmpLogId, TCHAR* TmpLogParamStr1, TCHAR* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
+void StkSocket_TakeFirstLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
 {
 	return StkSocketMgr::GetInstance()->TakeFirstLog(TmpLog, TmpLogId, TmpLogParamStr1, TmpLogParamStr2, TmpLogParamInt1, TmpLogParamInt2);
 }

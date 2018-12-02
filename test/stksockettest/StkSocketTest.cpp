@@ -1,7 +1,6 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <stdio.h>
-#include <tchar.h>
 #include <shlwapi.h>
 #include "..\..\src\stksocket\stksocket.h"
 #include "StkSocketTestMa.h"
@@ -10,7 +9,7 @@
 #include "StkSocketMemoryLeak.h"
 #include "StkSocketTestHttp.h"
 
-BOOL FinishFlag = FALSE;
+bool FinishFlag = false;
 int FindFlagCounter = 0;
 
 
@@ -18,21 +17,21 @@ int ConnectDisconnectTcpPort()
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
 	printf("[ConnectSocket()/DisconnectSocket() for TCP] : Connect invalid IP address and port...");
-	StkSocket_AddInfo(22, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2222);
+	StkSocket_AddInfo(22, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2222);
 	StkSocket_Connect(22);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_CONNERROR && ParamInt2 != 10061) {
 		printf("NG\r\n");
 		return -1;
 	}
-	StkSocket_Disconnect(22, 22, TRUE);
-	StkSocket_Close(22, TRUE);
+	StkSocket_Disconnect(22, 22, true);
+	StkSocket_Close(22, true);
 	StkSocket_DeleteInfo(22);
 	printf("OK [%d]\r\n", ParamInt2);
 	return 0;
@@ -42,20 +41,20 @@ int ConnectDisconnectUdpPort()
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
 	printf("[ConnectSocket()/DisconnectSocket() for UDP] : Only open and close socket.  It will be ended successfully...");
-	StkSocket_AddInfo(22, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2222);
+	StkSocket_AddInfo(22, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2222);
 	StkSocket_Connect(22);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SUCCESSCS) {
 		printf("NG (LOG_SUCCESSCS is not returned.\r\n");
 		return -1;
 	}
-	StkSocket_Disconnect(22, 22, TRUE);
+	StkSocket_Disconnect(22, 22, true);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSOCKCLOSE) {
 		printf("NG (LOG_UDPSOCKCLOSE is not returned.)\r\n");
@@ -70,14 +69,14 @@ int OpenClosePort()
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
 
 	printf("[OpenSocket()/CloseSocket()] : Open and close using same port. Check open and close operation are successfully end...");
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	if (StkSocket_GetNumOfStkInfos() != 1) {
 		printf("NG (Number of Socket Info is invalid.)\r\n");
 		return -1;
@@ -86,23 +85,23 @@ int OpenClosePort()
 		int TargetId;
 		int SockType;
 		int ActionType;
-		TCHAR TargetAddr[256];
+		wchar_t TargetAddr[256];
 		int TargetPort;
-		BOOL CopiedFlag;
+		bool CopiedFlag;
 
 		StkSocket_GetInfo(0, &TargetId, &SockType, &ActionType, TargetAddr, &TargetPort, &CopiedFlag);
 		if (TargetId != 0 ||
 			SockType != STKSOCKET_TYPE_STREAM ||
 			ActionType != STKSOCKET_ACTIONTYPE_RECEIVER ||
-			lstrcmp(TargetAddr, _T("127.0.0.1")) != 0 ||
+			lstrcmp(TargetAddr, L"127.0.0.1") != 0 ||
 			TargetPort != 2001 ||
-			CopiedFlag != FALSE) {
+			CopiedFlag != false) {
 			printf("NG (Acquired socket information is not matched.)\r\n");
 			return -1;
 		}
 	}
 	StkSocket_Open(0);
-	StkSocket_Close(0, TRUE);
+	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	if (StkSocket_GetNumOfStkInfos() != 0) {
 		printf("NG (Number of Socket Info is invalid. (not zero))\r\n");
@@ -122,7 +121,7 @@ int OpenClosePort()
 
 
 	printf("[OpenSocket()/CloseSocket()] : If OpenSocket is called twice with the same ID, the method processes nothing...");
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_Open(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SUCCESSCSBNLS) {
@@ -134,7 +133,7 @@ int OpenClosePort()
 		printf("NG\r\n");
 		return -1;
 	}
-	StkSocket_Close(1, TRUE);
+	StkSocket_Close(1, true);
 	StkSocket_DeleteInfo(1);
 	if (StkSocket_GetNumOfLogs() != 1) {
 		printf("NG\r\n");
@@ -145,7 +144,7 @@ int OpenClosePort()
 
 
 	printf("[OpenSocket()/CloseSocket()] : If CloseSocket is called with nonexisting ID, the method processes nothing...");
-	StkSocket_Close(9999, TRUE);
+	StkSocket_Close(9999, true);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != 0) {
 		printf("NG\r\n");
@@ -155,23 +154,23 @@ int OpenClosePort()
 
 
 	printf("[OpenSocket()/CloseSocket()] : If the receiver IP address is invalid(11.11.11.11), test program fails the socket opening...");
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("11.11.11.11"), 2000);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"11.11.11.11", 2000);
 	StkSocket_Open(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_BINDLISTENERR && ParamInt2 != 10049) {
 		printf("NG\r\n");
 		return -1;
 	}
-	StkSocket_Close(0, TRUE);
+	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	printf("OK [%d]\r\n", ParamInt2);
 
 
 	printf("[OpenSocket()/CloseSocket()] : If OpenSocket is called with invalid host name, An error (LOG_NAMESOLVEERR) occurred...");
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("invalid"), 2001);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"invalid", 2001);
 	StkSocket_Open(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	StkSocket_Close(0, TRUE);
+	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	if (Msg != STKSOCKET_LOG_NAMESOLVEERR && ParamInt2 != 11004) {
 		printf("NG\r\n");
@@ -187,16 +186,16 @@ int OpenCloseUdpPort()
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
 
 	printf("[OpenSocket()/CloseSocket() for UDP] : Open and close using same port. Check open and close operation are successfully end...");
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_Open(0);
-	StkSocket_Close(0, TRUE);
+	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSOCKCLOSE) {
@@ -212,7 +211,7 @@ int OpenCloseUdpPort()
 
 
 	printf("[OpenSocket()/CloseSocket() for UDP] : If OpenSocket is called twice with the same ID, the method processes nothing...");
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_Open(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SUCCESSCSBN) {
@@ -224,7 +223,7 @@ int OpenCloseUdpPort()
 		printf("NG\r\n");
 		return -1;
 	}
-	StkSocket_Close(1, TRUE);
+	StkSocket_Close(1, true);
 	StkSocket_DeleteInfo(1);
 	if (StkSocket_GetNumOfLogs() != 1) {
 		printf("NG\r\n");
@@ -235,7 +234,7 @@ int OpenCloseUdpPort()
 
 
 	printf("[OpenSocket()/CloseSocket() for UDP] : If CloseSocket is called with nonexisting ID, the method processes nothing...");
-	StkSocket_Close(9999, TRUE);
+	StkSocket_Close(9999, true);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != 0) {
 		printf("NG\r\n");
@@ -245,23 +244,23 @@ int OpenCloseUdpPort()
 
 
 	printf("[OpenSocket()/CloseSocket() for UDP] : If the receiver IP address is invalid(11.11.11.11), test program fails the socket opening...");
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("11.11.11.11"), 2000);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"11.11.11.11", 2000);
 	StkSocket_Open(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_BINDERR && ParamInt2 != 10049) {
 		printf("NG\r\n");
 		return -1;
 	}
-	StkSocket_Close(0, TRUE);
+	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	printf("OK [%d]\r\n", ParamInt2);
 
 
 	printf("[OpenSocket()/CloseSocket() for UDP] : If OpenSocket is called with invalid host name, An error (LOG_NAMESOLVEERR) occurred...");
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("invalid"), 2001);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"invalid", 2001);
 	StkSocket_Open(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	StkSocket_Close(0, TRUE);
+	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	if (Msg != STKSOCKET_LOG_NAMESOLVEERR && ParamInt2 != 11004) {
 		printf("NG\r\n");
@@ -277,8 +276,8 @@ int GenerateLogs()
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
@@ -292,11 +291,11 @@ int GenerateLogs()
 
 	printf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each. Current number of log messages is 64...");
 	for (int Loop = 0; Loop < 40; Loop++) {
-		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), Loop + 3000);
+		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", Loop + 3000);
 		StkSocket_Open(Loop);
 	}
 	for (int Loop = 0; Loop < 40; Loop++) {
-		StkSocket_Close(Loop, TRUE);
+		StkSocket_Close(Loop, true);
 		StkSocket_DeleteInfo(Loop);
 	}
 	if (StkSocket_GetNumOfLogs() != STKSOCKET_MAX_NUM_OF_LOG) {
@@ -378,11 +377,11 @@ int GenerateLogs()
 
 	printf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each. Current number of log messages is 64 but after ClearLog is called left Msg becomes zero...");
 	for (int Loop = 0; Loop < 40; Loop++) {
-		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), Loop + 2000);
+		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", Loop + 2000);
 		StkSocket_Open(Loop);
 	}
 	for (int Loop = 0; Loop < 40; Loop++) {
-		StkSocket_Close(Loop, TRUE);
+		StkSocket_Close(Loop, true);
 		StkSocket_DeleteInfo(Loop);
 	}
 	if (StkSocket_GetNumOfLogs() != STKSOCKET_MAX_NUM_OF_LOG) {
@@ -408,11 +407,11 @@ int GenerateLogs()
 
 	printf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each...");
 	for (int Loop = 0; Loop < 40; Loop++) {
-		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), Loop + 3000);
+		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", Loop + 3000);
 		StkSocket_Open(Loop);
 	}
 	for (int Loop = 0; Loop < 40; Loop++) {
-		StkSocket_Close(Loop, TRUE);
+		StkSocket_Close(Loop, true);
 		StkSocket_DeleteInfo(Loop);
 	}
 	if (StkSocket_GetNumOfLogs() != STKSOCKET_MAX_NUM_OF_LOG) {
@@ -467,7 +466,7 @@ int GenerateLogs()
 int TestAddDeleteSocketInfo()
 {
 	printf("[AddSocketInfo()] : If ActionType is invalid, -1 is returned...");
-	int Ret = StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, 2, _T("11.11.11.11"), 2000);
+	int Ret = StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, 2, L"11.11.11.11", 2000);
 	if (Ret != -1) {
 		printf("NG\r\n");
 		return -1;
@@ -477,7 +476,7 @@ int TestAddDeleteSocketInfo()
 
 	printf("[AddSocketInfo()] : Maximum number of stksockets can be registered...");
 	for (int Loop = 0; Loop < STKSOCKET_MAX_SOCKET_NUMBER; Loop++) {
-		if (StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("11.11.11.11"), Loop + 2000) != 0) {
+		if (StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"11.11.11.11", Loop + 2000) != 0) {
 			printf("NG\r\n");
 			return -1;
 		}
@@ -486,7 +485,7 @@ int TestAddDeleteSocketInfo()
 
 
 	printf("[AddSocketInfo()] : If Maximum number of stksockets is exceeded, -1 is returned...");
-	if (StkSocket_AddInfo(STKSOCKET_MAX_SOCKET_NUMBER, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("11.11.11.11"), STKSOCKET_MAX_SOCKET_NUMBER + 2000) != -1) {
+	if (StkSocket_AddInfo(STKSOCKET_MAX_SOCKET_NUMBER, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"11.11.11.11", STKSOCKET_MAX_SOCKET_NUMBER + 2000) != -1) {
 		printf("NG\r\n");
 		return -1;
 	}
@@ -494,7 +493,7 @@ int TestAddDeleteSocketInfo()
 
 
 	printf("[AddSocketInfo()] : If duplicated stksocket ID is registered, -1 is returned...");
-	if (StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("11.11.11.11"), 2000) != -1) {
+	if (StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"11.11.11.11", 2000) != -1) {
 		printf("NG\r\n");
 		return -1;
 	}
@@ -529,26 +528,26 @@ DWORD WINAPI TestThreadProc0(LPVOID Param)
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_Open(0);
-	BYTE Buffer[10000]; 
-	BYTE CondStr[1000];
+	unsigned char Buffer[10000]; 
+	unsigned char CondStr[1000];
 
 	printf("[Recv/Send] : Appropriate string has been received by receiver...");
-	while (TRUE) {
+	while (true) {
 		if (StkSocket_Accept(0) == 0) {
 			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
-				if (lstrcmp((TCHAR*)Buffer, _T("Hello, world!!")) == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					printf("OK [%S]\r\n", (TCHAR*)Buffer);
-					StkSocket_Send(0, 0, (BYTE*)_T("Reply Hello, world!!"), 50);
-					StkSocket_CloseAccept(0, 0, TRUE);
+				if (lstrcmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
+					printf("OK [%S]\r\n", (wchar_t*)Buffer);
+					StkSocket_Send(0, 0, (unsigned char*)L"Reply Hello, world!!", 50);
+					StkSocket_CloseAccept(0, 0, true);
 					break;
 				} else {
 					printf("NG\r\n");
@@ -560,15 +559,15 @@ DWORD WINAPI TestThreadProc0(LPVOID Param)
 	Sleep(1000);
 
 	printf("[Recv/Send] : Appropriate string has been received by receiver...");
-	while (TRUE) {
+	while (true) {
 		if (StkSocket_Accept(0) == 0) {
 			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
-				if (lstrcmp((TCHAR*)Buffer, _T("Dummy data!!")) == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					printf("OK [%S]\r\n", (TCHAR*)Buffer);
-					StkSocket_Send(0, 0, (BYTE*)_T("Reply Dummy data!!"), 50);
-					StkSocket_CloseAccept(0, 0, TRUE);
+				if (lstrcmp((wchar_t*)Buffer, L"Dummy data!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
+					printf("OK [%S]\r\n", (wchar_t*)Buffer);
+					StkSocket_Send(0, 0, (unsigned char*)L"Reply Dummy data!!", 50);
+					StkSocket_CloseAccept(0, 0, true);
 					break;
 				} else {
 					printf("NG\r\n");
@@ -579,9 +578,9 @@ DWORD WINAPI TestThreadProc0(LPVOID Param)
 	}
 	Sleep(1000);
 
-	StkSocket_Close(0, TRUE);
+	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
-	FinishFlag = TRUE;
+	FinishFlag = true;
 
 	return 0;
 }
@@ -591,22 +590,22 @@ DWORD WINAPI TestThreadProc1(LPVOID Param)
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
 	Sleep(1000);
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2001);
-	TCHAR Buf[10000];
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	wchar_t Buf[10000];
 	int Ret;
 
-	lstrcpy(Buf, _T("Hello, world!!"));
+	lstrcpy(Buf, L"Hello, world!!");
 	StkSocket_Connect(1);
-	StkSocket_Send(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
-	StkSocket_Send(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+	StkSocket_Send(1, 1, (unsigned char*)Buf, (lstrlen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (unsigned char*)Buf, (lstrlen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(TCHAR)) {
+	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(wchar_t)) {
 		printf("[Recv/Send] : Send data %S...", Buf);
 		printf("NG\r\n");
 		exit(-1);
@@ -615,25 +614,25 @@ DWORD WINAPI TestThreadProc1(LPVOID Param)
 	printf("[Recv/Send] : Sender received data...");
 	Ret = 0;
 	do {
-		Ret = StkSocket_Receive(1, 1, (BYTE*)Buf, 50, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
+		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 50, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-			if (lstrcmp((TCHAR*)Buf, _T("Reply Hello, world!!")) != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
+			if (lstrcmp((wchar_t*)Buf, L"Reply Hello, world!!") != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
 				printf("NG\r\n");
 				exit(-1);
 			}
 			printf("OK [%S]\r\n", Buf);
 		}
 	} while (Ret <= 0);
-	StkSocket_Disconnect(1, 1, TRUE);
+	StkSocket_Disconnect(1, 1, true);
 	Sleep(1000);
 
-	lstrcpy(Buf, _T("Dummy data!!"));
+	lstrcpy(Buf, L"Dummy data!!");
 	StkSocket_Connect(1);
-	StkSocket_Send(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
-	StkSocket_Send(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+	StkSocket_Send(1, 1, (unsigned char*)Buf, (lstrlen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (unsigned char*)Buf, (lstrlen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(TCHAR)) {
+	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(wchar_t)) {
 		printf("[Recv/Send] : Send data %S...", Buf);
 		printf("NG\r\n");
 		exit(-1);
@@ -642,22 +641,22 @@ DWORD WINAPI TestThreadProc1(LPVOID Param)
 	printf("[Recv/Send] : Sender received data...");
 	Ret = 0;
 	do {
-		Ret = StkSocket_Receive(1, 1, (BYTE*)Buf, 50, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
+		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 50, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-			if (lstrcmp((TCHAR*)Buf, _T("Reply Dummy data!!")) != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
+			if (lstrcmp((wchar_t*)Buf, L"Reply Dummy data!!") != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
 				printf("NG\r\n");
 				exit(-1);
 			}
 			printf("OK [%S]\r\n", Buf);
 		}
 	} while (Ret <= 0);
-	StkSocket_Disconnect(1, 1, TRUE);
+	StkSocket_Disconnect(1, 1, true);
 	Sleep(1000);
 
-	StkSocket_Close(1, TRUE);
+	StkSocket_Close(1, true);
 	StkSocket_DeleteInfo(1);
-	FinishFlag = TRUE;
+	FinishFlag = true;
 
 	return 0;
 }
@@ -666,24 +665,24 @@ DWORD WINAPI TestThreadProc2(LPVOID Param)
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_Open(0);
-	BYTE Buffer[10000]; 
-	BYTE CondStr[1000];
+	unsigned char Buffer[10000]; 
+	unsigned char CondStr[1000];
 
-	while (TRUE) {
+	while (true) {
 		if (StkSocket_Accept(0) == 0) {
 			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
 				printf("[Recv/Send2] : Appropriate string has been received by receiver...");
-				if (lstrcmp((TCHAR*)Buffer, _T("Hello, world!!")) == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					printf("OK [%S]\r\n", (TCHAR*)Buffer);
+				if (lstrcmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
+					printf("OK [%S]\r\n", (wchar_t*)Buffer);
 					break;
 				} else {
 					printf("NG\r\n");
@@ -702,7 +701,7 @@ DWORD WINAPI TestThreadProc2(LPVOID Param)
 		exit(-1);
 	}
 	Sleep(1000);
-	FinishFlag = TRUE;
+	FinishFlag = true;
 	return 0;
 }
 
@@ -710,21 +709,21 @@ DWORD WINAPI TestThreadProc3(LPVOID Param)
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
 	Sleep(1000);
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2001);
-	TCHAR Buf[10000];
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	wchar_t Buf[10000];
 
 	printf("[Recv/Send2] : Sender sent data...");
-	lstrcpy(Buf, _T("Hello, world!!"));
+	lstrcpy(Buf, L"Hello, world!!");
 	StkSocket_Connect(1);
-	StkSocket_Send(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+	StkSocket_Send(1, 1, (unsigned char*)Buf, (lstrlen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(TCHAR)) {
+	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(wchar_t)) {
 		printf("NG\r\n");
 		exit(-1);
 	}
@@ -739,7 +738,7 @@ DWORD WINAPI TestThreadProc3(LPVOID Param)
 		exit(-1);
 	}
 	Sleep(1000);
-	FinishFlag = TRUE;
+	FinishFlag = true;
 	return 0;
 }
 
@@ -747,14 +746,14 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
-	StkSocket_AddInfo(20, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2002);
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
-	StkSocket_AddInfo(30, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2003);
+	StkSocket_AddInfo(20, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2002);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+	StkSocket_AddInfo(30, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2003);
 	StkSocket_Open(0);
 
 	if (StkSocket_GetNumOfStkInfos() < 3) {
@@ -765,31 +764,31 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 		int TargetId;
 		int SockType;
 		int ActionType;
-		TCHAR TargetAddr[256];
+		wchar_t TargetAddr[256];
 		int TargetPort;
-		BOOL CopiedFlag;
+		bool CopiedFlag;
 
 		for (int Loop = 0; Loop < StkSocket_GetNumOfStkInfos(); Loop++) {
 			StkSocket_GetInfo(0, &TargetId, &SockType, &ActionType, TargetAddr, &TargetPort, &CopiedFlag);
 			if (SockType != STKSOCKET_TYPE_DGRAM ||
-				lstrcmp(TargetAddr, _T("127.0.0.1")) != 0 ||
-				CopiedFlag != FALSE) {
+				lstrcmp(TargetAddr, L"127.0.0.1") != 0 ||
+				CopiedFlag != false) {
 				printf("[Recv/Send for UDP] : NG (Acquired socket information is invalid.)\r\n");
 				return -1;
 			}
 		}
 	}
 
-	BYTE Buffer[10000]; 
-	while (TRUE) {
+	unsigned char Buffer[10000]; 
+	while (true) {
 		int Ret = StkSocket_ReceiveUdp(0, 0, Buffer, 10000);
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-			if (StrStr((TCHAR*)Buffer, _T("Hello, world!!")) != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
-				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...OK [%S]\r\n", (TCHAR*)Buffer);
+			if (StrStr((wchar_t*)Buffer, L"Hello, world!!") != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
+				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...OK [%S]\r\n", (wchar_t*)Buffer);
 				break;
 			} else {
-				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...NG [%S:%d]\r\n", (TCHAR*)Buffer, Msg);
+				printf("[Recv/Send for UDP] : Appropriate string has been received by receiver...NG [%S:%d]\r\n", (wchar_t*)Buffer, Msg);
 				exit(-1);
 			}
 		}
@@ -800,14 +799,14 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 
 	Sleep(1000);
 
-	TCHAR Buf[10000];
+	wchar_t Buf[10000];
 	for (int LoopSnd = 0; LoopSnd < 50; LoopSnd++) {
-		_snwprintf_s(Buf, 10000, _T("Shinya Takeuchi %d"), LoopSnd);
-		int Ret = StkSocket_SendUdp(0, 0, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+		_snwprintf_s(Buf, 10000, L"Shinya Takeuchi %d", LoopSnd);
+		int Ret = StkSocket_SendUdp(0, 0, (unsigned char*)Buf, (lstrlen(Buf) + 1) * sizeof(wchar_t));
 		Sleep(10);
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(TCHAR)) {
+	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(wchar_t)) {
 		printf("[Recv/Send for UDP] : Receiver replied data...NG\r\n");
 		exit(-1);
 	}
@@ -815,7 +814,7 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 
 	Sleep(1000);
 
-	StkSocket_Close(0, TRUE);
+	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_UDPSOCKCLOSE && LogId == 0) {
@@ -825,7 +824,7 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 		exit(-1);
 	}
 	Sleep(1000);
-	FinishFlag = TRUE;
+	FinishFlag = true;
 
 	return 0;
 }
@@ -834,44 +833,44 @@ DWORD WINAPI TestThreadProc5(LPVOID Param)
 {
 	int Msg;
 	int LogId;
-	TCHAR ParamStr1[256];
-	TCHAR ParamStr2[256];
+	wchar_t ParamStr1[256];
+	wchar_t ParamStr2[256];
 	int ParamInt1;
 	int ParamInt2;
 
 	Sleep(1000);
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 
-	TCHAR Buf[10000];
+	wchar_t Buf[10000];
 	StkSocket_Connect(1);
 	for (int LoopSnd = 0; LoopSnd < 50; LoopSnd++) {
-		_snwprintf_s(Buf, 10000, _T("Hello, world!! %d"), LoopSnd);
-		StkSocket_SendUdp(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+		_snwprintf_s(Buf, 10000, L"Hello, world!! %d", LoopSnd);
+		StkSocket_SendUdp(1, 1, (unsigned char*)Buf, (lstrlen(Buf) + 1) * sizeof(wchar_t));
 		Sleep(10);
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(TCHAR)) {
+	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (lstrlen(Buf) + 1) * sizeof(wchar_t)) {
 		printf("[Recv/Send for UDP] : Sender sent data...NG\r\n");
 		exit(-1);
 	}
 	printf("[Recv/Send for UDP] : Sender sent data...OK [%S]\r\n", Buf);
 
-	BYTE Buffer[10000]; 
-	while (TRUE) {
+	unsigned char Buffer[10000]; 
+	while (true) {
 		int Ret = StkSocket_ReceiveUdp(1, 1, Buffer, 10000);
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-			if (StrStr((TCHAR*)Buffer, _T("Shinya Takeuchi")) != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
-				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...OK [%S]\r\n", (TCHAR*)Buffer);
+			if (StrStr((wchar_t*)Buffer, L"Shinya Takeuchi") != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
+				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...OK [%S]\r\n", (wchar_t*)Buffer);
 				break;
 			} else {
-				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...NG [%S:%d]\r\n", (TCHAR*)Buffer, Msg);
+				printf("[Recv/Send for UDP] : Appropriate string has been received by sender...NG [%S:%d]\r\n", (wchar_t*)Buffer, Msg);
 				exit(-1);
 			}
 		}
 	}
 
-	StkSocket_Disconnect(1, 1, TRUE);
+	StkSocket_Disconnect(1, 1, true);
 	StkSocket_DeleteInfo(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_UDPSOCKCLOSE && LogId == 1) {
@@ -881,28 +880,28 @@ DWORD WINAPI TestThreadProc5(LPVOID Param)
 		exit(-1);
 	}
 	Sleep(1000);
-	FinishFlag = TRUE;
+	FinishFlag = true;
 	return 0;
 }
 
 DWORD WINAPI TestThreadProc6(LPVOID Param)
 {
 	printf("[Recv/Send] : Keep waiting for closure of sender ...");
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_Open(0);
-	BYTE Buffer[10000];
-	BYTE CondStr[1000];
-	while (TRUE) {
+	unsigned char Buffer[10000];
+	unsigned char CondStr[1000];
+	while (true) {
 		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 		if (Ret > 0) {
 			printf("NG\r\n");
 			exit(-1);
 		}
-		if (FinishFlag == TRUE) {
+		if (FinishFlag == true) {
 			break;
 		}
 	}
-	StkSocket_Close(0, FALSE);
+	StkSocket_Close(0, false);
 	StkSocket_DeleteInfo(0);
 	printf("OK\r\n");
 	return 0;
@@ -911,19 +910,19 @@ DWORD WINAPI TestThreadProc6(LPVOID Param)
 DWORD WINAPI TestThreadProc7(LPVOID Param)
 {
 	Sleep(3000);
-	FinishFlag = TRUE;
+	FinishFlag = true;
 	return 0;
 }
 
 DWORD WINAPI TestThreadProc8(LPVOID Param)
 {
 	printf("[Recv/Send] : Receiver method out detected with timeout=0...");
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_Open(0);
-	BYTE Buffer[10000];
-	BYTE CondStr[1000];
+	unsigned char Buffer[10000];
+	unsigned char CondStr[1000];
 
-	while (TRUE) {
+	while (true) {
 		if (StkSocket_Accept(0) == 0) {
 			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_TIMEOUT, 0, CondStr, 1000);
 			if (Ret > 0) {
@@ -933,19 +932,19 @@ DWORD WINAPI TestThreadProc8(LPVOID Param)
 	}
 	StkSocket_DeleteInfo(0);
 	printf("OK\r\n");
-	FinishFlag = TRUE;
+	FinishFlag = true;
 	return 0;
 }
 
 DWORD WINAPI TestThreadProc9(LPVOID Param)
 {
 	Sleep(1000);
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2001);
-	TCHAR Buf[10000];
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	wchar_t Buf[10000];
 
-	lstrcpy(Buf, _T("Hello, world!!"));
+	lstrcpy(Buf, L"Hello, world!!");
 	StkSocket_Connect(1);
-	StkSocket_Send(1, 1, (BYTE*)Buf, (lstrlen(Buf) + 1) * sizeof(TCHAR));
+	StkSocket_Send(1, 1, (unsigned char*)Buf, (lstrlen(Buf) + 1) * sizeof(wchar_t));
 	Sleep(3000);
 	StkSocket_ForceStop(0);
 	StkSocket_DeleteInfo(1);
@@ -954,18 +953,18 @@ DWORD WINAPI TestThreadProc9(LPVOID Param)
 
 DWORD WINAPI TestThreadForAcceptRecv1(LPVOID Param)
 {
-	BYTE Buf[1000000];
-	BOOL S1Flag = FALSE;
-	BOOL S2Flag = FALSE;
-	BOOL S3Flag = FALSE;
+	unsigned char Buf[1000000];
+	bool S1Flag = false;
+	bool S2Flag = false;
+	bool S3Flag = false;
 	srand(101);
-	while (TRUE) {
+	while (true) {
 		if (StkSocket_Accept(101) == 0) {
 			StkSocket_Receive(101, 101, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
-			if (strstr((char*)Buf, "#1") != 0) S1Flag = TRUE;
-			if (strstr((char*)Buf, "#2") != 0) S2Flag = TRUE;
-			if (strstr((char*)Buf, "#3") != 0) S3Flag = TRUE;
-			StkSocket_CloseAccept(101, 101, TRUE);
+			if (strstr((char*)Buf, "#1") != 0) S1Flag = true;
+			if (strstr((char*)Buf, "#2") != 0) S2Flag = true;
+			if (strstr((char*)Buf, "#3") != 0) S3Flag = true;
+			StkSocket_CloseAccept(101, 101, true);
 			if (S1Flag && S2Flag && S3Flag) break;
 			Sleep((rand() % 10) * 100);
 		}
@@ -977,18 +976,18 @@ DWORD WINAPI TestThreadForAcceptRecv1(LPVOID Param)
 
 DWORD WINAPI TestThreadForAcceptRecv2(LPVOID Param)
 {
-	BYTE Buf[1000000];
-	BOOL S1Flag = FALSE;
-	BOOL S2Flag = FALSE;
-	BOOL S3Flag = FALSE;
+	unsigned char Buf[1000000];
+	bool S1Flag = false;
+	bool S2Flag = false;
+	bool S3Flag = false;
 	srand(102);
-	while (TRUE) {
+	while (true) {
 		if (StkSocket_Accept(102) == 0) {
 			StkSocket_Receive(102, 102, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
-			if (strstr((char*)Buf, "#1") != 0) S1Flag = TRUE;
-			if (strstr((char*)Buf, "#2") != 0) S2Flag = TRUE;
-			if (strstr((char*)Buf, "#3") != 0) S3Flag = TRUE;
-			StkSocket_CloseAccept(102, 102, TRUE);
+			if (strstr((char*)Buf, "#1") != 0) S1Flag = true;
+			if (strstr((char*)Buf, "#2") != 0) S2Flag = true;
+			if (strstr((char*)Buf, "#3") != 0) S3Flag = true;
+			StkSocket_CloseAccept(102, 102, true);
 			if (S1Flag && S2Flag && S3Flag) break;
 			Sleep((rand() % 10) * 100);
 		}
@@ -1000,18 +999,18 @@ DWORD WINAPI TestThreadForAcceptRecv2(LPVOID Param)
 
 DWORD WINAPI TestThreadForAcceptRecv3(LPVOID Param)
 {
-	BYTE Buf[1000000];
-	BOOL S1Flag = FALSE;
-	BOOL S2Flag = FALSE;
-	BOOL S3Flag = FALSE;
+	unsigned char Buf[1000000];
+	bool S1Flag = false;
+	bool S2Flag = false;
+	bool S3Flag = false;
 	srand(103);
-	while (TRUE) {
+	while (true) {
 		if (StkSocket_Accept(103) == 0) {
 			StkSocket_Receive(103, 103, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
-			if (strstr((char*)Buf, "#1") != 0) S1Flag = TRUE;
-			if (strstr((char*)Buf, "#2") != 0) S2Flag = TRUE;
-			if (strstr((char*)Buf, "#3") != 0) S3Flag = TRUE;
-			StkSocket_CloseAccept(103, 103, TRUE);
+			if (strstr((char*)Buf, "#1") != 0) S1Flag = true;
+			if (strstr((char*)Buf, "#2") != 0) S2Flag = true;
+			if (strstr((char*)Buf, "#3") != 0) S3Flag = true;
+			StkSocket_CloseAccept(103, 103, true);
 			if (S1Flag && S2Flag && S3Flag) break;
 			Sleep((rand() % 10) * 100);
 		}
@@ -1024,14 +1023,14 @@ DWORD WINAPI TestThreadForAcceptRecv3(LPVOID Param)
 DWORD WINAPI TestThreadForAcceptSend1(LPVOID Param)
 {
 	char Buf[1024];
-	BOOL S1Flag = FALSE;
-	BOOL S2Flag = FALSE;
-	BOOL S3Flag = FALSE;
+	bool S1Flag = false;
+	bool S2Flag = false;
+	bool S3Flag = false;
 	strcpy_s(Buf, 1024, "Hello, world from #1\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
 		StkSocket_Connect(201);
-		StkSocket_Send(201, 201, (BYTE*)Buf, strlen(Buf) + 1);
-		StkSocket_Disconnect(201, 201, FALSE);
+		StkSocket_Send(201, 201, (unsigned char*)Buf, strlen(Buf) + 1);
+		StkSocket_Disconnect(201, 201, false);
 		if (FindFlagCounter >= 3) {
 			break;
 		}
@@ -1047,8 +1046,8 @@ DWORD WINAPI TestThreadForAcceptSend2(LPVOID Param)
 	strcpy_s(Buf, 1024, "Hello, world from #2\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
 		StkSocket_Connect(202);
-		StkSocket_Send(202, 202, (BYTE*)Buf, strlen(Buf) + 1);
-		StkSocket_Disconnect(202, 202, FALSE);
+		StkSocket_Send(202, 202, (unsigned char*)Buf, strlen(Buf) + 1);
+		StkSocket_Disconnect(202, 202, false);
 		if (FindFlagCounter >= 3) {
 			break;
 		}
@@ -1064,8 +1063,8 @@ DWORD WINAPI TestThreadForAcceptSend3(LPVOID Param)
 	strcpy_s(Buf, 1024, "Hello, world from #3\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
 		StkSocket_Connect(203);
-		StkSocket_Send(203, 203, (BYTE*)Buf, strlen(Buf) + 1);
-		StkSocket_Disconnect(203, 203, FALSE);
+		StkSocket_Send(203, 203, (unsigned char*)Buf, strlen(Buf) + 1);
+		StkSocket_Disconnect(203, 203, false);
 		if (FindFlagCounter >= 3) {
 			break;
 		}
@@ -1077,7 +1076,7 @@ DWORD WINAPI TestThreadForAcceptSend3(LPVOID Param)
 
 void TestThreadForAcceptSendRecv()
 {
-	StkSocket_AddInfo(101, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(101, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	if (StkSocket_CopyInfo(102, 101) != -1) {
 		printf("[Multi accepts] : CopySocketInfo successed ... OK\r\n");
 	} else {
@@ -1117,9 +1116,9 @@ void TestThreadForAcceptSendRecv()
 	} else {
 		printf("[Multi accepts] : Success to detect invalid code for unexistence base info ... OK\r\n");
 	}
-	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2001);
-	StkSocket_AddInfo(202, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2001);
-	StkSocket_AddInfo(203, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, _T("127.0.0.1"), 2001);
+	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	StkSocket_AddInfo(202, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	StkSocket_AddInfo(203, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	if (StkSocket_GetNumOfStkInfos() == 6) {
 		printf("[Multi accepts] : 3 socket information exists ... OK\r\n");
 	} else {
@@ -1141,7 +1140,7 @@ void TestThreadForAcceptSendRecv()
 	Sleep(1000);
 
 	printf("[Multi accepts] : Try StkSocket_CopyInfo() after source socket closure with StkSocket_Close() ... ");
-	StkSocket_Close(101, TRUE);
+	StkSocket_Close(101, true);
 	if (StkSocket_CopyInfo(104, 101) != -1) {
 		printf("OK\r\n");
 	} else {
@@ -1165,9 +1164,9 @@ void TestThreadForAcceptSendRecv()
 
 void TestMultiAccept1()
 {
-	StkSocket_AddInfo(111, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2201);
-	StkSocket_AddInfo(121, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2202);
-	StkSocket_AddInfo(131, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, _T("127.0.0.1"), 2203);
+	StkSocket_AddInfo(111, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2201);
+	StkSocket_AddInfo(121, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2202);
+	StkSocket_AddInfo(131, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2203);
 	StkSocket_Open(111);
 	StkSocket_Open(121);
 	StkSocket_Open(131);
@@ -1185,7 +1184,7 @@ void TestMultiAccept1()
 	}
 	printf("[Multi accepts] : Status validation [open] ... OK\r\n");
 
-	StkSocket_Close(121, FALSE);
+	StkSocket_Close(121, false);
 	if (StkSocket_GetStatus(111) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(131) != STKSOCKET_STATUS_OPEN ||
@@ -1196,8 +1195,8 @@ void TestMultiAccept1()
 			exit(-1);
 	}
 
-	StkSocket_Close(111, FALSE);
-	StkSocket_Close(131, FALSE);
+	StkSocket_Close(111, false);
+	StkSocket_Close(131, false);
 	if (StkSocket_GetStatus(111) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(131) != STKSOCKET_STATUS_CLOSE) {
 			printf("[Multi accepts] : Status validation [close+] ... NG\r\n");
@@ -1240,42 +1239,42 @@ int main(int Argc, char* Argv[])
 	StkSocketTestHttp TestHttpObj;
 	TestHttpObj.TestHttpTermination();
 
-	FinishFlag = FALSE;
+	FinishFlag = false;
 	CreateThread(NULL, 0, &TestThreadProc0, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc1, NULL, 0, &TmpId);
-	while (FinishFlag == FALSE) {
+	while (FinishFlag == false) {
 		Sleep(1000);
 	}
 	Sleep(1000);
 
-	FinishFlag = FALSE;
+	FinishFlag = false;
 	CreateThread(NULL, 0, &TestThreadProc2, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc3, NULL, 0, &TmpId);
-	while (FinishFlag == FALSE) {
+	while (FinishFlag == false) {
 		Sleep(1000);
 	}
 	Sleep(1000);
 
-	FinishFlag = FALSE;
+	FinishFlag = false;
 	CreateThread(NULL, 0, &TestThreadProc4, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc5, NULL, 0, &TmpId);
-	while (FinishFlag == FALSE) {
+	while (FinishFlag == false) {
 		Sleep(1000);
 	}
 	Sleep(1000);
 
-	FinishFlag = FALSE;
+	FinishFlag = false;
 	CreateThread(NULL, 0, &TestThreadProc6, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc7, NULL, 0, &TmpId);
-	while (FinishFlag == FALSE) {
+	while (FinishFlag == false) {
 		Sleep(1000);
 	}
 	Sleep(1000);
 
-	FinishFlag = FALSE;
+	FinishFlag = false;
 	CreateThread(NULL, 0, &TestThreadProc8, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc9, NULL, 0, &TmpId);
-	while (FinishFlag == FALSE) {
+	while (FinishFlag == false) {
 		Sleep(1000);
 	}
 	Sleep(1000);
