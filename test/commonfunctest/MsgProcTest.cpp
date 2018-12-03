@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\commonfunc\MsgProc.h"
 
@@ -7,17 +6,17 @@ void MsgProcTest()
 {
 	printf("MsgProcTest started.\n");
 
-	MessageProc::AddJpn(100, _T("‚ ‚¢‚¤‚¦‚¨"));
-	MessageProc::AddEng(100, _T("abcde"));
+	MessageProc::AddJpn(100, L"‚ ‚¢‚¤‚¦‚¨");
+	MessageProc::AddEng(100, L"abcde");
 
 	MessageProc::SetLocaleMode(MessageProc::LOCALE_MODE_ENGLISH);
-	if (lstrcmp(MessageProc::GetMsg(100), _T("abcde")) != 0) {
+	if (lstrcmp(MessageProc::GetMsg(100), L"abcde") != 0) {
 		printf("English message cannot be acquired in the English locale configuration ... NG case\n");
 		exit(0);
 	} else {
 		printf("English message can be acquired in the English locale configuration ... OK case\n");
 	}
-	if (lstrcmp(MessageProc::GetMsgJpn(100), _T("‚ ‚¢‚¤‚¦‚¨")) != 0) {
+	if (lstrcmp(MessageProc::GetMsgJpn(100), L"‚ ‚¢‚¤‚¦‚¨") != 0) {
 		printf("Japanese message cannot not be acquired using GetMsgJpn in the English locale configuration ... NG case\n");
 		exit(0);
 	} else {
@@ -25,13 +24,13 @@ void MsgProcTest()
 	}
 
 	MessageProc::SetLocaleMode(MessageProc::LOCALE_MODE_JAPANESE);
-	if (lstrcmp(MessageProc::GetMsg(100), _T("‚ ‚¢‚¤‚¦‚¨")) != 0) {
+	if (lstrcmp(MessageProc::GetMsg(100), L"‚ ‚¢‚¤‚¦‚¨") != 0) {
 		printf("Japanese message cannot not be acquired in the Japanese locale configuration ... NG case\n");
 		exit(0);
 	} else {
 		printf("Japanese message can be acquired in the Japanese locale configuration ... OK case\n");
 	}
-	if (lstrcmp(MessageProc::GetMsgEng(100), _T("abcde")) != 0) {
+	if (lstrcmp(MessageProc::GetMsgEng(100), L"abcde") != 0) {
 		printf("English message cannot not be acquired using GetMsgEng in the Japanese locale configuration ... NG case\n");
 		exit(0);
 	} else {
@@ -62,10 +61,10 @@ void MsgProcTest()
 		printf("After clear API is called no message can be acquired ... OK case\n");
 	}
 
-	MessageProc::AddJpn(101, _T("‚ ‚¢‚¤‚¦‚¨"));
-	MessageProc::AddEng(101, _T("abcde"));
-	MessageProc::AddJpn(102, _T("‚©‚«‚­‚¯‚±"));
-	MessageProc::AddEng(102, _T("fghij"));
+	MessageProc::AddJpn(101, L"‚ ‚¢‚¤‚¦‚¨");
+	MessageProc::AddEng(101, L"abcde");
+	MessageProc::AddJpn(102, L"‚©‚«‚­‚¯‚±");
+	MessageProc::AddEng(102, L"fghij");
 	MessageProc::DelJpn(101);
 	MessageProc::DelEng(102);
 	if (MessageProc::GetMsgEng(101) == NULL || MessageProc::GetMsgSjisEng(101) == NULL || MessageProc::GetMsgUtf8Eng(101) == NULL) {

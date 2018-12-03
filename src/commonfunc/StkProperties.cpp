@@ -67,7 +67,7 @@ int StkProperties::GetProperties(wchar_t* FileName)
 		return 0;
 	}
 	int WorkDatLength = (int)ExistingFileSize.QuadPart;
-	BYTE* WorkDat = new BYTE[WorkDatLength + 1];
+	unsigned char* WorkDat = new unsigned char[WorkDatLength + 1];
 	DWORD TmpSize = 0;
 
 	if (ReadFile(ReadFileHndl, (LPVOID)WorkDat, WorkDatLength, &TmpSize, NULL) == 0) {
@@ -81,8 +81,8 @@ int StkProperties::GetProperties(wchar_t* FileName)
 
 	// set line
 	char PropertyLine[64][256];
-	BYTE* WorkDatAddr = WorkDat;
-	BYTE* WorkDatEnd = WorkDat + WorkDatLength;
+	unsigned char* WorkDatAddr = WorkDat;
+	unsigned char* WorkDatEnd = WorkDat + WorkDatLength;
 	int Loop;
 	for (Loop = 0; Loop < 64; Loop++) {
 		for (; WorkDatAddr < WorkDatEnd; WorkDatAddr++) {

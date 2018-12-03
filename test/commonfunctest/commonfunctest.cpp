@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\commonfunc\StkGeneric.h"
 
@@ -21,7 +20,7 @@ int main(int argc, char *argv[])
 	StkGeneric* StkGen = StkGeneric::GetInstance();
 
 	{
-		TCHAR Html1[50] = _T("abcdefghijklmnopqrstuvwxyz");
+		wchar_t Html1[50] = L"abcdefghijklmnopqrstuvwxyz";
 		printf("HtmlEncodeSize#1[%S]...", Html1);
 		if (StkGen->HtmlEncodeSize(Html1) == 26) {
 			printf("OK\n");
@@ -32,7 +31,7 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		TCHAR Html2[50] = _T("abcde<>hijklmn&pqrsuvwxy\"z");
+		wchar_t Html2[50] = L"abcde<>hijklmn&pqrsuvwxy\"z";
 		printf("HtmlEncodeSize#2[%S]...", Html2);
 		int Len2 = StkGen->HtmlEncodeSize(Html2);
 		if (Len2 == 41) {
@@ -42,9 +41,9 @@ int main(int argc, char *argv[])
 			exit(0);
 		}
 		printf("HtmlEncode#1[%S]...", Html2);
-		TCHAR* NewHtml2 = new TCHAR[Len2 + 1];
+		wchar_t* NewHtml2 = new wchar_t[Len2 + 1];
 		StkGen->HtmlEncode(Html2, NewHtml2, Len2 + 1);
-		if (lstrcmp(_T("abcde&lt;&gt;hijklmn&amp;pqrsuvwxy&quot;z"), NewHtml2) == 0) {
+		if (lstrcmp(L"abcde&lt;&gt;hijklmn&amp;pqrsuvwxy&quot;z", NewHtml2) == 0) {
 			printf("OK\n");
 		} else {
 			printf("NG\n");
@@ -54,12 +53,12 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		TCHAR Html3[50] = _T("<>&\"");
+		wchar_t Html3[50] = L"<>&\"";
 		printf("HtmlEncode#2[%S]...", Html3);
 		int Len3 = StkGen->HtmlEncodeSize(Html3);
-		TCHAR* NewHtml3 = new TCHAR[Len3 + 1];
+		wchar_t* NewHtml3 = new wchar_t[Len3 + 1];
 		StkGen->HtmlEncode(Html3, NewHtml3, Len3 + 1);
-		if (lstrcmp(_T("&lt;&gt;&amp;&quot;"), NewHtml3) == 0) {
+		if (lstrcmp(L"&lt;&gt;&amp;&quot;", NewHtml3) == 0) {
 			printf("OK\n");
 		} else {
 			printf("NG\n");
@@ -69,11 +68,11 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		TCHAR Html4[10] = _T("abcdefghi");
+		wchar_t Html4[10] = L"abcdefghi";
 		printf("HtmlEncode#3[%S]...", Html4);
-		TCHAR* NewHtml4 = new TCHAR[10];
+		wchar_t* NewHtml4 = new wchar_t[10];
 		StkGen->HtmlEncode(Html4, NewHtml4, 10);
-		if (lstrcmp(_T("abcdefghi"), NewHtml4) == 0) {
+		if (lstrcmp(L"abcdefghi", NewHtml4) == 0) {
 			printf("OK\n");
 		} else {
 			printf("NG\n");
@@ -83,11 +82,11 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		TCHAR Html5[10] = _T("<>&\"");
+		wchar_t Html5[10] = L"<>&\"";
 		printf("HtmlEncode#4[%S;size=14]...", Html5);
-		TCHAR* NewHtml5 = new TCHAR[14];
+		wchar_t* NewHtml5 = new wchar_t[14];
 		StkGen->HtmlEncode(Html5, NewHtml5, 14);
-		if (lstrcmp(_T("&lt;&gt;&amp;"), NewHtml5) == 0) {
+		if (lstrcmp(L"&lt;&gt;&amp;", NewHtml5) == 0) {
 			printf("OK\n");
 		} else {
 			printf("NG\n");
@@ -97,11 +96,11 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		TCHAR Html[10] = _T("<>&\"");
+		wchar_t Html[10] = L"<>&\"";
 		printf("HtmlEncode#5[%S;size=13]...", Html);
-		TCHAR* NewHtml = new TCHAR[14];
+		wchar_t* NewHtml = new wchar_t[14];
 		StkGen->HtmlEncode(Html, NewHtml, 13);
-		if (lstrcmp(_T("&lt;&gt;"), NewHtml) == 0) {
+		if (lstrcmp(L"&lt;&gt;", NewHtml) == 0) {
 			printf("OK\n");
 		} else {
 			printf("NG\n");
@@ -111,11 +110,11 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		TCHAR Html[10] = _T("<>&\"");
+		wchar_t Html[10] = L"<>&\"";
 		printf("HtmlEncode#6[%S;size=20]...", Html);
-		TCHAR* NewHtml = new TCHAR[20];
+		wchar_t* NewHtml = new wchar_t[20];
 		StkGen->HtmlEncode(Html, NewHtml, 20);
-		if (lstrcmp(_T("&lt;&gt;&amp;&quot;"), NewHtml) == 0) {
+		if (lstrcmp(L"&lt;&gt;&amp;&quot;", NewHtml) == 0) {
 			printf("OK\n");
 		} else {
 			printf("NG\n");
@@ -126,10 +125,10 @@ int main(int argc, char *argv[])
 
 	////////////////////////////////////////////////////////////////////////
 	{
-		TCHAR OrgPath[MAX_PATH] = _T("aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg\\xxx.txt");
-		TCHAR CmpPath[MAX_PATH] = _T("aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg");
-		TCHAR AcqPath[MAX_PATH];
-		wprintf(_T("GetFullPathWithoutFileName#1[%s]..."), OrgPath);
+		wchar_t OrgPath[MAX_PATH] = L"aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg\\xxx.txt";
+		wchar_t CmpPath[MAX_PATH] = L"aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg";
+		wchar_t AcqPath[MAX_PATH];
+		wprintf(L"GetFullPathWithoutFileName#1[%s]...", OrgPath);
 		StkGen->GetFullPathWithoutFileName(OrgPath, AcqPath);
 		if (lstrcmp(AcqPath, CmpPath) == 0) {
 			printf("OK\n");
@@ -140,10 +139,10 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		TCHAR OrgPath[MAX_PATH] = _T("aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg\\");
-		TCHAR CmpPath[MAX_PATH] = _T("aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg");
-		TCHAR AcqPath[MAX_PATH];
-		wprintf(_T("GetFullPathWithoutFileName#2[%s]..."), OrgPath);
+		wchar_t OrgPath[MAX_PATH] = L"aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg\\";
+		wchar_t CmpPath[MAX_PATH] = L"aaa\\bbb\\ccc\\ddd\\eee\\fff\\ggg";
+		wchar_t AcqPath[MAX_PATH];
+		wprintf(L"GetFullPathWithoutFileName#2[%s]...", OrgPath);
 		StkGen->GetFullPathWithoutFileName(OrgPath, AcqPath);
 		if (lstrcmp(AcqPath, CmpPath) == 0) {
 			printf("OK\n");
@@ -154,9 +153,9 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		TCHAR OrgPath[MAX_PATH] = _T("aaabbbcccdddeeefffggg");
-		TCHAR AcqPath[MAX_PATH];
-		wprintf(_T("GetFullPathWithoutFileName#3[%s]..."), OrgPath);
+		wchar_t OrgPath[MAX_PATH] = L"aaabbbcccdddeeefffggg";
+		wchar_t AcqPath[MAX_PATH];
+		wprintf(L"GetFullPathWithoutFileName#3[%s]...", OrgPath);
 		if (StkGen->GetFullPathWithoutFileName(OrgPath, AcqPath) == -1) {
 			printf("OK\n");
 		} else {
@@ -166,16 +165,16 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		TCHAR AcqPath[MAX_PATH];
-		wprintf(_T("GetFullPathWithoutFileName#4[NULL]..."));
+		wchar_t AcqPath[MAX_PATH];
+		wprintf(L"GetFullPathWithoutFileName#4[NULL]...");
 		if (StkGen->GetFullPathWithoutFileName(NULL, AcqPath) == -1) {
 			printf("OK\n");
 		} else {
 			printf("NG\n");
 			exit(0);
 		}
-		wprintf(_T("GetFullPathWithoutFileName#4[EMPTY]..."));
-		if (StkGen->GetFullPathWithoutFileName(_T(""), AcqPath) == -1) {
+		wprintf(L"GetFullPathWithoutFileName#4[EMPTY]...");
+		if (StkGen->GetFullPathWithoutFileName(L"", AcqPath) == -1) {
 			printf("OK\n");
 		} else {
 			printf("NG\n");
