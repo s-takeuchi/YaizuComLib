@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"

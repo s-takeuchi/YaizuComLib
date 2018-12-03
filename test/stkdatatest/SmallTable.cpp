@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tchar.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
@@ -14,21 +13,21 @@ SmallTable
 ・GetMaxNumOfRecords("SmallTable")で取得したレコード件数は1件となる
 ・GetNumOfRecords("BigTable")で取得したレコード件数は-1件となる
 ・GetMaxNumOfRecords("BigTable")で取得したレコード件数は-1件となる
-・DeleteRecord(_T("SmallTable"))後，GetNumOfRecords(_T("SmallTable"))が0を返却する
-・DeleteTable(_T("SmallTable"))が0を返却する
+・DeleteRecord(L"SmallTable")後，GetNumOfRecords(L"SmallTable")が0を返却する
+・DeleteTable(L"SmallTable")が0を返却する
 */
 int SmallTable()
 {
 	// CreateTableでSmallTableテーブル(ID:Int) Max=1 を生成することができる
 	printf("CreateTableでSmallTableテーブル(ID:Int) Max=1 を生成することができる");
-	ColumnDefInt ColDefId(_T("ID"));
-	TableDef TabDefPerson(_T("SmallTable"), 1);
+	ColumnDefInt ColDefId(L"ID");
+	TableDef TabDefPerson(L"SmallTable", 1);
 	TabDefPerson.AddColumnDef(&ColDefId);
 	if (CreateTable(&TabDefPerson) != 0) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
-	if (GetMaxNumOfRecords(_T("SmallTable")) != 1) {
+	if (GetMaxNumOfRecords(L"SmallTable") != 1) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
@@ -42,8 +41,8 @@ int SmallTable()
 		RecordData *PrvRecDat;
 		RecordData *CurRecDat;
 		for (int i = 0; i < 16383; i++) {
-			ColDat[0] = new ColumnDataInt(_T("ID"), i);
-			CurRecDat = new RecordData(_T("SmallTable"), ColDat, 1);
+			ColDat[0] = new ColumnDataInt(L"ID", i);
+			CurRecDat = new RecordData(L"SmallTable", ColDat, 1);
 			if (i == 0) {
 				TopRecDat = CurRecDat;
 			}
@@ -52,11 +51,11 @@ int SmallTable()
 			}
 			PrvRecDat = CurRecDat;
 		}
-		LockTable(_T("SmallTable"), 2);
+		LockTable(L"SmallTable", 2);
 		InsertRecord(TopRecDat);
-		UnlockTable(_T("SmallTable"));
+		UnlockTable(L"SmallTable");
 		delete TopRecDat;
-		if (GetMaxNumOfRecords(_T("SmallTable")) != 1) {
+		if (GetMaxNumOfRecords(L"SmallTable") != 1) {
 			printf("...[NG]\r\n");
 			return -1;
 		}
@@ -67,12 +66,12 @@ int SmallTable()
 	{
 		printf("BigTable(\"ID\"カラム = 1)を検索条件に指定しGetRecord（レコード指定）を実行するとNULLが返る");
 		ColumnData *ColDatTake[1];
-		ColDatTake[0] = new ColumnDataInt(_T("ID"), 1);
-		RecordData RecDatTake(_T("BigTable"), ColDatTake, 1);
+		ColDatTake[0] = new ColumnDataInt(L"ID", 1);
+		RecordData RecDatTake(L"BigTable", ColDatTake, 1);
 		RecordData *RecDatGet;
-		LockTable(_T("SmallTable"), 1);
+		LockTable(L"SmallTable", 1);
 		RecDatGet = GetRecord(&RecDatTake);
-		UnlockTable(_T("SmallTable"));
+		UnlockTable(L"SmallTable");
 		if (RecDatGet != NULL) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -84,12 +83,12 @@ int SmallTable()
 	{
 		printf("SmallTable(\"ID\"カラム = 0)を検索条件に指定しロック後にGetRecord（レコード指定）を実行するとRecordDataが返る。ただしロック無しで実行した場合NULLが返る");
 		ColumnData *ColDatTake[1];
-		ColDatTake[0] = new ColumnDataInt(_T("ID"), 0);
-		RecordData RecDatTake(_T("SmallTable"), ColDatTake, 1);
+		ColDatTake[0] = new ColumnDataInt(L"ID", 0);
+		RecordData RecDatTake(L"SmallTable", ColDatTake, 1);
 		RecordData *RecDatGet;
-		LockTable(_T("SmallTable"), 1);
+		LockTable(L"SmallTable", 1);
 		RecDatGet = GetRecord(&RecDatTake);
-		UnlockTable(_T("SmallTable"));
+		UnlockTable(L"SmallTable");
 		if (RecDatGet == NULL) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -106,7 +105,7 @@ int SmallTable()
 	// GetNumOfRecords("SmallTable")で取得したレコード件数は1件となる
 	{
 		printf("GetNumOfRecords(\"SmallTable\")で取得したレコード件数は1件となる");
-		if (GetNumOfRecords(_T("SmallTable")) != 1) {
+		if (GetNumOfRecords(L"SmallTable") != 1) {
 			printf("...[NG]\r\n");
 			return -1;
 		}
@@ -116,7 +115,7 @@ int SmallTable()
 	// GetMaxNumOfRecords("SmallTable")で取得したレコード件数は1件となる
 	{
 		printf("GetMaxNumOfRecords(\"SmallTable\")で取得したレコード件数は1件となる");
-		if (GetMaxNumOfRecords(_T("SmallTable")) != 1) {
+		if (GetMaxNumOfRecords(L"SmallTable") != 1) {
 			printf("...[NG]\r\n");
 			return -1;
 		}
@@ -126,7 +125,7 @@ int SmallTable()
 	// GetNumOfRecords("BigTable")で取得したレコード件数は-1件となる
 	{
 		printf("GetNumOfRecords(\"BigTable\")で取得したレコード件数は-1件となる");
-		if (GetNumOfRecords(_T("BigTable")) != -1) {
+		if (GetNumOfRecords(L"BigTable") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
 		}
@@ -136,20 +135,20 @@ int SmallTable()
 	// GetMaxNumOfRecords("BigTable")で取得したレコード件数は-1件となる
 	{
 		printf("GetMaxNumOfRecords(\"BigTable\")で取得したレコード件数は-1件となる");
-		if (GetMaxNumOfRecords(_T("BigTable")) != -1) {
+		if (GetMaxNumOfRecords(L"BigTable") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
 		}
 		printf("...[OK]\r\n");
 	}
 
-	// DeleteRecord(_T("SmallTable"))後，GetNumOfRecords(_T("SmallTable"))が0を返却する
+	// DeleteRecord(L"SmallTable")後，GetNumOfRecords(L"SmallTable")が0を返却する
 	{
-		printf("DeleteRecord(_T(\"SmallTable\"))後，GetNumOfRecords(_T(\"SmallTable\"))が0を返却する");
-		LockTable(_T("SmallTable"), LOCK_EXCLUSIVE);
-		DeleteRecord(_T("SmallTable"));
-		UnlockTable(_T("SmallTable"));
-		if (GetNumOfRecords(_T("SmallTable")) != 0) {
+		printf("DeleteRecord(L\"SmallTable\")後，GetNumOfRecords(L\"SmallTable\")が0を返却する");
+		LockTable(L"SmallTable", LOCK_EXCLUSIVE);
+		DeleteRecord(L"SmallTable");
+		UnlockTable(L"SmallTable");
+		if (GetNumOfRecords(L"SmallTable") != 0) {
 			printf("...[NG]\r\n");
 			return -1;
 		}
@@ -158,14 +157,14 @@ int SmallTable()
 
 	// CreateTableでSmallTableテーブル2(ID:Int) Max=100 を生成することができる
 	printf("CreateTableでSmallTableテーブル2(ID:Int) Max=100 を生成することができる");
-	ColumnDefInt ColDefId2(_T("ID"));
-	TableDef TabDefPerson2(_T("SmallTable2"), 100);
+	ColumnDefInt ColDefId2(L"ID");
+	TableDef TabDefPerson2(L"SmallTable2", 100);
 	TabDefPerson2.AddColumnDef(&ColDefId2);
 	if (CreateTable(&TabDefPerson2) != 0) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
-	if (GetMaxNumOfRecords(_T("SmallTable2")) != 100) {
+	if (GetMaxNumOfRecords(L"SmallTable2") != 100) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
@@ -173,7 +172,7 @@ int SmallTable()
 
 	// Rename table name (UnexistTable ---> RenamedTable)
 	printf("Rename table name (UnexistTable ---> RenamedTable)  Does the API return -1?");
-	if (RenameTable(_T("UnexistTable"), _T("RenamedTable")) != -1) {
+	if (RenameTable(L"UnexistTable", L"RenamedTable") != -1) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
@@ -181,7 +180,7 @@ int SmallTable()
 
 	// Rename table name (SmallTable ---> SmallTable2)
 	printf("Rename table name (SmallTable ---> SmallTable2)  Does the API return -1?");
-	if (RenameTable(_T("SmallTable"), _T("SmallTable2")) != -1) {
+	if (RenameTable(L"SmallTable", L"SmallTable2") != -1) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
@@ -189,7 +188,7 @@ int SmallTable()
 
 	// Rename table name (SmallTable2 ---> SmallTable3)
 	printf("Rename table name (SmallTable2 ---> SmallTable3)  Does the API return 0?");
-	if (RenameTable(_T("SmallTable2"), _T("SmallTable3")) != 0) {
+	if (RenameTable(L"SmallTable2", L"SmallTable3") != 0) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
@@ -197,9 +196,9 @@ int SmallTable()
 
 	// Check that SmallTable2 is renamed as SmallTable3.
 	printf("Check that SmallTable2 is renamed as SmallTable3.");
-	TCHAR TblNames[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
+	wchar_t TblNames[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
 	int TblCnt = GetTableName(TblNames);
-	if (lstrcmp(TblNames[0], _T("SmallTable")) != 0 && lstrcmp(TblNames[1], _T("SmallTable2")) != 0) {
+	if (lstrcmp(TblNames[0], L"SmallTable") != 0 && lstrcmp(TblNames[1], L"SmallTable2") != 0) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
@@ -207,7 +206,7 @@ int SmallTable()
 
 	// Rename table name (SmallTable3 ---> SmallTable4)
 	printf("Rename table name (SmallTable3 ---> SmallTable4)  Does the API return 0?");
-	if (RenameTable(_T("SmallTable3"), _T("SmallTable4")) != 0) {
+	if (RenameTable(L"SmallTable3", L"SmallTable4") != 0) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
@@ -215,7 +214,7 @@ int SmallTable()
 
 	// Rename table name (SmallTable ---> SmallTable5)
 	printf("Rename table name (SmallTable ---> SmallTable5)  Does the API return 0?");
-	if (RenameTable(_T("SmallTable"), _T("SmallTable5")) != 0) {
+	if (RenameTable(L"SmallTable", L"SmallTable5") != 0) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
@@ -224,26 +223,26 @@ int SmallTable()
 	// Check that SmallTable is renamed as SmallTable5.
 	printf("Check that SmallTable is renamed as SmallTable5.");
 	TblCnt = GetTableName(TblNames);
-	if (lstrcmp(TblNames[0], _T("SmallTable5")) != 0 && lstrcmp(TblNames[1], _T("SmallTable4")) != 0) {
+	if (lstrcmp(TblNames[0], L"SmallTable5") != 0 && lstrcmp(TblNames[1], L"SmallTable4") != 0) {
 		printf("...[NG]\r\n");
 		return -1;
 	}
 	printf("...[OK]\r\n");
 
-	// DeleteTable(_T("SmallTable4"))が0を返却する
+	// DeleteTable(L"SmallTable4")が0を返却する
 	{
-		printf("DeleteTable(_T(\"SmallTable4\"))が0を返却する");
-		if (DeleteTable(_T("SmallTable4")) != 0) {
+		printf("DeleteTable(L\"SmallTable4\")が0を返却する");
+		if (DeleteTable(L"SmallTable4") != 0) {
 			printf("...[NG]\r\n");
 			return -1;
 		}
 		printf("...[OK]\r\n");
 	}
 
-	// DeleteTable(_T("SmallTable5"))が0を返却する
+	// DeleteTable(L"SmallTable5")が0を返却する
 	{
-		printf("DeleteTable(_T(\"SmallTable5\"))が0を返却する");
-		if (DeleteTable(_T("SmallTable5")) != 0) {
+		printf("DeleteTable(L\"SmallTable5\")が0を返却する");
+		if (DeleteTable(L"SmallTable5") != 0) {
 			printf("...[NG]\r\n");
 			return -1;
 		}
