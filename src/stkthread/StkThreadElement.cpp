@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <shlwapi.h>
-#include <tchar.h>
 #include "StkThreadElement.h"
 
 int StkThreadElement::NumOfRunThread;
@@ -11,16 +10,16 @@ StkThreadElement::StkThreadElement()
 {
 }
 
-StkThreadElement::StkThreadElement(int IDen, TCHAR* Na, TCHAR* De, void* Init, void* Final, void* Main, void* Start, void* Stop)
+StkThreadElement::StkThreadElement(int IDen, wchar_t* Na, wchar_t* De, void* Init, void* Final, void* Main, void* Start, void* Stop)
 {
-	static BOOL OneTimeInit = TRUE;
-	if (OneTimeInit == TRUE) {
-		OneTimeInit = FALSE;
+	static bool OneTimeInit = true;
+	if (OneTimeInit == true) {
+		OneTimeInit = false;
 		NumOfRunThread = 0;
 		InitializeCriticalSection(&CriticalSection);
 	}
 
-	StartStopFlag = FALSE;
+	StartStopFlag = false;
 	Status = STKTHREAD_STATUS_READY;
 	Id = IDen;
 	StrCpyN(Name, Na, MAX_LENGTH_OF_STKTHREAD_NAME);
@@ -37,15 +36,15 @@ StkThreadElement::~StkThreadElement()
 {
 }
 
-BOOL StkThreadElement::GetStartStopFlag()
+bool StkThreadElement::GetStartStopFlag()
 {
 	return StartStopFlag;
 }
 
-void StkThreadElement::SetStartStopFlag(BOOL Flag)
+void StkThreadElement::SetStartStopFlag(bool Flag)
 {
 	StartStopFlag = Flag;
-	if (StartStopFlag == TRUE) {
+	if (StartStopFlag == true) {
 		SetStatus(StkThreadElement::STKTHREAD_STATUS_STARTING);
 		StkThreadStart();
 	} else {
@@ -74,22 +73,22 @@ void StkThreadElement::SetId(int Iden)
 	Id = Iden;
 }
 
-TCHAR* StkThreadElement::GetName()
+wchar_t* StkThreadElement::GetName()
 {
 	return Name;
 }
 
-void StkThreadElement::SetName(TCHAR* Na)
+void StkThreadElement::SetName(wchar_t* Na)
 {
 	StrCpyN(Name, Na, MAX_LENGTH_OF_STKTHREAD_NAME);
 }
 
-TCHAR* StkThreadElement::GetDescription()
+wchar_t* StkThreadElement::GetDescription()
 {
 	return Desc;
 }
 
-void StkThreadElement::SetDescription(TCHAR* De)
+void StkThreadElement::SetDescription(wchar_t* De)
 {
 	StrCpyN(Desc, De, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION);
 }
@@ -103,9 +102,9 @@ int StkThreadElement::StkThreadLoop()
 	LeaveCriticalSection(&CriticalSection);
 	Sleep(1000); // 暫定修正StkFwのスレッド同時実行時にInit処理が終わる前にMainが実行されてしまうことへの対策
 
-	while (TRUE) {
+	while (true) {
 		StkThreadMain();
-		if (StartStopFlag == FALSE) {
+		if (StartStopFlag == false) {
 			break;
 		}
 		Sleep(Interval);

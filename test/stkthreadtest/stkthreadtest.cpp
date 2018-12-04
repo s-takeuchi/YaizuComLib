@@ -52,7 +52,7 @@ int GetUsedMemorySizeOfCurrentProcess()
 	PROCESS_MEMORY_COUNTERS pmc = { 0 };
 
 	long Size;
-	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dwProcessID)) != NULL) {
+	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
 		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
 			Size = pmc.WorkingSetSize;
 		}
@@ -68,7 +68,7 @@ int GetMaxUsedMemorySizeOfCurrentProcess()
 	PROCESS_MEMORY_COUNTERS pmc = { 0 };
 
 	long Size;
-	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dwProcessID)) != NULL) {
+	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
 		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
 			Size = pmc.PeakWorkingSetSize;
 		}
@@ -82,9 +82,9 @@ int MemoryLeakChecking1()
 	printf("Checks memory leak between AddStkThread and DeleteStkThread...");
 	long MaxMem[30];
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
-		TCHAR BufName[32];
+		wchar_t BufName[32];
 		for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
-			wsprintf(BufName, _T("person#%04d"), Loop);
+			wsprintf(BufName, L"person#%04d", Loop);
 			AddStkThread(Loop, BufName, _T("Dummy thread"), ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 		}
 		while (GetNumOfStkThread() >= 1) {
@@ -113,7 +113,7 @@ int MemoryLeakChecking2()
 {
 	printf("Checks memory leak between StartStkThread and StopStkThread...");
 	long MaxMem[20];
-	TCHAR BufName[32];
+	wchar_t BufName[32];
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
 		wsprintf(BufName, _T("person#%04d"), Loop);
 		AddStkThread(Loop, BufName, _T("Dummy thread"), ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
@@ -165,10 +165,10 @@ int Create1000Threads()
 
 	//////////////////////////////
 	printf("Creates 1000 threads...");
-	TCHAR BufName[32];
+	wchar_t BufName[32];
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
-		wsprintf(BufName, _T("person#%04d"), Loop);
-		AddStkThread(Loop, BufName, _T("Dummy thread"), ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
+		wsprintf(BufName, L"person#%04d", Loop);
+		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 	if (GetNumOfStkThread() != 1000) {
 		printf("[NG] NumOfStkThread=%d \r\n", GetNumOfStkThread());
@@ -257,10 +257,10 @@ int Create1000Threads()
 
 int TestProcBeforeAfterThreadOperation()
 {
-	TCHAR BufName[32];
+	wchar_t BufName[32];
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
-		wsprintf(BufName, _T("person#%04d"), Loop);
-		AddStkThread(Loop, BufName, _T("Dummy thread"), ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
+		wsprintf(BufName, L"person#%04d", Loop);
+		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 
 	ProcCount = 0;
@@ -388,10 +388,10 @@ int DeleteWithRunningThreads()
 	SetProcAfterLastStkThreadStops(NULL);
 	SetProcBeforeFirstStkThreadStarts(NULL);
 
-	TCHAR BufName[32];
+	wchar_t BufName[32];
 	for (int Loop = 0; Loop < 10; Loop++) {
-		wsprintf(BufName, _T("person#%04d"), Loop);
-		AddStkThread(Loop, BufName, _T("Dummy thread"), ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
+		wsprintf(BufName, L"person#%04d", Loop);
+		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 
 	int Ths[10];
@@ -425,15 +425,15 @@ int AbnormalCase()
 	SetProcAfterLastStkThreadStops(NULL);
 	SetProcBeforeFirstStkThreadStarts(NULL);
 
-	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
-	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
+	wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME];
+	wchar_t Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
 	/////
 	printf("Try to add more than 1000 threads. Check the number of added threads is 1000...");
-	TCHAR BufName[32];
+	wchar_t BufName[32];
 	for (int Loop = 0; Loop < 1010; Loop++) {
-		wsprintf(BufName, _T("person#%04d"), Loop);
-		AddStkThread(Loop, BufName, _T("Dummy thread"), ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
+		wsprintf(BufName, L"person#%04d", Loop);
+		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 	if (GetNumOfStkThread() != 1000) {
 		printf("[NG] NumOfStkThread=%d \r\n", GetNumOfStkThread());
@@ -570,20 +570,20 @@ int NormalCase()
 	SetProcBeforeFirstStkThreadStarts(NULL);
 
 	/////
-	TCHAR BufName[32];
+	wchar_t BufName[32];
 	for (int Loop = 0; Loop < 10; Loop++) {
-		wsprintf(BufName, _T("person#%04d"), Loop);
-		AddStkThread(Loop, BufName, _T("Dummy thread"), ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
+		wsprintf(BufName, L"person#%04d", Loop);
+		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 
 	/////
 	printf("Check the name of StkThread is correct...");
-	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
+	wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME];
 	if (GetStkThreadName(2, Name) != 0) {
 		printf("[NG]\r\n");
 		return -1;
 	}
-	if (lstrcmp(Name, _T("person#0002")) != 0) {
+	if (lstrcmp(Name, L"person#0002") != 0) {
 		printf("[NG] %S\r\n", Name);
 		return -1;
 	}
@@ -591,12 +591,12 @@ int NormalCase()
 
 	/////
 	printf("Check the description of StkThread is correct...");
-	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
+	wchar_t Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 	if (GetStkThreadDescription(4, Desc) != 0) {
 		printf("[NG]\r\n");
 		return -1;
 	}
-	if (lstrcmp(Desc, _T("Dummy thread")) != 0) {
+	if (lstrcmp(Desc, L"Dummy thread") != 0) {
 		printf("[NG]\r\n");
 		return -1;
 	}

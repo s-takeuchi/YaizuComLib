@@ -11,11 +11,11 @@ public:
 	static const int MAX_LENGTH_OF_STKTHREAD_DESCRIPTION = 256;
 
 private:
-	BOOL StartStopFlag;
+	bool StartStopFlag;
 	int Status;
 	int Id;
-	TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME];
-	TCHAR Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
+	wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME];
+	wchar_t Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 	int Interval;
 
 	int StkThreadInit();
@@ -45,21 +45,21 @@ public:
 
 	DWORD ThId;
 
-	StkThreadElement(int, TCHAR*, TCHAR*, void*, void*, void*, void*, void*);
+	StkThreadElement(int, wchar_t*, wchar_t*, void*, void*, void*, void*, void*);
 	virtual ~StkThreadElement();
 
-	BOOL GetStartStopFlag();
-	void SetStartStopFlag(BOOL);
+	bool GetStartStopFlag();
+	void SetStartStopFlag(bool);
 
 	int GetStatus();
 
 	int GetId();
 
-	TCHAR* GetName();
-	void SetName(TCHAR*);
+	wchar_t* GetName();
+	void SetName(wchar_t*);
 
-	TCHAR* GetDescription();
-	void SetDescription(TCHAR*);
+	wchar_t* GetDescription();
+	void SetDescription(wchar_t*);
 
 	int StkThreadLoop();
 

@@ -31,7 +31,7 @@ void SetStkThreadInterval(int TargetId, int Millisec)
 	StkThreadManager::GetInstance()->SetStkThreadInterval(TargetId, Millisec);
 }
 
-void AddStkThread(int Id, TCHAR Name[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_NAME], TCHAR Description[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)
+void AddStkThread(int Id, wchar_t Name[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_NAME], wchar_t Description[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)
 {
 	StkThreadManager::GetInstance()->AddStkThread(Id, Name, Description, Init, Final, Main, Start, Stop);
 }
@@ -61,22 +61,22 @@ int GetStkThreadStatusByIndex(int Index)
 	return StkThreadManager::GetInstance()->GetStkThreadStatusByIndex(Index);
 }
 
-int GetStkThreadName(int Id, TCHAR Name[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_NAME])
+int GetStkThreadName(int Id, wchar_t Name[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_NAME])
 {
 	return StkThreadManager::GetInstance()->GetStkThreadName(Id, Name);
 }
 
-int GetStkThreadNameByIndex(int Index, TCHAR Name[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_NAME])
+int GetStkThreadNameByIndex(int Index, wchar_t Name[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_NAME])
 {
 	return StkThreadManager::GetInstance()->GetStkThreadNameByIndex(Index, Name);
 }
 
-int GetStkThreadDescription(int Id, TCHAR Desc[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])
+int GetStkThreadDescription(int Id, wchar_t Desc[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])
 {
 	return StkThreadManager::GetInstance()->GetStkThreadDescription(Id, Desc);
 }
 
-int GetStkThreadDescriptionByIndex(int Index, TCHAR Desc[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])
+int GetStkThreadDescriptionByIndex(int Index, wchar_t Desc[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])
 {
 	return StkThreadManager::GetInstance()->GetStkThreadDescriptionByIndex(Index, Desc);
 }

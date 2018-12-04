@@ -1,6 +1,5 @@
 #pragma once
 #include <windows.h>
-#include <tchar.h>
 #include <commctrl.h>
 #include "StkThreadElement.h"
 
@@ -34,8 +33,8 @@ private:
 	void CheckAndExecProcBeforeFirstThreadStarts(int[MAX_NUM_OF_STKTHREADS], int);
 	void CheckAndExecProcAfterLastThreadStops(int[MAX_NUM_OF_STKTHREADS], int);
 
-	BOOL GetStkThreadStartStopFlag(int);
-	BOOL GetStkThreadStartStopFlagByIndex(int);
+	bool GetStkThreadStartStopFlag(int);
+	bool GetStkThreadStartStopFlagByIndex(int);
 
 public:
 	// Get this instance
@@ -49,17 +48,17 @@ public:
 	int GetStkThreadInterval(int);
 	void SetStkThreadInterval(int, int);
 
-	void AddStkThread(int, TCHAR[MAX_LENGTH_OF_STKTHREAD_NAME], TCHAR[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void*, void*, void*, void*, void*);
+	void AddStkThread(int, wchar_t[MAX_LENGTH_OF_STKTHREAD_NAME], wchar_t[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void*, void*, void*, void*, void*);
 	void DeleteStkThread(int);
 
 	int GetStkThreadIdByIndex(int);
 	int GetStkThreadIds(int[MAX_NUM_OF_STKTHREADS]);
 	int GetStkThreadStatus(int);
 	int GetStkThreadStatusByIndex(int);
-	int GetStkThreadName(int, TCHAR[MAX_LENGTH_OF_STKTHREAD_NAME]);
-	int GetStkThreadNameByIndex(int, TCHAR[MAX_LENGTH_OF_STKTHREAD_NAME]);
-	int GetStkThreadDescription(int, TCHAR[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION]);
-	int GetStkThreadDescriptionByIndex(int, TCHAR[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION]);
+	int GetStkThreadName(int, wchar_t[MAX_LENGTH_OF_STKTHREAD_NAME]);
+	int GetStkThreadNameByIndex(int, wchar_t[MAX_LENGTH_OF_STKTHREAD_NAME]);
+	int GetStkThreadDescription(int, wchar_t[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION]);
+	int GetStkThreadDescriptionByIndex(int, wchar_t[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION]);
 
 	void SetProcBeforeFirstThreadStarts(void*);
 	void SetProcAfterLastThreadStops(void*);

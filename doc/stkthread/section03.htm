@@ -15,7 +15,7 @@ StkThreadのユーザープログラム用APIの一覧を以下に示します�
 <tr><th>APIシグネチャ</th><th>概要</th></tr>
 <tr><td>int GetNumOfRunStkThread()</td><td>現在実行中のスレッドの数を返却します。</td></tr>
 <tr><td>int GetNumOfStkThread()</td><td>登録済の全てのスレッドの数を返却します。</td></tr>
-<tr><td>void AddStkThread(int Id, TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME], TCHAR Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)</td><td>新たなスレッドを登録します。</td></tr>
+<tr><td>void AddStkThread(int Id, wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME], wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)</td><td>新たなスレッドを登録します。</td></tr>
 <tr><td>void DeleteStkThread(int Id)</td><td>登録されているスレッドを削除します。</td></tr>
 <tr><td>void SetProcBeforeFirstStkThreadStarts(void* Proc)</td><td>コールバックメソッドProcBeforeFirstStkThreadStartsのポインタを設定します。</td></tr>
 <tr><td>void SetProcAfterLastStkThreadStops(void* Proc)</td><td>コールバックメソッドProcAfterLastStkThreadStopsのポインタを設定します。</td></tr>
@@ -29,10 +29,10 @@ StkThreadのユーザープログラム用APIの一覧を以下に示します�
 <tr><td>int GetStkThreadIds(int Ids[MAX_NUM_OF_STKTHREADS])</td><td>登録されているすべてのスレッドのIDを取得します。</td></tr>
 <tr><td>int GetStkThreadStatus(int TargetId)</td><td>指定したIDのスレッドの状態を取得します。</td></tr>
 <tr><td>int GetStkThreadStatusByIndex(int Index)</td><td>指定した要素番号のスレッドの状態を取得します。</td></tr>
-<tr><td>int GetStkThreadName(int TargetId, TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME])</td><td>指定したIDのスレッドの名前を取得します。</td></tr>
-<tr><td>int GetStkThreadNameByIndex(int Index, TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME])</td><td>指定した要素番号のスレッドの名前を取得します。</td></tr>
-<tr><td>int GetStkThreadDescription(int TargetId, TCHAR Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])</td><td>指定したIDのスレッドの詳細説明を取得します。</td></tr>
-<tr><td>int GetStkThreadDescriptionByIndex(int Index, TCHAR Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])</td><td>指定した要素番号のスレッドの詳細説明を取得します。</td></tr>
+<tr><td>int GetStkThreadName(int TargetId, wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME])</td><td>指定したIDのスレッドの名前を取得します。</td></tr>
+<tr><td>int GetStkThreadNameByIndex(int Index, wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME])</td><td>指定した要素番号のスレッドの名前を取得します。</td></tr>
+<tr><td>int GetStkThreadDescription(int TargetId, wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])</td><td>指定したIDのスレッドの詳細説明を取得します。</td></tr>
+<tr><td>int GetStkThreadDescriptionByIndex(int Index, wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])</td><td>指定した要素番号のスレッドの詳細説明を取得します。</td></tr>
 </table><P>
 </div><p>
 
@@ -62,7 +62,7 @@ AddStkThreadメソッドおよびDeleteStkThreadメソッドを用いて実施�
 </div><p>
 
 
-<H3 ID="3.2.3">3.2.3 void AddStkThread(int Id, TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME], TCHAR Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)</H3>
+<H3 ID="3.2.3">3.2.3 void AddStkThread(int Id, wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME], wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)</H3>
 <div class="topic">
 新たなスレッドを登録します。<br>
 下記の何れかに該当する場合，本メソッドはスレッドを登録せず処理は呼び出し元に戻ります。
@@ -253,7 +253,7 @@ STKTHREAD_STATUS_STOPPING<br>
 </div><p>
 
 
-<H3 ID="3.2.17">3.2.17 int GetStkThreadName(int TargetId, TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME])</H3>
+<H3 ID="3.2.17">3.2.17 int GetStkThreadName(int TargetId, wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME])</H3>
 <div class="topic">
 指定したIDのスレッドの名前を取得します。<br>
 <table class="tblstyle">
@@ -264,7 +264,7 @@ STKTHREAD_STATUS_STOPPING<br>
 </div><p>
 
 
-<H3 ID="3.2.18">3.2.18 int GetStkThreadNameByIndex(int Index, TCHAR Name[MAX_LENGTH_OF_STKTHREAD_NAME])</H3>
+<H3 ID="3.2.18">3.2.18 int GetStkThreadNameByIndex(int Index, wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME])</H3>
 <div class="topic">
 StkThreadはStkThread.Libの内部で配列の要素として管理されています。
 このメソッドは，配列のIndex番目の要素であるStkThreadの名前を取得します。<br>
@@ -276,7 +276,7 @@ StkThreadはStkThread.Libの内部で配列の要素として管理されてい�
 </div><p>
 
 
-<H3 ID="3.2.19">3.2.19 int GetStkThreadDescription(int TargetId, TCHAR Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])</H3>
+<H3 ID="3.2.19">3.2.19 int GetStkThreadDescription(int TargetId, wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])</H3>
 <div class="topic">
 指定したIDのスレッドの詳細説明を取得します。<br>
 <table class="tblstyle">
@@ -287,7 +287,7 @@ StkThreadはStkThread.Libの内部で配列の要素として管理されてい�
 </div><p>
 
 
-<H3 ID="3.2.20">3.2.20 int GetStkThreadDescriptionByIndex(int Index, TCHAR Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])</H3>
+<H3 ID="3.2.20">3.2.20 int GetStkThreadDescriptionByIndex(int Index, wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION])</H3>
 <div class="topic">
 StkThreadはStkThread.Libの内部で配列の要素として管理されています。
 このメソッドは，配列のIndex番目の要素であるStkThreadの詳細説明を取得します。<br>
@@ -305,8 +305,8 @@ StkThreadはStkThread.Libの内部で配列の要素として管理されてい�
 <table class="tblstyle">
 <tr><th>定数</th><th>説明</th><th>定数値</th></tr>
 <tr><td>MAX_NUM_OF_STKTHREADS</td><td>登録可能なスレッドの最大数</td><td>1,000</td></tr>
-<tr><td>MAX_LENGTH_OF_STKTHREAD_NAME</td><td>スレッド名の最大文字数(TCHAR換算)</td><td>32</td></tr>
-<tr><td>MAX_LENGTH_OF_STKTHREAD_DESCRIPTION</td><td>スレッドの説明の最大文字数(TCHAR換算)</td><td>256</td></tr>
+<tr><td>MAX_LENGTH_OF_STKTHREAD_NAME</td><td>スレッド名の最大文字数(wchar_t換算)</td><td>32</td></tr>
+<tr><td>MAX_LENGTH_OF_STKTHREAD_DESCRIPTION</td><td>スレッドの説明の最大文字数(wchar_t換算)</td><td>256</td></tr>
 <tr><td>STKTHREAD_STATUS_READY</td><td>スレッドの状態=待機中</td><td>100</td></tr>
 <tr><td>STKTHREAD_STATUS_STARTING</td><td>スレッドの状態=開始中</td><td>101</td></tr>
 <tr><td>STKTHREAD_STATUS_RUNNING</td><td>スレッドの状態=実行中</td><td>102</td></tr>
