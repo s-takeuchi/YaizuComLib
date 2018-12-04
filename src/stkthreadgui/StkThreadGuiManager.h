@@ -1,6 +1,5 @@
 #pragma once
 #include <windows.h>
-#include <tchar.h>
 #include <commctrl.h>
 
 class StkThreadGuiManager
@@ -33,23 +32,23 @@ private:
 	StkThreadGuiManager();
 	~StkThreadGuiManager();
 
-	int StartThreads(BOOL);
-	int StopThreads(BOOL);
+	int StartThreads(bool);
+	int StopThreads(bool);
 
 	void SetStatusOfMasterCheckBox();
 	void ReplaceStatus(int);
 	void ReplaceStatus(int, int);
-	void RefreshLog(BOOL);
-	void AddRecordToListView(int, TCHAR*, TCHAR*);
+	void RefreshLog(bool);
+	void AddRecordToListView(int, wchar_t*, wchar_t*);
 	void DeleteRecordFromListView(int);
 	int InitListView();
 
 public:
 	// Get this instance
 	static StkThreadGuiManager* GetInstance();
-	int ShowStkThreadController(HWND, int, TCHAR*);
+	int ShowStkThreadController(HWND, int, wchar_t*);
 	void StartAllThreads();
 	void StopAllThreads();
-	void AddStkThreadForGui(int, TCHAR*, TCHAR*, void*, void*, void*, void*, void*);
+	void AddStkThreadForGui(int, wchar_t*, wchar_t*, void*, void*, void*, void*, void*);
 	void DeleteStkThreadForGui(int);
 };

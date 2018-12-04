@@ -15,35 +15,35 @@ VOID CALLBACK StkThreadGuiManager::ReplaceStatus(HWND hwnd, UINT uMsg, UINT_PTR 
 	}
 
 	// Change Start and Stop button status
-	BOOL Fnd = FALSE;
-	BOOL AllReady = TRUE;
+	bool Fnd = false;
+	bool AllReady = true;
 	for (int RowLoop = 0; RowLoop < GetNumOfStkThread(); RowLoop++) {
 		int St = GetStkThreadStatusByIndex(RowLoop);
 		if (St == STKTHREAD_STATUS_STARTING || St == STKTHREAD_STATUS_STOPPING) {
-			Fnd = TRUE;
+			Fnd = true;
 		}
 		if (St != STKTHREAD_STATUS_READY) {
-			AllReady = FALSE;
+			AllReady = false;
 		}
 	}
-	if (Fnd == TRUE) {
+	if (Fnd == true) {
 		//Disable Start and Stop button.
-		EnableWindow(GetDlgItem(StkThGuiMgr->DlgWndHndl, IDC_START), FALSE);
-		EnableWindow(GetDlgItem(StkThGuiMgr->DlgWndHndl, IDC_STOP), FALSE);
+		EnableWindow(GetDlgItem(StkThGuiMgr->DlgWndHndl, IDC_START), false);
+		EnableWindow(GetDlgItem(StkThGuiMgr->DlgWndHndl, IDC_STOP), false);
 	} else {
 		//Enable Start and Stop button.
-		EnableWindow(GetDlgItem(StkThGuiMgr->DlgWndHndl, IDC_START), TRUE);
-		EnableWindow(GetDlgItem(StkThGuiMgr->DlgWndHndl, IDC_STOP), TRUE);
+		EnableWindow(GetDlgItem(StkThGuiMgr->DlgWndHndl, IDC_START), true);
+		EnableWindow(GetDlgItem(StkThGuiMgr->DlgWndHndl, IDC_STOP), true);
 	}
-	if (AllReady == FALSE) {
-		StkThGuiMgr->RefreshLog(FALSE);
+	if (AllReady == false) {
+		StkThGuiMgr->RefreshLog(false);
 	}
 }
 
 BOOL CALLBACK StkThreadGuiManager::SetStkThreadFontProc(HWND hwnd, LPARAM lParam)
 {
-	static HFONT FontHndl = CreateFont(16, 0, 0, 0, FW_REGULAR, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_DONTCARE, _T("Arial"));
-	SendMessage(hwnd, WM_SETFONT, (WPARAM)FontHndl, (LPARAM)TRUE);
+	static HFONT FontHndl = CreateFont(16, 0, 0, 0, FW_REGULAR, false, false, false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Arial");
+	SendMessage(hwnd, WM_SETFONT, (WPARAM)FontHndl, (LPARAM)true);
 	return TRUE;
 }
 
@@ -64,24 +64,24 @@ LRESULT CALLBACK StkThreadGuiManager::StkThreadProc(HWND hWnd, UINT message, WPA
 	RECT Wrect;
 
 	// Flag which checks whether the check box on list-view was clicked.
-	static BOOL MasterClkFlag = FALSE;
+	static bool MasterClkFlag = false;
 
 	switch (message) {
 	case WM_CREATE:
 		InitCommonControls();
 		GetClientRect(hWnd, &Wrect);
 
-		BkGndWndHndl = CreateWindow(_T("STATIC"), _T(""), WS_CHILD | WS_VISIBLE | WS_DLGFRAME, 0, Wrect.bottom - 50, Wrect.right, 50, hWnd, NULL, StkThGuiMgr->DlgInstHndl, NULL);
-		StkThGuiMgr->ListWndHndl = CreateWindowEx(0, WC_LISTVIEW, _T(""), WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SHOWSELALWAYS | WS_TABSTOP, 0, 190, Wrect.right, Wrect.bottom - 240, hWnd, (HMENU)IDC_THREADLIST, StkThGuiMgr->DlgInstHndl, NULL);
-		CheckAll = CreateWindow(_T("BUTTON"), _T("Check/Uncheck All (&A)"), WS_CHILD | WS_VISIBLE | BS_3STATE | WS_TABSTOP, Wrect.left + 10, Wrect.bottom - 35, 180, 25, hWnd, (HMENU)IDC_ALLCHECK, StkThGuiMgr->DlgInstHndl, NULL);
-		ButtonStart = CreateWindow(_T("BUTTON"), _T("Start (&R)"), WS_CHILD | WS_VISIBLE | WS_TABSTOP, Wrect.right - 170, Wrect.bottom - 35, 70, 25, hWnd, (HMENU)IDC_START, StkThGuiMgr->DlgInstHndl, NULL);
-		ButtonStop = CreateWindow(_T("BUTTON"), _T("Stop (&S)"), WS_CHILD | WS_VISIBLE | WS_TABSTOP, Wrect.right - 90, Wrect.bottom - 35, 70, 25, hWnd, (HMENU)IDC_STOP, StkThGuiMgr->DlgInstHndl, NULL);
-		StkThGuiMgr->Tracelog = CreateWindowEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_MULTILINE | WS_TABSTOP, 0, 0, Wrect.right, 190, hWnd/*BkGndWndHndl*/, (HMENU)IDC_TRACELOG, StkThGuiMgr->DlgInstHndl, NULL);
+		BkGndWndHndl = CreateWindow(L"STATIC", L"", WS_CHILD | WS_VISIBLE | WS_DLGFRAME, 0, Wrect.bottom - 50, Wrect.right, 50, hWnd, NULL, StkThGuiMgr->DlgInstHndl, NULL);
+		StkThGuiMgr->ListWndHndl = CreateWindowEx(0, WC_LISTVIEW, L"", WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SHOWSELALWAYS | WS_TABSTOP, 0, 190, Wrect.right, Wrect.bottom - 240, hWnd, (HMENU)IDC_THREADLIST, StkThGuiMgr->DlgInstHndl, NULL);
+		CheckAll = CreateWindow(L"BUTTON", L"Check/Uncheck All (&A)", WS_CHILD | WS_VISIBLE | BS_3STATE | WS_TABSTOP, Wrect.left + 10, Wrect.bottom - 35, 180, 25, hWnd, (HMENU)IDC_ALLCHECK, StkThGuiMgr->DlgInstHndl, NULL);
+		ButtonStart = CreateWindow(L"BUTTON", L"Start (&R)", WS_CHILD | WS_VISIBLE | WS_TABSTOP, Wrect.right - 170, Wrect.bottom - 35, 70, 25, hWnd, (HMENU)IDC_START, StkThGuiMgr->DlgInstHndl, NULL);
+		ButtonStop = CreateWindow(L"BUTTON", L"Stop (&S)", WS_CHILD | WS_VISIBLE | WS_TABSTOP, Wrect.right - 90, Wrect.bottom - 35, 70, 25, hWnd, (HMENU)IDC_STOP, StkThGuiMgr->DlgInstHndl, NULL);
+		StkThGuiMgr->Tracelog = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_MULTILINE | WS_TABSTOP, 0, 0, Wrect.right, 190, hWnd/*BkGndWndHndl*/, (HMENU)IDC_TRACELOG, StkThGuiMgr->DlgInstHndl, NULL);
 		ListView_SetExtendedListViewStyle(StkThGuiMgr->ListWndHndl, LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
-		SendMessage(StkThGuiMgr->Tracelog, EM_SETREADONLY, (WPARAM)TRUE, (LPARAM)0);
+		SendMessage(StkThGuiMgr->Tracelog, EM_SETREADONLY, (WPARAM)true, (LPARAM)0);
 		SendMessage(StkThGuiMgr->Tracelog, EM_SETLIMITTEXT, (WPARAM)0, (LPARAM)0);
 
-		StkThGuiMgr->RefreshLog(TRUE);
+		StkThGuiMgr->RefreshLog(true);
 
 		EnumChildWindows(hWnd, SetStkThreadFontProc, NULL);
 
@@ -109,17 +109,17 @@ LRESULT CALLBACK StkThreadGuiManager::StkThreadProc(HWND hWnd, UINT message, WPA
 		// Check/Uncheck box was clicked
 		if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ALLCHECK) {
 			UINT Sts = IsDlgButtonChecked(hWnd, IDC_ALLCHECK);
-			BOOL ChkUnchk;
-			static BOOL PrevChkUnchk = TRUE;
+			bool ChkUnchk;
+			static bool PrevChkUnchk = true;
 			if (Sts == BST_CHECKED) {
-				ChkUnchk = FALSE;
+				ChkUnchk = false;
 			} else if (Sts == BST_UNCHECKED) {
-				ChkUnchk = TRUE;
+				ChkUnchk = true;
 			} else if (Sts == BST_INDETERMINATE) {
-				ChkUnchk = (PrevChkUnchk == TRUE)? FALSE : TRUE;
+				ChkUnchk = (PrevChkUnchk == true)? false : true;
 			}
-			MasterClkFlag = TRUE;
-			CheckDlgButton(hWnd, IDC_ALLCHECK, (ChkUnchk == TRUE)? BST_CHECKED : BST_UNCHECKED);
+			MasterClkFlag = true;
+			CheckDlgButton(hWnd, IDC_ALLCHECK, (ChkUnchk == true)? BST_CHECKED : BST_UNCHECKED);
 			PrevChkUnchk = ChkUnchk;
 			int RowLoop;
 			for (RowLoop = 0; RowLoop < GetNumOfStkThread(); RowLoop++) {
@@ -135,12 +135,12 @@ LRESULT CALLBACK StkThreadGuiManager::StkThreadProc(HWND hWnd, UINT message, WPA
 
 		// Start button
 		if (LOWORD(wParam) == IDC_START) {
-			StkThGuiMgr->StartThreads(FALSE);
+			StkThGuiMgr->StartThreads(false);
 		}
 
 		// Stop button
 		if (LOWORD(wParam) == IDC_STOP) {
-			StkThGuiMgr->StopThreads(FALSE);
+			StkThGuiMgr->StopThreads(false);
 		}
 		break;
 
@@ -154,14 +154,14 @@ LRESULT CALLBACK StkThreadGuiManager::StkThreadProc(HWND hWnd, UINT message, WPA
 
 			// Something on list-view area was clicked.
 			if ((NmItemActivate->hdr).code == NM_CLICK) {
-				MasterClkFlag = FALSE;
+				MasterClkFlag = false;
 				break;
 			}
 
 			// Check box on list-view was changed.
 			if ((NmListView->hdr).code == LVN_ITEMCHANGED &&
 				(NmListView->uOldState & LVIS_STATEIMAGEMASK) != (NmListView->uNewState & LVIS_STATEIMAGEMASK) &&
-				MasterClkFlag == FALSE) {
+				MasterClkFlag == false) {
 				StkThGuiMgr->SetStatusOfMasterCheckBox();
 				break;
 			}
@@ -217,18 +217,18 @@ void StkThreadGuiManager::SetStatusOfMasterCheckBox()
 }
 
 // ログ出力領域を更新する
-// [in] Force : TRUEのときは強制的にログ出力領域を更新。FALSEのときは前回から変更あれば更新。
+// [in] Force : trueのときは強制的にログ出力領域を更新。falseのときは前回から変更あれば更新。
 // [out] なし
-void StkThreadGuiManager::RefreshLog(BOOL Force)
+void StkThreadGuiManager::RefreshLog(bool Force)
 {
 	StkThreadGuiLogging* StkLog = StkThreadGuiLogging::GetInstance();
 	
 	static int PrevUpdVer = 0;
 	int CurrUpdVer = StkLog->GetLogUpdateVersion();
 
-	if (Force == TRUE || PrevUpdVer != CurrUpdVer) {
+	if (Force == true || PrevUpdVer != CurrUpdVer) {
 		PrevUpdVer = CurrUpdVer;
-		TCHAR *Out = new TCHAR[StkLog->GetLogMaxSize()];
+		wchar_t *Out = new wchar_t[StkLog->GetLogMaxSize()];
 		StkLog->GetLog(Out, StkLog->GetLogMaxSize());
 		SendMessage(Tracelog, WM_SETTEXT, (WPARAM)0, (LPARAM)Out);
 		delete Out;
@@ -237,21 +237,21 @@ void StkThreadGuiManager::RefreshLog(BOOL Force)
 
 
 // Start the specified threads
-// [in] AllThreads : If you start all threads, TRUE is to be passed.  Otherwize FALSE is passed.
+// [in] AllThreads : If you start all threads, true is to be passed.  Otherwize false is passed.
 // [out] Result Code
-int StkThreadGuiManager::StartThreads(BOOL AllThreads)
+int StkThreadGuiManager::StartThreads(bool AllThreads)
 {
 	if (DlgWndHndl != NULL) {
 		SetFocus(DlgWndHndl); // TABフォーカスが失われるのを防止する施策
 
 		//Disable Start and Stop button.
-		EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), FALSE);
-		EnableWindow(GetDlgItem(DlgWndHndl, IDC_STOP), FALSE);
+		EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), false);
+		EnableWindow(GetDlgItem(DlgWndHndl, IDC_STOP), false);
 	}
 
 	// Change the status on GUI.
 	for (int RowLoop = 0; RowLoop < GetNumOfStkThread(); RowLoop++) {
-		if (AllThreads == TRUE || ListView_GetCheckState(ListWndHndl, RowLoop) == TRUE) {
+		if (AllThreads == true || ListView_GetCheckState(ListWndHndl, RowLoop) == TRUE) {
 			if (GetStkThreadStatusByIndex(RowLoop) != STKTHREAD_STATUS_RUNNING) {
 				ReplaceStatus(RowLoop, STKTHREAD_STATUS_STARTING);
 			}
@@ -262,7 +262,7 @@ int StkThreadGuiManager::StartThreads(BOOL AllThreads)
 	int Ids[MAX_NUM_OF_THREADS];
 	int IdsIndex = 0;
 	for (int RowLoop = 0; RowLoop < GetNumOfStkThread(); RowLoop++) {
-		if ((AllThreads == TRUE || ListView_GetCheckState(ListWndHndl, RowLoop) == TRUE) &&
+		if ((AllThreads == true || ListView_GetCheckState(ListWndHndl, RowLoop) == TRUE) &&
 			GetStkThreadStatusByIndex(RowLoop) == STKTHREAD_STATUS_READY) {
 			Ids[IdsIndex] = GetStkThreadIdByIndex(RowLoop);
 			IdsIndex++;
@@ -272,44 +272,44 @@ int StkThreadGuiManager::StartThreads(BOOL AllThreads)
 	// Start selected threads.
 	StartSpecifiedStkThreads(Ids, IdsIndex);
 
-	// When AllThreads is TRUE, check whether all threads are running or not.
+	// When AllThreads is true, check whether all threads are running or not.
 	// If some threads are not running, wait for the status change.
 	while (AllThreads) {
-		BOOL AllRunning = TRUE;
+		bool AllRunning = true;
 		for (int RowLoop = 0; RowLoop < GetNumOfStkThread(); RowLoop++) {
 			if (GetStkThreadStatusByIndex(RowLoop) != STKTHREAD_STATUS_RUNNING) {
-				AllRunning = FALSE;
+				AllRunning = false;
 				break;
 			}
 		}
-		if (AllRunning == TRUE) {
+		if (AllRunning == true) {
 			break;
 		} else {
 			Sleep(100);
 		}
 	}
 
-	RefreshLog(FALSE);
+	RefreshLog(false);
 
 	return 0;
 }
 
 // Stop the specified threads
-// [in] AllThreads : If you stop all threads, TRUE is to be passed.  Otherwize FALSE is passed.
+// [in] AllThreads : If you stop all threads, true is to be passed.  Otherwize false is passed.
 // [out] Result Code
-int StkThreadGuiManager::StopThreads(BOOL AllThreads)
+int StkThreadGuiManager::StopThreads(bool AllThreads)
 {
 	if (DlgWndHndl != NULL) {
 		SetFocus(DlgWndHndl); // TABフォーカスが失われるのを防止する施策
 
 		//Disable Start and Stop button.
-		EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), FALSE);
-		EnableWindow(GetDlgItem(DlgWndHndl, IDC_STOP), FALSE);
+		EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), false);
+		EnableWindow(GetDlgItem(DlgWndHndl, IDC_STOP), false);
 	}
 
 	// Change the status on GUI.
 	for (int RowLoop = 0; RowLoop < GetNumOfStkThread(); RowLoop++) {
-		if (AllThreads == TRUE || ListView_GetCheckState(ListWndHndl, RowLoop) == TRUE) {
+		if (AllThreads == true || ListView_GetCheckState(ListWndHndl, RowLoop) == TRUE) {
 			if (GetStkThreadStatusByIndex(RowLoop) != STKTHREAD_STATUS_READY) {
 				ReplaceStatus(RowLoop, STKTHREAD_STATUS_STOPPING);
 			}
@@ -320,7 +320,7 @@ int StkThreadGuiManager::StopThreads(BOOL AllThreads)
 	int Ids[MAX_NUM_OF_THREADS];
 	int IdsIndex = 0;
 	for (int RowLoop = 0; RowLoop < GetNumOfStkThread(); RowLoop++) {
-		if ((AllThreads == TRUE || ListView_GetCheckState(ListWndHndl, RowLoop) == TRUE) &&
+		if ((AllThreads == true || ListView_GetCheckState(ListWndHndl, RowLoop) == TRUE) &&
 			GetStkThreadStatusByIndex(RowLoop) == STKTHREAD_STATUS_RUNNING) {
 			Ids[IdsIndex] = GetStkThreadIdByIndex(RowLoop);
 			IdsIndex++;
@@ -330,7 +330,7 @@ int StkThreadGuiManager::StopThreads(BOOL AllThreads)
 	// Stop selected threads.
 	StopSpecifiedStkThreads(Ids, IdsIndex);
 
-	RefreshLog(FALSE);
+	RefreshLog(false);
 
 	return 0;
 }
@@ -356,13 +356,13 @@ void StkThreadGuiManager::ReplaceStatus(int Index, int St)
 	LvItm.iSubItem = 3;
 	LvItm.mask = LVIF_TEXT;
 	if (St == STKTHREAD_STATUS_READY) {
-		LvItm.pszText = _T("Ready");
+		LvItm.pszText = L"Ready";
 	} else if (St == STKTHREAD_STATUS_STARTING) {
-		LvItm.pszText = _T("Starting");
+		LvItm.pszText = L"Starting";
 	} else if (St == STKTHREAD_STATUS_RUNNING) {
-		LvItm.pszText = _T("Running");
+		LvItm.pszText = L"Running";
 	} else if (St == STKTHREAD_STATUS_STOPPING) {
-		LvItm.pszText = _T("Stopping");
+		LvItm.pszText = L"Stopping";
 	}
 	ListView_SetItem(ListWndHndl, &LvItm);
 	UpdateWindow(ListWndHndl);
@@ -370,11 +370,11 @@ void StkThreadGuiManager::ReplaceStatus(int Index, int St)
 
 // Add recourd into List-View
 // [in] int : Index
-// [in] TCHAR* : Name of record
-// [in] TCHAR* : Description
+// [in] wchar_t* : Name of record
+// [in] wchar_t* : Description
 // [in] int : Status
 // [out] Nothing
-void StkThreadGuiManager::AddRecordToListView(int Index, TCHAR* Na, TCHAR* De)
+void StkThreadGuiManager::AddRecordToListView(int Index, wchar_t* Na, wchar_t* De)
 {
 	LVITEM LvItm;
 	for (int ColumnLoop = 0; ColumnLoop < 4; ColumnLoop++) {
@@ -385,9 +385,9 @@ void StkThreadGuiManager::AddRecordToListView(int Index, TCHAR* Na, TCHAR* De)
 		case 0:
 			LvItm.mask = LVIF_TEXT;
 			LvItm.iImage = 0;
-			LvItm.pszText = _T("");
+			LvItm.pszText = L"";
 			ListView_InsertItem(ListWndHndl, &LvItm);
-			ListView_SetCheckState(ListWndHndl, Index, TRUE);
+			ListView_SetCheckState(ListWndHndl, Index, true);
 			break;
 		case 1:
 			LvItm.mask = LVIF_TEXT;
@@ -425,10 +425,10 @@ int StkThreadGuiManager::InitListView()
 
 	// For column name
 	LV_COLUMN LvColumn[] = {
-		{LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, LVCFMT_LEFT, 30, _T(""), 0, 0},
-		{LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, LVCFMT_LEFT, 160, _T("Name"), 0, 1},
-		{LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, LVCFMT_LEFT, 250, _T("Description"), 0, 2},
-		{LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, LVCFMT_LEFT, 80, _T("Status"), 0, 3}
+		{LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, LVCFMT_LEFT, 30, L"", 0, 0},
+		{LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, LVCFMT_LEFT, 160, L"Name", 0, 1},
+		{LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, LVCFMT_LEFT, 250, L"Description", 0, 2},
+		{LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, LVCFMT_LEFT, 80, L"Status", 0, 3}
 	};
 
 	// Sets List-View style
@@ -444,8 +444,8 @@ int StkThreadGuiManager::InitListView()
 
 	// Adds rows
 	for (RowLoop = 0; RowLoop < GetNumOfStkThread(); RowLoop++) {
-		TCHAR WorkName[MAX_LENGTH_OF_STKTHREAD_NAME];
-		TCHAR WorkDesc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
+		wchar_t WorkName[MAX_LENGTH_OF_STKTHREAD_NAME];
+		wchar_t WorkDesc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 		GetStkThreadNameByIndex(RowLoop, WorkName);
 		GetStkThreadDescriptionByIndex(RowLoop, WorkDesc);
 
@@ -470,7 +470,7 @@ StkThreadGuiManager* StkThreadGuiManager::GetInstance()
 	return ThisInstance;
 }
 
-int StkThreadGuiManager::ShowStkThreadController(HWND ParentWnd, int ParentIconId, TCHAR* Title)
+int StkThreadGuiManager::ShowStkThreadController(HWND ParentWnd, int ParentIconId, wchar_t* Title)
 {
 	if (DlgWndHndl != NULL) {
 		ShowWindow(DlgWndHndl, SW_NORMAL);
@@ -516,15 +516,15 @@ int StkThreadGuiManager::ShowStkThreadController(HWND ParentWnd, int ParentIconI
 
 void StkThreadGuiManager::StartAllThreads()
 {
-	StartThreads(TRUE);
+	StartThreads(true);
 }
 
 void StkThreadGuiManager::StopAllThreads()
 {
-	StopThreads(TRUE);
+	StopThreads(true);
 }
 
-void StkThreadGuiManager::AddStkThreadForGui(int Id, TCHAR* Name, TCHAR* Description, void* Init, void* Final, void* Main, void* Start, void* Stop)
+void StkThreadGuiManager::AddStkThreadForGui(int Id, wchar_t* Name, wchar_t* Description, void* Init, void* Final, void* Main, void* Start, void* Stop)
 {
 	int NumOfStkThread = GetNumOfStkThread();
 	AddStkThread(Id, Name, Description, Init, Final, Main, Start, Stop);
@@ -535,8 +535,8 @@ void StkThreadGuiManager::AddStkThreadForGui(int Id, TCHAR* Name, TCHAR* Descrip
 void StkThreadGuiManager::DeleteStkThreadForGui(int TargetId)
 {
 	//Disable Start and Stop button.
-	EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), FALSE);
-	EnableWindow(GetDlgItem(DlgWndHndl, IDC_STOP), FALSE);
+	EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), false);
+	EnableWindow(GetDlgItem(DlgWndHndl, IDC_STOP), false);
 
 	int TargetIndex = -1;
 	for (int Loop = 0; Loop < GetNumOfStkThread(); Loop++) {
@@ -551,6 +551,6 @@ void StkThreadGuiManager::DeleteStkThreadForGui(int TargetId)
 	SetStatusOfMasterCheckBox();
 
 	//Enable Start and Stop button.
-	EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), TRUE);
-	EnableWindow(GetDlgItem(DlgWndHndl, IDC_STOP), TRUE);
+	EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), true);
+	EnableWindow(GetDlgItem(DlgWndHndl, IDC_STOP), true);
 }

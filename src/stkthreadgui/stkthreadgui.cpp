@@ -2,12 +2,12 @@
 #include "StkThreadGuiManager.h"
 #include "StkThreadGuiLogging.h"
 
-int ShowStkThreadController(HWND hWnd, int ParentIconId, TCHAR* Title)
+int ShowStkThreadController(HWND hWnd, int ParentIconId, wchar_t* Title)
 {
 	return StkThreadGuiManager::GetInstance()->ShowStkThreadController(hWnd, ParentIconId, Title);
 }
 
-void AddStkThreadForGui(int Id, TCHAR* Name, TCHAR* Description, void* Init, void* Final, void* Main, void* Start, void* Stop)
+void AddStkThreadForGui(int Id, wchar_t* Name, wchar_t* Description, void* Init, void* Final, void* Main, void* Start, void* Stop)
 {
 	StkThreadGuiManager::GetInstance()->AddStkThreadForGui(Id, Name, Description, Init, Final, Main, Start, Stop);
 }
@@ -32,17 +32,17 @@ void ClearStkThreadLog()
 	StkThreadGuiLogging::GetInstance()->ClearLog();
 }
 
-void AddStkThreadLog(TCHAR* Msg)
+void AddStkThreadLog(wchar_t* Msg)
 {
 	StkThreadGuiLogging::GetInstance()->AddLog(Msg);
 }
 
-void AddStkThreadLogWithThreadInfo(TCHAR* Name, TCHAR* Msg)
+void AddStkThreadLogWithThreadInfo(wchar_t* Name, wchar_t* Msg)
 {
 	StkThreadGuiLogging::GetInstance()->AddLogWithThreadInfo(Name, Msg);
 }
 
-void GetStkThreadLog(TCHAR* Out, int Length)
+void GetStkThreadLog(wchar_t* Out, int Length)
 {
 	StkThreadGuiLogging::GetInstance()->GetLog(Out, Length);
 }

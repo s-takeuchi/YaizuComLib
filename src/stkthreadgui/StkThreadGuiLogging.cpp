@@ -17,7 +17,7 @@ StkThreadGuiLogging* StkThreadGuiLogging::GetInstance()
 StkThreadGuiLogging::StkThreadGuiLogging()
 {
 	MaxLogSize = 10000;
-	Log = new TCHAR[MaxLogSize];
+	Log = new wchar_t[MaxLogSize];
 	Log[0] = '\0';
 	InitializeCriticalSection(&StkThreadGuiLogging::CriticalSection);
 	ClearLog();
@@ -31,25 +31,25 @@ StkThreadGuiLogging::~StkThreadGuiLogging()
 void StkThreadGuiLogging::ClearLog()
 {
 	EnterCriticalSection(&CriticalSection);
-	lstrcpy(Log, _T(""));
+	lstrcpy(Log, L"");
 	UpdateVersion = 0;
 	LeaveCriticalSection(&CriticalSection);
 }
 
-void StkThreadGuiLogging::JoinToExistedLogStream(TCHAR* Buf)
+void StkThreadGuiLogging::JoinToExistedLogStream(wchar_t* Buf)
 {
 	lstrcat(Buf, Log);
 	lstrcpyn(Log, Buf, MaxLogSize);
 	if (lstrlen(Buf) >= MaxLogSize) {
 		Log[MaxLogSize - 25] = '\0';
-		lstrcat(Log, _T("...[End of log stream]"));
+		lstrcat(Log, L"...[End of log stream]");
 	}
 }
 
-void StkThreadGuiLogging::AddLog(TCHAR* Message)
+void StkThreadGuiLogging::AddLog(wchar_t* Message)
 {
 	EnterCriticalSection(&CriticalSection);
-	TCHAR *TmpBuf = new TCHAR[MaxLogSize + lstrlen(Message) + 1]; // 追加するメッセージの最大長を512文字と想定
+	wchar_t *TmpBuf = new wchar_t[MaxLogSize + lstrlen(Message) + 1]; // 追加するメッセージの最大長を512文字と想定
 	lstrcpy(TmpBuf, Message);
 	JoinToExistedLogStream(TmpBuf);
 	delete TmpBuf;
@@ -57,20 +57,20 @@ void StkThreadGuiLogging::AddLog(TCHAR* Message)
 	LeaveCriticalSection(&CriticalSection);
 }
 
-void StkThreadGuiLogging::AddLogWithThreadInfo(TCHAR* Name, TCHAR* Message)
+void StkThreadGuiLogging::AddLogWithThreadInfo(wchar_t* Name, wchar_t* Message)
 {
 	EnterCriticalSection(&CriticalSection);
 	SYSTEMTIME SysTm;
 	GetLocalTime(&SysTm);
-	TCHAR *TmpBuf = new TCHAR[MaxLogSize + lstrlen(Message) + 100]; // 追加するメッセージの最大長を512文字と想定
-	wsprintf(TmpBuf, _T("%02d:%02d:%02d [%s]  %s"), SysTm.wHour, SysTm.wMinute, SysTm.wSecond, Name, Message);
+	wchar_t *TmpBuf = new wchar_t[MaxLogSize + lstrlen(Message) + 100]; // 追加するメッセージの最大長を512文字と想定
+	wsprintf(TmpBuf, L"%02d:%02d:%02d [%s]  %s", SysTm.wHour, SysTm.wMinute, SysTm.wSecond, Name, Message);
 	JoinToExistedLogStream(TmpBuf);
 	delete TmpBuf;
 	UpdateVersion++;
 	LeaveCriticalSection(&CriticalSection);
 }
 
-void StkThreadGuiLogging::GetLog(TCHAR* Out, int Length)
+void StkThreadGuiLogging::GetLog(wchar_t* Out, int Length)
 {
 	lstrcpyn(Out, Log, Length);
 
@@ -99,6 +99,6 @@ void StkThreadGuiLogging::ChangeLogSize(int Size)
 	}
 	MaxLogSize = Size;
 	delete Log;
-	Log = new TCHAR[MaxLogSize];
+	Log = new wchar_t[MaxLogSize];
 	Log[0] = '\0';
 }
