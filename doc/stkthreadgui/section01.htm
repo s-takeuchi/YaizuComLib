@@ -68,7 +68,7 @@ GUIで表示している情報は以下の2種類となります。<br>
 </table>
 </div><p>
 
-<h3 ID="1.4.2">1.4.2 void AddStkThreadForGui(int Id, TCHAR* Name, TCHAR* Description, void* Init, void* Final, void* Main, void* Start, void* Stop)</h3>
+<h3 ID="1.4.2">1.4.2 void AddStkThreadForGui(int Id, wchar_t* Name, wchar_t* Description, void* Init, void* Final, void* Main, void* Start, void* Stop)</h3>
 <div class="topic">
 StkThreadをStkThreadGuiの管理リソースとして追加します。<br>
 スレッド管理用GUIを使用してスレッド(StkThread)を管理する場合，StkThread.LibのAddStkThreadではなく，本メソッドを使用する必要があります。<br>
@@ -112,7 +112,7 @@ StopAllStkThreadsメソッドは内部的にStkThread.LibのStopSpecifiedStkThre
 ログ出力をクリアします。<br>
 </div><p>
 
-<h3 ID="1.4.7">1.4.7 void AddStkThreadLog(TCHAR* Msg)</h3>
+<h3 ID="1.4.7">1.4.7 void AddStkThreadLog(wchar_t* Msg)</h3>
 <div class="topic">
 指定された文字列をログとして出力します。<br>
 <table class="tblstyle">
@@ -120,7 +120,7 @@ StopAllStkThreadsメソッドは内部的にStkThread.LibのStopSpecifiedStkThre
 </table>
 </div><p>
 
-<h3 ID="1.4.8">1.4.8 void AddStkThreadLogWithThreadInfo(TCHAR* Name, TCHAR* Msg)</h3>
+<h3 ID="1.4.8">1.4.8 void AddStkThreadLogWithThreadInfo(wchar_t* Name, wchar_t* Msg)</h3>
 <div class="topic">
 指定された文字列をログとして出力します。<br>
 出力される形式は，"時:分:秒 [Name] Msg"となります。<br>
@@ -130,12 +130,12 @@ StopAllStkThreadsメソッドは内部的にStkThread.LibのStopSpecifiedStkThre
 </table>
 </div><p>
 
-<h3 ID="1.4.9">1.4.9 void GetStkThreadLog(TCHAR* Out, int Length)</h3>
+<h3 ID="1.4.9">1.4.9 void GetStkThreadLog(wchar_t* Out, int Length)</h3>
 <div class="topic">
 現在出力されているログを取得します。<br>
 <table class="tblstyle">
 <tr><td>Out [出力]</td><td>取得した文字列が格納される領域。</td></tr>
-<tr><td>Length [入力]</td><td>取得した文字列が格納される領域のサイズ(WORD数;TCHARの要素数)。</td></tr>
+<tr><td>Length [入力]</td><td>取得した文字列が格納される領域のサイズ(WORD数;wchar_tの要素数)。</td></tr>
 </table>
 </div><p>
 
@@ -151,27 +151,27 @@ StopAllStkThreadsメソッドは内部的にStkThread.LibのStopSpecifiedStkThre
 
 <h3 ID="1.4.11">1.4.11 int GetStkThreadLogMaxSize()</h3>
 <div class="topic">
-ログ出力領域の最大サイズ(WORD数;TCHARの要素数)を取得します。<br>
+ログ出力領域の最大サイズ(WORD数;wchar_tの要素数)を取得します。<br>
 <table class="tblstyle">
-<tr><td>戻り値</td><td>ログ出力領域の最大サイズ(WORD数;TCHARの要素数)</td></tr>
+<tr><td>戻り値</td><td>ログ出力領域の最大サイズ(WORD数;wchar_tの要素数)</td></tr>
 </table>
 </div><p>
 
 <h3 ID="1.4.12">1.4.12 int GetStkThreadLogSize()</h3>
 <div class="topic">
-ログ出力領域に現在格納されている文字列のサイズ(WORD数;TCHARの要素数)を取得します。<br>
+ログ出力領域に現在格納されている文字列のサイズ(WORD数;wchar_tの要素数)を取得します。<br>
 <table class="tblstyle">
-<tr><td>戻り値</td><td>ログ出力領域に現在格納されている文字列のサイズ(WORD数;TCHARの要素数)</td></tr>
+<tr><td>戻り値</td><td>ログ出力領域に現在格納されている文字列のサイズ(WORD数;wchar_tの要素数)</td></tr>
 </table>
 </div><p>
 
 <h3 ID="1.4.13">1.4.13 void ChangeStkThreadLogSize(int Size)</h3>
 <div class="topic">
-ログ出力領域のサイズ(WORD数;TCHARの要素数)を変更します。<br>
+ログ出力領域のサイズ(WORD数;wchar_tの要素数)を変更します。<br>
 100よりも小さな値を指定しても，最低値100が設定されます。<br>
 デフォルトは10,000文字です。<br>
 <table class="tblstyle">
-<tr><td>Size [入力]</td><td>ログ出力領域のサイズ(WORD数;TCHARの要素数)</td></tr>
+<tr><td>Size [入力]</td><td>ログ出力領域のサイズ(WORD数;wchar_tの要素数)</td></tr>
 </table>
 </div><p>
 

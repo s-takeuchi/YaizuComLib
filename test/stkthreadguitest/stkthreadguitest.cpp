@@ -22,28 +22,28 @@ int ElemStkThreadMain(int Id)
 
 int ElemStkThreadStart(int Id)
 {
-	TCHAR Buf[50];
-	wsprintf(Buf, _T("Thread[%d]"), Id);
-	AddStkThreadLogWithThreadInfo(Buf, _T("Started\r\n"));
+	wchar_t Buf[50];
+	wsprintf(Buf, L"Thread[%d]", Id);
+	AddStkThreadLogWithThreadInfo(Buf, L"Started\r\n");
 	return 0;
 }
 
 int ElemStkThreadStop(int Id)
 {
-	TCHAR Buf[50];
-	wsprintf(Buf, _T("Thread[%d]"), Id);
-	AddStkThreadLogWithThreadInfo(Buf, _T("Stopped\r\n"));
+	wchar_t Buf[50];
+	wsprintf(Buf, L"Thread[%d]", Id);
+	AddStkThreadLogWithThreadInfo(Buf, L"Stopped\r\n");
 	return 0;
 }
 
 void ProcBefore()
 {
-	AddStkThreadLog(_T("ProcBefore\r\n"));
+	AddStkThreadLog(L"ProcBefore\r\n");
 }
 
 void ProcAfter()
 {
-	AddStkThreadLog(_T("ProcAfter\r\n"));
+	AddStkThreadLog(L"ProcAfter\r\n");
 }
 
 DWORD WINAPI TestThreadProc(LPVOID Param)
@@ -54,10 +54,10 @@ DWORD WINAPI TestThreadProc(LPVOID Param)
 		StartAllStkThreads();
 		Sleep(1000);
 
-		TCHAR BufName[MAX_LENGTH_OF_STKTHREAD_NAME];
-		TCHAR BufDesc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
-		wsprintf(BufName, _T("Name%03d"), Loop);
-		wsprintf(BufDesc, _T("Description%03d"), Loop);
+		wchar_t BufName[MAX_LENGTH_OF_STKTHREAD_NAME];
+		wchar_t BufDesc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
+		wsprintf(BufName, L"Name%03d", Loop);
+		wsprintf(BufDesc, L"Description%03d", Loop);
 		AddStkThreadForGui(Loop, BufName, BufDesc, NULL, NULL, NULL, ElemStkThreadStart, ElemStkThreadStop);
 		Sleep(1000);
 
@@ -79,14 +79,14 @@ int main(int Argc, char* Argv[])
 	SetProcBeforeFirstStkThreadStarts(ProcBefore);
 	SetProcAfterLastStkThreadStops(ProcAfter);
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
-		TCHAR BufName[MAX_LENGTH_OF_STKTHREAD_NAME];
-		TCHAR BufDesc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
-		wsprintf(BufName, _T("Name%03d"), Loop);
-		wsprintf(BufDesc, _T("Description%03d"), Loop);
+		wchar_t BufName[MAX_LENGTH_OF_STKTHREAD_NAME];
+		wchar_t BufDesc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
+		wsprintf(BufName, L"Name%03d", Loop);
+		wsprintf(BufDesc, L"Description%03d", Loop);
 		AddStkThreadForGui(Loop, BufName, BufDesc, NULL, NULL, NULL, ElemStkThreadStart, ElemStkThreadStop);
 	}
 	printf("全スレッド開始→停止を押してください。ログ出力が100文字以内であることを確認しダイアログを閉じてください。\r\n");
-	ShowStkThreadController(NULL, 0, _T("Test"));
+	ShowStkThreadController(NULL, 0, L"Test");
 	wchar_t LogBuf[20000];
 	GetStkThreadLog(LogBuf, 10);
 	if (lstrcmp(LogBuf, L"ProcAfter") != 0) {
@@ -96,7 +96,7 @@ int main(int Argc, char* Argv[])
 
 	ChangeStkThreadLogSize(1);
 	printf("全スレッド開始→停止を押してください。ログ出力が前回と変化無いことを確認しダイアログを閉じてください。\r\n");
-	ShowStkThreadController(NULL, 0, _T("Test"));
+	ShowStkThreadController(NULL, 0, L"Test");
 	GetStkThreadLog(LogBuf, 12000);
 	if (wcsstr(LogBuf, L"ProcAfter") == 0) {
 		printf("Error : Log does not start with 'ProcAfter'.\r\n");
@@ -105,19 +105,19 @@ int main(int Argc, char* Argv[])
 
 	ChangeStkThreadLogSize(50000);
 	printf("ログ出力量が拡張されていることを確認しダイアログを閉じてください。\r\n");
-	ShowStkThreadController(NULL, 0, _T("Test"));
+	ShowStkThreadController(NULL, 0, L"Test");
 
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
 		DeleteStkThreadForGui(Loop);
 	}
 	printf("何もスレッドが存在しないことを確認しダイアログを閉じてください。\r\n");
-	ShowStkThreadController(NULL, 0, _T("Test"));
+	ShowStkThreadController(NULL, 0, L"Test");
 
 	DWORD TmpId;
 	CreateThread(NULL, 0, &TestThreadProc, NULL, 0, &TmpId);
 	printf("StkThreadController自動制御--------------------\r\n");
 	printf("スレッドが10個分追加されたあと，10個分削除されます。\r\n");
-	ShowStkThreadController(NULL, 0, _T("Test"));
+	ShowStkThreadController(NULL, 0, L"Test");
 
 	printf("\r\nテストが完了しました。\r\n");
 
