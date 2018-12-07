@@ -807,8 +807,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 					unsigned char* ContLenPtr = (unsigned char*)strstr((char*)Buffer, "Content-Length:");
 					if (ContLenPtr == NULL) {
 						// If Content-Length is not presented. May be GET request
-						PutLog(RecvLog, LogId, L"", L"", Offset, 0);
-						return Offset;
+						FinishCondition = RECV_FINISHCOND_PEERCLOSURE;
 					} else {
 						ContLenPtr += 15;
 						unsigned char* ContLenEndPtr;
