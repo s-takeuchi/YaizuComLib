@@ -87,9 +87,9 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 {
 	unsigned char Dat[1024];
-	unsigned char TestData[11][256] = {
+	unsigned char TestData[13][256] = {
 		"TestTestTest\0",
-		"POST / HTTP/1.1\nContent-Type: text/html\n\nTestTestTest",
+		"POST / HTTP/1.1\nTransfer-Encoding: chunked\nContent-Type: text/html\n\nTestTestTest",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:\n\n",
 		"Content-Length:\n\n",
 		"POST / HTTP/1.1\nContent-Length: 0\nContent-Type: text/html\n\n",
@@ -97,11 +97,13 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length: 4\n\nTest",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:TestTestTestTestTest\n\n",
 		"Content-Length: 4\n\naa",
-		"\n\r\n\raaaaa",
-		"POST /aaa/bbb HTTP/1.1\r\nContent-Type: text/html\r\n\r\nhello, world!"
+		"\n\r\n\r",
+		"POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTestHello!",
+		"POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTestHello!",
+		"POST /aaa/bbb HTTP/1.1\r\nTransfer-Encoding: chunked\nContent-Type: text/html\r\n\r\nhello, world!"
 	};
 
-	for (int Loop = 0; Loop < 11; Loop++) {
+	for (int Loop = 0; Loop < 13; Loop++) {
 		while (true) {
 			Sleep(10);
 			int TcB = GetTickCount();
@@ -111,12 +113,12 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 			}
 			Ret = StkSocket_Receive(100, 100, Dat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, -1);
 			if (Ret == -1 || Ret == -2) {
-				printf("NG\r\n");
+				printf("NG (1)\r\n");
 				exit(0);
 			}
 			Dat[Ret] = '\0';
 			if (strcmp((char*)Dat, (char*)TestData[Loop]) != 0) {
-				printf("NG\r\n");
+				printf("NG (2)\r\n");
 				exit(0);
 			}
 			int TcE = GetTickCount();
@@ -125,11 +127,12 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 			if ((Loop == 0 && Tc != 3) || (Loop == 1 && Tc != 3) || (Loop == 2 && Tc != 0) ||
 				(Loop == 3 && Tc != 0) || (Loop == 4 && Tc != 0) || (Loop == 5 && Tc != 3) ||
 				(Loop == 6 && Tc != 0) || (Loop == 7 && Tc != 3) || (Loop == 8 && Tc != 3) ||
-				(Loop == 9 && Tc != 3) || (Loop == 10 && Tc != 0)) {
-				printf("NG\r\n");
+				(Loop == 9 && Tc != 0) || (Loop == 10 && Tc != 3) || (Loop == 11 && Tc != 0) ||
+				(Loop == 12 && Tc != 0)) {
+				printf("NG (3)\r\n");
 				exit(0);
 			}
-			if (Loop == 10) {
+			if (Loop == 12) {
 				StkSocket_CloseAccept(100, 100, true);
 				break;
 			}
@@ -142,7 +145,7 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 			strcat_s((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
 			int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, strlen((char*)Dat) + 1);
 			if (RetS <= 0) {
-				printf("NG\r\n");
+				printf("NG (4)\r\n");
 				exit(0);
 			}
 			StkSocket_CloseAccept(100, 100, true);
@@ -157,9 +160,9 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 {
 	unsigned char Dat[1024];
-	unsigned char TestData[11][256] = {
+	unsigned char TestData[13][256] = {
 		"TestTestTest\0",
-		"POST / HTTP/1.1\nContent-Type: text/html\n\nTestTestTest",
+		"POST / HTTP/1.1\nTransfer-Encoding: chunked\nContent-Type: text/html\n\nTestTestTest",
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:\n\nTestTestTest",
 		"Content-Length:\n\n",
 		"POST / HTTP/1.1\nContent-Length: 0\nContent-Type: text/html\n\n",
@@ -168,10 +171,12 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 		"POST / HTTP/1.1\nContent-Type: text/html\nContent-Length:TestTestTestTestTest\n\n",
 		"Content-Length: 4\n\naa",
 		"\n\r\n\raaaaa",
-		"POST /aaa/bbb HTTP/1.1\r\nContent-Type: text/html\r\n\r\nhello, world!"
+		"POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0006\r\nHello!\r\n",
+		"POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0006\r\nHello!\r\n00\r\n\r\n",
+		"POST /aaa/bbb HTTP/1.1\r\nTransfer-Encoding: chunked\nContent-Type: text/html\r\n\r\nhello, world!"
 	};
 
-	for (int Loop = 0; Loop < 11; Loop++) {
+	for (int Loop = 0; Loop < 13; Loop++) {
 		strcpy_s((char*)Dat, 1024, (char*)TestData[Loop]);
 
 		Sleep(3000);
@@ -181,7 +186,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 			printf("NG\r\n");
 			exit(0);
 		}
-		if (Loop == 10) {
+		if (Loop == 12) {
 			StkSocket_Disconnect(101, 101, true);
 			Sleep(1000);
 			break;

@@ -726,7 +726,13 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 		if (TmpSock == NULL || RecvLog == 0) {
 			continue;
 		}
-		int Offset = 0;
+
+		int ChunkSize = 0;
+		bool GetChunkMode = false;
+		bool ChunkEnd = false;
+		unsigned char* TmpSizePtr = 0;
+
+			int Offset = 0;
 		while (true) {
 			FD_ZERO(&RecFds);
 			FD_SET(TmpSock, &RecFds);
@@ -751,10 +757,18 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				}
 				continue;
 			}
-			int FetchSize;
+
+			// Set fetch size
+			int FetchSize = 0;
 			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH || FinishCondition == RECV_FINISHCOND_STRING) {
 				// if HTTP termination rule is selected...
 				FetchSize = 1;
+			} else if (FinishCondition == RECV_FINISHCOND_CHUNK) {
+				if (BufferSize >= Offset + ChunkSize) {
+					FetchSize = ChunkSize;
+				} else {
+					FetchSize = BufferSize - Offset;
+				}
 			} else if (FinishCondition > 0) {
 				if (BufferSize > FinishCondition) {
 					FetchSize = FinishCondition - Offset;
@@ -765,6 +779,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				// Otherwise
 				FetchSize = BufferSize - Offset;
 			}
+
 			int Ret = recv(TmpSock, (char*)Buffer + Offset, FetchSize, 0);
 			CurrWaitTime = GetTickCount();
 			if (Ret == SOCKET_ERROR) {
@@ -797,17 +812,60 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 				return Offset;
 			}
+			if (FinishCondition == RECV_FINISHCOND_CHUNK) {
+				if (GetChunkMode == false && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
+					int TmpSize = 0;
+					/*
+					for (int Loop = 3; Loop < Offset + 1; Loop++) {
+						if (Buffer[Offset - Loop - 1] == '\r' && Buffer[Offset - Loop] == '\n') {
+							TmpSizePtr = &Buffer[Offset - Loop + 1];
+							break;
+						}
+					}
+					*/
+					if (TmpSizePtr != 0) {
+						sscanf_s((char*)TmpSizePtr, "%x", &TmpSize);
+						if (TmpSize == 0) {
+							ChunkEnd = true;
+						}
+						ChunkSize = TmpSize + 2;
+						int Diff = &Buffer[Offset] - TmpSizePtr;
+						Offset -= Diff;
+					}
+					GetChunkMode = true;
+					continue;
+				} else if (GetChunkMode == true && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
+					ChunkSize = 1;
+					GetChunkMode = false;
+					Offset -= 2;
+					TmpSizePtr = &Buffer[Offset];
+					if (ChunkEnd == true) {
+						PutLog(RecvLog, LogId, L"", L"", Offset, 0);
+						return Offset;
+					}
+					continue;
+				}
+			}
 			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
 				// if HTTP termination rule is selected...
 				if ((Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\n') ||
 					(Buffer[Offset - 4] == '\r' && Buffer[Offset - 3] == '\n' && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') ||
 					(Buffer[Offset - 4] == '\n' && Buffer[Offset - 3] == '\r' && Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\r')) {
 					// If double new-line-code was detected...
-					Buffer[Offset] = '\0';
+					Buffer[Offset] = '\0'; // '\0' will be overwritten by next fetch.
 					unsigned char* ContLenPtr = (unsigned char*)strstr((char*)Buffer, "Content-Length:");
 					if (ContLenPtr == NULL) {
-						// If Content-Length is not presented. May be GET request
-						FinishCondition = RECV_FINISHCOND_PEERCLOSURE;
+						if (strstr((char*)Buffer, "Transfer-Encoding: chunked") != 0) {
+							// If "Transfer-Encoding: chunked" is presented...
+							FinishCondition = RECV_FINISHCOND_CHUNK;
+							GetChunkMode = false;
+							ChunkSize = 1;
+							TmpSizePtr = &Buffer[Offset];
+						} else {
+							// If both "Content-Length:" and "Transfer-Encoding: chunked" are not presented...May be GET request
+							PutLog(RecvLog, LogId, L"", L"", Offset, 0);
+							return Offset;
+						}
 					} else {
 						ContLenPtr += 15;
 						unsigned char* ContLenEndPtr;
