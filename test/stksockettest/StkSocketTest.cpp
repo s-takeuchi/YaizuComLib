@@ -1,6 +1,7 @@
 #include <winsock2.h>
 #include <windows.h>
-#include <stdio.h>
+#include <cstdio>
+#include <cstring>
 #include <shlwapi.h>
 #include "..\..\src\stksocket\stksocket.h"
 #include "StkSocketTestMa.h"
@@ -524,6 +525,10 @@ int TestAddDeleteSocketInfo()
 	return 0;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+
 DWORD WINAPI TestThreadProc0(LPVOID Param)
 {
 	int Msg;
@@ -951,6 +956,72 @@ DWORD WINAPI TestThreadProc9(LPVOID Param)
 	return 0;
 }
 
+DWORD WINAPI TestThreadProc10(LPVOID Param)
+{
+	unsigned char Buffer[256] = "";
+	unsigned char TestStr[256] = "";
+	int *Command = (int*)Param;
+	int RecvType = 0;
+	int Size = 0;
+	if (*Command >= 0 && *Command <= 4) {
+		RecvType = *Command * -1;
+		strcpy_s((char*)TestStr, 256, "01234567890123456789012345678901234567890123456789");
+		Size = 50;
+	}
+	if (*Command == 5) {
+		RecvType = -3;
+		strcpy_s((char*)TestStr, 256, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTestHello!!!0123456789abcdef0123456789abcdef");
+		Size = 124;
+	}
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+	StkSocket_Open(0);
+	
+	printf("[Recv/Send] : Receiver's buffer overflow occurrence (Command=%d) ...", *Command);
+	while (true) {
+		if (StkSocket_Accept(0) == 0) {
+			memset(Buffer, '\0', 128);
+			int Ret = StkSocket_Receive(0, 0, Buffer, Size, RecvType, 0, NULL, 0);
+			if (Ret != Size || strncmp((char*)Buffer, (char*)TestStr, Size) != 0) {
+				printf("NG\r\n");
+				exit(-1);
+			}
+			break;
+		}
+	}
+	printf("OK\r\n");
+
+	StkSocket_Close(0, true);
+	StkSocket_DeleteInfo(0);
+	FinishFlag = true;
+	return 0;
+}
+
+DWORD WINAPI TestThreadProc11(LPVOID Param)
+{
+	char Buf[256];
+	int *Command = (int*)Param;
+	if (*Command >= 0 && *Command <= 4) {
+		strcpy_s(Buf, 256, "012345678901234567890123456789012345678901234567890123456789");
+	}
+	if (*Command == 5) {
+		strcpy_s(Buf, 256, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n20\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n");
+	}
+
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+
+	Sleep(1000);
+	StkSocket_Connect(1);
+	StkSocket_Send(1, 1, (unsigned char*)Buf, strlen(Buf));
+	StkSocket_Disconnect(1, 1, true);
+
+	StkSocket_DeleteInfo(1);
+	return 0;
+}
+
+//
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 DWORD WINAPI TestThreadForAcceptRecv1(LPVOID Param)
 {
 	unsigned char Buf[1000000];
@@ -1220,6 +1291,17 @@ int main(int Argc, char* Argv[])
 	if (ConnectDisconnectTcpPort() != 0) {
 		return -1;
 	}
+	for (int Loop = 0; Loop <= 5; Loop++) {
+		FinishFlag = false;
+		int Command = Loop;
+		CreateThread(NULL, 0, &TestThreadProc10, &Command, 0, &TmpId);
+		CreateThread(NULL, 0, &TestThreadProc11, &Command, 0, &TmpId);
+		while (FinishFlag == false) {
+			Sleep(1000);
+		}
+		Sleep(1000);
+	}
+
 	if (ConnectDisconnectUdpPort() != 0) {
 		return -1;
 	}

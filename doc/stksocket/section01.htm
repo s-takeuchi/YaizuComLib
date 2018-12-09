@@ -414,8 +414,8 @@ int StkSocket_Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int Finis
 <li>-4 : タイムアウトを検知した場合メソッドアウト。</li>
 </ul></td></tr>
 <tr><td>FinishCondTimeout</td><td>入力</td><td>タイムアウト時間(ミリ秒)。データ受信後一定時間(ミリ秒）更なるデータ受信が無い場合タイムアウト。0は無効。</td></tr>
-<tr><td>VarDat</td><td>入力</td><td>メソッドアウトの条件となるバイト列。FinishConditionがマイナス値の場合，この引数が評価される。</td></tr>
-<tr><td>VarDatSize</td><td>入力</td><td>メソッドアウトの条件となるバイト列のサイズ。FinishConditionがマイナス値の場合，この引数が評価される。</td></tr>
+<tr><td>VarDat</td><td>入力</td><td>メソッドアウトの条件となるバイト列。FinishConditionが-1の場合，この引数が評価される。NULLの場合評価されない。</td></tr>
+<tr><td>VarDatSize</td><td>入力</td><td>メソッドアウトの条件となるバイト列のサイズ。FinishConditionが-1の場合，この引数が評価される。</td></tr>
 </table>
 </div><p>
 <u>戻り値</u>

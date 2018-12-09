@@ -758,6 +758,12 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				continue;
 			}
 
+			// Check whether the buffer is full.
+			if (BufferSize <= Offset) {
+				PutLog(RecvLog, LogId, L"", L"", Offset, 0);
+				return Offset;
+			}
+
 			// Set fetch size
 			int FetchSize = 0;
 			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH || FinishCondition == RECV_FINISHCOND_STRING) {
@@ -774,7 +780,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 					FetchSize = FinishCondition - Offset;
 				} else {
 					FetchSize = BufferSize - Offset;
-				}				
+				}
 			} else {
 				// Otherwise
 				FetchSize = BufferSize - Offset;
@@ -796,7 +802,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 				return Offset;
 			}
-			if (FinishCondition == RECV_FINISHCOND_STRING && Offset >= VarDatSize) {
+			if (FinishCondition == RECV_FINISHCOND_STRING && Offset >= VarDatSize && VarDat != NULL) {
 				if (memcmp(Buffer + Offset - VarDatSize, VarDat, VarDatSize) == 0) {
 					PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 					return Offset;
@@ -815,14 +821,6 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			if (FinishCondition == RECV_FINISHCOND_CHUNK) {
 				if (GetChunkMode == false && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
 					int TmpSize = 0;
-					/*
-					for (int Loop = 3; Loop < Offset + 1; Loop++) {
-						if (Buffer[Offset - Loop - 1] == '\r' && Buffer[Offset - Loop] == '\n') {
-							TmpSizePtr = &Buffer[Offset - Loop + 1];
-							break;
-						}
-					}
-					*/
 					if (TmpSizePtr != 0) {
 						sscanf_s((char*)TmpSizePtr, "%x", &TmpSize);
 						if (TmpSize == 0) {
