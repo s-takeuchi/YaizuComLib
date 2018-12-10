@@ -775,6 +775,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				} else {
 					FetchSize = BufferSize - Offset;
 				}
+				PutLog(RecvLog, LogId, L"", L"", FetchSize, 0);///////////////////////////////////////////debug code////////////////////////////////////////////////
 			} else if (FinishCondition > 0) {
 				if (BufferSize > FinishCondition) {
 					FetchSize = FinishCondition - Offset;

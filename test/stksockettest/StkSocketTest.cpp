@@ -970,8 +970,8 @@ DWORD WINAPI TestThreadProc10(LPVOID Param)
 	}
 	if (*Command == 5) {
 		RecvType = -3;
-		strcpy_s((char*)TestStr, 256, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTestHello!!!0123456789abcdef0123456789abcdef");
-		Size = 124;
+		strcpy_s((char*)TestStr, 256, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTestHello!!!0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
+		Size = 156;
 	}
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_Open(0);
@@ -1004,7 +1004,7 @@ DWORD WINAPI TestThreadProc11(LPVOID Param)
 		strcpy_s(Buf, 256, "012345678901234567890123456789012345678901234567890123456789");
 	}
 	if (*Command == 5) {
-		strcpy_s(Buf, 256, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n20\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n");
+		strcpy_s(Buf, 256, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n");
 	}
 
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
@@ -1291,17 +1291,6 @@ int main(int Argc, char* Argv[])
 	if (ConnectDisconnectTcpPort() != 0) {
 		return -1;
 	}
-	for (int Loop = 0; Loop <= 5; Loop++) {
-		FinishFlag = false;
-		int Command = Loop;
-		CreateThread(NULL, 0, &TestThreadProc10, &Command, 0, &TmpId);
-		CreateThread(NULL, 0, &TestThreadProc11, &Command, 0, &TmpId);
-		while (FinishFlag == false) {
-			Sleep(1000);
-		}
-		Sleep(1000);
-	}
-
 	if (ConnectDisconnectUdpPort() != 0) {
 		return -1;
 	}
@@ -1360,6 +1349,17 @@ int main(int Argc, char* Argv[])
 		Sleep(1000);
 	}
 	Sleep(1000);
+
+	for (int Loop = 0; Loop <= 5; Loop++) {
+		FinishFlag = false;
+		int Command = Loop;
+		CreateThread(NULL, 0, &TestThreadProc10, &Command, 0, &TmpId);
+		CreateThread(NULL, 0, &TestThreadProc11, &Command, 0, &TmpId);
+		while (FinishFlag == false) {
+			Sleep(1000);
+		}
+		Sleep(1000);
+	}
 
 	TestThreadForAcceptSendRecv();
 	TestMultiAccept1();
