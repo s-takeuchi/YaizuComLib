@@ -820,6 +820,10 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				return Offset;
 			}
 			if (FinishCondition == RECV_FINISHCOND_CHUNK) {
+				if (Ret > 0 && Ret < FetchSize) {
+					ChunkSize = FetchSize - Ret;
+					continue;
+				}
 				if (GetChunkMode == false && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
 					int TmpSize = 0;
 					if (TmpSizePtr != 0) {
