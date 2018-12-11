@@ -173,7 +173,7 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 		"\n\r\n\raaaaa",
 		"POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0006\r\nHello!\r\n",
 		"POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0006\r\nHello!\r\n00\r\n\r\n",
-		"POST /aaa/bbb HTTP/1.1\r\nTransfer-Encoding: chunked\nContent-Type: text/html\r\n\r\nhello, world!"
+		"POST /aaa/bbb HTTP/1.1\r\nTransfer-Encoding: chunked\nContent-Type: text/html\r\n\r\n100\r\nhello, world!"
 	};
 
 	for (int Loop = 0; Loop < 13; Loop++) {

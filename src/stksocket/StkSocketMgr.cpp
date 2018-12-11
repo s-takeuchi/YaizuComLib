@@ -775,7 +775,6 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				} else {
 					FetchSize = BufferSize - Offset;
 				}
-				PutLog(RecvLog, LogId, L"", L"", FetchSize, 0);///////////////////////////////////////////debug code////////////////////////////////////////////////
 			} else if (FinishCondition > 0) {
 				if (BufferSize > FinishCondition) {
 					FetchSize = FinishCondition - Offset;
@@ -825,6 +824,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 					continue;
 				}
 				if (GetChunkMode == false && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
+					// After size acquisition
 					int TmpSize = 0;
 					if (TmpSizePtr != 0) {
 						sscanf_s((char*)TmpSizePtr, "%x", &TmpSize);
@@ -838,6 +838,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 					GetChunkMode = true;
 					continue;
 				} else if (GetChunkMode == true && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
+					// After data acquisition
 					ChunkSize = 1;
 					GetChunkMode = false;
 					Offset -= 2;

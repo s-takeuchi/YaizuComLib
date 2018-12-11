@@ -410,7 +410,11 @@ int StkSocket_Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int Finis
 <li>0 : データ受信後無条件にメソッドアウト。</li>
 <li>-1 : 指定した文字列を受信した場合メソッドアウト。</li>
 <li>-2 : 送信側ソケットがクローズされたときメソッドアウト。</li>
-<li>-3 : HTTPのContent-Lengthで指定したバイト数のデータを受信した場合メソッドアウト。HTTPヘッダにContent-Lengthが含まれていない場合，送信側ソケットがクローズされたときメソッドアウト。</li>
+<li>-3 : 
+HTTPヘッダにContent-Lengthが指定されている場合: Content-Lengthで指定したバイト数のデータを受信後メソッドアウト。<br/>
+HTTPヘッダにTransfer-Encoding: chunkedが指定されている場合: Chunkをすべて受信後メソッドアウト。<br/>
+上記以外: HTTPヘッダを受信後メソッドアウト。<br/>
+</li>
 <li>-4 : タイムアウトを検知した場合メソッドアウト。</li>
 </ul></td></tr>
 <tr><td>FinishCondTimeout</td><td>入力</td><td>タイムアウト時間(ミリ秒)。データ受信後一定時間(ミリ秒）更なるデータ受信が無い場合タイムアウト。0は無効。</td></tr>
