@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <string>
 #include <stdio.h>
 #include <Psapi.h>
@@ -125,77 +125,77 @@ StkObject* MakeTestData1(int Mode = 0)
 
 StkObject* MakeTestData2(int Mode = 0)
 {
-	StkObject* Elem1 = new StkObject(L"ŒÂl‚ÌàY");
+	StkObject* Elem1 = new StkObject(L"å€‹äººã®è²¡ç”£");
 
 	if (Mode == 1) {
-		StkObject* Elem1_3 = new StkObject(L"Œ»‹à");
-		Elem1_3->AppendChildElement(new StkObject(L"C‹âs", 7000000));
-		Elem1_3->AppendChildElement(new StkObject(L"A‹âs", 5000000));
-		Elem1_3->AppendChildElement(new StkObject(L"B‹âs", 10000000));
+		StkObject* Elem1_3 = new StkObject(L"ç¾é‡‘");
+		Elem1_3->AppendChildElement(new StkObject(L"CéŠ€è¡Œ", 7000000));
+		Elem1_3->AppendChildElement(new StkObject(L"AéŠ€è¡Œ", 5000000));
+		Elem1_3->AppendChildElement(new StkObject(L"BéŠ€è¡Œ", 10000000));
 		Elem1->AppendChildElement(Elem1_3);
 
-		StkObject* Elem1_2 = new StkObject(L"Œv");
-		Elem1_2->AppendChildElement(new StkObject(L"ƒƒŒƒbƒNƒX", L"‹à"));
-		Elem1_2->AppendChildElement(new StkObject(L"ƒIƒƒK", L"•"));
-		Elem1_2->AppendChildElement(new StkObject(L"ƒOƒ‰ƒ“ƒhƒZƒCƒR[", L"”’"));
+		StkObject* Elem1_2 = new StkObject(L"æ™‚è¨ˆ");
+		Elem1_2->AppendChildElement(new StkObject(L"ãƒ­ãƒ¬ãƒƒã‚¯ã‚¹", L"é‡‘"));
+		Elem1_2->AppendChildElement(new StkObject(L"ã‚ªãƒ¡ã‚¬", L"é»’"));
+		Elem1_2->AppendChildElement(new StkObject(L"ã‚°ãƒ©ãƒ³ãƒ‰ã‚»ã‚¤ã‚³ãƒ¼", L"ç™½"));
 		Elem1->AppendChildElement(Elem1_2);
 
-		StkObject* Elem1_1 = new StkObject(L"æ—pÔ");
-		StkObject* Elem1_1_2 = new StkObject(L"ƒuƒ‹[ƒo[ƒh");
-		Elem1_1_2->AppendAttribute(new StkObject(L"ƒ[ƒJ[", L"“úY"));
-		Elem1_1_2->AppendAttribute(new StkObject(L"F", L"”’"));
+		StkObject* Elem1_1 = new StkObject(L"ä¹—ç”¨è»Š");
+		StkObject* Elem1_1_2 = new StkObject(L"ãƒ–ãƒ«ãƒ¼ãƒãƒ¼ãƒ‰");
+		Elem1_1_2->AppendAttribute(new StkObject(L"ãƒ¡ãƒ¼ã‚«ãƒ¼", L"æ—¥ç”£"));
+		Elem1_1_2->AppendAttribute(new StkObject(L"è‰²", L"ç™½"));
 		Elem1_1->AppendChildElement(Elem1_1_2);
-		StkObject* Elem1_1_1 = new StkObject(L"ƒJƒ[ƒ‰");
-		Elem1_1_1->AppendAttribute(new StkObject(L"ƒ[ƒJ[", L"ƒgƒˆƒ^"));
-		Elem1_1_1->AppendAttribute(new StkObject(L"F", L"Ô"));
+		StkObject* Elem1_1_1 = new StkObject(L"ã‚«ãƒ­ãƒ¼ãƒ©");
+		Elem1_1_1->AppendAttribute(new StkObject(L"ãƒ¡ãƒ¼ã‚«ãƒ¼", L"ãƒˆãƒ¨ã‚¿"));
+		Elem1_1_1->AppendAttribute(new StkObject(L"è‰²", L"èµ¤"));
 		Elem1_1->AppendChildElement(Elem1_1_1);
 		Elem1->AppendChildElement(Elem1_1);
 	} else {
-		StkObject* Elem1_1 = new StkObject(L"æ—pÔ");
-		StkObject* Elem1_1_1 = new StkObject(L"ƒJƒ[ƒ‰");
-		Elem1_1_1->AppendAttribute(new StkObject(L"F", L"Ô"));
-		Elem1_1_1->AppendAttribute(new StkObject(L"ƒ[ƒJ[", L"ƒgƒˆƒ^"));
+		StkObject* Elem1_1 = new StkObject(L"ä¹—ç”¨è»Š");
+		StkObject* Elem1_1_1 = new StkObject(L"ã‚«ãƒ­ãƒ¼ãƒ©");
+		Elem1_1_1->AppendAttribute(new StkObject(L"è‰²", L"èµ¤"));
+		Elem1_1_1->AppendAttribute(new StkObject(L"ãƒ¡ãƒ¼ã‚«ãƒ¼", L"ãƒˆãƒ¨ã‚¿"));
 		Elem1_1->AppendChildElement(Elem1_1_1);
-		StkObject* Elem1_1_2 = new StkObject(L"ƒuƒ‹[ƒo[ƒh");
-		Elem1_1_2->AppendAttribute(new StkObject(L"F", L"”’"));
-		Elem1_1_2->AppendAttribute(new StkObject(L"ƒ[ƒJ[", L"“úY"));
+		StkObject* Elem1_1_2 = new StkObject(L"ãƒ–ãƒ«ãƒ¼ãƒãƒ¼ãƒ‰");
+		Elem1_1_2->AppendAttribute(new StkObject(L"è‰²", L"ç™½"));
+		Elem1_1_2->AppendAttribute(new StkObject(L"ãƒ¡ãƒ¼ã‚«ãƒ¼", L"æ—¥ç”£"));
 		Elem1_1->AppendChildElement(Elem1_1_2);
 		Elem1->AppendChildElement(Elem1_1);
 
-		StkObject* Elem1_2 = new StkObject(L"Œv");
-		Elem1_2->AppendChildElement(new StkObject(L"ƒOƒ‰ƒ“ƒhƒZƒCƒR[", L"”’"));
-		Elem1_2->AppendChildElement(new StkObject(L"ƒIƒƒK", L"•"));
-		Elem1_2->AppendChildElement(new StkObject(L"ƒƒŒƒbƒNƒX", L"‹à"));
+		StkObject* Elem1_2 = new StkObject(L"æ™‚è¨ˆ");
+		Elem1_2->AppendChildElement(new StkObject(L"ã‚°ãƒ©ãƒ³ãƒ‰ã‚»ã‚¤ã‚³ãƒ¼", L"ç™½"));
+		Elem1_2->AppendChildElement(new StkObject(L"ã‚ªãƒ¡ã‚¬", L"é»’"));
+		Elem1_2->AppendChildElement(new StkObject(L"ãƒ­ãƒ¬ãƒƒã‚¯ã‚¹", L"é‡‘"));
 		Elem1->AppendChildElement(Elem1_2);
 
-		StkObject* Elem1_3 = new StkObject(L"Œ»‹à");
-		Elem1_3->AppendChildElement(new StkObject(L"A‹âs", 5000000));
-		Elem1_3->AppendChildElement(new StkObject(L"B‹âs", 10000000));
-		Elem1_3->AppendChildElement(new StkObject(L"C‹âs", 7000000));
+		StkObject* Elem1_3 = new StkObject(L"ç¾é‡‘");
+		Elem1_3->AppendChildElement(new StkObject(L"AéŠ€è¡Œ", 5000000));
+		Elem1_3->AppendChildElement(new StkObject(L"BéŠ€è¡Œ", 10000000));
+		Elem1_3->AppendChildElement(new StkObject(L"CéŠ€è¡Œ", 7000000));
 		Elem1->AppendChildElement(Elem1_3);
 	}
 
-	StkObject* Elem1_4 = new StkObject(L"ØŒ”");
-	StkObject* Elem1_4_1 = new StkObject(L"Š”");
-	Elem1_4_1->AppendChildElement(new StkObject(L"AĞ", 2000000));
-	Elem1_4_1->AppendChildElement(new StkObject(L"BĞ", 500000));
+	StkObject* Elem1_4 = new StkObject(L"è¨¼åˆ¸");
+	StkObject* Elem1_4_1 = new StkObject(L"æ ª");
+	Elem1_4_1->AppendChildElement(new StkObject(L"Aç¤¾", 2000000));
+	Elem1_4_1->AppendChildElement(new StkObject(L"Bç¤¾", 500000));
 	Elem1_4->AppendChildElement(Elem1_4_1);
-	StkObject* Elem1_4_2 = new StkObject(L"‘Â");
+	StkObject* Elem1_4_2 = new StkObject(L"å›½å‚µ");
 	if (Mode == 1) {
-		Elem1_4_2->AppendChildElement(new StkObject(L"ÂŒ ", 1000000));
-		Elem1_4_2->AppendChildElement(new StkObject(L"ÂŒ ", 2000000));
-		Elem1_4_2->AppendChildElement(new StkObject(L"ÂŒ ", 1500000));
+		Elem1_4_2->AppendChildElement(new StkObject(L"å‚µæ¨©", 1000000));
+		Elem1_4_2->AppendChildElement(new StkObject(L"å‚µæ¨©", 2000000));
+		Elem1_4_2->AppendChildElement(new StkObject(L"å‚µæ¨©", 1500000));
 	} else {
-		Elem1_4_2->AppendChildElement(new StkObject(L"ÂŒ ", 2000000));
-		Elem1_4_2->AppendChildElement(new StkObject(L"ÂŒ ", 1500000));
+		Elem1_4_2->AppendChildElement(new StkObject(L"å‚µæ¨©", 2000000));
+		Elem1_4_2->AppendChildElement(new StkObject(L"å‚µæ¨©", 1500000));
 		if (Mode == 2) {
-			Elem1_4_2->AppendChildElement(new StkObject(L"ÂŒ ", 1000001));
+			Elem1_4_2->AppendChildElement(new StkObject(L"å‚µæ¨©", 1000001));
 		} else {
-			Elem1_4_2->AppendChildElement(new StkObject(L"ÂŒ ", 1000000));
+			Elem1_4_2->AppendChildElement(new StkObject(L"å‚µæ¨©", 1000000));
 		}
 	}
 	Elem1_4->AppendChildElement(Elem1_4_2);
-	StkObject* Elem1_4_3 = new StkObject(L"‹àŒ”");
+	StkObject* Elem1_4_3 = new StkObject(L"é‡‘åˆ¸");
 	Elem1_4_3->AppendChildElement(new StkObject(L"VISA", 200000));
 	Elem1_4_3->AppendChildElement(new StkObject(L"JCB", 100000));
 	Elem1_4->AppendChildElement(Elem1_4_3);
@@ -226,10 +226,10 @@ StkObject* MakeTestData4(wchar_t Name[64], int Width, int Height, int CurrentLev
 {
 	StkObject* Obj = new StkObject(Name);
 	if (CurrentLevel > Height) {
-		Obj->AppendChildElement(new StkObject(L"Aaa", L"“Œ¼“ì–k"));
-		Obj->AppendChildElement(new StkObject(L"Bbb", L"t‰ÄH“~"));
-		Obj->AppendChildElement(new StkObject(L"Ccc", L"é³–£é±é²"));
-		Obj->AppendChildElement(new StkObject(L"Ddd", L"Ä“÷’èH"));
+		Obj->AppendChildElement(new StkObject(L"Aaa", L"æ±è¥¿å—åŒ—"));
+		Obj->AppendChildElement(new StkObject(L"Bbb", L"æ˜¥å¤ç§‹å†¬"));
+		Obj->AppendChildElement(new StkObject(L"Ccc", L"é­‘é­…é­é­"));
+		Obj->AppendChildElement(new StkObject(L"Ddd", L"ç„¼è‚‰å®šé£Ÿ"));
 	} else {
 		for (int Loop = 0; Loop < Width; Loop++) {
 			wchar_t Buf[25];
@@ -316,21 +316,21 @@ void GeneralTestCase2(StkObject* Elem1, wchar_t* Name)
 	printf("OK\r\n");
 
 	wprintf(L"%s#Each name is correct...", Name);
-	if (lstrcmp(Elem1->GetName(), L"ŒÂl‚ÌàY") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetName(), L"æ—pÔ") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetName(), L"Œv") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Œ»‹à") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"ØŒ”") != 0) {
+	if (lstrcmp(Elem1->GetName(), L"å€‹äººã®è²¡ç”£") != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetName(), L"ä¹—ç”¨è»Š") != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetName(), L"æ™‚è¨ˆ") != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"ç¾é‡‘") != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"è¨¼åˆ¸") != 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
 	printf("OK\r\n");
 
 	wprintf(L"%s#Attribute of car is correct...", Name);
-	if (lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetStringValue(), L"Ô") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetNext()->GetStringValue(), L"ƒgƒˆƒ^") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"”’") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetNext()->GetStringValue(), L"“úY") != 0) {
+	if (lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetStringValue(), L"èµ¤") != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetNext()->GetStringValue(), L"ãƒˆãƒ¨ã‚¿") != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"ç™½") != 0 ||
+		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetNext()->GetStringValue(), L"æ—¥ç”£") != 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
@@ -574,13 +574,13 @@ void GeneralTestCase4()
 	{
 		wprintf(L"GeneralCheck4#Test of Contains  (Common data 2 : advanced) ...");
 		StkObject* Origin = MakeTestData2();
-		StkObject* Elem1_4 = new StkObject(L"ØŒ”");
-		StkObject* Elem1_4_1 = new StkObject(L"Š”");
-		Elem1_4_1->AppendChildElement(new StkObject(L"BĞ", 500000));
-		Elem1_4_1->AppendChildElement(new StkObject(L"AĞ", 2000000));
+		StkObject* Elem1_4 = new StkObject(L"è¨¼åˆ¸");
+		StkObject* Elem1_4_1 = new StkObject(L"æ ª");
+		Elem1_4_1->AppendChildElement(new StkObject(L"Bç¤¾", 500000));
+		Elem1_4_1->AppendChildElement(new StkObject(L"Aç¤¾", 2000000));
 		Elem1_4->AppendChildElement(Elem1_4_1);
 		StkObject* Ret = Origin->Contains(Elem1_4);
-		Abort(Ret != NULL && lstrcmp(Ret->GetName(), L"ØŒ”") == 0 && Ret->GetFirstChildElement()->GetFirstChildElement()->GetIntValue() == 2000000);
+		Abort(Ret != NULL && lstrcmp(Ret->GetName(), L"è¨¼åˆ¸") == 0 && Ret->GetFirstChildElement()->GetFirstChildElement()->GetIntValue() == 2000000);
 		delete Origin;
 		delete Elem1_4;
 	}
@@ -617,14 +617,14 @@ void GeneralTestCase4()
 	{
 		wprintf(L"GeneralCheck4#Test of Contains  (Hierarchy : normal) ...");
 		int ErrorCode;
-		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>t</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>‰Ä</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>H</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>“~</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
-		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>‰Ä</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
+		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>æ˜¥</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>å¤</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>ç§‹</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>å†¬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
+		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>å¤</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target2 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Winter\"></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target3 = StkObject::CreateObjectFromXml(L"<Aaa></Aaa>", &ErrorCode);
-		StkObject* Target4 = StkObject::CreateObjectFromXml(L"<Bbb><Ccc Name=\"Fall\"><Ddd>H</Ddd></Ccc></Bbb>", &ErrorCode);
-		StkObject* Target5 = StkObject::CreateObjectFromXml(L"<Ccc Name=\"Spring\"><Ddd>t</Ddd></Ccc>", &ErrorCode);
-		StkObject* Target6 = StkObject::CreateObjectFromXml(L"<Ddd>“~</Ddd>", &ErrorCode);
-		StkObject* Target7 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>t</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Winter\"><Ddd>“~</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
+		StkObject* Target4 = StkObject::CreateObjectFromXml(L"<Bbb><Ccc Name=\"Fall\"><Ddd>ç§‹</Ddd></Ccc></Bbb>", &ErrorCode);
+		StkObject* Target5 = StkObject::CreateObjectFromXml(L"<Ccc Name=\"Spring\"><Ddd>æ˜¥</Ddd></Ccc>", &ErrorCode);
+		StkObject* Target6 = StkObject::CreateObjectFromXml(L"<Ddd>å†¬</Ddd>", &ErrorCode);
+		StkObject* Target7 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>æ˜¥</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Winter\"><Ddd>å†¬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target8 = StkObject::CreateObjectFromXml(L"<Ccc Name=\"Fall\"/>", &ErrorCode);
 		StkObject* Ret1 = Origin->Contains(Target1);
 		StkObject* Ret2 = Origin->Contains(Target2);
@@ -651,14 +651,14 @@ void GeneralTestCase4()
 	{
 		wprintf(L"GeneralCheck4#Test of Contains  (Hierarchy : abnormal) ...");
 		int ErrorCode;
-		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>t</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>‰Ä</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>H</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>“~</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
-		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>“~</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
-		StkObject* Target2 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ddd>‰Ä</Ddd></Bbb></Aaa>", &ErrorCode);
-		StkObject* Target3 = StkObject::CreateObjectFromXml(L"<Aaa><Ccc Name=\"Winter\"><Ddd>“~</Ddd></Ccc></Aaa>", &ErrorCode);
-		StkObject* Target4 = StkObject::CreateObjectFromXml(L"<Aaa><Ddd>‰Ä</Ddd></Aaa>", &ErrorCode);
-		StkObject* Target5 = StkObject::CreateObjectFromXml(L"<Bbb><Ddd>‰Ä</Ddd></Bbb>", &ErrorCode);
-		StkObject* Target6 = StkObject::CreateObjectFromXml(L"<Aaa>“~</Aaa>", &ErrorCode);
-		StkObject* Target7 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>t</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>“~</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
+		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>æ˜¥</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>å¤</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>ç§‹</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>å†¬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
+		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>å†¬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
+		StkObject* Target2 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ddd>å¤</Ddd></Bbb></Aaa>", &ErrorCode);
+		StkObject* Target3 = StkObject::CreateObjectFromXml(L"<Aaa><Ccc Name=\"Winter\"><Ddd>å†¬</Ddd></Ccc></Aaa>", &ErrorCode);
+		StkObject* Target4 = StkObject::CreateObjectFromXml(L"<Aaa><Ddd>å¤</Ddd></Aaa>", &ErrorCode);
+		StkObject* Target5 = StkObject::CreateObjectFromXml(L"<Bbb><Ddd>å¤</Ddd></Bbb>", &ErrorCode);
+		StkObject* Target6 = StkObject::CreateObjectFromXml(L"<Aaa>å†¬</Aaa>", &ErrorCode);
+		StkObject* Target7 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>æ˜¥</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>å†¬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target8 = StkObject::CreateObjectFromXml(L"<Aaa><Ccc Name=\"Fall\"/></Aaa>", &ErrorCode);
 		StkObject* Ret1 = Origin->Contains(Target1);
 		StkObject* Ret2 = Origin->Contains(Target2);
@@ -682,18 +682,18 @@ void GeneralTestCase4()
 	{
 		wprintf(L"GeneralCheck4#Test of Contains  (Hierarchy : sequential check) ...");
 		int ErrorCode;
-		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb Type=\"•¶š\"><Ccc Name=\"‹Gß\"><Ddd>t</Ddd><Ddd>‰Ä</Ddd><Ddd>H</Ddd><Ddd>“~</Ddd></Ccc><Ccc Name=\"•ûŠp\"><Ddd>“Œ</Ddd><Ddd>¼</Ddd><Ddd>“ì</Ddd><Ddd>–k</Ddd></Ccc></Bbb><Bbb Type=\"–¼\"><Ccc Name=\"‰Æ‘°\"><Ddd>’|“àL–ç</Ddd><Ddd>íŒ©é”ü</Ddd><Ddd>–Ø‘º—Dq</Ddd></Ccc><Ccc Name=\"‰ïĞƒƒ“ƒo[\"><Ddd>R“c‘¾˜Y</Ddd><Ddd>—é–Øˆê˜Y</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
-		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Bbb Type=\"•¶š\"/>", &ErrorCode);
-		StkObject* Target2 = StkObject::CreateObjectFromXml(L"<Ccc Name=\"•ûŠp\"/>", &ErrorCode);
-		StkObject* Target3 = StkObject::CreateObjectFromXml(L"<Ccc Name=\"‹Gß\"/>", &ErrorCode);
-		StkObject* Target4 = StkObject::CreateObjectFromXml(L"<Ddd>“ì</Ddd>", &ErrorCode);
-		StkObject* Target5 = StkObject::CreateObjectFromXml(L"<Ddd>“~</Ddd>", &ErrorCode);
+		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb Type=\"æ–‡å­—\"><Ccc Name=\"å­£ç¯€\"><Ddd>æ˜¥</Ddd><Ddd>å¤</Ddd><Ddd>ç§‹</Ddd><Ddd>å†¬</Ddd></Ccc><Ccc Name=\"æ–¹è§’\"><Ddd>æ±</Ddd><Ddd>è¥¿</Ddd><Ddd>å—</Ddd><Ddd>åŒ—</Ddd></Ccc></Bbb><Bbb Type=\"æ°å\"><Ccc Name=\"å®¶æ—\"><Ddd>ç«¹å†…ä¼¸ä¹Ÿ</Ddd><Ddd>å¸¸è¦‹æœ±ç¾</Ddd><Ddd>æœ¨æ‘å„ªå­</Ddd></Ccc><Ccc Name=\"ä¼šç¤¾ãƒ¡ãƒ³ãƒãƒ¼\"><Ddd>å±±ç”°å¤ªéƒ</Ddd><Ddd>éˆ´æœ¨ä¸€éƒ</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
+		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Bbb Type=\"æ–‡å­—\"/>", &ErrorCode);
+		StkObject* Target2 = StkObject::CreateObjectFromXml(L"<Ccc Name=\"æ–¹è§’\"/>", &ErrorCode);
+		StkObject* Target3 = StkObject::CreateObjectFromXml(L"<Ccc Name=\"å­£ç¯€\"/>", &ErrorCode);
+		StkObject* Target4 = StkObject::CreateObjectFromXml(L"<Ddd>å—</Ddd>", &ErrorCode);
+		StkObject* Target5 = StkObject::CreateObjectFromXml(L"<Ddd>å†¬</Ddd>", &ErrorCode);
 		StkObject* Ret124 = Origin->Contains(Target1)->Contains(Target2)->Contains(Target4);
 		StkObject* Ret125 = Origin->Contains(Target1)->Contains(Target2)->Contains(Target5);
 		StkObject* Ret134 = Origin->Contains(Target1)->Contains(Target3)->Contains(Target4);
 		StkObject* Ret135 = Origin->Contains(Target1)->Contains(Target3)->Contains(Target5);
-		Abort(lstrcmp(Ret124->GetStringValue(), L"“ì") == 0 && Ret125 == NULL &&
-			  Ret134 == NULL && lstrcmp(Ret135->GetStringValue(), L"“~") == 0);
+		Abort(lstrcmp(Ret124->GetStringValue(), L"å—") == 0 && Ret125 == NULL &&
+			  Ret134 == NULL && lstrcmp(Ret135->GetStringValue(), L"å†¬") == 0);
 		delete Origin;
 		delete Target1;
 		delete Target2;
@@ -890,19 +890,19 @@ void JsonEncodingTest2()
 	wchar_t JsonTxt2[128];
 	lstrcpy(JsonTxt2, L"");
 	Ret = MkDat2->ToJson(JsonTxt2, 32);
-	if (lstrcmp(JsonTxt2, L"\"ŒÂl‚ÌàY\" : {\r\n  \"æ—pÔ\" : {\r\n    \"") != 0) {
+	if (lstrcmp(JsonTxt2, L"\"å€‹äººã®è²¡ç”£\" : {\r\n  \"ä¹—ç”¨è»Š\" : {\r\n    \"") != 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
 	lstrcpy(JsonTxt2, L"");
 	Ret = MkDat2->ToJson(JsonTxt2, 33);
-	if (lstrcmp(JsonTxt2, L"\"ŒÂl‚ÌàY\" : {\r\n  \"æ—pÔ\" : {\r\n    \"ƒJ") != 0) {
+	if (lstrcmp(JsonTxt2, L"\"å€‹äººã®è²¡ç”£\" : {\r\n  \"ä¹—ç”¨è»Š\" : {\r\n    \"ã‚«") != 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
 	lstrcpy(JsonTxt2, L"");
 	Ret = MkDat2->ToJson(JsonTxt2, 34);
-	if (lstrcmp(JsonTxt2, L"\"ŒÂl‚ÌàY\" : {\r\n  \"æ—pÔ\" : {\r\n    \"ƒJƒ") != 0) {
+	if (lstrcmp(JsonTxt2, L"\"å€‹äººã®è²¡ç”£\" : {\r\n  \"ä¹—ç”¨è»Š\" : {\r\n    \"ã‚«ãƒ­") != 0) {
 		printf("NG\r\n");
 		exit(0);
 	}
@@ -1824,7 +1824,7 @@ void PerformanceTest()
 
 	for (int Loop = 2; Loop < 10; Loop++) {
 		lstrcpy(JsonTxt, L"");
-		StkObject* ObjWid = MakeTestData3(L"‚ ‚¢‚¤‚¦‚¨‚©‚«‚­‚¯‚±‚³‚µ‚·‚¹‚»‚½‚¿‚Â‚Ä‚Æ‚È‚É‚Ê‚Ë‚Ì‚Í‚Ğ‚Ó‚Ö‚Ù", 2, Loop);
+		StkObject* ObjWid = MakeTestData3(L"ã‚ã„ã†ãˆãŠã‹ããã‘ã“ã•ã—ã™ã›ããŸã¡ã¤ã¦ã¨ãªã«ã¬ã­ã®ã¯ã²ãµã¸ã»", 2, Loop);
 		PrevMiliSec = GetTickCount();
 		ObjWid->ToJson(JsonTxt, 16000000);
 		MiliSec = GetTickCount() - PrevMiliSec;

@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include "StkProperties.h"
 
 class StkProperties::Impl

@@ -1,4 +1,4 @@
-#include <windows.h>
+Ôªø#include <windows.h>
 #include <stdio.h>
 #include "..\..\src\commonfunc\MsgProc.h"
 
@@ -6,7 +6,7 @@ void MsgProcTest()
 {
 	printf("MsgProcTest started.\n");
 
-	MessageProc::AddJpn(100, L"Ç†Ç¢Ç§Ç¶Ç®");
+	MessageProc::AddJpn(100, L"„ÅÇ„ÅÑ„ÅÜ„Åà„Åä");
 	MessageProc::AddEng(100, L"abcde");
 
 	MessageProc::SetLocaleMode(MessageProc::LOCALE_MODE_ENGLISH);
@@ -16,7 +16,7 @@ void MsgProcTest()
 	} else {
 		printf("English message can be acquired in the English locale configuration ... OK case\n");
 	}
-	if (lstrcmp(MessageProc::GetMsgJpn(100), L"Ç†Ç¢Ç§Ç¶Ç®") != 0) {
+	if (lstrcmp(MessageProc::GetMsgJpn(100), L"„ÅÇ„ÅÑ„ÅÜ„Åà„Åä") != 0) {
 		printf("Japanese message cannot not be acquired using GetMsgJpn in the English locale configuration ... NG case\n");
 		exit(0);
 	} else {
@@ -24,7 +24,7 @@ void MsgProcTest()
 	}
 
 	MessageProc::SetLocaleMode(MessageProc::LOCALE_MODE_JAPANESE);
-	if (lstrcmp(MessageProc::GetMsg(100), L"Ç†Ç¢Ç§Ç¶Ç®") != 0) {
+	if (lstrcmp(MessageProc::GetMsg(100), L"„ÅÇ„ÅÑ„ÅÜ„Åà„Åä") != 0) {
 		printf("Japanese message cannot not be acquired in the Japanese locale configuration ... NG case\n");
 		exit(0);
 	} else {
@@ -61,9 +61,9 @@ void MsgProcTest()
 		printf("After clear API is called no message can be acquired ... OK case\n");
 	}
 
-	MessageProc::AddJpn(101, L"Ç†Ç¢Ç§Ç¶Ç®");
+	MessageProc::AddJpn(101, L"„ÅÇ„ÅÑ„ÅÜ„Åà„Åä");
 	MessageProc::AddEng(101, L"abcde");
-	MessageProc::AddJpn(102, L"Ç©Ç´Ç≠ÇØÇ±");
+	MessageProc::AddJpn(102, L"„Åã„Åç„Åè„Åë„Åì");
 	MessageProc::AddEng(102, L"fghij");
 	MessageProc::DelJpn(101);
 	MessageProc::DelEng(102);

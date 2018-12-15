@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <stdio.h>
 #include "..\..\src\commonfunc\StkStringParser.h"
 
@@ -55,15 +55,15 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] normal: three params with length ...");
-		wchar_t Target[100] = L"‚ ‚¢‚¤‚¦‚¨“Œ¼“ì–ké³–£é±é²˜Vá’j—¼’|”~ƒAƒCƒEƒGƒI";
-		wchar_t Format[100] = L"‚ ‚¢‚¤‚¦‚¨$é³–£é±é²$¼’|”~$";
+		wchar_t Target[100] = L"ã‚ã„ã†ãˆãŠæ±è¥¿å—åŒ—é­‘é­…é­é­è€è‹¥ç”·å¥³æ¾ç«¹æ¢…ã‚¢ã‚¤ã‚¦ã‚¨ã‚ª";
+		wchar_t Format[100] = L"ã‚ã„ã†ãˆãŠ$é­‘é­…é­é­$æ¾ç«¹æ¢…$";
 		wchar_t OutStr1[256];
 		wchar_t OutStr2[256];
 		wchar_t OutStr3[256];
 		int Ret = StkStringParser::ParseInto3Params(Target, Format, L'$', OutStr1, 10, OutStr2, 4, OutStr3, 3);
-		if (lstrcmp(OutStr1, L"“Œ¼“ì–k") != 0 ||
-			lstrcmp(OutStr2, L"˜Vá’j") != 0 ||
-			lstrcmp(OutStr3, L"ƒAƒC") != 0 ||
+		if (lstrcmp(OutStr1, L"æ±è¥¿å—åŒ—") != 0 ||
+			lstrcmp(OutStr2, L"è€è‹¥ç”·") != 0 ||
+			lstrcmp(OutStr3, L"ã‚¢ã‚¤") != 0 ||
 			Ret != 1) {
 			printf("NG\r\n");
 			exit(0);
@@ -237,15 +237,15 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] normal: For multi bytes characters ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"%é³–£é±é²%˜Vá’j—%‚P‚Xˆê‹ã%";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"%é­‘é­…é­é­%è€è‹¥ç”·å¥³%ï¼‘ï¼™ä¸€ä¹%";
 		wchar_t OutStr1[32];
 		wchar_t OutStr2[32];
 		wchar_t OutStr3[32];
 		wchar_t OutStr4[32];
 		StkStringParser::ParseInto4Params(Target, Format, L'%', OutStr1, OutStr2, OutStr3, OutStr4);
-		if (lstrcmp(OutStr1, L"“Œ¼“ì–k") != 0 || lstrcmp(OutStr2, L"ŒÃ¡“Œ¼") != 0 ||
-			lstrcmp(OutStr3, L"ÔÂ”’•") != 0 || lstrcmp(OutStr4, L"t‰ÄH“~") != 0) {
+		if (lstrcmp(OutStr1, L"æ±è¥¿å—åŒ—") != 0 || lstrcmp(OutStr2, L"å¤ä»Šæ±è¥¿") != 0 ||
+			lstrcmp(OutStr3, L"èµ¤é’ç™½é»’") != 0 || lstrcmp(OutStr4, L"æ˜¥å¤ç§‹å†¬") != 0) {
 			printf("NG\r\n");
 			exit(0);
 		}
@@ -253,8 +253,8 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] normal: Same string without targets is presented ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', NULL, NULL, NULL, NULL);
 		if (Ret != 1) {
 			printf("NG\r\n");
@@ -264,8 +264,8 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] normal: Partial string without targets is presented ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"é³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ã";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹";
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', NULL, NULL, NULL, NULL);
 		if (Ret != 0) {
 			printf("NG\r\n");
@@ -287,8 +287,8 @@ int StkStringParserTest()
 		wchar_t OutStr3[20001];
 		wchar_t Abc[20] = {L'a', L'b', L'c', L'd', L'e', 
 						L'1', L'2', L'3', L'4', L'5', 
-						L'•—', L'—Ñ', L'‰Î', L'R', L'x', 
-						L'y', L'é³', L'–£', L'é±', L'é²'
+						L'é¢¨', L'æ—', L'ç«', L'å±±', L'x', 
+						L'y', L'é­‘', L'é­…', L'é­', L'é­'
 		};
 
 		for (int Loop = 0; Loop < 19999; Loop++) {
@@ -325,8 +325,8 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] abnormal: Fetching empty ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"“Œ¼˜Vá%’j—ÔÂ%”’•‚P‚X";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"æ±è¥¿è€è‹¥%ç”·å¥³èµ¤é’%ç™½é»’ï¼‘ï¼™";
 		wchar_t OutStr1[64];
 		wchar_t OutStr2[64];
 		StkStringParser::ParseInto2Params(Target, Format, L'%', OutStr1, OutStr2);
@@ -338,13 +338,13 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] abnormal: Unmatch scenario (1) ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"“Œ¼“ì–k%ŒÃ¡“Œ¼%ÔÂ”’•%Ä“÷’èH";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"æ±è¥¿å—åŒ—%å¤ä»Šæ±è¥¿%èµ¤é’ç™½é»’%ç„¼è‚‰å®šé£Ÿ";
 		wchar_t OutStr1[16];
 		wchar_t OutStr2[16];
 		wchar_t OutStr3[16];
 		int Ret = StkStringParser::ParseInto3Params(Target, Format, L'%', OutStr1, OutStr2, OutStr3);
-		if (lstrcmp(OutStr1, L"é³–£é±é²") != 0 || lstrcmp(OutStr2, L"˜Vá’j—") != 0 || OutStr3[0] != '\0' || Ret != 0) {
+		if (lstrcmp(OutStr1, L"é­‘é­…é­é­") != 0 || lstrcmp(OutStr2, L"è€è‹¥ç”·å¥³") != 0 || OutStr3[0] != '\0' || Ret != 0) {
 			printf("NG\r\n");
 			exit(0);
 		}
@@ -352,7 +352,7 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] abnormal: Unmatch scenario (2) ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
 		wchar_t Format[100] = L"abc$xyz";
 		wchar_t OutStr1[16];
 		int Ret = StkStringParser::ParseInto1Param(Target, Format, L'$', OutStr1);
@@ -364,8 +364,8 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] abnormal: Unmatch scenario (3) ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"‚ ‚¢‚¤‚¦‚¨‚©‚«‚­‚¯‚±‚³‚µ‚·‚¹‚»‚½‚¿‚Â‚Ä‚Æ";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"ã‚ã„ã†ãˆãŠã‹ããã‘ã“ã•ã—ã™ã›ããŸã¡ã¤ã¦ã¨";
 		wchar_t OutStr1[16];
 		wchar_t OutStr2[16];
 		wchar_t OutStr3[16];
@@ -379,8 +379,8 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] abnormal: Specify all NULLs ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"%é³–£é±é²%˜Vá’j—%‚P‚Xˆê‹ã%";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"%é­‘é­…é­é­%è€è‹¥ç”·å¥³%ï¼‘ï¼™ä¸€ä¹%";
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', NULL, NULL, NULL, NULL);
 		if (Ret != 0) {
 			printf("NG\r\n");
@@ -390,8 +390,8 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] abnormal: Sequential double targets are specified ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"é³–£é±é²%%˜Vá’j—";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"é­‘é­…é­é­%%è€è‹¥ç”·å¥³";
 		wchar_t OutStr1[256];
 		wchar_t OutStr2[256];
 		StkStringParser::ParseInto4Params(Target, Format, L'%', OutStr1, OutStr2, NULL, NULL);
@@ -403,8 +403,8 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] abnormal: Sequential tripple targets are specified ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"é³–£é±é²%%%˜Vá’j—";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"é­‘é­…é­é­%%%è€è‹¥ç”·å¥³";
 		wchar_t OutStr1[64];
 		wchar_t OutStr2[64];
 		wchar_t OutStr3[64];
@@ -417,8 +417,8 @@ int StkStringParserTest()
 	}
 	{
 		printf("[StkStringParser] abnormal: Size exceeded target ...");
-		wchar_t Target[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
-		wchar_t Format[100] = L"“Œ¼“ì–ké³–£é±é²ŒÃ¡“Œ¼˜Vá’j—%ÔÂ”’•‚P‚Xˆê‹ãt‰ÄH“~";
+		wchar_t Target[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
+		wchar_t Format[100] = L"æ±è¥¿å—åŒ—é­‘é­…é­é­å¤ä»Šæ±è¥¿è€è‹¥ç”·å¥³%èµ¤é’ç™½é»’ï¼‘ï¼™ä¸€ä¹æ˜¥å¤ç§‹å†¬";
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', NULL, NULL, NULL, NULL);
 		if (Ret != -1) {
 			printf("NG\r\n");

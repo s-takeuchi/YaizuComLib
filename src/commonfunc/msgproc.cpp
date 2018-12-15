@@ -1,4 +1,4 @@
-#include "msgproc.h"
+﻿#include "msgproc.h"
 
 class MessageProc::Impl
 {

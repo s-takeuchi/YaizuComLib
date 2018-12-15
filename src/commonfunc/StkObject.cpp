@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <string>
 #include <shlwapi.h>
 #include "StkObject.h"
