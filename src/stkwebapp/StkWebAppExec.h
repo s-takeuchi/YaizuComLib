@@ -15,5 +15,5 @@ public:
 	static const int URL_PATH_LENGTH = 1024;
 
 public:
-	virtual StkObject* Execute(StkObject*, int, TCHAR[StkWebAppExec::URL_PATH_LENGTH], int*, TCHAR[3]) = 0;
+	virtual StkObject* Execute(StkObject*, int, wchar_t[StkWebAppExec::URL_PATH_LENGTH], int*, wchar_t[3]) = 0;
 };

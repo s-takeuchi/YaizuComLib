@@ -1,6 +1,6 @@
 #include "StkWebAppTest3.h"
 
-StkObject* StkWebAppTest3::Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, TCHAR Locale[3])
+StkObject* StkWebAppTest3::Execute(StkObject* ReqObj, int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, wchar_t Locale[3])
 {
 	*ResultCode = 200;
 	return ReqObj->Clone();

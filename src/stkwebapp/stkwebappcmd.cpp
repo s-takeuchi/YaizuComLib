@@ -12,15 +12,15 @@ DWORD WINAPI HandlerEx(DWORD, DWORD, PVOID, PVOID);
 VOID WINAPI ServiceMain(DWORD dwArgc, PTSTR* pszArgv);
 void StartProcesses();
 void StopProcesses();
-BOOL CALLBACK EnumWindowsProc(HWND, LPARAM);
+bool CALLBACK EnumWindowsProc(HWND, LPARAM);
 
 SERVICE_TABLE_ENTRY ServiceTable[] = {
 	{ SERVICE_NAME, ServiceMain },
 	{ NULL, NULL }
 };
 
-BOOL g_bRun = TRUE;
-BOOL g_bService = TRUE;
+bool g_bRun = true;
+bool g_bService = true;
 SERVICE_STATUS_HANDLE g_hServiceStatus = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ SERVICE_STATUS_HANDLE g_hServiceStatus = NULL;
 // Get file size of the specified file name
 // FilePaht [in] : Path of file which you want to get the size.
 // Return : Size of the specified file. If an error occurred, -1 is returned. (The value is casted into int.)
-int GetFileSize(TCHAR* FilePath)
+int GetFileSize(wchar_t* FilePath)
 {
 	HANDLE ReadFileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
@@ -43,7 +43,7 @@ int GetFileSize(TCHAR* FilePath)
 	return (int)ExistingFileSize.QuadPart;
 }
 
-BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
+bool CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
     PROCESS_INFORMATION* pi = (PROCESS_INFORMATION*)lParam;
 
@@ -51,19 +51,19 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
     GetWindowThreadProcessId(hWnd, &lpdwProcessId);
     if (pi->dwProcessId == lpdwProcessId) {
         PostMessage(hWnd, WM_CLOSE, 0, 0);
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
 
 void StartProcesses()
 {
-	TCHAR Buf[256];
-	TCHAR CmdLine[512];
+	wchar_t Buf[256];
+	wchar_t CmdLine[512];
 	GetModuleFileName(NULL, Buf, 255);
-	LPTSTR Addr = StrStr(Buf, _T("\\stkwebappcmd.exe"));
-	lstrcpy(Addr, _T(""));
-	TCHAR SystemDir[MAX_PATH];
+	LPTSTR Addr = StrStr(Buf, L"\\stkwebappcmd.exe");
+	lstrcpy(Addr, L"");
+	wchar_t SystemDir[MAX_PATH];
 	GetSystemDirectory(SystemDir, MAX_PATH);
 
 	SetCurrentDirectory(Buf);
@@ -72,44 +72,44 @@ void StartProcesses()
 	PROCESS_INFORMATION pi_wapp;
 	ZeroMemory(&si_wapp, sizeof(si_wapp));
 	si_wapp.cb = sizeof(si_wapp);
-	wsprintf(CmdLine, _T("%s\\stkwebapp.exe"), Buf);
-	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_wapp, &pi_wapp);
+	wsprintf(CmdLine, L"%s\\stkwebapp.exe", Buf);
+	CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_wapp, &pi_wapp);
 
 	STARTUPINFO si_nginx;
 	PROCESS_INFORMATION pi_nginx;
 	ZeroMemory(&si_nginx, sizeof(si_nginx));
 	si_nginx.cb = sizeof(si_nginx);
-	wsprintf(CmdLine, _T("\"%s\\nginx.exe\""), Buf); /* instead of  [cmd.exe /c "start \nginx.exe"] */
-	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginx);
+	wsprintf(CmdLine, L"\"%s\\nginx.exe\"", Buf); /* instead of  [cmd.exe /c "start \nginx.exe"] */
+	CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginx);
 }
 
 void StopProcesses()
 {
 	/***** Set current directory *****/
-	TCHAR Buf[256];
-	TCHAR CmdLine[512];
+	wchar_t Buf[256];
+	wchar_t CmdLine[512];
 	GetModuleFileName(NULL, Buf, 255);
-	LPTSTR Addr = StrStr(Buf, _T("\\stkwebappcmd.exe"));
-	lstrcpy(Addr, _T(""));
+	LPTSTR Addr = StrStr(Buf, L"\\stkwebappcmd.exe");
+	lstrcpy(Addr, L"");
 	SetCurrentDirectory(Buf);
 
 	/***** Stop StkWebApp *****/
 	char IpAddrTmp[256] = "127.0.0.1";
-	TCHAR IpAddr[256] = _T("127.0.0.1");
+	wchar_t IpAddr[256] = L"127.0.0.1";
 	int Port = 8081;
 	StkProperties *Prop = new StkProperties();
-	if (Prop->GetProperties(_T("stkwebapp.conf")) == 0) {
+	if (Prop->GetProperties(L"stkwebapp.conf") == 0) {
 		Prop->GetPropertyStr("servicehost", IpAddrTmp);
-		wsprintf(IpAddr, _T("%S"), IpAddrTmp);
+		wsprintf(IpAddr, L"%S", IpAddrTmp);
 		Prop->GetPropertyInt("serviceport", &Port);
 	}
 	StkSocket_AddInfo(1, SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, IpAddr, Port);
 	if (StkSocket_Connect(1) == 0) {
 		char SendDat[1024];
 		char Dat[256] = "{ \"Operation\" : \"Stop\" }";
-		BYTE RecvDat[1024];
+		unsigned char RecvDat[1024];
 		sprintf_s(SendDat, 1024, "POST /service/ HTTP/1.1\nContent-Length: %d\nContent-Type: application/json\n\n%s", strlen(Dat), Dat);
-		StkSocket_Send(1, 1, (BYTE*)SendDat, strlen((char*)SendDat));
+		StkSocket_Send(1, 1, (unsigned char*)SendDat, strlen((char*)SendDat));
 		int RetR;
 		for (int Loop = 0; Loop < 10; Loop++) {
 			RetR = StkSocket_Receive(1, 1, RecvDat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1);
@@ -117,7 +117,7 @@ void StopProcesses()
 				break;
 			}
 		}
-		StkSocket_Disconnect(1, 1, TRUE);
+		StkSocket_Disconnect(1, 1, true);
 	}
 	StkSocket_DeleteInfo(1);
 
@@ -126,8 +126,8 @@ void StopProcesses()
 	STARTUPINFO si_nginx;
 	ZeroMemory(&si_nginx, sizeof(si_nginx));
 	si_nginx.cb = sizeof(si_nginx);
-	wsprintf(CmdLine, _T("\"%s\\nginx.exe\" -s stop"), Buf);
-	CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginxstop);
+	wsprintf(CmdLine, L"\"%s\\nginx.exe\" -s stop", Buf);
+	CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginxstop);
 }
 
 DWORD WINAPI HandlerEx (DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext)
@@ -156,7 +156,7 @@ DWORD WINAPI HandlerEx (DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, 
 		// SERVICE SPECIFIC STOPPING CODE HERE.
 		// ...
 		// ...
-		g_bService = FALSE;
+		g_bService = false;
 		Sleep(2 * 1000);
 
 		// Set STOPPED status.
@@ -179,7 +179,7 @@ DWORD WINAPI HandlerEx (DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, 
 		// APPLICATION SPECIFIC PAUSE_PENDING CODE HERE.
 		// ...
 		// ...
-		g_bRun = FALSE;
+		g_bRun = false;
 		Sleep(2 * 1000);
 
 		// Set PAUSE_PENDING status.
@@ -206,7 +206,7 @@ DWORD WINAPI HandlerEx (DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, 
 		// APPLICATION SPECIFIC START_PENDING CODE HERE.
 		// ...
 		// ...
-		g_bRun = TRUE;
+		g_bRun = true;
 		Sleep(2 * 1000);
 
 		// Set RUNNING status.
@@ -284,15 +284,15 @@ int main(int argc, char* argv[])
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 
-	TCHAR ThisCmdPath[256];
+	wchar_t ThisCmdPath[256];
 	GetModuleFileName(NULL, ThisCmdPath, 255);
 
-	TCHAR WorkPath[256];
+	wchar_t WorkPath[256];
 	lstrcpy(WorkPath, ThisCmdPath);
-	LPTSTR Addr = StrStr(WorkPath, _T("\\stkwebappcmd.exe"));
-	lstrcpy(Addr, _T(""));
+	LPTSTR Addr = StrStr(WorkPath, L"\\stkwebappcmd.exe");
+	lstrcpy(Addr, L"");
 
-	TCHAR SystemDir[MAX_PATH];
+	wchar_t SystemDir[MAX_PATH];
 	GetSystemDirectory(SystemDir, MAX_PATH);
 
 	/////////////////////////////////////////////////////////////
@@ -300,7 +300,7 @@ int main(int argc, char* argv[])
 	/////////////////////////////////////////////////////////////
 
 	if (argc == 1) {
-		BOOL bRet = StartServiceCtrlDispatcher(ServiceTable);
+		bool bRet = StartServiceCtrlDispatcher(ServiceTable);
 		printf("StkWebAppCmd (Service command for StkWebApp)\r\n");
 		printf("Sepcify 'help' for the command usage\r\n");
 		return 0;
@@ -326,31 +326,31 @@ int main(int argc, char* argv[])
 	}
 	if (argc >= 3) {
 		for (int Loop = 2; Loop < argc; Loop++) {
-			TCHAR TargetParam[64] = _T("");
-			wsprintf(TargetParam, _T("%S"), argv[Loop]);
-			TCHAR TmpFetchedParam[64] = _T("");
-			if (StkStringParser::ParseInto1Param(TargetParam, _T("ProductName=$"), _T('$'), TmpFetchedParam) != 1 &&
-				StkStringParser::ParseInto1Param(TargetParam, _T("SrvHost=$"), _T('$'), TmpFetchedParam) != 1 &&
-				StkStringParser::ParseInto1Param(TargetParam, _T("SrvPort=$"), _T('$'), TmpFetchedParam) != 1 &&
-				StkStringParser::ParseInto1Param(TargetParam, _T("WebHost=$"), _T('$'), TmpFetchedParam) != 1 &&
-				StkStringParser::ParseInto1Param(TargetParam, _T("WebPort=$"), _T('$'), TmpFetchedParam) != 1) {
+			wchar_t TargetParam[64] = L"";
+			wsprintf(TargetParam, L"%S", argv[Loop]);
+			wchar_t TmpFetchedParam[64] = L"";
+			if (StkStringParser::ParseInto1Param(TargetParam, L"ProductName=$", L'$', TmpFetchedParam) != 1 &&
+				StkStringParser::ParseInto1Param(TargetParam, L"SrvHost=$", L'$', TmpFetchedParam) != 1 &&
+				StkStringParser::ParseInto1Param(TargetParam, L"SrvPort=$", L'$', TmpFetchedParam) != 1 &&
+				StkStringParser::ParseInto1Param(TargetParam, L"WebHost=$", L'$', TmpFetchedParam) != 1 &&
+				StkStringParser::ParseInto1Param(TargetParam, L"WebPort=$", L'$', TmpFetchedParam) != 1) {
 				printf("Invalid option is specified. [%S]\r\n", TargetParam);
 				return 0;
 			}
 		}
 	}
 	{
-		TCHAR TargetFile[9][MAX_PATH];
+		wchar_t TargetFile[9][MAX_PATH];
 
-		wsprintf(TargetFile[0], _T("%s\\icacls.exe"), SystemDir);
-		wsprintf(TargetFile[1], _T("%s\\netsh.exe"), SystemDir);
-		wsprintf(TargetFile[2], _T("%s\\sc.exe"), SystemDir);
-		wsprintf(TargetFile[3], _T("%s\\net.exe"), SystemDir);
-		wsprintf(TargetFile[4], _T("%s\\conf\\nginx.conf"), WorkPath);
-		wsprintf(TargetFile[5], _T("%s\\stkwebapp.conf"), WorkPath);
-		wsprintf(TargetFile[6], _T("%s\\stkwebapp.dat"), WorkPath);
-		wsprintf(TargetFile[7], _T("%s\\nginx.exe"), WorkPath);
-		wsprintf(TargetFile[8], _T("%s\\stkwebapp.exe"), WorkPath);
+		wsprintf(TargetFile[0], L"%s\\icacls.exe", SystemDir);
+		wsprintf(TargetFile[1], L"%s\\netsh.exe", SystemDir);
+		wsprintf(TargetFile[2], L"%s\\sc.exe", SystemDir);
+		wsprintf(TargetFile[3], L"%s\\net.exe", SystemDir);
+		wsprintf(TargetFile[4], L"%s\\conf\\nginx.conf", WorkPath);
+		wsprintf(TargetFile[5], L"%s\\stkwebapp.conf", WorkPath);
+		wsprintf(TargetFile[6], L"%s\\stkwebapp.dat", WorkPath);
+		wsprintf(TargetFile[7], L"%s\\nginx.exe", WorkPath);
+		wsprintf(TargetFile[8], L"%s\\stkwebapp.exe", WorkPath);
 
 		for (int Loop = 0; Loop < 9; Loop++) {
 			if (GetFileSize(TargetFile[Loop]) == -1) {
@@ -392,30 +392,30 @@ int main(int argc, char* argv[])
 	// Fetch the parameters          //
 	///////////////////////////////////
 
-	TCHAR ProductName[16] = _T("DummyName");
-	TCHAR SrvHost[64] = _T("127.0.0.1");
-	TCHAR SrvPort[8] = _T("8081");
-	TCHAR WebHost[64] = _T("localhost");
-	TCHAR WebPort[8] = _T("80");
+	wchar_t ProductName[16] = L"DummyName";
+	wchar_t SrvHost[64] = L"127.0.0.1";
+	wchar_t SrvPort[8] = L"8081";
+	wchar_t WebHost[64] = L"localhost";
+	wchar_t WebPort[8] = L"80";
 
 	if (argc >= 3) {
 		for (int Loop = 2; Loop < argc; Loop++) {
-			TCHAR TargetParam[64] = _T("");
-			wsprintf(TargetParam, _T("%S"), argv[Loop]);
-			TCHAR TmpFetchedParam[64] = _T("");
-			if (StkStringParser::ParseInto1Param(TargetParam, _T("ProductName=$"), _T('$'), TmpFetchedParam) == 1) {
+			wchar_t TargetParam[64] = L"";
+			wsprintf(TargetParam, L"%S", argv[Loop]);
+			wchar_t TmpFetchedParam[64] = L"";
+			if (StkStringParser::ParseInto1Param(TargetParam, L"ProductName=$", L'$', TmpFetchedParam) == 1) {
 				lstrcpy(ProductName, TmpFetchedParam);
 			}
-			if (StkStringParser::ParseInto1Param(TargetParam, _T("SrvHost=$"), _T('$'), TmpFetchedParam) == 1) {
+			if (StkStringParser::ParseInto1Param(TargetParam, L"SrvHost=$", L'$', TmpFetchedParam) == 1) {
 				lstrcpy(SrvHost, TmpFetchedParam);
 			}
-			if (StkStringParser::ParseInto1Param(TargetParam, _T("SrvPort=$"), _T('$'), TmpFetchedParam) == 1) {
+			if (StkStringParser::ParseInto1Param(TargetParam, L"SrvPort=$", L'$', TmpFetchedParam) == 1) {
 				lstrcpy(SrvPort, TmpFetchedParam);
 			}
-			if (StkStringParser::ParseInto1Param(TargetParam, _T("WebHost=$"), _T('$'), TmpFetchedParam) == 1) {
+			if (StkStringParser::ParseInto1Param(TargetParam, L"WebHost=$", L'$', TmpFetchedParam) == 1) {
 				lstrcpy(WebHost, TmpFetchedParam);
 			}
-			if (StkStringParser::ParseInto1Param(TargetParam, _T("WebPort=$"), _T('$'), TmpFetchedParam) == 1) {
+			if (StkStringParser::ParseInto1Param(TargetParam, L"WebPort=$", L'$', TmpFetchedParam) == 1) {
 				lstrcpy(WebPort, TmpFetchedParam);
 			}
 		}
@@ -425,56 +425,56 @@ int main(int argc, char* argv[])
 	// Commands for installation     //
 	///////////////////////////////////
 
-	BOOL InstFlag = FALSE;
+	bool InstFlag = false;
 	if (strcmp(argv[1], "inst") == 0) {
-		TCHAR Buf[512];
-		wsprintf(Buf, _T("%s\\stkwebapp.conf"), WorkPath);
+		wchar_t Buf[512];
+		wsprintf(Buf, L"%s\\stkwebapp.conf", WorkPath);
 		if (GetFileSize(Buf) > 0) {
 			printf("Program has already been installed.\r\n");
 			return 0;
 		} else {
-			InstFlag = TRUE;
+			InstFlag = true;
 		}
 	}
-	if (strcmp(argv[1], "modperm") == 0 || InstFlag == TRUE) {
+	if (strcmp(argv[1], "modperm") == 0 || InstFlag == true) {
 		// Modify permissions
 		printf("Modify permissions...\r\n");
-		TCHAR CmdLineForIcacls[512];
+		wchar_t CmdLineForIcacls[512];
 
 		// Grant modify permission to nginx.conf
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		wsprintf(CmdLineForIcacls, _T("\"%s\\icacls.exe\" \"%s\\conf\\nginx.conf\" /grant Users:M"), SystemDir, WorkPath);
+		wsprintf(CmdLineForIcacls, L"\"%s\\icacls.exe\" \"%s\\conf\\nginx.conf\" /grant Users:M", SystemDir, WorkPath);
 		printf("%S\r\n", CmdLineForIcacls);
-		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 
 		// Grant modify permission to stkwebapp.conf
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		wsprintf(CmdLineForIcacls, _T("\"%s\\icacls.exe\" \"%s\\stkwebapp.conf\" /grant Users:M"), SystemDir, WorkPath);
+		wsprintf(CmdLineForIcacls, L"\"%s\\icacls.exe\" \"%s\\stkwebapp.conf\" /grant Users:M", SystemDir, WorkPath);
 		printf("%S\r\n", CmdLineForIcacls);
-		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 
 		// Grant modify permission to stkwebapp.dat
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		wsprintf(CmdLineForIcacls, _T("\"%s\\icacls.exe\" \"%s\\stkwebapp.dat\" /grant Users:M"), SystemDir, WorkPath);
+		wsprintf(CmdLineForIcacls, L"\"%s\\icacls.exe\" \"%s\\stkwebapp.dat\" /grant Users:M", SystemDir, WorkPath);
 		printf("%S\r\n", CmdLineForIcacls);
-		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 	}
-	if (strcmp(argv[1], "modconfig") == 0 || InstFlag == TRUE) {
+	if (strcmp(argv[1], "modconfig") == 0 || InstFlag == true) {
 		// Modify config files
 		printf("Modify config files...\r\n");
 		HANDLE FileHndl;
 
-		TCHAR NginxConfPath[MAX_PATH];
-		swprintf(NginxConfPath, MAX_PATH, _T("%s\\conf\\nginx.conf"), WorkPath);
+		wchar_t NginxConfPath[MAX_PATH];
+		swprintf(NginxConfPath, MAX_PATH, L"%s\\conf\\nginx.conf", WorkPath);
 		FileHndl = CreateFile(NginxConfPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (FileHndl != INVALID_HANDLE_VALUE) {
 			char ConfStr1[4096] = "worker_processes 1;\r\nevents {\r\n  worker_connections 1024;\r\n}\r\n";
@@ -491,8 +491,8 @@ int main(int argc, char* argv[])
 			CloseHandle(FileHndl);
 		};
 
-		TCHAR StkWebAppConfPath[MAX_PATH];
-		swprintf(StkWebAppConfPath, MAX_PATH, _T("%s\\stkwebapp.conf"), WorkPath);
+		wchar_t StkWebAppConfPath[MAX_PATH];
+		swprintf(StkWebAppConfPath, MAX_PATH, L"%s\\stkwebapp.conf", WorkPath);
 		FileHndl = CreateFile(StkWebAppConfPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (FileHndl != INVALID_HANDLE_VALUE) {
 			char ConfStr1[4096];
@@ -502,39 +502,39 @@ int main(int argc, char* argv[])
 			CloseHandle(FileHndl);
 		};
 	}
-	if (strcmp(argv[1], "fwadd") == 0 || InstFlag == TRUE) {
+	if (strcmp(argv[1], "fwadd") == 0 || InstFlag == true) {
 		// Add firewall exception
 		printf("Add firewall exception...\r\n");
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		TCHAR CmdLine[512];
-		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" advfirewall firewall add rule name=\"%s\" dir=in program=\"%s\\nginx.exe\" action=allow"), SystemDir, ProductName, WorkPath);
+		wchar_t CmdLine[512];
+		wsprintf(CmdLine, L"\"%s\\netsh.exe\" advfirewall firewall add rule name=\"%s\" dir=in program=\"%s\\nginx.exe\" action=allow", SystemDir, ProductName, WorkPath);
 		printf("%S\r\n", CmdLine);
-		CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 	}
-	if (strcmp(argv[1], "srvadd") == 0 || InstFlag == TRUE) {
+	if (strcmp(argv[1], "srvadd") == 0 || InstFlag == true) {
 		// Add service
 		printf("Add service...\r\n");
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		TCHAR CmdLineForService[512];
-		wsprintf(CmdLineForService, _T("\"%s\\sc.exe\" create %s binPath= \"%s\" start= auto displayname= \"%s\""), SystemDir, ProductName, ThisCmdPath, ProductName);
+		wchar_t CmdLineForService[512];
+		wsprintf(CmdLineForService, L"\"%s\\sc.exe\" create %s binPath= \"%s\" start= auto displayname= \"%s\"", SystemDir, ProductName, ThisCmdPath, ProductName);
 		printf("%S\r\n", CmdLineForService);
-		CreateProcess(NULL, CmdLineForService, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, CmdLineForService, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 	}
-	if (strcmp(argv[1], "start") == 0 || InstFlag == TRUE) {
+	if (strcmp(argv[1], "start") == 0 || InstFlag == true) {
 		// Start service
 		printf("Start service...\r\n");
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		TCHAR CmdLineForNet[512];
-		wsprintf(CmdLineForNet, _T("\"%s\\net.exe\" start %s"), SystemDir, ProductName);
+		wchar_t CmdLineForNet[512];
+		wsprintf(CmdLineForNet, L"\"%s\\net.exe\" start %s", SystemDir, ProductName);
 		printf("%S\r\n", CmdLineForNet);
-		CreateProcess(NULL, CmdLineForNet, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, CmdLineForNet, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 	}
@@ -543,43 +543,43 @@ int main(int argc, char* argv[])
 	// Commands for uninstallation   //
 	///////////////////////////////////
 
-	BOOL UninstFlag = FALSE;
+	bool UninstFlag = false;
 	if (strcmp(argv[1], "uninst") == 0) {
-		UninstFlag = TRUE;
+		UninstFlag = true;
 	}
-	if (strcmp(argv[1], "stop") == 0 || UninstFlag == TRUE) {
+	if (strcmp(argv[1], "stop") == 0 || UninstFlag == true) {
 		// Stop service
 		printf("Stop service...\r\n");
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		TCHAR CmdLineForNet[512];
-		wsprintf(CmdLineForNet, _T("\"%s\\net.exe\" stop %s"), SystemDir, ProductName);
+		wchar_t CmdLineForNet[512];
+		wsprintf(CmdLineForNet, L"\"%s\\net.exe\" stop %s", SystemDir, ProductName);
 		printf("%S\r\n", CmdLineForNet);
-		CreateProcess(NULL, CmdLineForNet, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, CmdLineForNet, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 	}
-	if (strcmp(argv[1], "srvdel") == 0 || UninstFlag == TRUE) {
+	if (strcmp(argv[1], "srvdel") == 0 || UninstFlag == true) {
 		// Delete service
 		printf("Delete service...\r\n");
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		TCHAR CmdLineForService[512];
-		wsprintf(CmdLineForService, _T("\"%s\\sc.exe\" delete %s"), SystemDir, ProductName);
+		wchar_t CmdLineForService[512];
+		wsprintf(CmdLineForService, L"\"%s\\sc.exe\" delete %s", SystemDir, ProductName);
 		printf("%S\r\n", CmdLineForService);
-		CreateProcess(NULL, CmdLineForService, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, CmdLineForService, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 	}
-	if (strcmp(argv[1], "fwdel") == 0 || UninstFlag == TRUE) {
+	if (strcmp(argv[1], "fwdel") == 0 || UninstFlag == true) {
 		// Delete firewall exception
 		printf("Delete firewall exception...\r\n");
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		TCHAR CmdLine[512];
-		wsprintf(CmdLine, _T("\"%s\\netsh.exe\" advfirewall firewall delete rule name=\"%s\""), SystemDir, ProductName);
+		wchar_t CmdLine[512];
+		wsprintf(CmdLine, L"\"%s\\netsh.exe\" advfirewall firewall delete rule name=\"%s\"", SystemDir, ProductName);
 		printf("%S\r\n", CmdLine);
-		CreateProcess(NULL, CmdLine, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 	}

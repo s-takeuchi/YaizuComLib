@@ -4,25 +4,25 @@
 #include "..\..\src\commonfunc\StkStringParser.h"
 #include "StkWebAppTest5.h"
 
-StkObject* StkWebAppTest5::Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, TCHAR Locale[3])
+StkObject* StkWebAppTest5::Execute(StkObject* ReqObj, int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, wchar_t Locale[3])
 {
 	StkObject* RetObj = NULL;
-	if (StrStr(UrlPath, _T("/bigdata/")) != NULL) {
-		RetObj = new StkObject(_T("BigData"));
+	if (StrStr(UrlPath, L"/bigdata/") != NULL) {
+		RetObj = new StkObject(L"BigData");
 		for (int Loop = 0; Loop < 150; Loop++) {
-			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), _T("Hello, world!!")));
+			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), L"Hello, world!!"));
 		}
 	}
-	if (StrStr(UrlPath, _T("/middledata/")) != NULL) {
-		RetObj = new StkObject(_T("MiddleData"));
+	if (StrStr(UrlPath, L"/middledata/") != NULL) {
+		RetObj = new StkObject(L"MiddleData");
 		for (int Loop = 0; Loop < 90; Loop++) {
-			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), _T("Hello, world!!")));
+			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), L"Hello, world!!"));
 		}
 	}
-	if (StrStr(UrlPath, _T("/smalldata/")) != NULL) {
+	if (StrStr(UrlPath, L"/smalldata/") != NULL) {
 		RetObj = new StkObject(_T("SmallData"));
 		for (int Loop = 0; Loop < 50; Loop++) {
-			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), _T("Hello, world!!")));
+			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), L"Hello, world!!"));
 		}
 	}
 	return RetObj;

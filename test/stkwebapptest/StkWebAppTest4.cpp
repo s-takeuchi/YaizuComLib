@@ -3,10 +3,10 @@
 #include "..\..\src\commonfunc\StkStringParser.h"
 #include "StkWebAppTest4.h"
 
-StkObject* StkWebAppTest4::Execute(StkObject* ReqObj, int Method, TCHAR UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, TCHAR Locale[3])
+StkObject* StkWebAppTest4::Execute(StkObject* ReqObj, int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, wchar_t Locale[3])
 {
-	TCHAR Buf[10];
-	StkStringParser::ParseInto1Param(UrlPath, _T("/aaa/$/"), _T('$'), Buf, 10);
+	wchar_t Buf[10];
+	StkStringParser::ParseInto1Param(UrlPath, L"/aaa/$/", L'$', Buf, 10);
 	*ResultCode = _wtoi(Buf);
 	return NULL;
 }
