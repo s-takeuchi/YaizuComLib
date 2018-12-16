@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
@@ -6,7 +6,7 @@
 
 int AutoSaveTest()
 {
-	printf("AutoSave(ŠÔŠu=30•b, o—Í=AutoSave.std)‚ğŠJn‚·‚é");
+	printf("AutoSave(é–“éš”=30ç§’, å‡ºåŠ›=AutoSave.std)ã‚’é–‹å§‹ã™ã‚‹");
 	if (AutoSave(L"AutoSave.std", 30, true) != 0) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -16,7 +16,7 @@ int AutoSaveTest()
 
 	for (int Loop = 0; Loop < 30; Loop++) {
 		if (Loop == 5) {
-			printf("AutoSave(30•bŠÔŠu)ŠJnŒã50•bŒã‚ÉPersonƒe[ƒuƒ‹‚ğì¬‚·‚é");
+			printf("AutoSave(30ç§’é–“éš”)é–‹å§‹å¾Œ50ç§’å¾Œã«Personãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ä½œæˆã™ã‚‹");
 			ColumnDefWStr ColDefName(L"Name", 50);
 			ColumnDefInt ColDefAge(L"Age");
 			TableDef TabDefPerson(L"Person", 16383);
@@ -31,7 +31,7 @@ int AutoSaveTest()
 
 
 		if (Loop == 10) {
-			printf("AutoSave(30•bŠÔŠu)ŠJnŒã100•bŒã‚ÉShinya Takeuchi, 35‚ğInsertRecord‚Å’Ç‰Á‚·‚é");
+			printf("AutoSave(30ç§’é–“éš”)é–‹å§‹å¾Œ100ç§’å¾Œã«Shinya Takeuchi, 35ã‚’InsertRecordã§è¿½åŠ ã™ã‚‹");
 			ColumnData* ColDat[2];
 			ColDat[0] = new ColumnDataWStr(L"Name", L"Shinya Takeuchi");
 			ColDat[1] = new ColumnDataInt(L"Age", 35);
@@ -50,7 +50,7 @@ int AutoSaveTest()
 
 
 		if (Loop == 11) {
-			printf("AutoSave(30•bŠÔŠu)ŠJnŒã110•bŒã‚ÉAkemi Tsunemi, 38‚ğInsertRecord‚Å’Ç‰Á‚·‚é");
+			printf("AutoSave(30ç§’é–“éš”)é–‹å§‹å¾Œ110ç§’å¾Œã«Akemi Tsunemi, 38ã‚’InsertRecordã§è¿½åŠ ã™ã‚‹");
 			ColumnData* ColDat[2];
 			ColDat[0] = new ColumnDataWStr(L"Name", L"Akemi Tsunemi");
 			ColDat[1] = new ColumnDataInt(L"Age", 38);
@@ -69,7 +69,7 @@ int AutoSaveTest()
 
 
 		if (Loop == 15) {
-			printf("AutoSave(30•bŠÔŠu)ŠJnŒã150•bŒã‚ÉJoe Satriani, 50‚ğInsertRecord‚Å’Ç‰Á‚·‚é");
+			printf("AutoSave(30ç§’é–“éš”)é–‹å§‹å¾Œ150ç§’å¾Œã«Joe Satriani, 50ã‚’InsertRecordã§è¿½åŠ ã™ã‚‹");
 			ColumnData* ColDat[2];
 			ColDat[0] = new ColumnDataWStr(L"Name", L"Joe Satriani");
 			ColDat[1] = new ColumnDataInt(L"Age", 50);
@@ -88,7 +88,7 @@ int AutoSaveTest()
 
 
 		if (Loop == 20) {
-			printf("AutoSave(30•bŠÔŠu)ŠJnŒã200•bŒã‚ÉAutoSave‚ğ’â~‚·‚é");
+			printf("AutoSave(30ç§’é–“éš”)é–‹å§‹å¾Œ200ç§’å¾Œã«AutoSaveã‚’åœæ­¢ã™ã‚‹");
 			if (AutoSave(L"AutoSave.std", 30, false) != 0) {
 				printf("...[NG]\r\n");
 				return -1;
@@ -97,7 +97,7 @@ int AutoSaveTest()
 		}
 
 		if (Loop == 21) {
-			printf("AutoSave’â~ŒãSteve Vail, 45‚ğInsertRecord‚Å’Ç‰Á‚·‚é");
+			printf("AutoSaveåœæ­¢å¾ŒSteve Vail, 45ã‚’InsertRecordã§è¿½åŠ ã™ã‚‹");
 			ColumnData* ColDat[2];
 			ColDat[0] = new ColumnDataWStr(L"Name", L"Steve Vai");
 			ColDat[1] = new ColumnDataInt(L"Age", 45);
@@ -117,7 +117,7 @@ int AutoSaveTest()
 		Sleep(10000);
 	}
 
-	printf("AutoSave‚Å•Û‘¶‚µ‚½ƒf[ƒ^(AutoSave.std)‚ğ“Ç‚İ‚İC3Œ‚ÌƒŒƒR[ƒh‚ª‘¶İ‚·‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("AutoSaveã§ä¿å­˜ã—ãŸãƒ‡ãƒ¼ã‚¿(AutoSave.std)ã‚’èª­ã¿è¾¼ã¿ï¼Œ3ä»¶ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ãŒå­˜åœ¨ã™ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	LockAllTable(LOCK_EXCLUSIVE);
 	if (LoadData(L"AutoSave.std") != 0) {
 		printf("...[NG]\r\n");

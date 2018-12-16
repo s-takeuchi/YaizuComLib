@@ -1,4 +1,4 @@
-#include "stkdata.h"
+﻿#include "stkdata.h"
 
 // Constructor
 ColumnDefFloat::ColumnDefFloat()

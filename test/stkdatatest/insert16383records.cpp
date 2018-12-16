@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <stdio.h>
 #include <shlwapi.h>
 #include "..\..\src\stkdata\stkdata.h"
@@ -7,7 +7,7 @@
 
 int Insert16383Records()
 {
-	printf("CreateTable‚ÅPersonƒe[ƒuƒ‹(Name:WStr(10), ID;Integer, Address:WStr(15), Key:Str(10), Height:Float) Max=16383 ‚ğ¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚é");
+	printf("CreateTableã§Personãƒ†ãƒ¼ãƒ–ãƒ«(Name:WStr(10), ID;Integer, Address:WStr(15), Key:Str(10), Height:Float) Max=16383 ã‚’ç”Ÿæˆã™ã‚‹ã“ã¨ãŒã§ãã‚‹");
 	ColumnDefWStr ColDefName(L"Name", 10);
 	ColumnDefInt ColDefAge(L"ID");
 	ColumnDefWStr ColDefAddr(L"Address", 15);
@@ -26,21 +26,21 @@ int Insert16383Records()
 	printf("...[OK]\r\n");
 
 
-	printf("Personƒe[ƒuƒ‹‚É‘Î‚µ‚ÄInsertRecord‚ğ16383‰ñŒJ‚è•Ô‚µC16383ŒÂ‚ÌƒŒƒR[ƒh‚ğ’Ç‰Á‚·‚é‚±‚Æ‚ª‚Å‚«‚é");
-	wchar_t Lname[10][5] = {	L"—é–Ø", L"–Ø‘º", L"R“c", L"“c’†", L"²X–Ø",
-							L"HR", L"‚‹´", L"’·’Jì", L"“n•Ó", L"ˆÉ“¡"
+	printf("Personãƒ†ãƒ¼ãƒ–ãƒ«ã«å¯¾ã—ã¦InsertRecordã‚’16383å›ç¹°ã‚Šè¿”ã—ï¼Œ16383å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ ã™ã‚‹ã“ã¨ãŒã§ãã‚‹");
+	wchar_t Lname[10][5] = {	L"éˆ´æœ¨", L"æœ¨æ‘", L"å±±ç”°", L"ç”°ä¸­", L"ä½ã€…æœ¨",
+							L"ç§‹å±±", L"é«˜æ©‹", L"é•·è°·å·", L"æ¸¡è¾º", L"ä¼Šè—¤"
 	};
-	wchar_t Fname[10][5] = {	L"˜al", L"–¾q", L"’B–ç", L"¡“úq", L"’q",
-							L"—R”ü", L"Œ’ˆê", L"ˆŸ”ü", L"‘ô–", L"—R‹I"
+	wchar_t Fname[10][5] = {	L"å’Œäºº", L"æ˜å­", L"é”ä¹Ÿ", L"ä»Šæ—¥å­", L"æ™º",
+							L"ç”±ç¾", L"å¥ä¸€", L"äºœç¾", L"ç¢ç£¨", L"ç”±ç´€"
 	};
-	wchar_t Pref[7][15] = {L"“Œ‹“s", L"_“ŞìŒ§", L"ˆïéŒ§", L"é‹ÊŒ§", L"ç—tŒ§", L"“È–ØŒ§", L"R—œ"};
+	wchar_t Pref[7][15] = {L"æ±äº¬éƒ½", L"ç¥å¥ˆå·çœŒ", L"èŒ¨åŸçœŒ", L"åŸ¼ç‰çœŒ", L"åƒè‘‰çœŒ", L"æ ƒæœ¨çœŒ", L"å±±æ¢¨"};
 	ColumnData *ColDat1[5];
 	RecordData *CurRecDat;
 	for (int i = 0; i < 16383; i++) {
 		wchar_t Name[10];
 		wsprintf(Name, L"%s %s", Lname[rand() % 10], Fname[rand() % 10]);
 		if (i % 5000 == 0) {
-			ColDat1[0] = new ColumnDataWStr(L"Name", L"’|“à L–ç");
+			ColDat1[0] = new ColumnDataWStr(L"Name", L"ç«¹å†… ä¼¸ä¹Ÿ");
 		} else {
 			ColDat1[0] = new ColumnDataWStr(L"Name", Name);
 		}
@@ -65,7 +65,7 @@ int Insert16383Records()
 
 
 	{
-		printf("ƒƒbƒN–³‚µ‚Åƒ\[ƒg(AzSortRecord(L\"Person\", L\"ID\")))‚ğs‚¤‚Æ-1‚ª•Ô‚é");
+		printf("ãƒ­ãƒƒã‚¯ç„¡ã—ã§ã‚½ãƒ¼ãƒˆ(AzSortRecord(L\"Person\", L\"ID\")))ã‚’è¡Œã†ã¨-1ãŒè¿”ã‚‹");
 		if (AzSortRecord(L"Person", L"ID") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -73,7 +73,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("ƒƒbƒN–³‚µ‚Åƒ\[ƒg(ZaSortRecord(L\"Person\", L\"ID\")))‚ğs‚¤‚Æ-1‚ª•Ô‚é");
+		printf("ãƒ­ãƒƒã‚¯ç„¡ã—ã§ã‚½ãƒ¼ãƒˆ(ZaSortRecord(L\"Person\", L\"ID\")))ã‚’è¡Œã†ã¨-1ãŒè¿”ã‚‹");
 		if (ZaSortRecord(L"Person", L"ID") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -81,7 +81,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("‹¤—LƒƒbƒNŒãƒ\[ƒg(AzSortRecord(L\"Person\", L\"ID\"))‚ğs‚¤‚Æ-1‚ª•Ô‚é");
+		printf("å…±æœ‰ãƒ­ãƒƒã‚¯å¾Œã‚½ãƒ¼ãƒˆ(AzSortRecord(L\"Person\", L\"ID\"))ã‚’è¡Œã†ã¨-1ãŒè¿”ã‚‹");
 		LockTable(L"Person", LOCK_SHARE);
 		if (AzSortRecord(L"Person", L"ID") != -1) {
 			UnlockTable(L"Person");
@@ -92,7 +92,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("‹¤—LƒƒbƒNŒãƒ\[ƒg(ZaSortRecord(L\"Person\", L\"ID\"))‚ğs‚¤‚Æ-1‚ª•Ô‚é");
+		printf("å…±æœ‰ãƒ­ãƒƒã‚¯å¾Œã‚½ãƒ¼ãƒˆ(ZaSortRecord(L\"Person\", L\"ID\"))ã‚’è¡Œã†ã¨-1ãŒè¿”ã‚‹");
 		LockTable(L"Person", LOCK_SHARE);
 		if (ZaSortRecord(L"Person", L"ID") != -1) {
 			UnlockTable(L"Person");
@@ -103,7 +103,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("”r‘¼ƒƒbƒNŒãƒ\[ƒg(AzSortRecord(L\"Person\", L\"ID\"))‚ğs‚¤‚Æ0‚ª•Ô‚é");
+		printf("æ’ä»–ãƒ­ãƒƒã‚¯å¾Œã‚½ãƒ¼ãƒˆ(AzSortRecord(L\"Person\", L\"ID\"))ã‚’è¡Œã†ã¨0ãŒè¿”ã‚‹");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (AzSortRecord(L"Person", L"ID") != 0) {
 			UnlockTable(L"Person");
@@ -114,7 +114,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("”r‘¼ƒƒbƒNŒãƒ\[ƒg(ZaSortRecord(\"Person\", L\"ID\"))‚ğs‚¤‚Æ0‚ª•Ô‚é");
+		printf("æ’ä»–ãƒ­ãƒƒã‚¯å¾Œã‚½ãƒ¼ãƒˆ(ZaSortRecord(\"Person\", L\"ID\"))ã‚’è¡Œã†ã¨0ãŒè¿”ã‚‹");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (ZaSortRecord(L"Person", L"ID") != 0) {
 			UnlockTable(L"Person");
@@ -127,7 +127,7 @@ int Insert16383Records()
 
 
 	{
-		printf("’Ç‰Á‚µ‚½16383ŒÂ‚ÌƒŒƒR[ƒh‚É‘Î‚µGetRecord(ƒe[ƒuƒ‹–¼w’è)‚Å˜AŒ‹‚µ‚½16383ŒÂ‚ÌƒŒƒR[ƒh‚ğæ“¾‚·‚é‚±‚Æ‚ª‚Å‚«‚é");
+		printf("è¿½åŠ ã—ãŸ16383å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã«å¯¾ã—GetRecord(ãƒ†ãƒ¼ãƒ–ãƒ«åæŒ‡å®š)ã§é€£çµã—ãŸ16383å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—ã™ã‚‹ã“ã¨ãŒã§ãã‚‹");
 		int Count = 0;
 		RecordData *RecDatGet;
 		LockTable(L"Person", 1);
@@ -147,7 +147,7 @@ int Insert16383Records()
 
 
 	{
-		printf("’Ç‰Á‚µ‚½16383ŒÂ‚ÌƒŒƒR[ƒh’†‚É‘¶İ‚·‚éName=\"–Ø‘º\"‚Ü‚½‚Í\"“c’†\"‚ğŠÜ‚İC1000 < ID < 2000  ‚ÌƒŒƒR[ƒh‚ğŒŸõ‚·‚é‚±‚Æ‚ª‚Å‚«‚é");
+		printf("è¿½åŠ ã—ãŸ16383å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ä¸­ã«å­˜åœ¨ã™ã‚‹Name=\"æœ¨æ‘\"ã¾ãŸã¯\"ç”°ä¸­\"ã‚’å«ã¿ï¼Œ1000 < ID < 2000  ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’æ¤œç´¢ã™ã‚‹ã“ã¨ãŒã§ãã‚‹");
 		bool Err = false;
 		int FndCnt = 0;
 		RecordData *RecDatGet;
@@ -155,12 +155,12 @@ int Insert16383Records()
 		RecordData* RecDatKim;
 		RecordData* RecDatTan;
 
-		ColDatTake[0] = new ColumnDataWStr(L"Name", L"–Ø‘º", COMP_CONTAIN);
+		ColDatTake[0] = new ColumnDataWStr(L"Name", L"æœ¨æ‘", COMP_CONTAIN);
 		ColDatTake[1] = new ColumnDataInt(L"ID", 1000, COMP_GT);
 		ColDatTake[2] = new ColumnDataInt(L"ID", 2000, COMP_LT);
 		RecDatKim = new RecordData(L"Person", &ColDatTake[0], 3);
 
-		ColDatTake[3] = new ColumnDataWStr(L"Name", L"“c’†", COMP_CONTAIN);
+		ColDatTake[3] = new ColumnDataWStr(L"Name", L"ç”°ä¸­", COMP_CONTAIN);
 		ColDatTake[4] = new ColumnDataInt(L"ID", 1000, COMP_GT);
 		ColDatTake[5] = new ColumnDataInt(L"ID", 2000, COMP_LT);
 		RecDatTan = new RecordData(L"Person", &ColDatTake[3], 3);
@@ -177,7 +177,7 @@ int Insert16383Records()
 		int NumOfFnd = 0;
 		for (RecordData* CurRecDat = RecDatGet; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
 			ColumnDataWStr* ColName = (ColumnDataWStr*)CurRecDat->GetColumn(L"Name");
-			if (StrStr(ColName->GetValue(), L"–Ø‘º") == NULL && StrStr(ColName->GetValue(), L"“c’†") == NULL ) {
+			if (StrStr(ColName->GetValue(), L"æœ¨æ‘") == NULL && StrStr(ColName->GetValue(), L"ç”°ä¸­") == NULL ) {
 				printf("...[NG]\r\n");
 				return -1;
 			}
@@ -195,12 +195,12 @@ int Insert16383Records()
 
 
 	{
-		printf("’Ç‰Á‚µ‚½16383ŒÂ‚ÌƒŒƒR[ƒh’†‚É‘¶İ‚·‚éName=\"’|“à L–ç\"‚ğŠÜ‚Ş4‚Â‚ÌƒŒƒR[ƒh‚ğGetRecord‚ÅŒŸõ&æ“¾‚·‚é‚±‚Æ‚ª‚Å‚«‚é");
+		printf("è¿½åŠ ã—ãŸ16383å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ä¸­ã«å­˜åœ¨ã™ã‚‹Name=\"ç«¹å†… ä¼¸ä¹Ÿ\"ã‚’å«ã‚€4ã¤ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecordã§æ¤œç´¢&å–å¾—ã™ã‚‹ã“ã¨ãŒã§ãã‚‹");
 		bool Err = false;
 		int FndCnt = 0;
 		RecordData *RecDatGet;
 		ColumnData *ColDatTake[1];
-		ColDatTake[0] = new ColumnDataWStr(L"Name", L"’|“à L–ç");
+		ColDatTake[0] = new ColumnDataWStr(L"Name", L"ç«¹å†… ä¼¸ä¹Ÿ");
 		RecordData RecDatTake(L"Person", ColDatTake, 1);
 		LockTable(L"Person", 1);
 		RecDatGet = GetRecord(&RecDatTake);
@@ -208,7 +208,7 @@ int Insert16383Records()
 		while (RecDatGet) {
 			ColumnDataWStr *ColDatName = (ColumnDataWStr*)(RecDatGet->GetColumn(0));
 			wchar_t *Name = ColDatName->GetValue();
-			if (lstrcmp(Name, L"’|“à L–ç") != 0) {
+			if (lstrcmp(Name, L"ç«¹å†… ä¼¸ä¹Ÿ") != 0) {
 				printf("...[NG]\r\n");
 				return -1;
 			}
@@ -224,10 +224,10 @@ int Insert16383Records()
 	}
 
 	{
-		printf("16383ŒÂ‚ÌƒŒƒR[ƒh’†‚É‘¶İ‚µ‚È‚¢ƒŒƒR[ƒh(Name = \"ƒWƒ‡[ƒW ƒuƒbƒVƒ…\")‚ğŒŸõğŒ‚Éw’è‚µ‚ÄGetRecordÀsŒãƒŒƒR[ƒh‚ªæ“¾‚Å‚«‚È‚¢");
+		printf("16383å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ä¸­ã«å­˜åœ¨ã—ãªã„ãƒ¬ã‚³ãƒ¼ãƒ‰(Name = \"ã‚¸ãƒ§ãƒ¼ã‚¸ ãƒ–ãƒƒã‚·ãƒ¥\")ã‚’æ¤œç´¢æ¡ä»¶ã«æŒ‡å®šã—ã¦GetRecordå®Ÿè¡Œå¾Œãƒ¬ã‚³ãƒ¼ãƒ‰ãŒå–å¾—ã§ããªã„");
 		RecordData *RecDatGet;
 		ColumnData *ColDat[1];
-		ColDat[0] = new ColumnDataWStr(L"Name", L"ƒWƒ‡[ƒW ƒuƒbƒVƒ…");
+		ColDat[0] = new ColumnDataWStr(L"Name", L"ã‚¸ãƒ§ãƒ¼ã‚¸ ãƒ–ãƒƒã‚·ãƒ¥");
 		RecordData RecDat(L"Person", ColDat, 1);
 		LockTable(L"Person", 1);
 		RecDatGet = GetRecord(&RecDat);
@@ -241,7 +241,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("GetNumOfRecords(\"Person\")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í16383Œ‚Æ‚È‚é");
+		printf("GetNumOfRecords(\"Person\")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯16383ä»¶ã¨ãªã‚‹");
 		if (GetNumOfRecords(L"Person") != 16383) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -250,7 +250,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("GetMaxNumOfRecords(\"Person\")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í16383Œ‚Æ‚È‚é");
+		printf("GetMaxNumOfRecords(\"Person\")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯16383ä»¶ã¨ãªã‚‹");
 		if (GetMaxNumOfRecords(L"Person") != 16383) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -259,7 +259,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("ƒe[ƒuƒ‹î•ñ‚ğ\"Insert16383records.std\"‚É•Û‘¶‚·‚éB");
+		printf("ãƒ†ãƒ¼ãƒ–ãƒ«æƒ…å ±ã‚’\"Insert16383records.std\"ã«ä¿å­˜ã™ã‚‹ã€‚");
 		LockAllTable(LOCK_SHARE);
 		if (SaveData(L"Insert16383records.std") != 0) {
 			printf("...[NG]\r\n");
@@ -271,9 +271,9 @@ int Insert16383Records()
 	}
 
 	{
-		printf("DeleteRecord(Person-Name=\"’|“à L–ç\")‚ğƒƒbƒN–³‚µ‚ÅÀs‚µ‚½ê‡C-1‚ª•Ô‹p‚³‚êCGetNumOfRecords(L\"Person\")‚Ì’l‚Í16383‚Ì‚Ü‚Ü‚Æ‚È‚é");
+		printf("DeleteRecord(Person-Name=\"ç«¹å†… ä¼¸ä¹Ÿ\")ã‚’ãƒ­ãƒƒã‚¯ç„¡ã—ã§å®Ÿè¡Œã—ãŸå ´åˆï¼Œ-1ãŒè¿”å´ã•ã‚Œï¼ŒGetNumOfRecords(L\"Person\")ã®å€¤ã¯16383ã®ã¾ã¾ã¨ãªã‚‹");
 		ColumnData* Col[1];
-		Col[0] = new ColumnDataWStr(L"Name", L"’|“à L–ç");
+		Col[0] = new ColumnDataWStr(L"Name", L"ç«¹å†… ä¼¸ä¹Ÿ");
 		RecordData* Rec = new RecordData(L"Person", Col, 1);
 		if (DeleteRecord(Rec) != -1) {
 			printf("...[NG]\r\n");
@@ -286,7 +286,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("DeleteRecord(Person-Name=\"’|“à L–ç\")‚ğ‹¤—LƒƒbƒN‚ÅÀs‚µ‚½ê‡C-1‚ª•Ô‹p‚³‚êCGetNumOfRecords(L\"Person\")‚Ì’l‚Í16383‚Ì‚Ü‚Ü‚Æ‚È‚é");
+		printf("DeleteRecord(Person-Name=\"ç«¹å†… ä¼¸ä¹Ÿ\")ã‚’å…±æœ‰ãƒ­ãƒƒã‚¯ã§å®Ÿè¡Œã—ãŸå ´åˆï¼Œ-1ãŒè¿”å´ã•ã‚Œï¼ŒGetNumOfRecords(L\"Person\")ã®å€¤ã¯16383ã®ã¾ã¾ã¨ãªã‚‹");
 		LockTable(L"Person", LOCK_SHARE);
 		if (DeleteRecord(Rec) != -1) {
 			printf("...[NG]\r\n");
@@ -300,7 +300,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("DeleteRecord(Person-Name=\"’|“à L–ç\")‚ğ”r‘¼ƒƒbƒN‚ÅÀs‚µ‚½ê‡C0‚ª•Ô‹p‚³‚êCGetNumOfRecords(L\"Person\")‚Ì’l‚Í16379‚Æ‚È‚é");
+		printf("DeleteRecord(Person-Name=\"ç«¹å†… ä¼¸ä¹Ÿ\")ã‚’æ’ä»–ãƒ­ãƒƒã‚¯ã§å®Ÿè¡Œã—ãŸå ´åˆï¼Œ0ãŒè¿”å´ã•ã‚Œï¼ŒGetNumOfRecords(L\"Person\")ã®å€¤ã¯16379ã¨ãªã‚‹");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (DeleteRecord(Rec) != 0) {
 			printf("...[NG]\r\n");
@@ -316,7 +316,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("DeleteRecord(L\"Person\"‚ğƒƒbƒN–³‚µ‚ÅÀs‚µ‚½ê‡C-1‚ª•Ô‹p‚³‚êCGetNumOfRecords(L\"Person\")‚Ì’l‚Í16379‚Ì‚Ü‚Ü‚Æ‚È‚é");
+		printf("DeleteRecord(L\"Person\"ã‚’ãƒ­ãƒƒã‚¯ç„¡ã—ã§å®Ÿè¡Œã—ãŸå ´åˆï¼Œ-1ãŒè¿”å´ã•ã‚Œï¼ŒGetNumOfRecords(L\"Person\")ã®å€¤ã¯16379ã®ã¾ã¾ã¨ãªã‚‹");
 		if (DeleteRecord(L"Person") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -328,7 +328,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("DeleteRecord(L\"Person\"‚ğ‹¤—LƒƒbƒN‚ÅÀs‚µ‚½ê‡C-1‚ª•Ô‹p‚³‚êCGetNumOfRecords(L\"Person\")‚Ì’l‚Í16379‚Ì‚Ü‚Ü‚Æ‚È‚é");
+		printf("DeleteRecord(L\"Person\"ã‚’å…±æœ‰ãƒ­ãƒƒã‚¯ã§å®Ÿè¡Œã—ãŸå ´åˆï¼Œ-1ãŒè¿”å´ã•ã‚Œï¼ŒGetNumOfRecords(L\"Person\")ã®å€¤ã¯16379ã®ã¾ã¾ã¨ãªã‚‹");
 		LockTable(L"Person", LOCK_SHARE);
 		if (DeleteRecord(L"Person") != -1) {
 			printf("...[NG]\r\n");
@@ -344,19 +344,19 @@ int Insert16383Records()
 
 
 	{
-		printf("16383ŒÂ‚ÌƒŒƒR[ƒh’†‚É‘¶İ‚·‚éName=\"—R‹I\"‚Ü‚½‚Í\"—R”ü\"‚ğŠÜ‚İC100 < ID < 500  ‚ÌƒŒƒR[ƒh‚ÌKeyƒJƒ‰ƒ€‚ğ\"Key exist\"‚É•ÏX‚·‚éB");
+		printf("16383å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ä¸­ã«å­˜åœ¨ã™ã‚‹Name=\"ç”±ç´€\"ã¾ãŸã¯\"ç”±ç¾\"ã‚’å«ã¿ï¼Œ100 < ID < 500  ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã®Keyã‚«ãƒ©ãƒ ã‚’\"Key exist\"ã«å¤‰æ›´ã™ã‚‹ã€‚");
 		RecordData *RecDatGet;
 		ColumnData *ColDat[7];
 		RecordData* RecDatSch1;
 		RecordData* RecDatSch2;
 		RecordData* RecDatUpd;
 
-		ColDat[0] = new ColumnDataWStr(L"Name", L"—R‹I", COMP_CONTAIN);
+		ColDat[0] = new ColumnDataWStr(L"Name", L"ç”±ç´€", COMP_CONTAIN);
 		ColDat[1] = new ColumnDataInt(L"ID", 100, COMP_GT);
 		ColDat[2] = new ColumnDataInt(L"ID", 500, COMP_LT);
 		RecDatSch1 = new RecordData(L"Person", &ColDat[0], 3);
 
-		ColDat[3] = new ColumnDataWStr(L"Name", L"—R”ü", COMP_CONTAIN);
+		ColDat[3] = new ColumnDataWStr(L"Name", L"ç”±ç¾", COMP_CONTAIN);
 		ColDat[4] = new ColumnDataInt(L"ID", 100, COMP_GT);
 		ColDat[5] = new ColumnDataInt(L"ID", 500, COMP_LT);
 		RecDatSch2 = new RecordData(L"Person", &ColDat[3], 3);
@@ -385,7 +385,7 @@ int Insert16383Records()
 			ColumnDataInt* ColId = (ColumnDataInt*)CurRecDat->GetColumn(L"ID");
 			ColumnDataStr* ColKey = (ColumnDataStr*)CurRecDat->GetColumn(L"Key");
 
-			if ((StrStr(ColName->GetValue(), L"—R‹I") != NULL || StrStr(ColName->GetValue(), L"—R”ü") != NULL) && ColId->GetValue() > 100 && ColId->GetValue() < 500) {
+			if ((StrStr(ColName->GetValue(), L"ç”±ç´€") != NULL || StrStr(ColName->GetValue(), L"ç”±ç¾") != NULL) && ColId->GetValue() > 100 && ColId->GetValue() < 500) {
 				if (strcmp(ColKey->GetValue(), "Key exist") != 0) {
 					printf("...[NG]\r\n");
 					return -1;
@@ -404,7 +404,7 @@ int Insert16383Records()
 		printf("(Key=%d, NoKey=%d)...[OK]\r\n", NumOfKey, NumOfNoKey);
 
 
-		printf("16383ŒÂ‚ÌƒŒƒR[ƒh’†‚É‘¶İ‚·‚éName=\"—R‹I\"‚Ü‚½‚Í\"—R”ü\"‚ğŠÜ‚İC100 < ID < 500  ‚ÌƒŒƒR[ƒh‚ğíœ‚·‚éB");
+		printf("16383å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ä¸­ã«å­˜åœ¨ã™ã‚‹Name=\"ç”±ç´€\"ã¾ãŸã¯\"ç”±ç¾\"ã‚’å«ã¿ï¼Œ100 < ID < 500  ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤ã™ã‚‹ã€‚");
 		if (GetNumOfRecords(L"Person") != 16379) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -426,7 +426,7 @@ int Insert16383Records()
 
 
 	{
-		printf("DeleteRecord(L\"Person\"‚ğ”r‘¼ƒƒbƒN‚ÅÀs‚µ‚½ê‡C0‚ª•Ô‹p‚³‚êCGetNumOfRecords(L\"Person\"))‚Ì’l‚Í0‚Æ‚È‚é");
+		printf("DeleteRecord(L\"Person\"ã‚’æ’ä»–ãƒ­ãƒƒã‚¯ã§å®Ÿè¡Œã—ãŸå ´åˆï¼Œ0ãŒè¿”å´ã•ã‚Œï¼ŒGetNumOfRecords(L\"Person\"))ã®å€¤ã¯0ã¨ãªã‚‹");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (DeleteRecord(L"Person") != 0) {
 			printf("...[NG]\r\n");
@@ -440,7 +440,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("Ä“xDeleteRecord(L\"Person\"‚ğ”r‘¼ƒƒbƒN‚ÅÀs‚µ‚½ê‡C‚à‚Í‚â‘ÎÛƒe[ƒuƒ‹‚ª‘¶İ‚µ‚È‚¢‚½‚ß-1‚ª•Ô‹p‚³‚ê‚é");
+		printf("å†åº¦DeleteRecord(L\"Person\"ã‚’æ’ä»–ãƒ­ãƒƒã‚¯ã§å®Ÿè¡Œã—ãŸå ´åˆï¼Œã‚‚ã¯ã‚„å¯¾è±¡ãƒ†ãƒ¼ãƒ–ãƒ«ãŒå­˜åœ¨ã—ãªã„ãŸã‚-1ãŒè¿”å´ã•ã‚Œã‚‹");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (DeleteRecord(L"Person") != 0) {
 			printf("...[NG]\r\n");
@@ -452,7 +452,7 @@ int Insert16383Records()
 
 
 	{
-		printf("DeleteTable(\"Person\")‚Åƒe[ƒuƒ‹‚ğíœ‚·‚é‚±‚Æ‚ª‚Å‚«‚é");
+		printf("DeleteTable(\"Person\")ã§ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’å‰Šé™¤ã™ã‚‹ã“ã¨ãŒã§ãã‚‹");
 		if (DeleteTable(L"Person") != 0) {
 			printf("...[NG]\r\n");
 			return -1;

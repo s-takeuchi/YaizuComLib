@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
@@ -6,8 +6,8 @@
 
 int BasicBinaryTest01()
 {
-	// 10ƒoƒCƒg‚ÌƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€‚ğŠÜ‚Şƒe[ƒuƒ‹"Bin-Test"‚ğCreateTable‚Å¶¬‚Å‚«‚é
-	printf("10ƒoƒCƒg‚ÌƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€‚ğŠÜ‚Şƒe[ƒuƒ‹\"Bin-Test\"‚ğCreateTable‚Å¶¬‚Å‚«‚é");
+	// 10ãƒã‚¤ãƒˆã®ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ã‚’å«ã‚€ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"ã‚’CreateTableã§ç”Ÿæˆã§ãã‚‹
+	printf("10ãƒã‚¤ãƒˆã®ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ã‚’å«ã‚€ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"ã‚’CreateTableã§ç”Ÿæˆã§ãã‚‹");
 	ColumnDefInt ColDefId(L"ID");
 	ColumnDefBin ColDefImg1(L"Img1", 10);
 	ColumnDefBin ColDefImg2(L"Img2", 10);
@@ -19,9 +19,9 @@ int BasicBinaryTest01()
 	CreateTable(&TabDefTest);
 	printf("...[OK]\r\n");
 
-	// ƒe[ƒuƒ‹"Bin-Test"‚ÉInsertRecord‚Å1ƒŒƒR[ƒh‚ğ’Ç‰Á
+	// ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"ã«InsertRecordã§1ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ 
 	{
-		printf("ƒe[ƒuƒ‹\"Bin-Test\"‚ÉInsertRecord‚Å1ƒŒƒR[ƒh‚ğ’Ç‰Á");
+		printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"ã«InsertRecordã§1ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ ");
 		ColumnData* ColDat[10];
 		RecordData* RecDat;
 		unsigned char one_img1[10] = {0x00, 0xFF, 0x01, 0x02, 0x03, 0x04, 0x05, 0x00, 0xFF, 0xFF};
@@ -37,9 +37,9 @@ int BasicBinaryTest01()
 		printf("...[OK]\r\n");
 	}
 
-	// ƒe[ƒuƒ‹"Bin-Test"‚ÉInsertRecord‚Å˜AŒ‹‚³‚ê‚½ƒŒƒR[ƒh‚RŒÂ‚ğ’Ç‰Á
+	// ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"ã«InsertRecordã§é€£çµã•ã‚ŒãŸãƒ¬ã‚³ãƒ¼ãƒ‰ï¼“å€‹ã‚’è¿½åŠ 
 	{
-		printf("ƒe[ƒuƒ‹\"Bin-Test\"‚ÉInsertRecord‚Å˜AŒ‹‚³‚ê‚½ƒŒƒR[ƒh‚RŒÂ‚ğ’Ç‰Á");
+		printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"ã«InsertRecordã§é€£çµã•ã‚ŒãŸãƒ¬ã‚³ãƒ¼ãƒ‰ï¼“å€‹ã‚’è¿½åŠ ");
 		ColumnData* ColDat1[10];
 		ColumnData* ColDat2[10];
 		ColumnData* ColDat3[10];
@@ -77,9 +77,9 @@ int BasicBinaryTest01()
 		printf("...[OK]\r\n");
 	}
 
-	// ƒe[ƒuƒ‹"Bin-Test"‚ÉInsertRecord‚Å1ƒŒƒR[ƒh‚ğ’Ç‰Á
+	// ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"ã«InsertRecordã§1ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ 
 	{
-		printf("ƒe[ƒuƒ‹\"Bin-Test\"‚ÉInsertRecord‚Å1ƒŒƒR[ƒh‚ğ’Ç‰Á");
+		printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"ã«InsertRecordã§1ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ ");
 		ColumnData* ColDat[10];
 		RecordData* RecDat;
 		unsigned char one_img1[10] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x00, 0x00, 0xFF};
@@ -98,10 +98,10 @@ int BasicBinaryTest01()
 	return 0;
 }
 
-// ƒe[ƒuƒ‹"Bin-Test"“à‚Ì‘S‚Ä‚ÌƒŒƒR[ƒh‚ğGetRecrd(L"Bin-Test")‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
+// ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®å…¨ã¦ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(L"Bin-Test")ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
 int BasicBinaryTest02()
 {
-	printf("ƒe[ƒuƒ‹\"Bin-Test\"“à‚Ì‘S‚Ä‚ÌƒŒƒR[ƒh‚ğGetRecrd(L\"Bin-Test\")‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"å†…ã®å…¨ã¦ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(L\"Bin-Test\")ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	RecordData* RecDat;
 	LockTable(L"Bin-Test", 1);
 	RecDat = GetRecord(L"Bin-Test");
@@ -153,10 +153,10 @@ int BasicBinaryTest02()
 	return 0;
 }
 
-// ƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img1:ƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
+// ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img1:ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
 int BasicBinaryTest04()
 {
-	printf("ƒe[ƒuƒ‹\"Bin-Test\"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img1:ƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img1:ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	ColumnData* ColDat[10];
 	RecordData* RecDat;
 	RecordData* GetRecDat;
@@ -191,10 +191,10 @@ int BasicBinaryTest04()
 	return 0;
 }
 
-// ƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(®”ƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
+// ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(æ•´æ•°ãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
 int BasicBinaryTest05()
 {
-	printf("ƒe[ƒuƒ‹\"Bin-Test\"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(®”ƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(æ•´æ•°ãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	ColumnData* ColDat[10];
 	RecordData* RecDat;
 	RecordData* GetRecDat;
@@ -228,10 +228,10 @@ int BasicBinaryTest05()
 	return 0;
 }
 
-// ƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img2:ƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
+// ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img2:ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
 int BasicBinaryTest06()
 {
-	printf("ƒe[ƒuƒ‹\"Bin-Test\"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img2:ƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img2:ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	ColumnData* ColDat[10];
 	RecordData* RecDat;
 	RecordData* GetRecDat;
@@ -267,10 +267,10 @@ int BasicBinaryTest06()
 	return 0;
 }
 
-// ƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img1, Img2:ƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
+// ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img1, Img2:ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
 int BasicBinaryTest07()
 {
-	printf("ƒe[ƒuƒ‹\"Bin-Test\"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img1, Img2:ƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img1, Img2:ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	ColumnData* ColDat[10];
 	RecordData* RecDat;
 	RecordData* GetRecDat;
@@ -300,10 +300,10 @@ int BasicBinaryTest07()
 	return 0;
 }
 
-// ƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img1, Img2:•¡”‚Ì˜AŒ‹‚³‚ê‚½ƒŒƒR[ƒh‚É‚æ‚éƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
+// ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img1, Img2:è¤‡æ•°ã®é€£çµã•ã‚ŒãŸãƒ¬ã‚³ãƒ¼ãƒ‰ã«ã‚ˆã‚‹ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
 int BasicBinaryTest08()
 {
-	printf("ƒe[ƒuƒ‹\"Bin-Test\"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img1, Img2:•¡”‚Ì˜AŒ‹‚³‚ê‚½ƒŒƒR[ƒh‚É‚æ‚éƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Bin-Test\"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img1, Img2:è¤‡æ•°ã®é€£çµã•ã‚ŒãŸãƒ¬ã‚³ãƒ¼ãƒ‰ã«ã‚ˆã‚‹ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	ColumnData* ColDat[10];
 	RecordData* RecDat1;
 	RecordData* RecDat2;
@@ -337,10 +337,10 @@ int BasicBinaryTest08()
 	return 0;
 }
 
-// 2‚Â‚Ì˜AŒ‹‚µ‚½ƒŒƒR[ƒh(ƒoƒCƒiƒŠƒf[ƒ^ƒJƒ‰ƒ€—L‚è)‚ğw’è‚µ‚ÄƒoƒCƒiƒŠƒf[ƒ^‚ğUpdateRecord‚ÅXV‚·‚é
+// 2ã¤ã®é€£çµã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰(ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚«ãƒ©ãƒ æœ‰ã‚Š)ã‚’æŒ‡å®šã—ã¦ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’UpdateRecordã§æ›´æ–°ã™ã‚‹
 int BasicBinaryTest09()
 {
-	printf("2‚Â‚Ì˜AŒ‹‚µ‚½ƒŒƒR[ƒh(ƒoƒCƒiƒŠƒf[ƒ^ƒJƒ‰ƒ€—L‚è)‚ğw’è‚µ‚ÄƒoƒCƒiƒŠƒf[ƒ^‚ğUpdateRecord‚ÅXV‚·‚é");
+	printf("2ã¤ã®é€£çµã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰(ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚«ãƒ©ãƒ æœ‰ã‚Š)ã‚’æŒ‡å®šã—ã¦ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’UpdateRecordã§æ›´æ–°ã™ã‚‹");
 	ColumnData* ColDat[10];
 	RecordData* RecDat1;
 	RecordData* RecDat2;
@@ -396,9 +396,9 @@ int BasicBinaryTest09()
 	}
 	printf("...[OK]\r\n");
 
-	// ƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€"Img2"‚ğw’è‚µ‚ÄƒŒƒR[ƒh‚ğ~‡ƒ\[ƒg¨“K³‚Éƒ\[ƒg‚³‚ê‚Ä‚¢‚é
+	// ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ "Img2"ã‚’æŒ‡å®šã—ã¦ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’é™é †ã‚½ãƒ¼ãƒˆâ†’é©æ­£ã«ã‚½ãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹
 	{
-		printf("ƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€\"Img2\"‚ğw’è‚µ‚ÄƒŒƒR[ƒh‚ğ~‡ƒ\[ƒg¨“K³‚Éƒ\[ƒg‚³‚ê‚Ä‚¢‚é");
+		printf("ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ \"Img2\"ã‚’æŒ‡å®šã—ã¦ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’é™é †ã‚½ãƒ¼ãƒˆâ†’é©æ­£ã«ã‚½ãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹");
 		LockTable(L"Bin-Test", LOCK_EXCLUSIVE);
 		if (ZaSortRecord(L"Bin-Test", L"Img2") != 0) {
 			printf("...[NG]\r\n");
@@ -417,9 +417,9 @@ int BasicBinaryTest09()
 		printf("...[OK]\r\n");
 	}
 
-	// Img1‚ªƒ\[ƒg‚ÅÅ¬‚Æ•]‰¿‚³‚ê‚éƒŒƒR[ƒh‚ğ’Ç‰ÁŒãCƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€"Img1"‚ğw’è‚µ‚ÄƒŒƒR[ƒh‚ğ¸‡ƒ\[ƒg‚·‚é¨“K³‚Éƒ\[ƒg‚³‚ê‚Ä‚¢‚é
+	// Img1ãŒã‚½ãƒ¼ãƒˆã§æœ€å°ã¨è©•ä¾¡ã•ã‚Œã‚‹ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ å¾Œï¼Œãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ "Img1"ã‚’æŒ‡å®šã—ã¦ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’æ˜‡é †ã‚½ãƒ¼ãƒˆã™ã‚‹â†’é©æ­£ã«ã‚½ãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹
 	{
-		printf("Img1‚ªƒ\[ƒg‚ÅÅ¬‚Æ•]‰¿‚³‚ê‚éƒŒƒR[ƒh‚ğ’Ç‰ÁŒãCƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€\"Img1\"‚ğw’è‚µ‚ÄƒŒƒR[ƒh‚ğ¸‡ƒ\[ƒg‚·‚é¨“K³‚Éƒ\[ƒg‚³‚ê‚Ä‚¢‚é");
+		printf("Img1ãŒã‚½ãƒ¼ãƒˆã§æœ€å°ã¨è©•ä¾¡ã•ã‚Œã‚‹ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ å¾Œï¼Œãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ \"Img1\"ã‚’æŒ‡å®šã—ã¦ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’æ˜‡é †ã‚½ãƒ¼ãƒˆã™ã‚‹â†’é©æ­£ã«ã‚½ãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹");
 		ColumnData* ColDat[10];
 		RecordData* RecDat;
 		unsigned char one_img1[10] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF};
@@ -451,8 +451,8 @@ int BasicBinaryTest09()
 		printf("...[OK]\r\n");
 	}
 
-	// ƒoƒCƒiƒŠƒf[ƒ^‚ğŒŸõğŒ‚É‚µ‚ÄƒŒƒR[ƒh‚ğíœ‚·‚é
-	printf("ƒoƒCƒiƒŠƒf[ƒ^‚ğŒŸõğŒ‚É‚µ‚ÄƒŒƒR[ƒh‚ğíœ‚·‚é");
+	// ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’æ¤œç´¢æ¡ä»¶ã«ã—ã¦ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤ã™ã‚‹
+	printf("ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’æ¤œç´¢æ¡ä»¶ã«ã—ã¦ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤ã™ã‚‹");
 	LockTable(L"Bin-Test", 2);
 	DeleteRecord(RecDat3);
 	UnlockTable(L"Bin-Test");
@@ -469,17 +469,17 @@ int BasicBinaryTest09()
 	return 0;
 }
 
-// 1MB(ƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€) * 32 * 10 = 320MB‚Ìƒe[ƒuƒ‹"LargeBinTable"‚ğCreateTable‚Åì¬‚µC‚»‚ÌŒãDeleteTable‚Åíœ‚·‚é
-// 2MB(ƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€) * 32 * 10 = 640MB‚Ìƒe[ƒuƒ‹"LargeBinTable"‚ğCreateTable‚Åì¬‚µC‚»‚ÌŒãDeleteTable‚Åíœ‚·‚é
+// 1MB(ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ) * 32 * 10 = 320MBã®ãƒ†ãƒ¼ãƒ–ãƒ«"LargeBinTable"ã‚’CreateTableã§ä½œæˆã—ï¼Œãã®å¾ŒDeleteTableã§å‰Šé™¤ã™ã‚‹
+// 2MB(ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ) * 32 * 10 = 640MBã®ãƒ†ãƒ¼ãƒ–ãƒ«"LargeBinTable"ã‚’CreateTableã§ä½œæˆã—ï¼Œãã®å¾ŒDeleteTableã§å‰Šé™¤ã™ã‚‹
 int LargeBinaryTableTest01()
 {
 	TableDef* LargeBinTable;
 	ColumnDefBin* ColDef[32];
 	for (int i = 1000000; i < 2000001; i += 1000000) {
 		if (i == 1000000) {
-			printf("1MB(ƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€) * 32 * 10 = 320MB‚Ìƒe[ƒuƒ‹\"LargeBinTable\"‚ğCreateTable‚Åì¬‚µC‚»‚ÌŒãDeleteTable‚Åíœ‚·‚é");
+			printf("1MB(ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ) * 32 * 10 = 320MBã®ãƒ†ãƒ¼ãƒ–ãƒ«\"LargeBinTable\"ã‚’CreateTableã§ä½œæˆã—ï¼Œãã®å¾ŒDeleteTableã§å‰Šé™¤ã™ã‚‹");
 		} else {
-			printf("2MB(ƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€) * 32 * 10 = 640MB‚Ìƒe[ƒuƒ‹\"LargeBinTable\"‚ğCreateTable‚Åì¬‚µC‚»‚ÌŒãDeleteTable‚Åíœ‚·‚é");
+			printf("2MB(ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ) * 32 * 10 = 640MBã®ãƒ†ãƒ¼ãƒ–ãƒ«\"LargeBinTable\"ã‚’CreateTableã§ä½œæˆã—ï¼Œãã®å¾ŒDeleteTableã§å‰Šé™¤ã™ã‚‹");
 		}
 
 		LargeBinTable = new TableDef(L"LargeBinTable", 10);
@@ -492,7 +492,7 @@ int LargeBinaryTableTest01()
 		int Ret = CreateTable(LargeBinTable);
 		if (Ret != 0) {
 			wchar_t MsgBuf[256];
-			wsprintf(MsgBuf, L"ƒe[ƒuƒ‹ì¬‚É¸”s‚µ‚Ü‚µ‚½  %d", i);
+			wsprintf(MsgBuf, L"ãƒ†ãƒ¼ãƒ–ãƒ«ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ  %d", i);
 			return -1;
 		}
 		for (int j = 0; j < 32; j++) {
@@ -501,7 +501,7 @@ int LargeBinaryTableTest01()
 		delete LargeBinTable;
 		if (DeleteTable(L"LargeBinTable") != 0) {
 			wchar_t MsgBuf[256];
-			wsprintf(MsgBuf, L"ƒe[ƒuƒ‹íœ‚É¸”s‚µ‚Ü‚µ‚½  %d", i);
+			wsprintf(MsgBuf, L"ãƒ†ãƒ¼ãƒ–ãƒ«å‰Šé™¤ã«å¤±æ•—ã—ã¾ã—ãŸ  %d", i);
 			return -1;
 		}
 		printf("...[OK]\r\n");
@@ -510,11 +510,11 @@ int LargeBinaryTableTest01()
 	return 0;
 }
 
-// 6MB * 64 = 384MB‚Ìƒe[ƒuƒ‹"LargeBinTable2"‚ğCreateTable‚Åì¬‚Å‚«‚é
-// 6MB‚ÌƒoƒCƒiƒŠƒf[ƒ^‚ğŠÜ‚ŞƒŒƒR[ƒh‚ğ64‰ñInsertRecord‚Å’Ç‰Á‚·‚éB
+// 6MB * 64 = 384MBã®ãƒ†ãƒ¼ãƒ–ãƒ«"LargeBinTable2"ã‚’CreateTableã§ä½œæˆã§ãã‚‹
+// 6MBã®ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’å«ã‚€ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’64å›InsertRecordã§è¿½åŠ ã™ã‚‹ã€‚
 int LargeBinaryTableTest02()
 {
-	printf("6MB * 64 = 384MB‚Ìƒe[ƒuƒ‹\"LargeBinTable2\"‚ğCreateTable‚Åì¬‚Å‚«‚é");
+	printf("6MB * 64 = 384MBã®ãƒ†ãƒ¼ãƒ–ãƒ«\"LargeBinTable2\"ã‚’CreateTableã§ä½œæˆã§ãã‚‹");
 	TableDef* LargeBinTable;
 	ColumnDef* ColDef[32];
 	LargeBinTable = new TableDef(L"LargeBinTable2", 64);
@@ -529,7 +529,7 @@ int LargeBinaryTableTest02()
 	}
 	printf("...[OK]\r\n");
 
-	printf("6MB‚ÌƒoƒCƒiƒŠƒf[ƒ^‚ğŠÜ‚ŞƒŒƒR[ƒh‚ğ64‰ñInsertRecord‚Å’Ç‰Á‚·‚é");
+	printf("6MBã®ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’å«ã‚€ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’64å›InsertRecordã§è¿½åŠ ã™ã‚‹");
 	unsigned char *Dat = new unsigned char[6000000];
 	for (int i = 0; i < 6000000; i++) {
 		Dat[i] = 127;
@@ -556,24 +556,24 @@ int LargeBinaryTableTest02()
 
 /*
 BinaryTest
-E10ƒoƒCƒg‚ÌƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€‚ğŠÜ‚Şƒe[ƒuƒ‹"Bin-Test"‚ğCreateTable‚Å¶¬‚Å‚«‚é
-Eƒe[ƒuƒ‹"Bin-Test"‚ÉInsertRecord‚Å1ƒŒƒR[ƒh‚ğ’Ç‰Á
-Eƒe[ƒuƒ‹"Bin-Test"‚ÉInsertRecord‚Å˜AŒ‹‚³‚ê‚½ƒŒƒR[ƒh‚RŒÂ‚ğ’Ç‰Á
-Eƒe[ƒuƒ‹"Bin-Test"‚ÉInsertRecord‚Å1ƒŒƒR[ƒh‚ğ’Ç‰Á
-Eƒe[ƒuƒ‹"Bin-Test"“à‚Ì‘S‚Ä‚ÌƒŒƒR[ƒh‚ğGetRecrd(L"Bin-Test")‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
-Eƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img1:ƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
-Eƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(®”ƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
-Eƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img2:ƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
-Eƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img1, Img2:ƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
-Eƒe[ƒuƒ‹"Bin-Test"“à‚ÌƒŒƒR[ƒh‚ğGetRecrd(Img1, Img2:•¡”‚Ì˜AŒ‹‚³‚ê‚½ƒŒƒR[ƒh‚É‚æ‚éƒoƒCƒiƒŠƒf[ƒ^ğŒw’è)‚Åæ“¾‚µCæ“¾‚µ‚½˜AŒ‹ƒŒƒR[ƒh‚ª“KØ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é
-E2‚Â‚Ì˜AŒ‹‚µ‚½ƒŒƒR[ƒh(ƒoƒCƒiƒŠƒf[ƒ^ƒJƒ‰ƒ€—L‚è)‚ğw’è‚µ‚ÄƒoƒCƒiƒŠƒf[ƒ^‚ğUpdateRecord‚ÅXV‚·‚é
-EƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€"Img2"‚ğw’è‚µ‚ÄƒŒƒR[ƒh‚ğ~‡ƒ\[ƒg¨“K³‚Éƒ\[ƒg‚³‚ê‚Ä‚¢‚é
-EImg1‚ªƒ\[ƒg‚ÅÅ¬‚Æ•]‰¿‚³‚ê‚éƒŒƒR[ƒh‚ğ’Ç‰ÁŒãCƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€"Img1"‚ğw’è‚µ‚ÄƒŒƒR[ƒh‚ğ¸‡ƒ\[ƒg‚·‚é¨“K³‚Éƒ\[ƒg‚³‚ê‚Ä‚¢‚é
-EƒoƒCƒiƒŠƒf[ƒ^‚ğŒŸõğŒ‚É‚µ‚ÄDeleteRecord‚ÅƒŒƒR[ƒh‚ğíœ‚·‚é
-E1MB(ƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€) * 32 * 10 = 320MB‚Ìƒe[ƒuƒ‹"LargeBinTable"‚ğCreateTable‚Åì¬‚µC‚»‚ÌŒãDeleteTable‚Åíœ‚·‚é
-E2MB(ƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€) * 32 * 10 = 640MB‚Ìƒe[ƒuƒ‹"LargeBinTable"‚ğCreateTable‚Åì¬‚µC‚»‚ÌŒãDeleteTable‚Åíœ‚·‚é
-E6MB * 64 = 384MB‚Ìƒe[ƒuƒ‹"LargeBinTable2"‚ğCreateTable‚Åì¬‚Å‚«‚é
-E6MB‚ÌƒoƒCƒiƒŠƒf[ƒ^‚ğŠÜ‚ŞƒŒƒR[ƒh‚ğ64‰ñInsertRecord‚Å’Ç‰Á‚·‚éB
+ãƒ»10ãƒã‚¤ãƒˆã®ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ã‚’å«ã‚€ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"ã‚’CreateTableã§ç”Ÿæˆã§ãã‚‹
+ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"ã«InsertRecordã§1ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ 
+ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"ã«InsertRecordã§é€£çµã•ã‚ŒãŸãƒ¬ã‚³ãƒ¼ãƒ‰ï¼“å€‹ã‚’è¿½åŠ 
+ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"ã«InsertRecordã§1ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ 
+ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®å…¨ã¦ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(L"Bin-Test")ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
+ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img1:ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
+ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(æ•´æ•°ãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
+ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img2:ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
+ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img1, Img2:ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
+ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«"Bin-Test"å†…ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’GetRecrd(Img1, Img2:è¤‡æ•°ã®é€£çµã•ã‚ŒãŸãƒ¬ã‚³ãƒ¼ãƒ‰ã«ã‚ˆã‚‹ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿æ¡ä»¶æŒ‡å®š)ã§å–å¾—ã—ï¼Œå–å¾—ã—ãŸé€£çµãƒ¬ã‚³ãƒ¼ãƒ‰ãŒé©åˆ‡ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹
+ãƒ»2ã¤ã®é€£çµã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰(ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚«ãƒ©ãƒ æœ‰ã‚Š)ã‚’æŒ‡å®šã—ã¦ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’UpdateRecordã§æ›´æ–°ã™ã‚‹
+ãƒ»ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ "Img2"ã‚’æŒ‡å®šã—ã¦ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’é™é †ã‚½ãƒ¼ãƒˆâ†’é©æ­£ã«ã‚½ãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹
+ãƒ»Img1ãŒã‚½ãƒ¼ãƒˆã§æœ€å°ã¨è©•ä¾¡ã•ã‚Œã‚‹ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ å¾Œï¼Œãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ "Img1"ã‚’æŒ‡å®šã—ã¦ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’æ˜‡é †ã‚½ãƒ¼ãƒˆã™ã‚‹â†’é©æ­£ã«ã‚½ãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹
+ãƒ»ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’æ¤œç´¢æ¡ä»¶ã«ã—ã¦DeleteRecordã§ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤ã™ã‚‹
+ãƒ»1MB(ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ) * 32 * 10 = 320MBã®ãƒ†ãƒ¼ãƒ–ãƒ«"LargeBinTable"ã‚’CreateTableã§ä½œæˆã—ï¼Œãã®å¾ŒDeleteTableã§å‰Šé™¤ã™ã‚‹
+ãƒ»2MB(ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ) * 32 * 10 = 640MBã®ãƒ†ãƒ¼ãƒ–ãƒ«"LargeBinTable"ã‚’CreateTableã§ä½œæˆã—ï¼Œãã®å¾ŒDeleteTableã§å‰Šé™¤ã™ã‚‹
+ãƒ»6MB * 64 = 384MBã®ãƒ†ãƒ¼ãƒ–ãƒ«"LargeBinTable2"ã‚’CreateTableã§ä½œæˆã§ãã‚‹
+ãƒ»6MBã®ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’å«ã‚€ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’64å›InsertRecordã§è¿½åŠ ã™ã‚‹ã€‚
 */
 int BinaryTest()
 {

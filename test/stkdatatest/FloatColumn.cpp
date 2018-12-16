@@ -1,11 +1,11 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
 
 int BasicFloatTest01()
 {
-	printf("32ŒÂ‚ÌFloatŒ^ƒJƒ‰ƒ€‚ğ•Û‚µÅ‘å16383ŒÂ‚ÌƒŒƒR[ƒh‚ğŠi”[‚·‚é‚±‚Æ‚ª‚Å‚«‚éƒe[ƒuƒ‹\"Float-Test\"‚ğì¬‚·‚é");
+	printf("32å€‹ã®Floatå‹ã‚«ãƒ©ãƒ ã‚’ä¿æŒã—æœ€å¤§16383å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’æ ¼ç´ã™ã‚‹ã“ã¨ãŒã§ãã‚‹ãƒ†ãƒ¼ãƒ–ãƒ«\"Float-Test\"ã‚’ä½œæˆã™ã‚‹");
 	ColumnDefFloat ColDef00(L"Fcol00");
 	ColumnDefFloat ColDef01(L"Fcol01");
 	ColumnDefFloat ColDef02(L"Fcol02");
@@ -78,7 +78,7 @@ int BasicFloatTest01()
 	printf("...[OK]\r\n");
 
 
-	printf("ƒe[ƒuƒ‹\"Float-Test\"‚É32ŒÂ‚ÌƒJƒ‰ƒ€‚ª‘¶İ‚·‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Float-Test\"ã«32å€‹ã®ã‚«ãƒ©ãƒ ãŒå­˜åœ¨ã™ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	if (GetColumnCount(L"Float-Test") != 32) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -86,7 +86,7 @@ int BasicFloatTest01()
 	printf("...[OK]\r\n");
 
 
-	printf("ƒe[ƒuƒ‹\"Float-Test\"‚Ì0”Ô–Ú, 1”Ô–Ú, 30”Ô–Ú, 31”Ô–Ú‚ÌƒJƒ‰ƒ€‚ÌƒTƒCƒY‚ª‰½‚ê‚à4ƒoƒCƒg‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Float-Test\"ã®0ç•ªç›®, 1ç•ªç›®, 30ç•ªç›®, 31ç•ªç›®ã®ã‚«ãƒ©ãƒ ã®ã‚µã‚¤ã‚ºãŒä½•ã‚Œã‚‚4ãƒã‚¤ãƒˆã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	if (GetColumnSize(L"Float-Test", L"Fcol00") != 4 ||
 		GetColumnSize(L"Float-Test", L"Fcol01") != 4 ||
 		GetColumnSize(L"Float-Test", L"Fcol30") != 4 ||
@@ -97,7 +97,7 @@ int BasicFloatTest01()
 	printf("...[OK]\r\n");
 
 
-	printf("ƒe[ƒuƒ‹\"Float-Test\"‚ÌFcol10, Fcol20, Fcol30‚ÌƒJƒ‰ƒ€ƒ^ƒCƒv‚ªFloat‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«\"Float-Test\"ã®Fcol10, Fcol20, Fcol30ã®ã‚«ãƒ©ãƒ ã‚¿ã‚¤ãƒ—ãŒFloatã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	if (GetColumnType(L"Float-Test", L"Fcol10") != COLUMN_TYPE_FLOAT ||
 		GetColumnSize(L"Float-Test", L"Fcol20") != COLUMN_TYPE_FLOAT ||
 		GetColumnSize(L"Float-Test", L"Fcol30") != COLUMN_TYPE_FLOAT) {
@@ -111,7 +111,7 @@ int BasicFloatTest01()
 
 int BasicFloatTest02()
 {
-	printf("\"Float-Test\"ƒe[ƒuƒ‹‚É10ŒÂ‚ÌƒŒƒR[ƒh(with Fcol00`Fcol31ƒJƒ‰ƒ€)‚ğŒJ‚è•Ô‚µ’Ç‰Á‚·‚é");
+	printf("\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã«10å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰(with Fcol00ï½Fcol31ã‚«ãƒ©ãƒ )ã‚’ç¹°ã‚Šè¿”ã—è¿½åŠ ã™ã‚‹");
 	ColumnData *ColDat[32];
 	RecordData *RecDat;
 	LockTable(L"Float-Test", LOCK_EXCLUSIVE);
@@ -134,7 +134,7 @@ int BasicFloatTest02()
 	printf("...[OK]\r\n");
 
 
-	printf("\"Float-Test\"ƒe[ƒuƒ‹‚É‘¶İ‚·‚éƒŒƒR[ƒh‚Ì”‚ª10ŒÂ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã«å­˜åœ¨ã™ã‚‹ãƒ¬ã‚³ãƒ¼ãƒ‰ã®æ•°ãŒ10å€‹ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	if (GetNumOfRecords(L"Float-Test") != 10) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -142,7 +142,7 @@ int BasicFloatTest02()
 	printf("...[OK]\r\n");
 
 
-	printf("\"Float-Test\"ƒe[ƒuƒ‹‚É’Ç‰Á‚µ‚½10ŒÂ‚ÌƒŒƒR[ƒh(with Fcol00`Fcol31ƒJƒ‰ƒ€)‚Ìî•ñ‚ª³‚µ‚­æ“¾‚Å‚«‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã«è¿½åŠ ã—ãŸ10å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰(with Fcol00ï½Fcol31ã‚«ãƒ©ãƒ )ã®æƒ…å ±ãŒæ­£ã—ãå–å¾—ã§ãã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	RecordData *AcquiredRecDat;
 	LockTable(L"Float-Test", LOCK_SHARE);
 	AcquiredRecDat = GetRecord(L"Float-Test");
@@ -165,7 +165,7 @@ int BasicFloatTest02()
 
 int BasicFloatTest03()
 {
-	printf("\"Float-Test\"ƒe[ƒuƒ‹‚Ì10ŒÂ‚ÌƒŒƒR[ƒh(Fcol00‚¨‚æ‚ÑFcol01)‚ğŒJ‚è•Ô‚µXV‚·‚é");
+	printf("\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã®10å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰(Fcol00ãŠã‚ˆã³Fcol01)ã‚’ç¹°ã‚Šè¿”ã—æ›´æ–°ã™ã‚‹");
 	ColumnData *ColDat[1];
 	ColumnData *UpdColDat[2];
 	RecordData *RecDat;
@@ -194,7 +194,7 @@ int BasicFloatTest03()
 	LockTable(L"Float-Test", LOCK_SHARE);
 	AcquiredRecDat = GetRecord(L"Float-Test");
 	UnlockTable(L"Float-Test");
-	printf("XV‚µ‚½10ŒÂ‚ÌƒŒƒR[ƒh(with Fcol00`Fcol31ƒJƒ‰ƒ€)‚Ìî•ñ‚ª³‚µ‚­æ“¾‚Å‚«‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("æ›´æ–°ã—ãŸ10å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰(with Fcol00ï½Fcol31ã‚«ãƒ©ãƒ )ã®æƒ…å ±ãŒæ­£ã—ãå–å¾—ã§ãã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			if (i == 0) {
@@ -220,7 +220,7 @@ int BasicFloatTest03()
 
 int BasicFloatTest04()
 {
-	printf("\"Float-Test\"ƒe[ƒuƒ‹‚É‚³‚ç‚É10ŒÂ‚ÌƒŒƒR[ƒh(with Fcol00`Fcol31ƒJƒ‰ƒ€)‚ğˆê“x‚É’Ç‰Á‚·‚é");
+	printf("\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã«ã•ã‚‰ã«10å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰(with Fcol00ï½Fcol31ã‚«ãƒ©ãƒ )ã‚’ä¸€åº¦ã«è¿½åŠ ã™ã‚‹");
 	ColumnData *ColDat[32];
 	RecordData *RecDat;
 	RecordData *HeadRecDat;
@@ -251,7 +251,7 @@ int BasicFloatTest04()
 	printf("...[OK]\r\n");
 
 	{
-		printf("\"Float-table\"ƒe[ƒuƒ‹‚ÌŒŸõ‚ğs‚¤ (Less thanw’è)");
+		printf("\"Float-table\"ãƒ†ãƒ¼ãƒ–ãƒ«ã®æ¤œç´¢ã‚’è¡Œã† (Less thanæŒ‡å®š)");
 		ColDat[0] = new ColumnDataFloat(L"Fcol05", 200.5);
 		ColDat[0]->SetComparisonOperator(COMP_LT);
 		RecDat = new RecordData(L"Float-Test", ColDat, 1);
@@ -277,7 +277,7 @@ int BasicFloatTest04()
 	}
 
 	{
-		printf("\"Float-table\"ƒe[ƒuƒ‹‚ÌŒŸõ‚ğs‚¤ (Greater than or Equal tow’è)");
+		printf("\"Float-table\"ãƒ†ãƒ¼ãƒ–ãƒ«ã®æ¤œç´¢ã‚’è¡Œã† (Greater than or Equal toæŒ‡å®š)");
 		ColDat[0] = new ColumnDataFloat(L"Fcol05", 200.5, COMP_GE);
 		RecDat = new RecordData(L"Float-Test", ColDat, 1);
 		LockTable(L"Float-Test", LOCK_SHARE);
@@ -301,7 +301,7 @@ int BasicFloatTest04()
 		printf("...[OK]\r\n");
 	}
 
-	printf("\"Float-Test\"ƒe[ƒuƒ‹‚É‘¶İ‚·‚éƒŒƒR[ƒh‚Ì”‚ª20ŒÂ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã«å­˜åœ¨ã™ã‚‹ãƒ¬ã‚³ãƒ¼ãƒ‰ã®æ•°ãŒ20å€‹ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	if (GetNumOfRecords(L"Float-Test") != 20) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -309,7 +309,7 @@ int BasicFloatTest04()
 	printf("...[OK]\r\n");
 
 
-	printf("\"Float-Test\"ƒe[ƒuƒ‹‚É‘¶İ‚·‚é20ŒÂ‚ÌƒŒƒR[ƒh‚Ì‚¤‚¿ğŒw’è‚Å10ŒÂ‚ÌƒŒƒR[ƒh‚Ìî•ñ‚ª“KØ‚Éæ“¾‚Å‚«‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã«å­˜åœ¨ã™ã‚‹20å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã®ã†ã¡æ¡ä»¶æŒ‡å®šã§10å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã®æƒ…å ±ãŒé©åˆ‡ã«å–å¾—ã§ãã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	RecordData *AcquiredRecDat;
 	for (int i = 0; i < 10; i++) {
 		ColDat[0] = new ColumnDataFloat(L"Fcol00", (float)(200.0 + 0.1 * i));
@@ -347,7 +347,7 @@ int BasicFloatTest04()
 
 int BasicFloatTest05()
 {
-	printf("\"Float-Test\"ƒe[ƒuƒ‹‚Ì10ŒÂ‚ÌƒŒƒR[ƒh(Fcol00‚¨‚æ‚ÑFcol01)‚ğˆê“x‚ÉXV‚·‚é");
+	printf("\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã®10å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰(Fcol00ãŠã‚ˆã³Fcol01)ã‚’ä¸€åº¦ã«æ›´æ–°ã™ã‚‹");
 	ColumnData *ColDat[1];
 	RecordData *RecDat;
 	RecordData *LastRecDat;
@@ -384,7 +384,7 @@ int BasicFloatTest05()
 	LockTable(L"Float-Test", LOCK_SHARE);
 	AcquiredRecDat = GetRecord(L"Float-Test");
 	UnlockTable(L"Float-Test");
-	printf("XV‚µ‚½10ŒÂ‚ÌƒŒƒR[ƒh‚ğŠÜ‚Ş‚·‚×‚Ä‚ÌƒŒƒR[ƒh(20ŒÂ)‚Ìî•ñ(Fcol00)‚ª³‚µ‚­æ“¾‚Å‚«‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("æ›´æ–°ã—ãŸ10å€‹ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’å«ã‚€ã™ã¹ã¦ã®ãƒ¬ã‚³ãƒ¼ãƒ‰(20å€‹)ã®æƒ…å ±(Fcol00)ãŒæ­£ã—ãå–å¾—ã§ãã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	for (int j = 0; j < 20; j++) {
 		if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(0)))->GetValue() != 0) {
 			printf("...[NG]\r\n");
@@ -402,7 +402,7 @@ int BasicFloatTest05()
 
 int BasicFloatTest06()
 {
-	printf("ƒe[ƒuƒ‹î•ñ‚ğ\"FloatColumn.std\"‚É•Û‘¶‚·‚éB");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«æƒ…å ±ã‚’\"FloatColumn.std\"ã«ä¿å­˜ã™ã‚‹ã€‚");
 	LockAllTable(LOCK_SHARE);
 	if (SaveData(L"FloatColumn.std") != 0) {
 		printf("...[NG]\r\n");
@@ -413,7 +413,7 @@ int BasicFloatTest06()
 	printf("...[OK]\r\n");
 
 
-	printf("‚·‚×‚Ä‚ÌƒŒƒR[ƒhiFcol00‚Ì’l‚ª0‚Æ‚È‚éƒŒƒR[ƒh‚ğŒŸõj‚ğƒe[ƒuƒ‹‚©‚çíœ‚·‚éB");
+	printf("ã™ã¹ã¦ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ï¼ˆFcol00ã®å€¤ãŒ0ã¨ãªã‚‹ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’æ¤œç´¢ï¼‰ã‚’ãƒ†ãƒ¼ãƒ–ãƒ«ã‹ã‚‰å‰Šé™¤ã™ã‚‹ã€‚");
 	ColumnData *ColDat[1];
 	ColDat[0] = new ColumnDataFloat(L"Fcol00", 0);
 	RecordData *RecDat = new RecordData(L"Float-Test", ColDat, 1);
@@ -429,7 +429,7 @@ int BasicFloatTest06()
 	printf("...[OK]\r\n");
 
 
-	printf("‚·‚×‚Ä‚ÌƒŒƒR[ƒh‚ª\"Float-Test\"ƒe[ƒuƒ‹‚©‚çíœ‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("ã™ã¹ã¦ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ãŒ\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã‹ã‚‰å‰Šé™¤ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	if (GetNumOfRecords(L"Float-Test") != 0) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -437,7 +437,7 @@ int BasicFloatTest06()
 	printf("...[OK]\r\n");
 
 
-	printf("ƒe[ƒuƒ‹î•ñ‚ğ\"FloatColumn.std\"‚©‚ç“Ç‚İ‚ŞB");
+	printf("ãƒ†ãƒ¼ãƒ–ãƒ«æƒ…å ±ã‚’\"FloatColumn.std\"ã‹ã‚‰èª­ã¿è¾¼ã‚€ã€‚");
 	LockAllTable(LOCK_EXCLUSIVE);
 	if (LoadData(L"FloatColumn.std") != 0) {
 		printf("...[NG]\r\n");
@@ -448,7 +448,7 @@ int BasicFloatTest06()
 	printf("...[OK]\r\n");
 
 
-	printf("\"Float-Test\"ƒe[ƒuƒ‹‚É‘¶İ‚·‚éƒŒƒR[ƒh‚Ì”‚ª20ŒÂ‚Å‚ ‚é‚±‚Æ‚ğŠm”F‚·‚é");
+	printf("\"Float-Test\"ãƒ†ãƒ¼ãƒ–ãƒ«ã«å­˜åœ¨ã™ã‚‹ãƒ¬ã‚³ãƒ¼ãƒ‰ã®æ•°ãŒ20å€‹ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹");
 	if (GetNumOfRecords(L"Float-Test") != 20) {
 		printf("...[NG]\r\n");
 		return -1;

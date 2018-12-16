@@ -1,25 +1,25 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <stdio.h>
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
 
 /*
 SmallTable
-ECreateTable‚ÅSmallTableƒe[ƒuƒ‹(ID:Int) Max=1 ‚ğ¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚é
-EÅ‘åƒŒƒR[ƒh“o˜^‰Â”\”=1‚ÌSmallTable‚É‘Î‚µ‚Ä16383ŒÂ‚Ì˜AŒ‹‚³‚ê‚½ƒŒƒR[ƒh‚ğInsertRecord‚·‚é‚Æ1ƒŒƒR[ƒh‚Ì‚İ’Ç‰Á‚³‚ê‚é
-EBigTable("ID"ƒJƒ‰ƒ€ = 1)‚ğŒŸõğŒ‚Éw’è‚µGetRecordiƒŒƒR[ƒhw’èj‚ğÀs‚·‚é‚ÆNULL‚ª•Ô‚é
-ESmallTable("ID"ƒJƒ‰ƒ€ = 0)‚ğŒŸõğŒ‚Éw’è‚µƒƒbƒNŒã‚ÉGetRecordiƒŒƒR[ƒhw’èj‚ğÀs‚·‚é‚ÆRecordData‚ª•Ô‚éB‚½‚¾‚µƒƒbƒN–³‚µ‚ÅÀs‚µ‚½ê‡NULL‚ª•Ô‚é
-EGetNumOfRecords("SmallTable")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í1Œ‚Æ‚È‚é
-EGetMaxNumOfRecords("SmallTable")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í1Œ‚Æ‚È‚é
-EGetNumOfRecords("BigTable")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í-1Œ‚Æ‚È‚é
-EGetMaxNumOfRecords("BigTable")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í-1Œ‚Æ‚È‚é
-EDeleteRecord(L"SmallTable")ŒãCGetNumOfRecords(L"SmallTable")‚ª0‚ğ•Ô‹p‚·‚é
-EDeleteTable(L"SmallTable")‚ª0‚ğ•Ô‹p‚·‚é
+ãƒ»CreateTableã§SmallTableãƒ†ãƒ¼ãƒ–ãƒ«(ID:Int) Max=1 ã‚’ç”Ÿæˆã™ã‚‹ã“ã¨ãŒã§ãã‚‹
+ãƒ»æœ€å¤§ãƒ¬ã‚³ãƒ¼ãƒ‰ç™»éŒ²å¯èƒ½æ•°=1ã®SmallTableã«å¯¾ã—ã¦16383å€‹ã®é€£çµã•ã‚ŒãŸãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’InsertRecordã™ã‚‹ã¨1ãƒ¬ã‚³ãƒ¼ãƒ‰ã®ã¿è¿½åŠ ã•ã‚Œã‚‹
+ãƒ»BigTable("ID"ã‚«ãƒ©ãƒ  = 1)ã‚’æ¤œç´¢æ¡ä»¶ã«æŒ‡å®šã—GetRecordï¼ˆãƒ¬ã‚³ãƒ¼ãƒ‰æŒ‡å®šï¼‰ã‚’å®Ÿè¡Œã™ã‚‹ã¨NULLãŒè¿”ã‚‹
+ãƒ»SmallTable("ID"ã‚«ãƒ©ãƒ  = 0)ã‚’æ¤œç´¢æ¡ä»¶ã«æŒ‡å®šã—ãƒ­ãƒƒã‚¯å¾Œã«GetRecordï¼ˆãƒ¬ã‚³ãƒ¼ãƒ‰æŒ‡å®šï¼‰ã‚’å®Ÿè¡Œã™ã‚‹ã¨RecordDataãŒè¿”ã‚‹ã€‚ãŸã ã—ãƒ­ãƒƒã‚¯ç„¡ã—ã§å®Ÿè¡Œã—ãŸå ´åˆNULLãŒè¿”ã‚‹
+ãƒ»GetNumOfRecords("SmallTable")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯1ä»¶ã¨ãªã‚‹
+ãƒ»GetMaxNumOfRecords("SmallTable")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯1ä»¶ã¨ãªã‚‹
+ãƒ»GetNumOfRecords("BigTable")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯-1ä»¶ã¨ãªã‚‹
+ãƒ»GetMaxNumOfRecords("BigTable")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯-1ä»¶ã¨ãªã‚‹
+ãƒ»DeleteRecord(L"SmallTable")å¾Œï¼ŒGetNumOfRecords(L"SmallTable")ãŒ0ã‚’è¿”å´ã™ã‚‹
+ãƒ»DeleteTable(L"SmallTable")ãŒ0ã‚’è¿”å´ã™ã‚‹
 */
 int SmallTable()
 {
-	// CreateTable‚ÅSmallTableƒe[ƒuƒ‹(ID:Int) Max=1 ‚ğ¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚é
-	printf("CreateTable‚ÅSmallTableƒe[ƒuƒ‹(ID:Int) Max=1 ‚ğ¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚é");
+	// CreateTableã§SmallTableãƒ†ãƒ¼ãƒ–ãƒ«(ID:Int) Max=1 ã‚’ç”Ÿæˆã™ã‚‹ã“ã¨ãŒã§ãã‚‹
+	printf("CreateTableã§SmallTableãƒ†ãƒ¼ãƒ–ãƒ«(ID:Int) Max=1 ã‚’ç”Ÿæˆã™ã‚‹ã“ã¨ãŒã§ãã‚‹");
 	ColumnDefInt ColDefId(L"ID");
 	TableDef TabDefPerson(L"SmallTable", 1);
 	TabDefPerson.AddColumnDef(&ColDefId);
@@ -33,9 +33,9 @@ int SmallTable()
 	}
 	printf("...[OK]\r\n");
 
-	// Å‘åƒŒƒR[ƒh“o˜^‰Â”\”=1‚ÌSmallTable‚É‘Î‚µ‚Ä16383ŒÂ‚Ì˜AŒ‹‚³‚ê‚½ƒŒƒR[ƒh‚ğInsertRecord‚·‚é‚Æ1ƒŒƒR[ƒh‚Ì‚İ’Ç‰Á‚³‚ê‚é
+	// æœ€å¤§ãƒ¬ã‚³ãƒ¼ãƒ‰ç™»éŒ²å¯èƒ½æ•°=1ã®SmallTableã«å¯¾ã—ã¦16383å€‹ã®é€£çµã•ã‚ŒãŸãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’InsertRecordã™ã‚‹ã¨1ãƒ¬ã‚³ãƒ¼ãƒ‰ã®ã¿è¿½åŠ ã•ã‚Œã‚‹
 	{
-		printf("Å‘åƒŒƒR[ƒh“o˜^‰Â”\”=1‚ÌSmallTable‚É‘Î‚µ‚Ä16383ŒÂ‚Ì˜AŒ‹‚³‚ê‚½ƒŒƒR[ƒh‚ğInsertRecord‚·‚é‚Æ1ƒŒƒR[ƒh‚Ì‚İ’Ç‰Á‚³‚ê‚é");
+		printf("æœ€å¤§ãƒ¬ã‚³ãƒ¼ãƒ‰ç™»éŒ²å¯èƒ½æ•°=1ã®SmallTableã«å¯¾ã—ã¦16383å€‹ã®é€£çµã•ã‚ŒãŸãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’InsertRecordã™ã‚‹ã¨1ãƒ¬ã‚³ãƒ¼ãƒ‰ã®ã¿è¿½åŠ ã•ã‚Œã‚‹");
 		ColumnData *ColDat[4];
 		RecordData *TopRecDat;
 		RecordData *PrvRecDat;
@@ -62,9 +62,9 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// BigTable("ID"ƒJƒ‰ƒ€ = 1)‚ğŒŸõğŒ‚Éw’è‚µGetRecordiƒŒƒR[ƒhw’èj‚ğÀs‚·‚é‚ÆNULL‚ª•Ô‚é
+	// BigTable("ID"ã‚«ãƒ©ãƒ  = 1)ã‚’æ¤œç´¢æ¡ä»¶ã«æŒ‡å®šã—GetRecordï¼ˆãƒ¬ã‚³ãƒ¼ãƒ‰æŒ‡å®šï¼‰ã‚’å®Ÿè¡Œã™ã‚‹ã¨NULLãŒè¿”ã‚‹
 	{
-		printf("BigTable(\"ID\"ƒJƒ‰ƒ€ = 1)‚ğŒŸõğŒ‚Éw’è‚µGetRecordiƒŒƒR[ƒhw’èj‚ğÀs‚·‚é‚ÆNULL‚ª•Ô‚é");
+		printf("BigTable(\"ID\"ã‚«ãƒ©ãƒ  = 1)ã‚’æ¤œç´¢æ¡ä»¶ã«æŒ‡å®šã—GetRecordï¼ˆãƒ¬ã‚³ãƒ¼ãƒ‰æŒ‡å®šï¼‰ã‚’å®Ÿè¡Œã™ã‚‹ã¨NULLãŒè¿”ã‚‹");
 		ColumnData *ColDatTake[1];
 		ColDatTake[0] = new ColumnDataInt(L"ID", 1);
 		RecordData RecDatTake(L"BigTable", ColDatTake, 1);
@@ -79,9 +79,9 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// SmallTable("ID"ƒJƒ‰ƒ€ = 0)‚ğŒŸõğŒ‚Éw’è‚µƒƒbƒNŒã‚ÉGetRecordiƒŒƒR[ƒhw’èj‚ğÀs‚·‚é‚ÆRecordData‚ª•Ô‚éB‚½‚¾‚µƒƒbƒN–³‚µ‚ÅÀs‚µ‚½ê‡NULL‚ª•Ô‚é
+	// SmallTable("ID"ã‚«ãƒ©ãƒ  = 0)ã‚’æ¤œç´¢æ¡ä»¶ã«æŒ‡å®šã—ãƒ­ãƒƒã‚¯å¾Œã«GetRecordï¼ˆãƒ¬ã‚³ãƒ¼ãƒ‰æŒ‡å®šï¼‰ã‚’å®Ÿè¡Œã™ã‚‹ã¨RecordDataãŒè¿”ã‚‹ã€‚ãŸã ã—ãƒ­ãƒƒã‚¯ç„¡ã—ã§å®Ÿè¡Œã—ãŸå ´åˆNULLãŒè¿”ã‚‹
 	{
-		printf("SmallTable(\"ID\"ƒJƒ‰ƒ€ = 0)‚ğŒŸõğŒ‚Éw’è‚µƒƒbƒNŒã‚ÉGetRecordiƒŒƒR[ƒhw’èj‚ğÀs‚·‚é‚ÆRecordData‚ª•Ô‚éB‚½‚¾‚µƒƒbƒN–³‚µ‚ÅÀs‚µ‚½ê‡NULL‚ª•Ô‚é");
+		printf("SmallTable(\"ID\"ã‚«ãƒ©ãƒ  = 0)ã‚’æ¤œç´¢æ¡ä»¶ã«æŒ‡å®šã—ãƒ­ãƒƒã‚¯å¾Œã«GetRecordï¼ˆãƒ¬ã‚³ãƒ¼ãƒ‰æŒ‡å®šï¼‰ã‚’å®Ÿè¡Œã™ã‚‹ã¨RecordDataãŒè¿”ã‚‹ã€‚ãŸã ã—ãƒ­ãƒƒã‚¯ç„¡ã—ã§å®Ÿè¡Œã—ãŸå ´åˆNULLãŒè¿”ã‚‹");
 		ColumnData *ColDatTake[1];
 		ColDatTake[0] = new ColumnDataInt(L"ID", 0);
 		RecordData RecDatTake(L"SmallTable", ColDatTake, 1);
@@ -102,9 +102,9 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// GetNumOfRecords("SmallTable")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í1Œ‚Æ‚È‚é
+	// GetNumOfRecords("SmallTable")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯1ä»¶ã¨ãªã‚‹
 	{
-		printf("GetNumOfRecords(\"SmallTable\")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í1Œ‚Æ‚È‚é");
+		printf("GetNumOfRecords(\"SmallTable\")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯1ä»¶ã¨ãªã‚‹");
 		if (GetNumOfRecords(L"SmallTable") != 1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -112,9 +112,9 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// GetMaxNumOfRecords("SmallTable")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í1Œ‚Æ‚È‚é
+	// GetMaxNumOfRecords("SmallTable")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯1ä»¶ã¨ãªã‚‹
 	{
-		printf("GetMaxNumOfRecords(\"SmallTable\")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í1Œ‚Æ‚È‚é");
+		printf("GetMaxNumOfRecords(\"SmallTable\")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯1ä»¶ã¨ãªã‚‹");
 		if (GetMaxNumOfRecords(L"SmallTable") != 1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -122,9 +122,9 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// GetNumOfRecords("BigTable")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í-1Œ‚Æ‚È‚é
+	// GetNumOfRecords("BigTable")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯-1ä»¶ã¨ãªã‚‹
 	{
-		printf("GetNumOfRecords(\"BigTable\")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í-1Œ‚Æ‚È‚é");
+		printf("GetNumOfRecords(\"BigTable\")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯-1ä»¶ã¨ãªã‚‹");
 		if (GetNumOfRecords(L"BigTable") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -132,9 +132,9 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// GetMaxNumOfRecords("BigTable")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í-1Œ‚Æ‚È‚é
+	// GetMaxNumOfRecords("BigTable")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯-1ä»¶ã¨ãªã‚‹
 	{
-		printf("GetMaxNumOfRecords(\"BigTable\")‚Åæ“¾‚µ‚½ƒŒƒR[ƒhŒ”‚Í-1Œ‚Æ‚È‚é");
+		printf("GetMaxNumOfRecords(\"BigTable\")ã§å–å¾—ã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°ã¯-1ä»¶ã¨ãªã‚‹");
 		if (GetMaxNumOfRecords(L"BigTable") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -142,9 +142,9 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// DeleteRecord(L"SmallTable")ŒãCGetNumOfRecords(L"SmallTable")‚ª0‚ğ•Ô‹p‚·‚é
+	// DeleteRecord(L"SmallTable")å¾Œï¼ŒGetNumOfRecords(L"SmallTable")ãŒ0ã‚’è¿”å´ã™ã‚‹
 	{
-		printf("DeleteRecord(L\"SmallTable\")ŒãCGetNumOfRecords(L\"SmallTable\")‚ª0‚ğ•Ô‹p‚·‚é");
+		printf("DeleteRecord(L\"SmallTable\")å¾Œï¼ŒGetNumOfRecords(L\"SmallTable\")ãŒ0ã‚’è¿”å´ã™ã‚‹");
 		LockTable(L"SmallTable", LOCK_EXCLUSIVE);
 		DeleteRecord(L"SmallTable");
 		UnlockTable(L"SmallTable");
@@ -155,8 +155,8 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// CreateTable‚ÅSmallTableƒe[ƒuƒ‹2(ID:Int) Max=100 ‚ğ¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚é
-	printf("CreateTable‚ÅSmallTableƒe[ƒuƒ‹2(ID:Int) Max=100 ‚ğ¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚é");
+	// CreateTableã§SmallTableãƒ†ãƒ¼ãƒ–ãƒ«2(ID:Int) Max=100 ã‚’ç”Ÿæˆã™ã‚‹ã“ã¨ãŒã§ãã‚‹
+	printf("CreateTableã§SmallTableãƒ†ãƒ¼ãƒ–ãƒ«2(ID:Int) Max=100 ã‚’ç”Ÿæˆã™ã‚‹ã“ã¨ãŒã§ãã‚‹");
 	ColumnDefInt ColDefId2(L"ID");
 	TableDef TabDefPerson2(L"SmallTable2", 100);
 	TabDefPerson2.AddColumnDef(&ColDefId2);
@@ -229,9 +229,9 @@ int SmallTable()
 	}
 	printf("...[OK]\r\n");
 
-	// DeleteTable(L"SmallTable4")‚ª0‚ğ•Ô‹p‚·‚é
+	// DeleteTable(L"SmallTable4")ãŒ0ã‚’è¿”å´ã™ã‚‹
 	{
-		printf("DeleteTable(L\"SmallTable4\")‚ª0‚ğ•Ô‹p‚·‚é");
+		printf("DeleteTable(L\"SmallTable4\")ãŒ0ã‚’è¿”å´ã™ã‚‹");
 		if (DeleteTable(L"SmallTable4") != 0) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -239,9 +239,9 @@ int SmallTable()
 		printf("...[OK]\r\n");
 	}
 
-	// DeleteTable(L"SmallTable5")‚ª0‚ğ•Ô‹p‚·‚é
+	// DeleteTable(L"SmallTable5")ãŒ0ã‚’è¿”å´ã™ã‚‹
 	{
-		printf("DeleteTable(L\"SmallTable5\")‚ª0‚ğ•Ô‹p‚·‚é");
+		printf("DeleteTable(L\"SmallTable5\")ãŒ0ã‚’è¿”å´ã™ã‚‹");
 		if (DeleteTable(L"SmallTable5") != 0) {
 			printf("...[NG]\r\n");
 			return -1;

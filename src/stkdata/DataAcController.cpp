@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <memory.h>
 #include <shlwapi.h>
 #include "DataAcController.h"
@@ -571,8 +571,8 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 					char* Value = (char*)ColDatStr->GetValue();
 					char* ValueStore = (char*)Addr;
 					strncpy_s(ValueStore, m_ColumnSize[TableId][Loop], Value, _TRUNCATE);
-					//strncpy_s‚Ì‘ã‚í‚è‚ÉCopyMemory‚ðŽg—p‚·‚é‚±‚Æ‚Í‚Å‚«‚È‚¢BCopyMemory‚Ìê‡
-					//§ŒÀ’·‚¢‚Á‚Ï‚¢‚Ì•¶Žš—ñ‚ðƒRƒs[‚µ‚½‚Æ‚«‚ÉI’[‚É\0‚ª•t‰Á‚³‚ê‚È‚¢B
+					//strncpy_sã®ä»£ã‚ã‚Šã«CopyMemoryã‚’ä½¿ç”¨ã™ã‚‹ã“ã¨ã¯ã§ããªã„ã€‚CopyMemoryã®å ´åˆ
+					//åˆ¶é™é•·ã„ã£ã±ã„ã®æ–‡å­—åˆ—ã‚’ã‚³ãƒ”ãƒ¼ã—ãŸã¨ãã«çµ‚ç«¯ã«\0ãŒä»˜åŠ ã•ã‚Œãªã„ã€‚
 					CheckAndChangeChar(ValueStore, ValueStore + m_ColumnSize[TableId][Loop] - 1);
 				} else if (ColDat->GetColumnType() == COLUMN_TYPE_WSTR) {
 					if (m_ColumnType[TableId][Loop] != COLUMN_TYPE_WSTR) {
@@ -884,11 +884,11 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 					}
 					PrevRecDatRes = RecDatRes;
 				} else if (OpType == OPE_DELETE) {
-					// «”\–â‘è‚Æ‚È‚éƒR[ƒh‚ÌC³ #10055
+					// æ€§èƒ½å•é¡Œã¨ãªã‚‹ã‚³ãƒ¼ãƒ‰ã®ä¿®æ­£ #10055
 					SIZE_T Source = (SIZE_T)m_TableAddr[TableId] + (m_RecordCount[TableId] - 1) * m_RecordSize[TableId];
 					CopyMemory((void*)Addr, (void*)Source, m_RecordSize[TableId]);
 
-					/* «”\–â‘è‚Æ‚È‚éƒR[ƒh‚ÌC³ #10055
+					/* æ€§èƒ½å•é¡Œã¨ãªã‚‹ã‚³ãƒ¼ãƒ‰ã®ä¿®æ­£ #10055
 					SIZE_T Length = (SIZE_T)(m_TableSize[TableId] + (SIZE_T)m_TableAddr[TableId] - (SIZE_T)Addr - m_RecordSize[TableId]);
 					CopyMemory((void*)Addr, (void*)(Addr + m_RecordSize[TableId]), Length);
 					FillMemory((void*)(m_TableSize[TableId] + (SIZE_T)m_TableAddr[TableId] - m_RecordSize[TableId]), m_RecordSize[TableId], 0);
@@ -939,8 +939,8 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 							char* Value = (char*)ColDatStr->GetValue();
 							char* ValueStore = (char*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
 							strncpy_s(ValueStore, m_ColumnSize[TableId][CurColIdx], Value, _TRUNCATE);
-							//strncpy_s‚Ì‘ã‚í‚è‚ÉCopyMemory‚ðŽg—p‚·‚é‚±‚Æ‚Í‚Å‚«‚È‚¢BCopyMemory‚Ìê‡
-							//§ŒÀ’·‚¢‚Á‚Ï‚¢‚Ì•¶Žš—ñ‚ðƒRƒs[‚µ‚½‚Æ‚«‚ÉI’[‚É\0‚ª•t‰Á‚³‚ê‚È‚¢B
+							//strncpy_sã®ä»£ã‚ã‚Šã«CopyMemoryã‚’ä½¿ç”¨ã™ã‚‹ã“ã¨ã¯ã§ããªã„ã€‚CopyMemoryã®å ´åˆ
+							//åˆ¶é™é•·ã„ã£ã±ã„ã®æ–‡å­—åˆ—ã‚’ã‚³ãƒ”ãƒ¼ã—ãŸã¨ãã«çµ‚ç«¯ã«\0ãŒä»˜åŠ ã•ã‚Œãªã„ã€‚
 							CheckAndChangeChar(ValueStore, ValueStore + m_ColumnSize[TableId][CurColIdx] - 1);
 							UdtFlag = true;
 						} else if (ColDatUdt->GetColumnType() == COLUMN_TYPE_WSTR) {
