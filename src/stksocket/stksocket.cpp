@@ -1,4 +1,4 @@
-#include "StkSocketMgr.h"
+﻿#include "StkSocketMgr.h"
 
 int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, wchar_t TargetAddr[256], int TargetPort)
 {

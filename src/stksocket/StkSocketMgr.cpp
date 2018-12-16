@@ -1,4 +1,4 @@
-#include <winsock2.h>
+ï»¿#include <winsock2.h>
 #include <Ws2tcpip.h.>
 #include <windows.h>
 #include <stdio.h>
@@ -356,7 +356,7 @@ int StkSocketMgr::ConnectSocket(int Id)
 			}
 
 			SocketInfo[Loop].Sock = socket(ResAddr->ai_family, ResAddr->ai_socktype, ResAddr->ai_protocol);
-			// ƒ\ƒPƒbƒg‚ÌƒI[ƒvƒ“‚É¸”s‚µ‚½‚ç"Continue"
+			// ã‚½ã‚±ãƒƒãƒˆã®ã‚ªãƒ¼ãƒ—ãƒ³ã«å¤±æ•—ã—ãŸã‚‰"Continue"
 			if (SocketInfo[Loop].Sock == INVALID_SOCKET) {
 				freeaddrinfo(ResAddr);
 				return -1;
@@ -428,7 +428,7 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, bool WaitForPeerClose)
 	return 0;
 }
 
-// Socket‚ÌƒI[ƒvƒ“
+// Socketã®ã‚ªãƒ¼ãƒ—ãƒ³
 int StkSocketMgr::OpenSocket(int TargetId)
 {
 	addrinfo Hints;
@@ -448,7 +448,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 				return 0;
 			}
-			// Receiver‚Ìê‡
+			// Receiverã®å ´åˆ
 			if (SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER) {
 
 				// Get address information
@@ -468,13 +468,13 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				}
 
 				SocketInfo[Loop].Sock = socket(ResAddr->ai_family, ResAddr->ai_socktype, ResAddr->ai_protocol);
-				// ƒ\ƒPƒbƒg‚ÌƒI[ƒvƒ“‚É¸”s‚µ‚½‚çŒÄ‚Ño‚µŒ³‚É–ß‚é
+				// ã‚½ã‚±ãƒƒãƒˆã®ã‚ªãƒ¼ãƒ—ãƒ³ã«å¤±æ•—ã—ãŸã‚‰å‘¼ã³å‡ºã—å…ƒã«æˆ»ã‚‹
 				if (SocketInfo[Loop].Sock == INVALID_SOCKET) {
 					freeaddrinfo(ResAddr);
 					return -1;
 				}
 
-				// BIND‚É¸”s‚µ‚½‚çƒ\ƒPƒbƒg‚ğƒNƒ[ƒY‚·‚é
+				// BINDã«å¤±æ•—ã—ãŸã‚‰ã‚½ã‚±ãƒƒãƒˆã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹
 				int RetBind = bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen);
 				if (RetBind == SOCKET_ERROR) {
 					if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
@@ -488,7 +488,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 					return -1;
 				}
 				if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
-					// LISTEN‚É¸”s‚µ‚½‚çƒ\ƒPƒbƒg‚ğƒNƒ[ƒY‚·‚é
+					// LISTENã«å¤±æ•—ã—ãŸã‚‰ã‚½ã‚±ãƒƒãƒˆã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹
 					int RetListen = listen(SocketInfo[Loop].Sock, 5);
 					if (RetListen == SOCKET_ERROR) {
 						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, WSAGetLastError());
@@ -530,9 +530,9 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				freeaddrinfo(ResAddr);
 				return 0;
 			}
-			// Sender‚Ìê‡
+			// Senderã®å ´åˆ
 			if (SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_SENDER) {
-				// “Á‚É‰½‚à‚µ‚È‚¢
+				// ç‰¹ã«ä½•ã‚‚ã—ãªã„
 				return 0;
 			}
 		}
@@ -540,7 +540,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 	return 0;
 }
 
-// Socket‚ÌƒNƒ[ƒY
+// Socketã®ã‚¯ãƒ­ãƒ¼ã‚º
 int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 {
 	// Find socket descriptor
@@ -634,14 +634,14 @@ int StkSocketMgr::Accept(int Id)
 {
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == Id && SocketInfo[Loop].Status == StkSocketInfo::STATUS_OPEN) {
-			// Select—pFDSì¬
+			// Selectç”¨FDSä½œæˆ
 			timeval Timeout;
 			Timeout.tv_sec = 0;
 			Timeout.tv_usec = 0;
 			fd_set AccFds;
 			FD_ZERO(&AccFds);
 			FD_SET(SocketInfo[Loop].Sock, &AccFds);
-			// ˆê’èŠÔ‘Ò‚Á‚½‚ ‚ÆSock‚ÉÚ‘±‚ª‚ ‚é‚©Šm”F‚·‚é
+			// ä¸€å®šæ™‚é–“å¾…ã£ãŸã‚ã¨Sockã«æ¥ç¶šãŒã‚ã‚‹ã‹ç¢ºèªã™ã‚‹
 			select(0, &AccFds, NULL, NULL, &Timeout);
 			if (!FD_ISSET(SocketInfo[Loop].Sock, &AccFds)) {
 				return -1;
@@ -699,7 +699,7 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 // FinishCondition = -4 : Exit method if timeout is detected
 int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, unsigned char* VarDat, int VarDatSize)
 {
-	// Select—pFDSì¬
+	// Selectç”¨FDSä½œæˆ
 	DWORD CurrWaitTime = GetTickCount();
 	timeval Timeout;
 	Timeout.tv_sec = 0;
@@ -736,7 +736,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 		while (true) {
 			FD_ZERO(&RecFds);
 			FD_SET(TmpSock, &RecFds);
-			// ˆê’èŠÔ‘Ò‚Á‚½‚ ‚ÆAcceptedSock‚ÉÚ‘±‚ª‚ ‚é‚©Šm”F‚·‚é
+			// ä¸€å®šæ™‚é–“å¾…ã£ãŸã‚ã¨AcceptedSockã«æ¥ç¶šãŒã‚ã‚‹ã‹ç¢ºèªã™ã‚‹
 			select(0, &RecFds, NULL, NULL, &Timeout);
 			if (!FD_ISSET(TmpSock, &RecFds)) {
 				// Timeout occurrence and no data received
@@ -793,12 +793,12 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				return Ret;
 			}
 			if (Ret == 0 && Offset == 0) {
-				// Ú‘±æƒ\ƒPƒbƒg‚ªƒNƒ[ƒY‚µ‚½ê‡Ret=0‚Æ‚È‚é
+				// æ¥ç¶šå…ˆã‚½ã‚±ãƒƒãƒˆãŒã‚¯ãƒ­ãƒ¼ã‚ºã—ãŸå ´åˆRet=0ã¨ãªã‚‹
 				return Offset;
 			}
 			Offset += Ret;
 			if (Ret == 0 && Offset > 0) {
-				// Ú‘±æƒ\ƒPƒbƒg‚ªƒNƒ[ƒY‚µ‚½ê‡Ret=0‚Æ‚È‚é
+				// æ¥ç¶šå…ˆã‚½ã‚±ãƒƒãƒˆãŒã‚¯ãƒ­ãƒ¼ã‚ºã—ãŸå ´åˆRet=0ã¨ãªã‚‹
 				PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 				return Offset;
 			}
@@ -905,13 +905,13 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			}
 		}
 	}
-	// ƒRƒR‚ÅƒGƒ‰[ƒƒO‚ğo—Í‚µ‚Ä‚Í‚¢‚¯‚È‚¢B‘¼‚Ì‘—M—v‘f‚Ìƒ\ƒPƒbƒg‚©‚ç‚Ì•ÔM‘Ò‚¿‚Ìê‡•K‚¸ƒGƒ‰[‚ª”­¶‚·‚é
+	// ã‚³ã‚³ã§ã‚¨ãƒ©ãƒ¼ãƒ­ã‚°ã‚’å‡ºåŠ›ã—ã¦ã¯ã„ã‘ãªã„ã€‚ä»–ã®é€ä¿¡è¦ç´ ã®ã‚½ã‚±ãƒƒãƒˆã‹ã‚‰ã®è¿”ä¿¡å¾…ã¡ã®å ´åˆå¿…ãšã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã™ã‚‹
 	return -1;
 }
 
 int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 {
-	// Select—pFDSì¬
+	// Selectç”¨FDSä½œæˆ
 	timeval Timeout;
 	Timeout.tv_sec = 0;
 	Timeout.tv_usec = 0;
@@ -931,7 +931,7 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int Buffe
 		}
 		FD_ZERO(&RecFds);
 		FD_SET(TmpSock, &RecFds);
-		// ˆê’èŠÔ‘Ò‚Á‚½‚ ‚ÆTmpSock‚ÉÚ‘±‚ª‚ ‚é‚©Šm”F‚·‚é
+		// ä¸€å®šæ™‚é–“å¾…ã£ãŸã‚ã¨TmpSockã«æ¥ç¶šãŒã‚ã‚‹ã‹ç¢ºèªã™ã‚‹
 		select(0, &RecFds, NULL, NULL, &Timeout);
 		if (!FD_ISSET(TmpSock, &RecFds)) {
 			// Timeout occurrence and no data received
@@ -947,7 +947,7 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int Buffe
 		}
 		memcpy(&SocketInfo[Loop].LastAccessedAddr, &SenderAddr, SenderAddrLen);
 		if (Ret == 0) {
-			// Ú‘±æƒ\ƒPƒbƒg‚ªƒNƒ[ƒY‚µ‚½ê‡Ret=0‚Æ‚È‚é
+			// æ¥ç¶šå…ˆã‚½ã‚±ãƒƒãƒˆãŒã‚¯ãƒ­ãƒ¼ã‚ºã—ãŸå ´åˆRet=0ã¨ãªã‚‹
 			PutLog(LOG_UDPRECV, LogId, L"", L"", Ret, 0);
 			return Ret;
 		}
@@ -957,7 +957,7 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int Buffe
 		}
 		return -1;
 	}
-	// ƒRƒR‚ÅƒGƒ‰[ƒƒO‚ğo—Í‚µ‚Ä‚Í‚¢‚¯‚È‚¢B‘¼‚Ì‘—M—v‘f‚Ìƒ\ƒPƒbƒg‚©‚ç‚Ì•ÔM‘Ò‚¿‚Ìê‡•K‚¸ƒGƒ‰[‚ª”­¶‚·‚é
+	// ã‚³ã‚³ã§ã‚¨ãƒ©ãƒ¼ãƒ­ã‚°ã‚’å‡ºåŠ›ã—ã¦ã¯ã„ã‘ãªã„ã€‚ä»–ã®é€ä¿¡è¦ç´ ã®ã‚½ã‚±ãƒƒãƒˆã‹ã‚‰ã®è¿”ä¿¡å¾…ã¡ã®å ´åˆå¿…ãšã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã™ã‚‹
 	return -1;
 }
 
@@ -1029,7 +1029,7 @@ int StkSocketMgr::Send(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 			return Ret;
 		}
 	}
-	// ƒRƒR‚ÅƒGƒ‰[ƒƒO‚ğo—Í‚µ‚Ä‚Í‚¢‚¯‚È‚¢B‘¼‚ÌóM—v‘f‚Ö•ÔM‚·‚éê‡•K‚¸ƒGƒ‰[‚ª”­¶‚·‚é
+	// ã‚³ã‚³ã§ã‚¨ãƒ©ãƒ¼ãƒ­ã‚°ã‚’å‡ºåŠ›ã—ã¦ã¯ã„ã‘ãªã„ã€‚ä»–ã®å—ä¿¡è¦ç´ ã¸è¿”ä¿¡ã™ã‚‹å ´åˆå¿…ãšã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã™ã‚‹
 	return -1;
 }
 
@@ -1082,7 +1082,7 @@ int StkSocketMgr::SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			return Ret;
 		}
 	}
-	// ƒRƒR‚ÅƒGƒ‰[ƒƒO‚ğo—Í‚µ‚Ä‚Í‚¢‚¯‚È‚¢B‘¼‚ÌóM—v‘f‚Ö•ÔM‚·‚éê‡•K‚¸ƒGƒ‰[‚ª”­¶‚·‚é
+	// ã‚³ã‚³ã§ã‚¨ãƒ©ãƒ¼ãƒ­ã‚°ã‚’å‡ºåŠ›ã—ã¦ã¯ã„ã‘ãªã„ã€‚ä»–ã®å—ä¿¡è¦ç´ ã¸è¿”ä¿¡ã™ã‚‹å ´åˆå¿…ãšã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã™ã‚‹
 	return -1;
 }
 

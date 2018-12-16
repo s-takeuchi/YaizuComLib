@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include <winsock2.h>
 #include <windows.h>
 
 struct StkSocketInfo
 {
-	// Status‚Ì‚Ìæ‚è“¾‚é’l
+	// Statusã®ã®å–ã‚Šå¾—ã‚‹å€¤
 	static const int STATUS_OPEN = 1;
 	static const int STATUS_ACCEPT = 2;
 	static const int STATUS_CLOSE = 3;
@@ -12,28 +12,28 @@ struct StkSocketInfo
 	// Socket Type
 	int SocketType;
 
-	// ViewElement‚ÌID
+	// ViewElementã®ID
 	int ElementId;
 
-	// ƒ\ƒPƒbƒg
+	// ã‚½ã‚±ãƒƒãƒˆ
 	SOCKET Sock;
-	// Accept‚µ‚½ƒ\ƒPƒbƒg
+	// Acceptã—ãŸã‚½ã‚±ãƒƒãƒˆ
 	SOCKET AcceptedSock;
 
-	// ó‘Ô
+	// çŠ¶æ…‹
 	int Status;
 
-	// “®ìí•Ê (Receiver=0‚Ü‚½‚ÍSender=1)
+	// å‹•ä½œç¨®åˆ¥ (Receiver=0ã¾ãŸã¯Sender=1)
 	int ActionType;
 
-	// ƒzƒXƒg–¼‚Ü‚½‚ÍIPƒAƒhƒŒƒX
-	// Receiver‚Ìê‡‘Ò‚¿ó‚¯CSender‚Ìê‡Ú‘±æ
+	// ãƒ›ã‚¹ãƒˆåã¾ãŸã¯IPã‚¢ãƒ‰ãƒ¬ã‚¹
+	// Receiverã®å ´åˆå¾…ã¡å—ã‘ï¼ŒSenderã®å ´åˆæ¥ç¶šå…ˆ
 	wchar_t HostOrIpAddr[256];
 	// In case of UDP receiver, last accessed IP address is stored.
 	sockaddr_storage LastAccessedAddr;
 
-	// ’ÊM—pƒ|[ƒg”Ô†
-	// Receiver‚Ìê‡‘Ò‚¿ó‚¯CSender‚Ìê‡Ú‘±æ
+	// é€šä¿¡ç”¨ãƒãƒ¼ãƒˆç•ªå·
+	// Receiverã®å ´åˆå¾…ã¡å—ã‘ï¼ŒSenderã®å ´åˆæ¥ç¶šå…ˆ
 	int Port;
 
 	// Flag which shows whether this socket is copied socket or not.

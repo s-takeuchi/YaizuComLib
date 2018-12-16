@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <winsock2.h>
 #include <windows.h>
 #include "StkSocketInfo.h"
@@ -6,9 +6,9 @@
 class StkSocketMgr
 {
 public:
-	// Å‘åƒƒO‚Ì”
+	// æœ€å¤§ãƒ­ã‚°ã®æ•°
 	static const int MAX_NUM_OF_LOG = 64;
-	// ƒ\ƒPƒbƒg‚Ì”i‘¼‚Ìƒm[ƒh‚ÉÚ‘±‰Â”\‚ÈÅ‘å”j
+	// ã‚½ã‚±ãƒƒãƒˆã®æ•°ï¼ˆä»–ã®ãƒãƒ¼ãƒ‰ã«æ¥ç¶šå¯èƒ½ãªæœ€å¤§æ•°ï¼‰
 	static const int MAX_SOCKET_NUMBER = 256;
 
 private:
@@ -104,23 +104,23 @@ public:
 	int OpenSocket(int);
 	int CloseSocket(int, bool);
 
-	// ‘¼ƒm[ƒh‚Ö‚ÌÚ‘±
+	// ä»–ãƒãƒ¼ãƒ‰ã¸ã®æ¥ç¶š
 	int ConnectSocket(int);
-	// ‘¼ƒm[ƒh‚Ö‚ÌÚ‘±Ø’f
+	// ä»–ãƒãƒ¼ãƒ‰ã¸ã®æ¥ç¶šåˆ‡æ–­
 	int DisconnectSocket(int, int, bool);
 
-	// accept‚·‚é
+	// acceptã™ã‚‹
 	int Accept(int);
-	// accept‚µ‚½ƒ\ƒPƒbƒg‚ğƒNƒ[ƒY‚·‚é
+	// acceptã—ãŸã‚½ã‚±ãƒƒãƒˆã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹
 	int CloseAccept(int, int, bool);
 
-	// ƒf[ƒ^óM(TCP)
+	// ãƒ‡ãƒ¼ã‚¿å—ä¿¡(TCP)
 	int Receive(int, int, unsigned char*, int, int, int, unsigned char*, int);
-	// ƒf[ƒ^‘—M(TCP)
+	// ãƒ‡ãƒ¼ã‚¿é€ä¿¡(TCP)
 	int Send(int, int, unsigned char*, int);
-	// ƒf[ƒ^óM(UDP)
+	// ãƒ‡ãƒ¼ã‚¿å—ä¿¡(UDP)
 	int ReceiveUdp(int, int, unsigned char*, int);
-	// ƒf[ƒ^‘—M(UDP)
+	// ãƒ‡ãƒ¼ã‚¿é€ä¿¡(UDP)
 	int SendUdp(int, int, unsigned char*, int);
 
 	// Acquire UDP max message size

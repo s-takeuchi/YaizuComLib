@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <commctrl.h>
 #include <tchar.h>
 #include <string.h>
@@ -236,7 +236,7 @@ RecordData* GetCheckedRecord(HWND WndHndl)
 			} else if (GetColumnType(SelectedTableName, ColName[LoopCol]) == COLUMN_TYPE_WSTR) {
 				ColDat[FndCnt] = new ColumnDataWStr(ColName[LoopCol], Buf);
 			} else {
-				// ‘I‘ğ‚µ‚½ƒŒƒR[ƒh“à‚ÌƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€‚Ì’l‚Í–³‹‚³‚ê‚é
+				// é¸æŠã—ãŸãƒ¬ã‚³ãƒ¼ãƒ‰å†…ã®ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ã®å€¤ã¯ç„¡è¦–ã•ã‚Œã‚‹
 				continue;
 			}
 			FndCnt++;
@@ -271,7 +271,7 @@ LRESULT CALLBACK InsertDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 		for (Loop = 0; Loop < ColCnt; Loop++) {
 			SetDlgItemText(hDlg, IDC_ED_ATTR1 + Loop, ColName[Loop]);
 			if (GetColumnType(SelectedTableName, ColName[Loop]) == COLUMN_TYPE_BIN) {
-				// ƒoƒCƒiƒŠŒ^ƒJƒ‰ƒ€‚Ìê‡C’l“ü—Í•s‰Â‚Æ‚·‚éB
+				// ãƒã‚¤ãƒŠãƒªå‹ã‚«ãƒ©ãƒ ã®å ´åˆï¼Œå€¤å…¥åŠ›ä¸å¯ã¨ã™ã‚‹ã€‚
 				SendDlgItemMessage(hDlg, IDC_EDIT1 + Loop, EM_SETREADONLY, TRUE, 0);
 				SetDlgItemText(hDlg, IDC_EDIT1 + Loop, L"<<binary data>>");
 				lstrcpy(StrBuf[Loop], L"bin");
@@ -445,24 +445,24 @@ LRESULT CALLBACK CreateTableDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 			Buf[15] = NULL;
 			if (lstrcmp(Buf, L"") != 0) {
 				int SelCur = (int)SendDlgItemMessage(hDlg, Loop + IDC_COMBO1, CB_GETCURSEL, 0, 0);
-				if (SelCur == 0) { // Integer‚ª‘I‘ğ‚³‚ê‚½
+				if (SelCur == 0) { // IntegerãŒé¸æŠã•ã‚ŒãŸ
 					Clm = new ColumnDefInt(Buf);
-				} else if (SelCur == 1) { // String‚ª‘I‘ğ‚³‚ê‚½
+				} else if (SelCur == 1) { // StringãŒé¸æŠã•ã‚ŒãŸ
 					wchar_t BufStrSize[32];
 					GetDlgItemText(hDlg, IDC_EDIT1 + Loop, BufStrSize, 32);
 					int Val = StrToInt(BufStrSize);
 					Clm = new ColumnDefStr(Buf, Val);
-				} else if (SelCur == 2) { // WString‚ª‘I‘ğ‚³‚ê‚½
+				} else if (SelCur == 2) { // WStringãŒé¸æŠã•ã‚ŒãŸ
 					wchar_t BufStrSize[32];
 					GetDlgItemText(hDlg, IDC_EDIT1 + Loop, BufStrSize, 32);
 					int Val = StrToInt(BufStrSize);
 					Clm = new ColumnDefWStr(Buf, Val);
-				} else if (SelCur == 3) { // Binary‚ª‘I‘ğ‚³‚ê‚½
+				} else if (SelCur == 3) { // BinaryãŒé¸æŠã•ã‚ŒãŸ
 					wchar_t BufBinSize[32];
 					GetDlgItemText(hDlg, IDC_EDIT1 + Loop, BufBinSize, 32);
 					int Val = StrToInt(BufBinSize);
 					Clm = new ColumnDefBin(Buf, Val);
-				} else if (SelCur == 4) { // Float‚ª‘I‘ğ‚³‚ê‚½
+				} else if (SelCur == 4) { // FloatãŒé¸æŠã•ã‚ŒãŸ
 					Clm = new ColumnDefFloat(Buf);
 				}
 				Tbl->AddColumnDef(Clm);
