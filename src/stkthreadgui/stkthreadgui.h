@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <windows.h>
 
 int ShowStkThreadController(HWND, int, wchar_t*);

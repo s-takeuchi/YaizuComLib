@@ -1,4 +1,4 @@
-#include "StkThreadManager.h"
+﻿#include "StkThreadManager.h"
 
 
 StkThreadManager* StkThreadManager::ThisInstance;

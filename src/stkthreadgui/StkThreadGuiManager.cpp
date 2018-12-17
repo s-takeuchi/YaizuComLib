@@ -1,4 +1,4 @@
-#include "StkThreadGuiManager.h"
+ï»¿#include "StkThreadGuiManager.h"
 #include "..\stkthread\stkthread.h"
 #include "StkThreadGuiLogging.h"
 
@@ -216,9 +216,9 @@ void StkThreadGuiManager::SetStatusOfMasterCheckBox()
 	}
 }
 
-// ƒƒOo—Í—Ìˆæ‚ğXV‚·‚é
-// [in] Force : true‚Ì‚Æ‚«‚Í‹­§“I‚ÉƒƒOo—Í—Ìˆæ‚ğXVBfalse‚Ì‚Æ‚«‚Í‘O‰ñ‚©‚ç•ÏX‚ ‚ê‚ÎXVB
-// [out] ‚È‚µ
+// ãƒ­ã‚°å‡ºåŠ›é ˜åŸŸã‚’æ›´æ–°ã™ã‚‹
+// [in] Force : trueã®ã¨ãã¯å¼·åˆ¶çš„ã«ãƒ­ã‚°å‡ºåŠ›é ˜åŸŸã‚’æ›´æ–°ã€‚falseã®ã¨ãã¯å‰å›ã‹ã‚‰å¤‰æ›´ã‚ã‚Œã°æ›´æ–°ã€‚
+// [out] ãªã—
 void StkThreadGuiManager::RefreshLog(bool Force)
 {
 	StkThreadGuiLogging* StkLog = StkThreadGuiLogging::GetInstance();
@@ -242,7 +242,7 @@ void StkThreadGuiManager::RefreshLog(bool Force)
 int StkThreadGuiManager::StartThreads(bool AllThreads)
 {
 	if (DlgWndHndl != NULL) {
-		SetFocus(DlgWndHndl); // TABƒtƒH[ƒJƒX‚ª¸‚í‚ê‚é‚Ì‚ğ–h~‚·‚é{ô
+		SetFocus(DlgWndHndl); // TABãƒ•ã‚©ãƒ¼ã‚«ã‚¹ãŒå¤±ã‚ã‚Œã‚‹ã®ã‚’é˜²æ­¢ã™ã‚‹æ–½ç­–
 
 		//Disable Start and Stop button.
 		EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), false);
@@ -300,7 +300,7 @@ int StkThreadGuiManager::StartThreads(bool AllThreads)
 int StkThreadGuiManager::StopThreads(bool AllThreads)
 {
 	if (DlgWndHndl != NULL) {
-		SetFocus(DlgWndHndl); // TABƒtƒH[ƒJƒX‚ª¸‚í‚ê‚é‚Ì‚ğ–h~‚·‚é{ô
+		SetFocus(DlgWndHndl); // TABãƒ•ã‚©ãƒ¼ã‚«ã‚¹ãŒå¤±ã‚ã‚Œã‚‹ã®ã‚’é˜²æ­¢ã™ã‚‹æ–½ç­–
 
 		//Disable Start and Stop button.
 		EnableWindow(GetDlgItem(DlgWndHndl, IDC_START), false);

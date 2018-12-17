@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
 #include <cstring>
@@ -50,7 +50,7 @@ DWORD WINAPI TestThreadProc(LPVOID Param)
 {
 	Sleep(1000);
 	for (int Loop = 0; Loop < 10; Loop++) {
-		printf("‘SƒXƒŒƒbƒhŽ©“®ŽÀs\r\n");
+		printf("å…¨ã‚¹ãƒ¬ãƒƒãƒ‰è‡ªå‹•å®Ÿè¡Œ\r\n");
 		StartAllStkThreads();
 		Sleep(1000);
 
@@ -61,12 +61,12 @@ DWORD WINAPI TestThreadProc(LPVOID Param)
 		AddStkThreadForGui(Loop, BufName, BufDesc, NULL, NULL, NULL, ElemStkThreadStart, ElemStkThreadStop);
 		Sleep(1000);
 
-		printf("‘SƒXƒŒƒbƒhŽ©“®’âŽ~\r\n");
+		printf("å…¨ã‚¹ãƒ¬ãƒƒãƒ‰è‡ªå‹•åœæ­¢\r\n");
 		StopAllStkThreads();
 		Sleep(1000);
 	}
 	for (int Loop = 0; Loop < 10; Loop++) {
-		printf("ƒXƒŒƒbƒhíœ\r\n");
+		printf("ã‚¹ãƒ¬ãƒƒãƒ‰å‰Šé™¤\r\n");
 		DeleteStkThreadForGui(Loop);
 		Sleep(1000);
 	}
@@ -85,7 +85,7 @@ int main(int Argc, char* Argv[])
 		wsprintf(BufDesc, L"Description%03d", Loop);
 		AddStkThreadForGui(Loop, BufName, BufDesc, NULL, NULL, NULL, ElemStkThreadStart, ElemStkThreadStop);
 	}
-	printf("‘SƒXƒŒƒbƒhŠJŽn¨’âŽ~‚ð‰Ÿ‚µ‚Ä‚­‚¾‚³‚¢BƒƒOo—Í‚ª100•¶ŽšˆÈ“à‚Å‚ ‚é‚±‚Æ‚ðŠm”F‚µƒ_ƒCƒAƒƒO‚ð•Â‚¶‚Ä‚­‚¾‚³‚¢B\r\n");
+	printf("å…¨ã‚¹ãƒ¬ãƒƒãƒ‰é–‹å§‹â†’åœæ­¢ã‚’æŠ¼ã—ã¦ãã ã•ã„ã€‚ãƒ­ã‚°å‡ºåŠ›ãŒ100æ–‡å­—ä»¥å†…ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’é–‰ã˜ã¦ãã ã•ã„ã€‚\r\n");
 	ShowStkThreadController(NULL, 0, L"Test");
 	wchar_t LogBuf[20000];
 	GetStkThreadLog(LogBuf, 10);
@@ -95,7 +95,7 @@ int main(int Argc, char* Argv[])
 	}
 
 	ChangeStkThreadLogSize(1);
-	printf("‘SƒXƒŒƒbƒhŠJŽn¨’âŽ~‚ð‰Ÿ‚µ‚Ä‚­‚¾‚³‚¢BƒƒOo—Í‚ª‘O‰ñ‚Æ•Ï‰»–³‚¢‚±‚Æ‚ðŠm”F‚µƒ_ƒCƒAƒƒO‚ð•Â‚¶‚Ä‚­‚¾‚³‚¢B\r\n");
+	printf("å…¨ã‚¹ãƒ¬ãƒƒãƒ‰é–‹å§‹â†’åœæ­¢ã‚’æŠ¼ã—ã¦ãã ã•ã„ã€‚ãƒ­ã‚°å‡ºåŠ›ãŒå‰å›žã¨å¤‰åŒ–ç„¡ã„ã“ã¨ã‚’ç¢ºèªã—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’é–‰ã˜ã¦ãã ã•ã„ã€‚\r\n");
 	ShowStkThreadController(NULL, 0, L"Test");
 	GetStkThreadLog(LogBuf, 12000);
 	if (wcsstr(LogBuf, L"ProcAfter") == 0) {
@@ -104,22 +104,22 @@ int main(int Argc, char* Argv[])
 	}
 
 	ChangeStkThreadLogSize(50000);
-	printf("ƒƒOo—Í—Ê‚ªŠg’£‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ðŠm”F‚µƒ_ƒCƒAƒƒO‚ð•Â‚¶‚Ä‚­‚¾‚³‚¢B\r\n");
+	printf("ãƒ­ã‚°å‡ºåŠ›é‡ãŒæ‹¡å¼µã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèªã—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’é–‰ã˜ã¦ãã ã•ã„ã€‚\r\n");
 	ShowStkThreadController(NULL, 0, L"Test");
 
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
 		DeleteStkThreadForGui(Loop);
 	}
-	printf("‰½‚àƒXƒŒƒbƒh‚ª‘¶Ý‚µ‚È‚¢‚±‚Æ‚ðŠm”F‚µƒ_ƒCƒAƒƒO‚ð•Â‚¶‚Ä‚­‚¾‚³‚¢B\r\n");
+	printf("ä½•ã‚‚ã‚¹ãƒ¬ãƒƒãƒ‰ãŒå­˜åœ¨ã—ãªã„ã“ã¨ã‚’ç¢ºèªã—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’é–‰ã˜ã¦ãã ã•ã„ã€‚\r\n");
 	ShowStkThreadController(NULL, 0, L"Test");
 
 	DWORD TmpId;
 	CreateThread(NULL, 0, &TestThreadProc, NULL, 0, &TmpId);
-	printf("StkThreadControllerŽ©“®§Œä--------------------\r\n");
-	printf("ƒXƒŒƒbƒh‚ª10ŒÂ•ª’Ç‰Á‚³‚ê‚½‚ ‚ÆC10ŒÂ•ªíœ‚³‚ê‚Ü‚·B\r\n");
+	printf("StkThreadControllerè‡ªå‹•åˆ¶å¾¡--------------------\r\n");
+	printf("ã‚¹ãƒ¬ãƒƒãƒ‰ãŒ10å€‹åˆ†è¿½åŠ ã•ã‚ŒãŸã‚ã¨ï¼Œ10å€‹åˆ†å‰Šé™¤ã•ã‚Œã¾ã™ã€‚\r\n");
 	ShowStkThreadController(NULL, 0, L"Test");
 
-	printf("\r\nƒeƒXƒg‚ªŠ®—¹‚µ‚Ü‚µ‚½B\r\n");
+	printf("\r\nãƒ†ã‚¹ãƒˆãŒå®Œäº†ã—ã¾ã—ãŸã€‚\r\n");
 
 	return 0;
 }

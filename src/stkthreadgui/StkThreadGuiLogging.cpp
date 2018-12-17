@@ -1,4 +1,4 @@
-#include "StkThreadGuiLogging.h"
+ï»¿#include "StkThreadGuiLogging.h"
 
 StkThreadGuiLogging* StkThreadGuiLogging::ThisInstance;
 CRITICAL_SECTION StkThreadGuiLogging::CriticalSection;
@@ -49,7 +49,7 @@ void StkThreadGuiLogging::JoinToExistedLogStream(wchar_t* Buf)
 void StkThreadGuiLogging::AddLog(wchar_t* Message)
 {
 	EnterCriticalSection(&CriticalSection);
-	wchar_t *TmpBuf = new wchar_t[MaxLogSize + lstrlen(Message) + 1]; // ’Ç‰Á‚·‚éƒƒbƒZ[ƒW‚ÌÅ‘å’·‚ğ512•¶š‚Æ‘z’è
+	wchar_t *TmpBuf = new wchar_t[MaxLogSize + lstrlen(Message) + 1]; // è¿½åŠ ã™ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®æœ€å¤§é•·ã‚’512æ–‡å­—ã¨æƒ³å®š
 	lstrcpy(TmpBuf, Message);
 	JoinToExistedLogStream(TmpBuf);
 	delete TmpBuf;
@@ -62,7 +62,7 @@ void StkThreadGuiLogging::AddLogWithThreadInfo(wchar_t* Name, wchar_t* Message)
 	EnterCriticalSection(&CriticalSection);
 	SYSTEMTIME SysTm;
 	GetLocalTime(&SysTm);
-	wchar_t *TmpBuf = new wchar_t[MaxLogSize + lstrlen(Message) + 100]; // ’Ç‰Á‚·‚éƒƒbƒZ[ƒW‚ÌÅ‘å’·‚ğ512•¶š‚Æ‘z’è
+	wchar_t *TmpBuf = new wchar_t[MaxLogSize + lstrlen(Message) + 100]; // è¿½åŠ ã™ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®æœ€å¤§é•·ã‚’512æ–‡å­—ã¨æƒ³å®š
 	wsprintf(TmpBuf, L"%02d:%02d:%02d [%s]  %s", SysTm.wHour, SysTm.wMinute, SysTm.wSecond, Name, Message);
 	JoinToExistedLogStream(TmpBuf);
 	delete TmpBuf;

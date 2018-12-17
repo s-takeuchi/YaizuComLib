@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <shlwapi.h>
 #include "StkThreadElement.h"
 
@@ -100,7 +100,7 @@ int StkThreadElement::StkThreadLoop()
 	StkThreadInit();
 	SetStatus(STKTHREAD_STATUS_RUNNING);
 	LeaveCriticalSection(&CriticalSection);
-	Sleep(1000); // b’èC³StkFw‚ÌƒXƒŒƒbƒh“¯Às‚ÉInitˆ—‚ªI‚í‚é‘O‚ÉMain‚ªÀs‚³‚ê‚Ä‚µ‚Ü‚¤‚±‚Æ‚Ö‚Ì‘Îô
+	Sleep(1000); // æš«å®šä¿®æ­£StkFwã®ã‚¹ãƒ¬ãƒƒãƒ‰åŒæ™‚å®Ÿè¡Œæ™‚ã«Initå‡¦ç†ãŒçµ‚ã‚ã‚‹å‰ã«MainãŒå®Ÿè¡Œã•ã‚Œã¦ã—ã¾ã†ã“ã¨ã¸ã®å¯¾ç­–
 
 	while (true) {
 		StkThreadMain();

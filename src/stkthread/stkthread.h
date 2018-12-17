@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <windows.h>
 
 #define MAX_NUM_OF_STKTHREADS 1000

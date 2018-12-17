@@ -1,4 +1,4 @@
-#include "stkthreadgui.h"
+﻿#include "stkthreadgui.h"
 #include "StkThreadGuiManager.h"
 #include "StkThreadGuiLogging.h"
 
