@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <shlwapi.h>
 #include <time.h>
 #include "..\stksocket\stksocket.h"
@@ -549,15 +549,15 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, wchar_t* HostName, int TargetPor
 	pImpl->TimeoutInterval = 3000;
 
 	// Message definition
-	MessageProc::AddJpn(1001, L"ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒg‚É‘Î‰‚·‚éAPI‚Í’è‹`‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+	MessageProc::AddJpn(1001, L"ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆã«å¯¾å¿œã™ã‚‹APIã¯å®šç¾©ã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
 	MessageProc::AddEng(1001, L"No API is defined for the request sent from client.");
-	MessageProc::AddJpn(1002, L"ƒŠƒNƒGƒXƒg‚ªJSON‚Å‚Í‚È‚¢ƒf[ƒ^‚ğŠÜ‚ñ‚Å‚¢‚é‚©HTTPƒwƒbƒ_‚ÌContent-Type‚ªapplication/json‚Å‚Í‚ ‚è‚Ü‚¹‚ñB");
+	MessageProc::AddJpn(1002, L"ãƒªã‚¯ã‚¨ã‚¹ãƒˆãŒJSONã§ã¯ãªã„ãƒ‡ãƒ¼ã‚¿ã‚’å«ã‚“ã§ã„ã‚‹ã‹HTTPãƒ˜ãƒƒãƒ€ã®Content-TypeãŒapplication/jsonã§ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚");
 	MessageProc::AddEng(1002, L"The request contains non-JSON data or Content-Type of HTTP header is not application/json.");
-	MessageProc::AddJpn(1004, L"URL\"/service/\"‚ÉPOST‚³‚ê‚½ƒŠƒNƒGƒXƒg‚Í•s³‚Å‚·B");
+	MessageProc::AddJpn(1004, L"URL\"/service/\"ã«POSTã•ã‚ŒãŸãƒªã‚¯ã‚¨ã‚¹ãƒˆã¯ä¸æ­£ã§ã™ã€‚");
 	MessageProc::AddEng(1004, L"An invalid request is posted to URL\"/service/\".");
-	MessageProc::AddJpn(1005, L"•s³‚ÈƒŠƒNƒGƒXƒg‚ğóM‚µ‚Ü‚µ‚½BƒŠƒNƒGƒXƒg‚ª‰ó‚ê‚Ä‚¢‚é‚¨‚»‚ê‚ª‚ ‚è‚Ü‚·B");
+	MessageProc::AddJpn(1005, L"ä¸æ­£ãªãƒªã‚¯ã‚¨ã‚¹ãƒˆã‚’å—ä¿¡ã—ã¾ã—ãŸã€‚ãƒªã‚¯ã‚¨ã‚¹ãƒˆãŒå£Šã‚Œã¦ã„ã‚‹ãŠãã‚ŒãŒã‚ã‚Šã¾ã™ã€‚");
 	MessageProc::AddEng(1005, L"An invalid request is received. The request might be broken.");
-	MessageProc::AddJpn(1006, L"ƒf[ƒ^ƒTƒCƒY‚ª‘—M‚Å‚«‚éƒTƒCƒY‚ÌãŒÀ‚ğ’´‚¦‚Ü‚µ‚½B");
+	MessageProc::AddJpn(1006, L"ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚ºãŒé€ä¿¡ã§ãã‚‹ã‚µã‚¤ã‚ºã®ä¸Šé™ã‚’è¶…ãˆã¾ã—ãŸã€‚");
 	MessageProc::AddEng(1006, L"Data size has exceeded the limit for sending.");
 
 	// Update array of StkWebApp

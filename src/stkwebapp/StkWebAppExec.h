@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "..\commonfunc\stkobject.h"
 
 class StkWebAppExec

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "..\..\src\stkwebapp\StkWebAppExec.h"
 
 class StkWebAppTest5 : StkWebAppExec

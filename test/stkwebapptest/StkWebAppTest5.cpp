@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <shlwapi.h>
 #include "..\..\src\commonfunc\StkStringParser.h"
 #include "StkWebAppTest5.h"
