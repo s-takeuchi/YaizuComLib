@@ -1,5 +1,4 @@
 ﻿#include <windows.h>
-#include <tchar.h>
 #include <stdio.h>
 #include <cstring>
 #include "..\..\src\stkthread\stkthread.h"

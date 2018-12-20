@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tchar.h>
 #include <shlwapi.h>
 #include "..\..\src\commonfunc\StkStringParser.h"
 #include "StkWebAppTest5.h"
@@ -10,19 +9,19 @@ StkObject* StkWebAppTest5::Execute(StkObject* ReqObj, int Method, wchar_t UrlPat
 	if (StrStr(UrlPath, L"/bigdata/") != NULL) {
 		RetObj = new StkObject(L"BigData");
 		for (int Loop = 0; Loop < 150; Loop++) {
-			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), L"Hello, world!!"));
+			RetObj->AppendChildElement(new StkObject(L"ChildObj", L"Hello, world!!"));
 		}
 	}
 	if (StrStr(UrlPath, L"/middledata/") != NULL) {
 		RetObj = new StkObject(L"MiddleData");
 		for (int Loop = 0; Loop < 90; Loop++) {
-			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), L"Hello, world!!"));
+			RetObj->AppendChildElement(new StkObject(L"ChildObj", L"Hello, world!!"));
 		}
 	}
 	if (StrStr(UrlPath, L"/smalldata/") != NULL) {
-		RetObj = new StkObject(_T("SmallData"));
+		RetObj = new StkObject(L"SmallData");
 		for (int Loop = 0; Loop < 50; Loop++) {
-			RetObj->AppendChildElement(new StkObject(_T("ChildObj"), L"Hello, world!!"));
+			RetObj->AppendChildElement(new StkObject(L"ChildObj", L"Hello, world!!"));
 		}
 	}
 	return RetObj;

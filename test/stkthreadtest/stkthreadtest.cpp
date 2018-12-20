@@ -1,5 +1,4 @@
 ﻿#include <windows.h>
-#include <tchar.h>
 #include <stdio.h>
 #include <Psapi.h>
 #include "..\..\src\stkthread\stkthread.h"
@@ -85,7 +84,7 @@ int MemoryLeakChecking1()
 		wchar_t BufName[32];
 		for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
 			wsprintf(BufName, L"person#%04d", Loop);
-			AddStkThread(Loop, BufName, _T("Dummy thread"), ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
+			AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 		}
 		while (GetNumOfStkThread() >= 1) {
 			int TargetId = GetStkThreadIdByIndex(0);
@@ -115,8 +114,8 @@ int MemoryLeakChecking2()
 	long MaxMem[20];
 	wchar_t BufName[32];
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
-		wsprintf(BufName, _T("person#%04d"), Loop);
-		AddStkThread(Loop, BufName, _T("Dummy thread"), ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
+		wsprintf(BufName, L"person#%04d", Loop);
+		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 
 	for (int CreationLoop = 0; CreationLoop < 20; CreationLoop++) {

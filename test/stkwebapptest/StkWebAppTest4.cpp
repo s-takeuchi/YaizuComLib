@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tchar.h>
 #include "..\..\src\commonfunc\StkStringParser.h"
 #include "StkWebAppTest4.h"
 
