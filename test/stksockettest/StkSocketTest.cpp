@@ -10,6 +10,8 @@
 #include "StkSocketMemoryLeak.h"
 #include "StkSocketTestHttp.h"
 
+bool StartFlag = false;
+bool PeerCloseOkFlag = false;
 bool FinishFlag = false;
 int FindFlagCounter = 0;
 
@@ -963,7 +965,13 @@ DWORD WINAPI TestThreadProc10(LPVOID Param)
 	int *Command = (int*)Param;
 	int RecvType = 0;
 	int Size = 0;
-	if (*Command >= 0 && *Command <= 4) {
+
+	if (*Command == 0) {
+		RecvType = 256;
+		strcpy_s((char*)TestStr, 65536, "012345678901234567890123456789");
+		Size = 30;
+	}
+	if (*Command >= 1 && *Command <= 4) {
 		RecvType = *Command * -1;
 		strcpy_s((char*)TestStr, 65536, "01234567890123456789012345678901234567890123456789");
 		Size = 50;
@@ -973,22 +981,25 @@ DWORD WINAPI TestThreadProc10(LPVOID Param)
 		strcpy_s((char*)TestStr, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTestHello!!!0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
 		Size = 156;
 	}
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2002);
 	StkSocket_Open(0);
+	StartFlag = true;
 	
-	printf("[Recv/Send] : Receiver's buffer overflow occurrence (Command=%d) ...", *Command);
+	printf("[Recv/Send] : Receiver's buffer overflow occurrence %d(Command=%d) ...", StkSocket_GetNumOfStkInfos(), RecvType);
 	while (true) {
 		if (StkSocket_Accept(0) == 0) {
-			memset(Buffer, '\0', 128);
+			memset(Buffer, '\0', 512);
 			int Ret = StkSocket_Receive(0, 0, Buffer, Size, RecvType, 0, NULL, 0);
 			if (Ret != Size || strncmp((char*)Buffer, (char*)TestStr, Size) != 0) {
-				printf("NG\r\n");
+				printf("NG (return=%d, expectation=%d)\r\n", Ret, Size);
 				exit(-1);
 			}
 			break;
 		}
 	}
 	printf("OK\r\n");
+	PeerCloseOkFlag = true;
 
 	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
@@ -1007,11 +1018,16 @@ DWORD WINAPI TestThreadProc11(LPVOID Param)
 		strcpy_s(Buf, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n");
 	}
 
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2002);
 
-	Sleep(1000);
+	while (StartFlag == false) {
+		Sleep(100);
+	}
 	StkSocket_Connect(1);
 	StkSocket_Send(1, 1, (unsigned char*)Buf, strlen(Buf));
+	while (PeerCloseOkFlag == false) {
+		Sleep(100);
+	}
 	StkSocket_Disconnect(1, 1, true);
 
 	StkSocket_DeleteInfo(1);
@@ -1351,14 +1367,15 @@ int main(int Argc, char* Argv[])
 	Sleep(1000);
 
 	for (int Loop = 0; Loop <= 5; Loop++) {
+		StartFlag = false;
+		PeerCloseOkFlag = false;
 		FinishFlag = false;
 		int Command = Loop;
 		CreateThread(NULL, 0, &TestThreadProc10, &Command, 0, &TmpId);
 		CreateThread(NULL, 0, &TestThreadProc11, &Command, 0, &TmpId);
 		while (FinishFlag == false) {
-			Sleep(1000);
+			Sleep(100);
 		}
-		Sleep(1000);
 	}
 
 	TestThreadForAcceptSendRecv();
