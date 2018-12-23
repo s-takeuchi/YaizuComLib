@@ -937,6 +937,7 @@ DWORD WINAPI TestThreadProc8(LPVOID Param)
 			}
 		}
 	}
+	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	printf("OK\r\n");
 	FinishFlag = true;
@@ -954,6 +955,7 @@ DWORD WINAPI TestThreadProc9(LPVOID Param)
 	StkSocket_Send(1, 1, (unsigned char*)Buf, (lstrlen(Buf) + 1) * sizeof(wchar_t));
 	Sleep(3000);
 	StkSocket_ForceStop(0);
+	StkSocket_Disconnect(1, 1, true);
 	StkSocket_DeleteInfo(1);
 	return 0;
 }
@@ -982,15 +984,15 @@ DWORD WINAPI TestThreadProc10(LPVOID Param)
 		Size = 156;
 	}
 
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2002);
-	StkSocket_Open(0);
+	StkSocket_AddInfo(10, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2002);
+	StkSocket_Open(10);
 	StartFlag = true;
 	
-	printf("[Recv/Send] : Receiver's buffer overflow occurrence %d(Command=%d) ...", StkSocket_GetNumOfStkInfos(), RecvType);
+	printf("[Recv/Send] : Receiver's buffer overflow occurrence (Command=%d) ...", RecvType);
 	while (true) {
-		if (StkSocket_Accept(0) == 0) {
+		if (StkSocket_Accept(10) == 0) {
 			memset(Buffer, '\0', 512);
-			int Ret = StkSocket_Receive(0, 0, Buffer, Size, RecvType, 0, NULL, 0);
+			int Ret = StkSocket_Receive(10, 10, Buffer, Size, RecvType, 0, NULL, 0);
 			if (Ret != Size || strncmp((char*)Buffer, (char*)TestStr, Size) != 0) {
 				printf("NG (return=%d, expectation=%d)\r\n", Ret, Size);
 				exit(-1);
@@ -1001,8 +1003,8 @@ DWORD WINAPI TestThreadProc10(LPVOID Param)
 	printf("OK\r\n");
 	PeerCloseOkFlag = true;
 
-	StkSocket_Close(0, true);
-	StkSocket_DeleteInfo(0);
+	StkSocket_Close(10, true);
+	StkSocket_DeleteInfo(10);
 	FinishFlag = true;
 	return 0;
 }
