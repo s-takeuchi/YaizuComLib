@@ -1,5 +1,5 @@
-﻿#include "..\..\src\StkPl.h"
-#include "..\..\src\commonfunc\MsgProc.h"
+﻿#include "../../src/StkPl.h"
+#include "../../src/commonfunc/msgproc.h"
 
 void MsgProcTest()
 {

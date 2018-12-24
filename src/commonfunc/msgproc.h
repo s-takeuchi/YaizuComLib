@@ -27,8 +27,8 @@ public:
 	static unsigned char* GetMsgUtf8Eng(int);
 	static unsigned char* GetMsgUtf8Jpn(int);
 
-	static void AddEng(int, wchar_t*);
-	static void AddJpn(int, wchar_t*);
+	static void AddEng(int, const wchar_t*);
+	static void AddJpn(int, const wchar_t*);
 	static void DelEng(int);
 	static void DelJpn(int);
 

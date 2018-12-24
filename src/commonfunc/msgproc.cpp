@@ -1,4 +1,4 @@
-﻿#include "..\StkPl.h"
+﻿#include "../StkPl.h"
 #include "msgproc.h"
 
 class MessageProc::Impl
@@ -20,8 +20,8 @@ public:
 	unsigned char* StkMsgSjis[MAX_MSG_COUNT][2];
 	unsigned char* StkMsgUtf8[MAX_MSG_COUNT][2];
 
-	void Eng(int, wchar_t*);
-	void Jpn(int, wchar_t*);
+	void Eng(int, const wchar_t*);
+	void Jpn(int, const wchar_t*);
 
 	void InitMsg();
 	void AllClear();
@@ -54,7 +54,7 @@ int MessageProc::Impl::GetLocale()
 	return MessageProc::Impl::MLANG_ENGLISH;
 }
 
-void MessageProc::Impl::Eng(int Id, wchar_t* Msg)
+void MessageProc::Impl::Eng(int Id, const wchar_t* Msg)
 {
 	if (StkMsg[Id][ENG] != NULL) {
 		delete StkMsg[Id][ENG];
@@ -75,7 +75,7 @@ void MessageProc::Impl::Eng(int Id, wchar_t* Msg)
 	StkMsgUtf8[Id][ENG] = (unsigned char*)StkPlWideCharToUtf8(Msg);
 }
 
-void MessageProc::Impl::Jpn(int Id, wchar_t* Msg)
+void MessageProc::Impl::Jpn(int Id, const wchar_t* Msg)
 {
 	if (StkMsg[Id][JPN] != NULL) {
 		delete StkMsg[Id][JPN];
@@ -232,7 +232,7 @@ unsigned char* MessageProc::GetMsgUtf8Jpn(int Id)
 	return Impl::Instance->pImpl->StkMsgUtf8[Id][MessageProc::Impl::MLANG_JAPANESE];
 }
 
-void MessageProc::AddEng(int Id, wchar_t* Msg)
+void MessageProc::AddEng(int Id, const wchar_t* Msg)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();
@@ -240,7 +240,7 @@ void MessageProc::AddEng(int Id, wchar_t* Msg)
 	Impl::Instance->pImpl->Eng(Id, Msg);
 }
 
-void MessageProc::AddJpn(int Id, wchar_t* Msg)
+void MessageProc::AddJpn(int Id, const wchar_t* Msg)
 {
 	if (Impl::Instance == NULL) {
 		Impl::Instance = new MessageProc();

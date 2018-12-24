@@ -127,7 +127,9 @@ char* StkPlWideCharToUtf8(const wchar_t* Msg)
 	memset((void*)&MbState, 0, sizeof(MbState));
 	size_t ActualSize = wcsrtombs(NULL, &Msg, 1, &MbState);
 	if (ActualSize == (size_t)-1) {
-		return NULL;
+		char* NewMbs = new char[1];
+		NewMbs[0] = L'\0';
+		return NewMbs;
 	}
 	char* NewMbs = new char[ActualSize + 1];
 	wcsrtombs(NewMbs, &Msg, ActualSize, &MbState);
@@ -137,12 +139,14 @@ char* StkPlWideCharToUtf8(const wchar_t* Msg)
 
 char* StkPlWideCharToSjis(const wchar_t* Msg)
 {
-	setlocale(LC_CTYPE, "ja_JP.SJIS");
+	setlocale(LC_CTYPE, "ja_JP.sjis");
 	mbstate_t MbState;
 	memset((void*)&MbState, 0, sizeof(MbState));
 	size_t ActualSize = wcsrtombs(NULL, &Msg, 1, &MbState);
 	if (ActualSize == (size_t)-1) {
-		return NULL;
+		char* NewMbs = new char[1];
+		NewMbs[0] = L'\0';
+		return NewMbs;
 	}
 	char* NewMbs = new char[ActualSize + 1];
 	wcsrtombs(NewMbs, &Msg, ActualSize, &MbState);
