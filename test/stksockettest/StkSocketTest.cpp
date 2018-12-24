@@ -830,9 +830,7 @@ DWORD WINAPI TestThreadProc4(LPVOID Param)
 		printf("[Recv/Send for UDP] : Receiver socket close is called...NG\r\n");
 		exit(-1);
 	}
-	Sleep(1000);
 	FinishFlag = true;
-
 	return 0;
 }
 
@@ -886,8 +884,7 @@ DWORD WINAPI TestThreadProc5(LPVOID Param)
 		printf("[Recv/Send for UDP] : Sender socket close is called...NG\r\n");
 		exit(-1);
 	}
-	Sleep(1000);
-	FinishFlag = true;
+	PeerCloseOkFlag = true;
 	return 0;
 }
 
@@ -911,6 +908,7 @@ DWORD WINAPI TestThreadProc6(LPVOID Param)
 	StkSocket_Close(0, false);
 	StkSocket_DeleteInfo(0);
 	printf("OK\r\n");
+	PeerCloseOkFlag = true;
 	return 0;
 }
 
@@ -957,6 +955,7 @@ DWORD WINAPI TestThreadProc9(LPVOID Param)
 	StkSocket_ForceStop(0);
 	StkSocket_Disconnect(1, 1, true);
 	StkSocket_DeleteInfo(1);
+	PeerCloseOkFlag = true;
 	return 0;
 }
 
@@ -1345,28 +1344,28 @@ int main(int Argc, char* Argv[])
 	Sleep(1000);
 
 	FinishFlag = false;
+	PeerCloseOkFlag = false;
 	CreateThread(NULL, 0, &TestThreadProc4, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc5, NULL, 0, &TmpId);
-	while (FinishFlag == false) {
-		Sleep(1000);
+	while (FinishFlag == false || PeerCloseOkFlag == false) {
+		Sleep(100);
 	}
-	Sleep(1000);
 
 	FinishFlag = false;
+	PeerCloseOkFlag = false;
 	CreateThread(NULL, 0, &TestThreadProc6, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc7, NULL, 0, &TmpId);
-	while (FinishFlag == false) {
-		Sleep(1000);
+	while (FinishFlag == false || PeerCloseOkFlag == false) {
+		Sleep(100);
 	}
-	Sleep(1000);
 
 	FinishFlag = false;
+	PeerCloseOkFlag = false;
 	CreateThread(NULL, 0, &TestThreadProc8, NULL, 0, &TmpId);
 	CreateThread(NULL, 0, &TestThreadProc9, NULL, 0, &TmpId);
-	while (FinishFlag == false) {
-		Sleep(1000);
+	while (FinishFlag == false || PeerCloseOkFlag == false) {
+		Sleep(100);
 	}
-	Sleep(1000);
 
 	for (int Loop = 0; Loop <= 5; Loop++) {
 		StartFlag = false;
