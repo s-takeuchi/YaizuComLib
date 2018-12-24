@@ -123,11 +123,11 @@ bool StkPlIsJapaneseLocaleFromEnv()
 char* StkPlWideCharToUtf8(const wchar_t* Msg)
 {
 	setlocale(LC_CTYPE, "");
-	setlocale(LC_CTYPE, "ja_JP.UTF-8");
+	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.UTF-8");
 	mbstate_t MbState;
 	memset((void*)&MbState, 0, sizeof(MbState));
 	size_t ActualSize = wcsrtombs(NULL, &Msg, 1, &MbState);
-	if (ActualSize == (size_t)-1) {
+	if (ActualSize == (size_t)-1 || ConfLc == NULL) {
 		char* NewMbs = new char[1];
 		NewMbs[0] = L'\0';
 		return NewMbs;
@@ -141,11 +141,11 @@ char* StkPlWideCharToUtf8(const wchar_t* Msg)
 char* StkPlWideCharToSjis(const wchar_t* Msg)
 {
 	setlocale(LC_CTYPE, "");
-	setlocale(LC_CTYPE, "ja_JP.sjis");
+	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
 	mbstate_t MbState;
 	memset((void*)&MbState, 0, sizeof(MbState));
 	size_t ActualSize = wcsrtombs(NULL, &Msg, 1, &MbState);
-	if (ActualSize == (size_t)-1) {
+	if (ActualSize == (size_t)-1 || ConfLc == NULL) {
 		char* NewMbs = new char[1];
 		NewMbs[0] = L'\0';
 		return NewMbs;
