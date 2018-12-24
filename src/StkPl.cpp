@@ -122,6 +122,7 @@ bool StkPlIsJapaneseLocaleFromEnv()
 
 char* StkPlWideCharToUtf8(const wchar_t* Msg)
 {
+	setlocale(LC_CTYPE, "");
 	setlocale(LC_CTYPE, "ja_JP.UTF-8");
 	mbstate_t MbState;
 	memset((void*)&MbState, 0, sizeof(MbState));
@@ -139,6 +140,7 @@ char* StkPlWideCharToUtf8(const wchar_t* Msg)
 
 char* StkPlWideCharToSjis(const wchar_t* Msg)
 {
+	setlocale(LC_CTYPE, "");
 	setlocale(LC_CTYPE, "ja_JP.sjis");
 	mbstate_t MbState;
 	memset((void*)&MbState, 0, sizeof(MbState));
