@@ -20,7 +20,12 @@ int StkPlWcsCmp(const wchar_t* Wcs1, const wchar_t* Wcs2)
 	return wcscmp(Wcs1, Wcs2);
 }
 
-const char* StkPlStrStr(const char* Str1, const char* Str2)
+wchar_t* StkPlWcsStr(wchar_t* Wcs1, const wchar_t* Wcs2)
+{
+	return wcsstr(Wcs1, Wcs2);
+}
+
+char* StkPlStrStr(char* Str1, const char* Str2)
 {
 	return strstr(Str1, Str2);
 }
@@ -45,6 +50,11 @@ int StkPlPrintf(const char* Format)
 	return printf(Format);
 }
 
+int StkPlRand()
+{
+	return rand();
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -53,9 +63,21 @@ int StkPlPrintf(const char* Format)
 
 #include <windows.h>
 
+wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+{
+	wcsncpy_s(Destination, NumberOfElements, Source, _TRUNCATE);
+	return Destination;
+}
+
 wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
 {
 	wcsncpy_s(Destination, NumberOfElements, Source, Num);
+	return Destination;
+}
+
+wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+{
+	wcscat_s(Destination, NumberOfElements, Source);
 	return Destination;
 }
 
@@ -103,9 +125,19 @@ char* StkPlWideCharToSjis(const wchar_t* Msg)
 
 #ifndef WIN32
 
+wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+{
+	return wcscpy(Destination, Source);
+}
+
 wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
 {
 	return wcsncpy(Destination, Source, Num);
+}
+
+wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+{
+	return wcscat(Destination, Source);
 }
 
 bool StkPlIsJapaneseLocaleFromEnv()
