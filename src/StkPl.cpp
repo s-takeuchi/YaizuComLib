@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-size_t StkPlStrLen(const char* Str)
+int StkPlStrLen(const char* Str)
 {
 	return strlen(Str);
 }
@@ -25,7 +25,7 @@ char* StkPlStrStr(char* Str1, const char* Str2)
 	return strstr(Str1, Str2);
 }
 
-size_t StkPlWcsLen(const wchar_t* Wcs)
+int StkPlWcsLen(const wchar_t* Wcs)
 {
 	return wcslen(Wcs);
 }
@@ -79,25 +79,25 @@ int StkPlAtoi(const char* Str)
 #include <windows.h>
 #include <filesystem>
 
-char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
+char* StkPlStrCpy(char* Destination, int NumberOfElements, const char* Source)
 {
 	strcpy_s(Destination, NumberOfElements, Source);
 	return Destination;
 }
 
-wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+wchar_t* StkPlWcsCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
 {
 	wcsncpy_s(Destination, NumberOfElements, Source, _TRUNCATE);
 	return Destination;
 }
 
-wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
+wchar_t* StkPlWcsNCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* Source, int Num)
 {
 	wcsncpy_s(Destination, NumberOfElements, Source, Num);
 	return Destination;
 }
 
-wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+wchar_t* StkPlWcsCat(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
 {
 	wcscat_s(Destination, NumberOfElements, Source);
 	return Destination;
@@ -106,7 +106,7 @@ wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_
 bool StkPlIsJapaneseLocaleFromEnv()
 {
 	char* Locale;
-	size_t LocaleSize;
+	unsigned int LocaleSize;
 	if (_dupenv_s(&Locale, &LocaleSize, "HTTP_ACCEPT_LANGUAGE") == 0) {
 		if (Locale == 0 || LocaleSize == 0) {
 			return false;
@@ -152,7 +152,7 @@ int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
 	return 0;
 }
 
-size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
+int GetFileSize(wchar_t FilePath[FILENAME_MAX])
 {
 	uintmax_t FileSize = 0;
 	try {
@@ -166,10 +166,10 @@ size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
 	if (FileSize == 0) {
 		return 0;
 	}
-	return (size_t)FileSize;
+	return (int)FileSize;
 }
 
-size_t ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
+int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, int FileSize)
 {
 	HANDLE ReadFileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
@@ -195,22 +195,22 @@ size_t ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
 #include <unistd.h>
 #include <experimental/filesystem>
 
-char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
+char* StkPlStrCpy(char* Destination, int NumberOfElements, const char* Source)
 {
 	return strcpy(Destination, Source);
 }
 
-wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+wchar_t* StkPlWcsCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
 {
 	return wcscpy(Destination, Source);
 }
 
-wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
+wchar_t* StkPlWcsNCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* Source, int Num)
 {
 	return wcsncpy(Destination, Source, Num);
 }
 
-wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+wchar_t* StkPlWcsCat(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
 {
 	return wcscat(Destination, Source);
 }
@@ -233,8 +233,8 @@ char* StkPlWideCharToUtf8(const wchar_t* Msg)
 	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.UTF-8");
 	mbstate_t MbState;
 	memset((void*)&MbState, 0, sizeof(MbState));
-	size_t ActualSize = wcsrtombs(NULL, &Msg, 1, &MbState);
-	if (ActualSize == (size_t)-1 || ConfLc == NULL) {
+	int ActualSize = wcsrtombs(NULL, &Msg, 1, &MbState);
+	if (ActualSize == -1 || ConfLc == NULL) {
 		char* NewMbs = new char[1];
 		NewMbs[0] = L'\0';
 		return NewMbs;
@@ -251,8 +251,8 @@ char* StkPlWideCharToSjis(const wchar_t* Msg)
 	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
 	mbstate_t MbState;
 	memset((void*)&MbState, 0, sizeof(MbState));
-	size_t ActualSize = wcsrtombs(NULL, &Msg, 1, &MbState);
-	if (ActualSize == (size_t)-1 || ConfLc == NULL) {
+	int ActualSize = wcsrtombs(NULL, &Msg, 1, &MbState);
+	if (ActualSize == -1 || ConfLc == NULL) {
 		char* NewMbs = new char[1];
 		NewMbs[0] = L'\0';
 		return NewMbs;
@@ -273,11 +273,11 @@ int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
 	readlink("/proc/self/exe", c_full_path, sizeof(c_full_path) - 1);
 	std::experimental::filesystem::path CurPath = c_full_path;
 	std::experimental::filesystem::path NewPath = CurPath.parent_path() / FileName;
-	wcscpy(FullPath, (wchar_t*)NewPath.c_str());
+	wcscpy(FullPath, NewPath.wstring().c_str());
 	return 0;
 }
 
-size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
+int GetFileSize(wchar_t FilePath[FILENAME_MAX])
 {
 	uintmax_t FileSize = 0;
 	try {
@@ -291,10 +291,10 @@ size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
 	if (FileSize == 0) {
 		return 0;
 	}
-	return (size_t)FileSize;
+	return (int)FileSize;
 }
 
-size_t ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
+int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, int FileSize)
 {
 	char* FileNameUtf8 = StkPlWideCharToUtf8(FilePath);
 	FILE *fp = fopen(FileNameUtf8, "r");
@@ -302,7 +302,7 @@ size_t ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
 		return -1;
 	}
 	char* work_dat = new char[(int)FileSize + 1];
-	size_t actual_filesize = fread(Buffer, sizeof(char), (size_t)FileSize, fp);
+	int actual_filesize = fread(Buffer, sizeof(char), (int)FileSize, fp);
 	fclose(fp);
 	delete FileNameUtf8;
 	return actual_filesize;

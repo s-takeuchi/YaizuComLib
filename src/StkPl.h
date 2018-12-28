@@ -8,17 +8,17 @@
 #define FILENAME_MAX 4096
 #endif
 
-size_t StkPlStrLen(const char*);
+int StkPlStrLen(const char*);
 int StkPlStrCmp(const char*, const char*);
 char* StkPlStrStr(char*, const char*);
-char* StkPlStrCpy(char*, size_t, const char*);
+char* StkPlStrCpy(char*, int, const char*);
 
-size_t StkPlWcsLen(const wchar_t*);
+int StkPlWcsLen(const wchar_t*);
 int StkPlWcsCmp(const wchar_t*, const wchar_t*);
 wchar_t* StkPlWcsStr(wchar_t*, const wchar_t*);
-wchar_t* StkPlWcsCpy(wchar_t*, size_t, const wchar_t*);
-wchar_t* StkPlWcsNCpy(wchar_t*, size_t, const wchar_t*, size_t);
-wchar_t* StkPlWcsCat(wchar_t*, size_t, const wchar_t*);
+wchar_t* StkPlWcsCpy(wchar_t*, int, const wchar_t*);
+wchar_t* StkPlWcsNCpy(wchar_t*, int, const wchar_t*, int);
+wchar_t* StkPlWcsCat(wchar_t*, int, const wchar_t*);
 
 bool StkPlIsJapaneseLocale();
 bool StkPlIsJapaneseLocaleFromEnv();
@@ -31,5 +31,5 @@ int StkPlRand();
 int StkPlAtoi(const char*);
 
 int GetFullPathFromFileName(wchar_t*, wchar_t[FILENAME_MAX]);
-size_t GetFileSize(wchar_t[FILENAME_MAX]);
-size_t ReadFile(wchar_t[FILENAME_MAX], char*, size_t);
+int GetFileSize(wchar_t[FILENAME_MAX]);
+int ReadFile(wchar_t[FILENAME_MAX], char*, int);

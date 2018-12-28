@@ -1,5 +1,5 @@
 ﻿#include "../../src/StkPl.h"
-#include "..\..\src\commonfunc\StkProperties.h"
+#include "../../src/commonfunc/StkProperties.h"
 
 void StkPropertiesTest()
 {
