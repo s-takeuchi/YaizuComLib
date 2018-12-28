@@ -10,6 +10,21 @@
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
+size_t StkPlStrLen(const char* Str)
+{
+	return strlen(Str);
+}
+
+int StkPlStrCmp(const char* Str1, const char* Str2)
+{
+	return strcmp(Str1, Str2);
+}
+
+char* StkPlStrStr(char* Str1, const char* Str2)
+{
+	return strstr(Str1, Str2);
+}
+
 size_t StkPlWcsLen(const wchar_t* Wcs)
 {
 	return wcslen(Wcs);
@@ -23,11 +38,6 @@ int StkPlWcsCmp(const wchar_t* Wcs1, const wchar_t* Wcs2)
 wchar_t* StkPlWcsStr(wchar_t* Wcs1, const wchar_t* Wcs2)
 {
 	return wcsstr(Wcs1, Wcs2);
-}
-
-char* StkPlStrStr(char* Str1, const char* Str2)
-{
-	return strstr(Str1, Str2);
 }
 
 bool StkPlIsJapaneseLocale()
@@ -55,6 +65,11 @@ int StkPlRand()
 	return rand();
 }
 
+int StkPlAtoi(const char* Str)
+{
+	return atoi(Str);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +77,13 @@ int StkPlRand()
 #ifdef WIN32
 
 #include <windows.h>
+#include <filesystem>
+
+char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
+{
+	strcpy_s(Destination, NumberOfElements, Source);
+	return Destination;
+}
 
 wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
 {
@@ -117,13 +139,65 @@ char* StkPlWideCharToSjis(const wchar_t* Msg)
 	return MltBuf;
 }
 
-#endif
+// Get full path from the specified file name.
+// FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
+// FullPath [out] : Acquired full path for the specified file.
+// Return : Always zero
+int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
+{
+	GetModuleFileName(NULL, FullPath, FILENAME_MAX - 1);
+	std::experimental::filesystem::path CurPath = FullPath;
+	std::filesystem::path NewPath = CurPath.parent_path() / FileName;
+	wcscpy_s(FullPath, FILENAME_MAX, NewPath.c_str());
+	return 0;
+}
+
+size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
+{
+	uintmax_t FileSize = 0;
+	try {
+		FileSize = std::filesystem::file_size(FilePath);
+	} catch (std::filesystem::filesystem_error ex) {
+		return -1;
+	}
+	if (FileSize >= 1000000) {
+		return -1;
+	}
+	if (FileSize == 0) {
+		return 0;
+	}
+	return (size_t)FileSize;
+}
+
+size_t ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
+{
+	HANDLE ReadFileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
+		return -1;
+	}
+
+	DWORD TmpSize = 0;
+	if (ReadFile(ReadFileHndl, (LPVOID)Buffer, FileSize, &TmpSize, NULL) == 0) {
+		CloseHandle(ReadFileHndl);
+		return -1;
+	}
+
+	CloseHandle(ReadFileHndl);
+	return TmpSize;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef WIN32
+#else
+
+#include <experimental/filesystem>
+
+char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
+{
+	return strcpy(Destination, Source);
+}
 
 wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
 {
@@ -186,6 +260,51 @@ char* StkPlWideCharToSjis(const wchar_t* Msg)
 	wcsrtombs(NewMbs, &Msg, ActualSize, &MbState);
 	NewMbs[ActualSize] = '\0';
 	return NewMbs;
+}
+
+// Get full path from the specified file name.
+// FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
+// FullPath [out] : Acquired full path for the specified file.
+// Return : Always zero
+int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
+{
+	char c_full_path[FILENAME_MAX];
+	readlink("/proc/self/exe", c_full_path, sizeof(c_full_path) - 1);
+	std::experimental::filesystem::path CurPath = c_full_path;
+	std::experimental::filesystem::path NewPath = CurPath.parent_path() / FileName;
+	wcscpy(FullPath, NewPath.c_str());
+	return 0;
+}
+
+size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
+{
+	uintmax_t FileSize = 0;
+	try {
+		FileSize = std::experimental::filesystem::file_size(FilePath);
+	} catch (std::experimental::filesystem::filesystem_error ex) {
+		return -1;
+	}
+	if (FileSize >= 1000000) {
+		return -1;
+	}
+	if (FileSize == 0) {
+		return 0;
+	}
+	return (size_t)FileSize;
+}
+
+size_t ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
+{
+	char* FileNameUtf8 = StkPlWideCharToUtf8(FilePath);
+	FILE *fp = fopen(FileNameUtf8, "r");
+	if (fp == NULL) {
+		return -1;
+	}
+	char* work_dat = new char[(int)FileSize + 1];
+	size_t actual_filesize = fread(Buffer, sizeof(char), (size_t)FileSize, fp);
+	fclose(fp);
+	delete FileNameUtf8;
+	return actual_filesize;
 }
 
 #endif
