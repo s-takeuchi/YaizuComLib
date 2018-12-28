@@ -192,6 +192,7 @@ size_t ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
 
 #else
 
+#include <unistd.h>
 #include <experimental/filesystem>
 
 char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
@@ -272,7 +273,7 @@ int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
 	readlink("/proc/self/exe", c_full_path, sizeof(c_full_path) - 1);
 	std::experimental::filesystem::path CurPath = c_full_path;
 	std::experimental::filesystem::path NewPath = CurPath.parent_path() / FileName;
-	wcscpy(FullPath, NewPath.c_str());
+	wcscpy(FullPath, (wchar_t*)NewPath.c_str());
 	return 0;
 }
 
