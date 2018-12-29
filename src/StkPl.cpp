@@ -3,6 +3,7 @@
 #include <clocale>
 #include <cstdlib>
 #include <cstdio>
+#include <cstdarg>
 
 #include "StkPl.h"
 
@@ -55,9 +56,31 @@ void StkPlExit(int Status)
 	exit(Status);
 }
 
-int StkPlPrintf(const char* Format)
+int StkPlPrintf(const char* Format, ...)
 {
-	return printf(Format);
+	va_list va;
+	va_start(va, Format);
+	int Ret = vprintf(Format, va);
+	va_end(va);
+	return Ret;
+}
+
+int StkPlWPrintf(const wchar_t* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vwprintf(Format, va);
+	va_end(va);
+	return Ret;
+}
+
+int StkPlSwPrintf(wchar_t* Str, int Len, const wchar_t* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vswprintf(Str, Len, Format, va);
+	va_end(va);
+	return Ret;
 }
 
 int StkPlRand()
@@ -70,6 +93,16 @@ int StkPlAtoi(const char* Str)
 	return atoi(Str);
 }
 
+long int StkPlWcsToL(const wchar_t* Str)
+{
+	return wcstol(Str, NULL, 10);
+}
+
+float StkPlWcsToF(const wchar_t* Str)
+{
+	return wcstof(Str, NULL);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +110,7 @@ int StkPlAtoi(const char* Str)
 #ifdef WIN32
 
 #include <windows.h>
+#include <Psapi.h>
 #include <filesystem>
 
 char* StkPlStrCpy(char* Destination, int NumberOfElements, const char* Source)
@@ -95,6 +129,11 @@ wchar_t* StkPlWcsNCpy(wchar_t* Destination, int NumberOfElements, const wchar_t*
 {
 	wcsncpy_s(Destination, NumberOfElements, Source, Num);
 	return Destination;
+}
+
+wchar_t* StkPlLStrCpy(wchar_t* Destination, const wchar_t* Source)
+{
+	return lstrcpy(Destination, Source);
 }
 
 wchar_t* StkPlWcsCat(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
@@ -186,6 +225,27 @@ int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, int FileSize)
 	return TmpSize;
 }
 
+int StkPlGetUsedMemorySizeOfCurrentProcess()
+{
+	DWORD dwProcessID = GetCurrentProcessId();
+	HANDLE hProcess;
+	PROCESS_MEMORY_COUNTERS pmc = { 0 };
+
+	long Size;
+	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
+		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
+			Size = pmc.WorkingSetSize;
+		}
+	}
+	CloseHandle(hProcess);
+	return Size;
+}
+
+long long StkPlGetTickCount()
+{
+	return GetTickCount();
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -193,6 +253,7 @@ int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, int FileSize)
 #else
 
 #include <unistd.h>
+#include <time.h>
 #include <experimental/filesystem>
 
 char* StkPlStrCpy(char* Destination, int NumberOfElements, const char* Source)
@@ -208,6 +269,11 @@ wchar_t* StkPlWcsCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* 
 wchar_t* StkPlWcsNCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* Source, int Num)
 {
 	return wcsncpy(Destination, Source, Num);
+}
+
+wchar_t* StkPlLStrCpy(wchar_t* Destination, const wchar_t* Source)
+{
+	return wcscpy(Destination, Source);
 }
 
 wchar_t* StkPlWcsCat(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
@@ -306,6 +372,18 @@ int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, int FileSize)
 	fclose(fp);
 	delete FileNameUtf8;
 	return actual_filesize;
+}
+
+int StkPlGetUsedMemorySizeOfCurrentProcess()
+{
+	return 999;
+}
+
+long long StkPlGetTickCount()
+{
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return (long long)(ts.tv_nsec / 1000000) + ((long long)ts.tv_sec * 1000ull);
 }
 
 #endif

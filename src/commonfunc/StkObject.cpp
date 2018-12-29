@@ -1,6 +1,4 @@
-﻿#include <windows.h>
-#include <string>
-#include <shlwapi.h>
+﻿#include "../StkPl.h"
 #include "StkObject.h"
 
 class StkObject::Impl
@@ -55,7 +53,7 @@ void StkObject::Impl::ClearMember()
 int StkObject::Impl::XmlEncodeSize(wchar_t* InMsg)
 {
 	int Size = 0;
-	int InMsgLen = lstrlen(InMsg);
+	int InMsgLen = StkPlWcsLen(InMsg);
 	for (int Loop = 0; Loop < InMsgLen; Loop++) {
 		if (InMsg[Loop] == '<') Size += 4;
 		else if (InMsg[Loop] == '>') Size += 4;
@@ -73,7 +71,7 @@ int StkObject::Impl::XmlEncodeSize(wchar_t* InMsg)
 int StkObject::Impl::JsonEncodeSize(wchar_t* InMsg)
 {
 	int Size = 0;
-	int InMsgLen = lstrlen(InMsg);
+	int InMsgLen = StkPlWcsLen(InMsg);
 	for (int Loop = 0; Loop < InMsgLen; Loop++) {
 		if (InMsg[Loop] == '\"' || InMsg[Loop] == '\\' || InMsg[Loop] == '/' ||
 			InMsg[Loop] == '\b' || InMsg[Loop] == '\f' || InMsg[Loop] == '\n' ||
@@ -93,40 +91,40 @@ int StkObject::Impl::JsonEncodeSize(wchar_t* InMsg)
 void StkObject::Impl::XmlEncode(wchar_t* InMsg, wchar_t* OutMsg, int SizeOfOutMsg)
 {
 	int OutMsgIndex = 0;
-	int InMsgLen = lstrlen(InMsg);
+	int InMsgLen = StkPlWcsLen(InMsg);
 	for (int Loop = 0; Loop < InMsgLen; Loop++) {
 		if (InMsg[Loop] == '<') {
 			if (OutMsgIndex + 4 >= SizeOfOutMsg)
 				break;
-			lstrcpy(&OutMsg[OutMsgIndex], L"&lt;");
+			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&lt;");
 			OutMsgIndex += 4;
 			continue;
 		}
 		if (InMsg[Loop] == '>') {
 			if (OutMsgIndex + 4 >= SizeOfOutMsg)
 				break;
-			lstrcpy(&OutMsg[OutMsgIndex], L"&gt;");
+			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&gt;");
 			OutMsgIndex += 4;
 			continue;
 		}
 		if (InMsg[Loop] == '&') {
 			if (OutMsgIndex + 5 >= SizeOfOutMsg)
 				break;
-			lstrcpy(&OutMsg[OutMsgIndex], L"&amp;");
+			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&amp;");
 			OutMsgIndex += 5;
 			continue;
 		}
 		if (InMsg[Loop] == '\"') {
 			if (OutMsgIndex + 6 >= SizeOfOutMsg)
 				break;
-			lstrcpy(&OutMsg[OutMsgIndex], L"&quot;");
+			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&quot;");
 			OutMsgIndex += 6;
 			continue;
 		}
 		if (InMsg[Loop] == '\'') {
 			if (OutMsgIndex + 6 >= SizeOfOutMsg)
 				break;
-			lstrcpy(&OutMsg[OutMsgIndex], L"&apos;");
+			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&apos;");
 			OutMsgIndex += 6;
 			continue;
 		}
@@ -188,7 +186,7 @@ bool StkObject::Impl::IsArrayExpression(StkObject* Obj)
 	wchar_t* BsName = Obj->GetName();
 	while (Obj = Obj->GetNext()) {
 		wchar_t* CurName = Obj->GetName();
-		if (lstrcmp(BsName, CurName) != 0) {
+		if (StkPlWcsCmp(BsName, CurName) != 0) {
 			return false;
 		}
 	}
@@ -257,9 +255,9 @@ bool StkObject::Impl::GetJsonNumber(wchar_t* OrgStr, int* Len, int* ValInt, floa
 	RtnValue[Loop] = wchar_t('\0');
 
 	if (FloatFlag == true) {
-		*ValFloat = (float)_wtof(RtnValue);
+		*ValFloat = (float)StkPlWcsToF(RtnValue);
 	} else {
-		*ValInt = _wtoi(RtnValue);
+		*ValInt = (int)StkPlWcsToL(RtnValue);
 	}
 	delete RtnValue;
 	return FloatFlag;
@@ -293,49 +291,49 @@ wchar_t* StkObject::Impl::GetJsonString(wchar_t* OrgStr, int* Len)
 	wchar_t* RtnValue = new wchar_t[OutLength + 1];
 	int RtnLoop = 0;
 	for (wchar_t* Loop = OrgStr; Loop < CurPnt; Loop++) {
-		if (StrStr(Loop, L"\\\"") == Loop) {
+		if (StkPlWcsStr(Loop, L"\\\"") == Loop) {
 			RtnValue[RtnLoop] = '\"';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, L"\\\\") == Loop) {
+		if (StkPlWcsStr(Loop, L"\\\\") == Loop) {
 			RtnValue[RtnLoop] = '\\';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, L"\\/") == Loop) {
+		if (StkPlWcsStr(Loop, L"\\/") == Loop) {
 			RtnValue[RtnLoop] = '/';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, L"\\b") == Loop) {
+		if (StkPlWcsStr(Loop, L"\\b") == Loop) {
 			RtnValue[RtnLoop] = '\b';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, L"\\f") == Loop) {
+		if (StkPlWcsStr(Loop, L"\\f") == Loop) {
 			RtnValue[RtnLoop] = '\f';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, L"\\n") == Loop) {
+		if (StkPlWcsStr(Loop, L"\\n") == Loop) {
 			RtnValue[RtnLoop] = '\n';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, L"\\r") == Loop) {
+		if (StkPlWcsStr(Loop, L"\\r") == Loop) {
 			RtnValue[RtnLoop] = '\r';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StrStr(Loop, L"\\t") == Loop) {
+		if (StkPlWcsStr(Loop, L"\\t") == Loop) {
 			RtnValue[RtnLoop] = '\t';
 			RtnLoop++;
 			Loop++;
@@ -371,15 +369,15 @@ wchar_t* StkObject::Impl::GetValue(wchar_t* TgtValue, int* Len)
 	int ValueLength = 0;
 	while (*CurPnt != wchar_t('\"') && *CurPnt != wchar_t('<') && *CurPnt != wchar_t('\0')) {
 		if (*CurPnt == wchar_t('&')) {
-			if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && StrStr(CurPnt, L"&lt;") == CurPnt) {
+			if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && StkPlWcsStr(CurPnt, L"&lt;") == CurPnt) {
 				CurPnt += 4;
-			} else if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && StrStr(CurPnt, L"&gt;") == CurPnt) {
+			} else if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && StkPlWcsStr(CurPnt, L"&gt;") == CurPnt) {
 				CurPnt += 4;
-			} else if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && *(CurPnt + 4) != wchar_t('\0') && StrStr(CurPnt, L"&amp;") == CurPnt) {
+			} else if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && *(CurPnt + 4) != wchar_t('\0') && StkPlWcsStr(CurPnt, L"&amp;") == CurPnt) {
 				CurPnt += 5;
-			} else if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && *(CurPnt + 4) != wchar_t('\0') && *(CurPnt + 5) != wchar_t('\0') && StrStr(CurPnt, L"&quot;") == CurPnt) {
+			} else if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && *(CurPnt + 4) != wchar_t('\0') && *(CurPnt + 5) != wchar_t('\0') && StkPlWcsStr(CurPnt, L"&quot;") == CurPnt) {
 				CurPnt += 6;
-			} else if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && *(CurPnt + 4) != wchar_t('\0') && *(CurPnt + 5) != wchar_t('\0') && StrStr(CurPnt, L"&apos;") == CurPnt) {
+			} else if (*(CurPnt + 1) != wchar_t('\0') && *(CurPnt + 2) != wchar_t('\0') && *(CurPnt + 3) != wchar_t('\0') && *(CurPnt + 4) != wchar_t('\0') && *(CurPnt + 5) != wchar_t('\0') && StkPlWcsStr(CurPnt, L"&apos;") == CurPnt) {
 				CurPnt += 6;
 			} else {
 				CurPnt++;
@@ -398,31 +396,31 @@ wchar_t* StkObject::Impl::GetValue(wchar_t* TgtValue, int* Len)
 	wchar_t* RtnValue = new wchar_t[ValueLength + 1];
 	int RtnLoop = 0;
 	for (wchar_t* Loop = TgtValue; Loop < CurPnt; Loop++) {
-		if (StrStr(Loop, L"&lt;") == Loop) {
+		if (StkPlWcsStr(Loop, L"&lt;") == Loop) {
 			RtnValue[RtnLoop] = '<';
 			RtnLoop++;
 			Loop += 3;
 			continue;
 		}
-		if (StrStr(Loop, L"&gt;") == Loop) {
+		if (StkPlWcsStr(Loop, L"&gt;") == Loop) {
 			RtnValue[RtnLoop] = '>';
 			RtnLoop++;
 			Loop += 3;
 			continue;
 		}
-		if (StrStr(Loop, L"&amp;") == Loop) {
+		if (StkPlWcsStr(Loop, L"&amp;") == Loop) {
 			RtnValue[RtnLoop] = '&';
 			RtnLoop++;
 			Loop += 4;
 			continue;
 		}
-		if (StrStr(Loop, L"&quot;") == Loop) {
+		if (StkPlWcsStr(Loop, L"&quot;") == Loop) {
 			RtnValue[RtnLoop] = '\"';
 			RtnLoop++;
 			Loop += 5;
 			continue;
 		}
-		if (StrStr(Loop, L"&apos;") == Loop) {
+		if (StkPlWcsStr(Loop, L"&apos;") == Loop) {
 			RtnValue[RtnLoop] = '\'';
 			RtnLoop++;
 			Loop += 5;
@@ -441,7 +439,7 @@ StkObject* StkObject::Impl::ContainsInArray(StkObject* Obj1, StkObject* Obj2)
 		return false;
 	}
 	do {
-		if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
+		if (StkPlWcsCmp(Obj1->GetName(), Obj2->GetName()) != 0) {
 			continue;
 		}
 		int CurType = Obj1->GetType();
@@ -460,7 +458,7 @@ StkObject* StkObject::Impl::ContainsInArray(StkObject* Obj1, StkObject* Obj2)
 				return Obj2;
 			}
 		} else if (CurType == StkObject::STKOBJECT_ATTR_STRING || CurType == StkObject::STKOBJECT_ELEM_STRING || CurType == StkObject::STKOBJECT_UNKW_STRING) {
-			if (lstrcmp(Obj1->GetStringValue(), Obj2->GetStringValue()) == 0) {
+			if (StkPlWcsCmp(Obj1->GetStringValue(), Obj2->GetStringValue()) == 0) {
 				return Obj2;
 			}
 		} else if (CurType == StkObject::STKOBJECT_ELEMENT) {
@@ -477,7 +475,7 @@ bool StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 	if (Obj1 == NULL || Obj2 == NULL) {
 		return false;
 	}
-	if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
+	if (StkPlWcsCmp(Obj1->GetName(), Obj2->GetName()) != 0) {
 		return false;
 	}
 	int CurType = Obj1->GetType();
@@ -542,7 +540,7 @@ bool StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 			return false;
 		}
 	} else if (CurType == StkObject::STKOBJECT_ATTR_STRING || CurType == StkObject::STKOBJECT_ELEM_STRING || CurType == StkObject::STKOBJECT_UNKW_STRING) {
-		if (lstrcmp(Obj1->GetStringValue(), Obj2->GetStringValue()) != 0) {
+		if (StkPlWcsCmp(Obj1->GetStringValue(), Obj2->GetStringValue()) != 0) {
 			return false;
 		}
 	}
@@ -557,7 +555,7 @@ StkObject* StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, bool Pare
 	if (Obj1->GetType() == StkObject::STKOBJECT_ELEMENT) {
 		bool Matched = true;
 
-		if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
+		if (StkPlWcsCmp(Obj1->GetName(), Obj2->GetName()) != 0) {
 			Matched = false;
 		}
 		if (Obj1->GetType() != Obj2->GetType()) {
@@ -658,7 +656,7 @@ StkObject* StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, bool Pare
 		}
 		return NULL;
 	} else {
-		if (lstrcmp(Obj1->GetName(), Obj2->GetName()) != 0) {
+		if (StkPlWcsCmp(Obj1->GetName(), Obj2->GetName()) != 0) {
 			return NULL;
 		}
 		if (Obj1->GetType() != Obj2->GetType()) {
@@ -673,7 +671,7 @@ StkObject* StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, bool Pare
 				return Obj1;
 			}
 		} else if (Obj1->GetType() == StkObject::STKOBJECT_ATTR_STRING || Obj1->GetType() == StkObject::STKOBJECT_ELEM_STRING || Obj1->GetType() == StkObject::STKOBJECT_UNKW_STRING) {
-			if (lstrcmp(Obj1->GetStringValue(), Obj2->GetStringValue()) == 0) {
+			if (StkPlWcsCmp(Obj1->GetStringValue(), Obj2->GetStringValue()) == 0) {
 				return Obj1;
 			}
 		}
@@ -695,9 +693,9 @@ StkObject::StkObject(wchar_t* TmpName)
 	pImpl->ClearMember();
 	pImpl->Type = STKOBJECT_ELEMENT;
 	if (TmpName != NULL) {
-		int Len = lstrlen(TmpName) + 1;
+		int Len = StkPlWcsLen(TmpName) + 1;
 		pImpl->Name = new wchar_t[Len];
-		lstrcpy(pImpl->Name, TmpName);
+		StkPlLStrCpy(pImpl->Name, TmpName);
 	}
 }
 
@@ -707,9 +705,9 @@ StkObject::StkObject(wchar_t* TmpName, int TmpValue)
 	pImpl->ClearMember();
 	pImpl->Type = STKOBJECT_UNKW_INT;
 	if (TmpName != NULL) {
-		int Len = lstrlen(TmpName) + 1;
+		int Len = StkPlWcsLen(TmpName) + 1;
 		pImpl->Name = new wchar_t[Len];
-		lstrcpy(pImpl->Name, TmpName);
+		StkPlLStrCpy(pImpl->Name, TmpName);
 	}
 	pImpl->Value = new int(TmpValue);
 }
@@ -720,9 +718,9 @@ StkObject::StkObject(wchar_t* TmpName, float TmpValue)
 	pImpl->ClearMember();
 	pImpl->Type = STKOBJECT_UNKW_FLOAT;
 	if (TmpName != NULL) {
-		int Len = lstrlen(TmpName) + 1;
+		int Len = StkPlWcsLen(TmpName) + 1;
 		pImpl->Name = new wchar_t[Len];
-		lstrcpy(pImpl->Name, TmpName);
+		StkPlLStrCpy(pImpl->Name, TmpName);
 	}
 	pImpl->Value = new float(TmpValue);
 }
@@ -733,14 +731,14 @@ StkObject::StkObject(wchar_t* TmpName, wchar_t* TmpValue)
 	pImpl->ClearMember();
 	pImpl->Type = STKOBJECT_UNKW_STRING;
 	if (TmpName != NULL) {
-		int Len = lstrlen(TmpName) + 1;
+		int Len = StkPlWcsLen(TmpName) + 1;
 		pImpl->Name = new wchar_t[Len];
-		lstrcpy(pImpl->Name, TmpName);
+		StkPlLStrCpy(pImpl->Name, TmpName);
 	}
 	if (TmpValue != NULL) {
-		int Len = lstrlen(TmpValue) + 1;
+		int Len = StkPlWcsLen(TmpValue) + 1;
 		pImpl->Value = new wchar_t[Len];
-		lstrcpy((wchar_t*)pImpl->Value, TmpValue);
+		StkPlLStrCpy((wchar_t*)pImpl->Value, TmpValue);
 	}
 }
 
@@ -759,7 +757,7 @@ StkObject::~StkObject()
 		pImpl->FirstElem = NULL;
 	}
 	if (pImpl->Name != NULL) {
-		int Len = lstrlen((wchar_t*)pImpl->Name) + 1;
+		int Len = StkPlWcsLen((wchar_t*)pImpl->Name) + 1;
 		delete [Len] pImpl->Name;
 		pImpl->Name = NULL;
 	}
@@ -769,7 +767,7 @@ StkObject::~StkObject()
 		} else if (pImpl->Type == StkObject::STKOBJECT_ATTR_FLOAT || pImpl->Type == StkObject::STKOBJECT_ELEM_FLOAT || pImpl->Type == StkObject::STKOBJECT_UNKW_FLOAT) {
 			delete (float*)pImpl->Value;
 		} else if (pImpl->Type == StkObject::STKOBJECT_ATTR_STRING || pImpl->Type == StkObject::STKOBJECT_ELEM_STRING || pImpl->Type == StkObject::STKOBJECT_UNKW_STRING) {
-			int Len = lstrlen((wchar_t*)pImpl->Value) + 1;
+			int Len = StkPlWcsLen((wchar_t*)pImpl->Value) + 1;
 			delete [Len] (wchar_t*)pImpl->Value;
 		} else {
 			delete pImpl->Value;
@@ -886,9 +884,9 @@ void StkObject::SetStringValue(wchar_t* TmpValue)
 	if (pImpl->Value != NULL) {
 		delete [] (wchar_t*)pImpl->Value;
 	}
-	int Len = lstrlen(TmpValue) + 1;
+	int Len = StkPlWcsLen(TmpValue) + 1;
 	pImpl->Value = new wchar_t[Len];
-	lstrcpy((wchar_t*)pImpl->Value, TmpValue);
+	StkPlLStrCpy((wchar_t*)pImpl->Value, TmpValue);
 }
 
 wchar_t* StkObject::GetName()
@@ -1017,19 +1015,19 @@ void StkObject::ToXml(wchar_t* Msg, int MsgLength, int Indent)
 	if (pImpl->Name == NULL) {
 		return;
 	}
-	int Length = lstrlen(Msg);
+	int Length = StkPlWcsLen(Msg);
 	if (pImpl->Type == STKOBJECT_ATTR_INT || pImpl->Type == STKOBJECT_ATTR_FLOAT || pImpl->Type == STKOBJECT_ATTR_STRING) {
 		if (pImpl->Type == STKOBJECT_ATTR_INT) {
 			int *Val = (int*)pImpl->Value;
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L" %s=\"%d\"", pImpl->Name, *Val);
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L" %s=\"%d\"", pImpl->Name, *Val);
 		} else if (pImpl->Type == STKOBJECT_ATTR_FLOAT) {
 			float *Val = (float*)pImpl->Value;
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L" %s=\"%f\"", pImpl->Name, *Val);
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L" %s=\"%f\"", pImpl->Name, *Val);
 		} else if (pImpl->Type == STKOBJECT_ATTR_STRING) {
 			int StrLen = pImpl->XmlEncodeSize((wchar_t*)pImpl->Value);
 			wchar_t* TmpStr = new wchar_t[StrLen + 1];
 			pImpl->XmlEncode((wchar_t*)pImpl->Value, TmpStr, StrLen + 1);
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L" %s=\"%s\"", pImpl->Name, TmpStr);
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L" %s=\"%s\"", pImpl->Name, TmpStr);
 			delete TmpStr;
 		}
 		if (pImpl->Next != NULL) {
@@ -1038,45 +1036,45 @@ void StkObject::ToXml(wchar_t* Msg, int MsgLength, int Indent)
 		}
 	} else if (pImpl->Type == STKOBJECT_ELEMENT) {
 		for (int Loop = 0; Loop < Indent; Loop++) {
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L" ");
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L" ");
 			Length++;
 			if (Length >= MsgLength) {
 				Length = MsgLength - 1;
 			}
 		}
-		_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"<%s", pImpl->Name);
-		Length += (lstrlen(pImpl->Name) + 1);
+		StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"<%s", pImpl->Name);
+		Length += (StkPlWcsLen(pImpl->Name) + 1);
 		if (Length >= MsgLength) {
 			Length = MsgLength - 1;
 		}
 		if (pImpl->FirstAttr != NULL) {
 			StkObject* TmpObj = pImpl->FirstAttr;
 			TmpObj->ToXml(Msg, MsgLength, Indent);
-			Length = lstrlen(Msg);
+			Length = StkPlWcsLen(Msg);
 		}
 		if (pImpl->FirstElem != NULL) {
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L">\r\n");
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L">\r\n");
 			Length += 3;
 			if (Length >= MsgLength) {
 				Length = MsgLength - 1;
 			}
 			StkObject* TmpObj = pImpl->FirstElem;
 			TmpObj->ToXml(Msg, MsgLength, Indent + 2);
-			Length = lstrlen(Msg);
+			Length = StkPlWcsLen(Msg);
 			for (int Loop = 0; Loop < Indent; Loop++) {
-				_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L" ");
+				StkPlSwPrintf(&Msg[Length], MsgLength - Length, L" ");
 				Length++;
 				if (Length >= MsgLength) {
 					Length = MsgLength - 1;
 				}
 			}
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"</%s>\r\n", pImpl->Name);
-			Length += (lstrlen(pImpl->Name) + 5);
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"</%s>\r\n", pImpl->Name);
+			Length += (StkPlWcsLen(pImpl->Name) + 5);
 			if (Length >= MsgLength) {
 				Length = MsgLength - 1;
 			}
 		} else {
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"/>\r\n");
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"/>\r\n");
 			Length += 4;
 			if (Length >= MsgLength) {
 				Length = MsgLength - 1;
@@ -1085,11 +1083,11 @@ void StkObject::ToXml(wchar_t* Msg, int MsgLength, int Indent)
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;
 			TmpObj->ToXml(Msg, MsgLength, Indent);
-			Length = lstrlen(Msg);
+			Length = StkPlWcsLen(Msg);
 		}
 	} else if (pImpl->Type == STKOBJECT_ELEM_INT || pImpl->Type == STKOBJECT_ELEM_FLOAT || pImpl->Type == STKOBJECT_ELEM_STRING) {
 		for (int Loop = 0; Loop < Indent; Loop++) {
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L" ");
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L" ");
 			Length++;
 			if (Length >= MsgLength) {
 				Length = MsgLength - 1;
@@ -1097,15 +1095,15 @@ void StkObject::ToXml(wchar_t* Msg, int MsgLength, int Indent)
 		}
 		if (pImpl->Type == STKOBJECT_ELEM_INT) {
 			int *Val = (int*)pImpl->Value;
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"<%s>%d</%s>\r\n", pImpl->Name, *Val, pImpl->Name);
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"<%s>%d</%s>\r\n", pImpl->Name, *Val, pImpl->Name);
 		} else if (pImpl->Type == STKOBJECT_ELEM_FLOAT) {
 			float *Val = (float*)pImpl->Value;
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"<%s>%f</%s>\r\n", pImpl->Name, *Val, pImpl->Name);
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"<%s>%f</%s>\r\n", pImpl->Name, *Val, pImpl->Name);
 		} else if (pImpl->Type == STKOBJECT_ELEM_STRING) {
 			int StrLen = pImpl->XmlEncodeSize((wchar_t*)pImpl->Value);
 			wchar_t* TmpStr = new wchar_t[StrLen + 1];
 			pImpl->XmlEncode((wchar_t*)pImpl->Value, TmpStr, StrLen + 1);
-			_snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"<%s>%s</%s>\r\n", pImpl->Name, TmpStr, pImpl->Name);
+			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"<%s>%s</%s>\r\n", pImpl->Name, TmpStr, pImpl->Name);
 			delete TmpStr;
 		}
 		if (pImpl->Next != NULL) {
@@ -1127,11 +1125,11 @@ int StkObject::ToJson(wchar_t* Msg, int MsgLength, int Indent, bool ArrayFlag)
 	if (pImpl->Type == STKOBJECT_ATTR_INT || pImpl->Type == STKOBJECT_ATTR_FLOAT || pImpl->Type == STKOBJECT_ATTR_STRING) {
 		if (pImpl->Type == STKOBJECT_ATTR_INT) {
 			int *Val = (int*)pImpl->Value;
-			TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"\"%s\" : %d", pImpl->Name, *Val);
+			TmpLength = StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"\"%s\" : %d", pImpl->Name, *Val);
 			Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
 		} else if (pImpl->Type == STKOBJECT_ATTR_FLOAT) {
 			float *Val = (float*)pImpl->Value;
-			TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"\"%s\" : %f", pImpl->Name, *Val);
+			TmpLength = StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"\"%s\" : %f", pImpl->Name, *Val);
 			Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
 		} else if (pImpl->Type == STKOBJECT_ATTR_STRING) {
 			int StrLen = pImpl->JsonEncodeSize((wchar_t*)pImpl->Value);
@@ -1159,19 +1157,19 @@ int StkObject::ToJson(wchar_t* Msg, int MsgLength, int Indent, bool ArrayFlag)
 		if (pImpl->Type == STKOBJECT_ELEM_INT) {
 			int *Val = (int*)pImpl->Value;
 			if (ArrayFlag == false) {
-				TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"\"%s\" : %d", pImpl->Name, *Val);
+				TmpLength = StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"\"%s\" : %d", pImpl->Name, *Val);
 				Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
 			} else {
-				TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"%d", *Val);
+				TmpLength = StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"%d", *Val);
 				Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
 			}
 		} else if (pImpl->Type == STKOBJECT_ELEM_FLOAT) {
 			float *Val = (float*)pImpl->Value;
 			if (ArrayFlag == false) {
-				TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"\"%s\" : %f", pImpl->Name, *Val);
+				TmpLength = StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"\"%s\" : %f", pImpl->Name, *Val);
 				Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
 			} else {
-				TmpLength = _snwprintf_s(&Msg[Length], MsgLength - Length, _TRUNCATE, L"%f", *Val);
+				TmpLength = StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"%f", *Val);
 				Length = (TmpLength == -1 ? MsgLength - 1 : Length + TmpLength);
 			}
 		} else if (pImpl->Type == STKOBJECT_ELEM_STRING) {
@@ -1245,7 +1243,7 @@ int StkObject::ToJson(wchar_t* Msg, int MsgLength, int Indent, bool ArrayFlag)
 			// ArrayMode In
 			if (NexObj) {
 				wchar_t* NextName = NexObj->GetName();
-				if (lstrcmp(CurName, NextName) == 0 && ArrayMode == false) {
+				if (StkPlWcsCmp(CurName, NextName) == 0 && ArrayMode == false) {
 					ArrayMode = true;
 					for (int Loop = 0; Loop < Indent + 2; Loop++) {
 						Length += pImpl->AddString(&Msg[Length], EndPoint, L" ");
@@ -1257,14 +1255,14 @@ int StkObject::ToJson(wchar_t* Msg, int MsgLength, int Indent, bool ArrayFlag)
 			}
 
 			Length += TmpObj->ToJson(&Msg[Length], MsgLength - Length, Indent + (ArrayMode? 4 : 2), ArrayMode);
-			if ((NexObj && !ArrayMode) || NexObj && ArrayMode && lstrcmp(CurName, NexObj->GetName()) == 0) {
+			if ((NexObj && !ArrayMode) || NexObj && ArrayMode && StkPlWcsCmp(CurName, NexObj->GetName()) == 0) {
 				Length += pImpl->AddString(&Msg[Length], EndPoint, L",\r\n");
 			} else {
 				Length += pImpl->AddString(&Msg[Length], EndPoint, L"\r\n");
 			}
 
 			// ArrayMode Out
-			if ((!NexObj && ArrayMode == true) || (NexObj && lstrcmp(CurName, NexObj->GetName()) != 0 && ArrayMode == true)) {
+			if ((!NexObj && ArrayMode == true) || (NexObj && StkPlWcsCmp(CurName, NexObj->GetName()) != 0 && ArrayMode == true)) {
 				ArrayMode = false;
 				for (int Loop = 0; Loop < Indent + 2; Loop++) {
 					Length += pImpl->AddString(&Msg[Length], EndPoint, L" ");
@@ -1393,7 +1391,7 @@ StkObject* StkObject::CreateObjectFromJson(wchar_t* Json, int* Offset, StkObject
 	int PrevStatus = ELEM_START;
 	bool ArrayFlag = false;
 
-	if (Json == NULL || lstrcmp(Json, L"") == 0) {
+	if (Json == NULL || StkPlWcsCmp(Json, L"") == 0) {
 		Impl::CleanupObjectsForJson(PrevName, RetObj);
 		*Offset = ERROR_JSON_NO_ELEMENT_FOUND;
 		return NULL;
@@ -1408,7 +1406,7 @@ StkObject* StkObject::CreateObjectFromJson(wchar_t* Json, int* Offset, StkObject
 				continue;
 			} else if (Json[Loop] == wchar_t('{')) {
 				PrevName = new wchar_t[1];
-				lstrcpy(PrevName, L"");
+				StkPlLStrCpy(PrevName, L"");
 				PrevStatus = ELEMOBJ_START;
 				break;
 			} else {
@@ -1655,7 +1653,7 @@ StkObject* StkObject::CreateObjectFromXml(wchar_t* Xml, int* Offset)
 	wchar_t* PrevAttrName = NULL;
 	int PrevStatus = ELEM_START;
 
-	if (Xml == NULL || lstrcmp(Xml, L"") == 0) {
+	if (Xml == NULL || StkPlWcsCmp(Xml, L"") == 0) {
 		Impl::CleanupObjectsForXml(PrevAttrName, RetObj);
 		*Offset = ERROR_XML_NO_ELEMENT_FOUND;
 		return NULL;
@@ -1674,7 +1672,7 @@ StkObject* StkObject::CreateObjectFromXml(wchar_t* Xml, int* Offset)
 				PrevStatus = ELEMNAME_START;
 				continue;
 			} else if (PrevStatus == ELEM_DOWN) {
-				for (int Loop2 = Loop + 1; Xml[Loop2] != CHAR('\0'); Loop2++) {
+				for (int Loop2 = Loop + 1; Xml[Loop2] != char('\0'); Loop2++) {
 					if (Xml[Loop2] == wchar_t(' ') || Xml[Loop2] == wchar_t('\t') || Xml[Loop2] == wchar_t('\r') || Xml[Loop2] == wchar_t('\n')) {
 						continue;
 					} else if (Xml[Loop2] == wchar_t('/')) {

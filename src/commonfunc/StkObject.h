@@ -1,6 +1,4 @@
-﻿#include <windows.h>
-#include <string>
-#pragma once
+﻿#pragma once
 
 class StkObject
 {
@@ -83,5 +81,5 @@ public:
 
 	static int Analyze(wchar_t*);
 	static StkObject* CreateObjectFromXml(wchar_t*, int*);
-	static StkObject* CreateObjectFromJson(wchar_t*, int*, StkObject* Obj = NULL); // DO NOT SPECIFY 3RD PARAMETER.
+	static StkObject* CreateObjectFromJson(wchar_t*, int*, StkObject* Obj = 0); // DO NOT SPECIFY 3RD PARAMETER.
 };

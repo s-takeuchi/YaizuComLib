@@ -1,18 +1,13 @@
-﻿#include <windows.h>
-#include <string>
-#include <stdio.h>
-#include <Psapi.h>
-#include <shlwapi.h>
-
-#include "..\..\src\commonfunc\StkObject.h"
+﻿#include "../../src/StkPl.h"
+#include "../../src/commonfunc/StkObject.h"
 
 void Abort(bool Cond)
 {
 	if (!Cond) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 }
 
@@ -22,17 +17,17 @@ void AbnormalCaseForJson(wchar_t* JsonTxt, int ErrorCode)
 	StkObject* RetObj;
 
 	if (JsonTxt == NULL) {
-		wprintf(L"Abnormal case (JSON): NULL is presented...");
+		StkPlWPrintf(L"Abnormal case (JSON): NULL is presented...");
 	} else {
-		wprintf(L"Abnormal case (JSON): \"%s\" is presented...", JsonTxt);
+		StkPlWPrintf(L"Abnormal case (JSON): \"%s\" is presented...", JsonTxt);
 	}
 	RetObj = StkObject::CreateObjectFromJson(JsonTxt, &Offset);
 	if (RetObj != NULL || Offset != ErrorCode) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObj;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 }
 
 void AbnormalCaseForXml(wchar_t* XmlTxt, int ErrorCode)
@@ -41,33 +36,17 @@ void AbnormalCaseForXml(wchar_t* XmlTxt, int ErrorCode)
 	StkObject* RetObj;
 
 	if (XmlTxt == NULL) {
-		wprintf(L"Abnormal case (XML): NULL is presented...");
+		StkPlWPrintf(L"Abnormal case (XML): NULL is presented...");
 	} else {
-		wprintf(L"Abnormal case (XML): \"%s\" is presented...", XmlTxt);
+		StkPlWPrintf(L"Abnormal case (XML): \"%s\" is presented...", XmlTxt);
 	}
 	RetObj = StkObject::CreateObjectFromXml(XmlTxt, &Offset);
 	if (RetObj != NULL || Offset != ErrorCode) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObj;
-	printf("OK\r\n");
-}
-
-int GetUsedMemorySizeOfCurrentProcess()
-{
-	DWORD dwProcessID = GetCurrentProcessId();
-	HANDLE hProcess;
-	PROCESS_MEMORY_COUNTERS pmc = { 0 };
-
-	long Size;
-	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
-		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
-			Size = pmc.WorkingSetSize;
-		}
-	}
-	CloseHandle(hProcess);
-	return Size;
+	StkPlPrintf("OK\r\n");
 }
 
 StkObject* MakeTestData1(int Mode = 0)
@@ -215,7 +194,7 @@ StkObject* MakeTestData3(wchar_t Name[64], int Width, int Height, int CurrentLev
 	} else {
 		for (int Loop = 0; Loop < Width; Loop++) {
 			wchar_t Buf[25];
-			wsprintf(Buf, L"Elem_%d:%d", CurrentLevel, Loop);
+			StkPlSwPrintf(Buf, 25, L"Elem_%d:%d", CurrentLevel, Loop);
 			Obj->AppendChildElement(MakeTestData3(Buf, Width, Height, CurrentLevel + 1));
 		}
 	}
@@ -233,7 +212,7 @@ StkObject* MakeTestData4(wchar_t Name[64], int Width, int Height, int CurrentLev
 	} else {
 		for (int Loop = 0; Loop < Width; Loop++) {
 			wchar_t Buf[25];
-			wsprintf(Buf, L"ElemRecursive", CurrentLevel, Loop);
+			StkPlSwPrintf(Buf, 25, L"ElemRecursive", CurrentLevel, Loop);
 			Obj->AppendChildElement(MakeTestData4(Buf, Width, Height, CurrentLevel + 1));
 		}
 	}
@@ -243,120 +222,120 @@ StkObject* MakeTestData4(wchar_t Name[64], int Width, int Height, int CurrentLev
 void GeneralTestCase1(StkObject* Elem1, wchar_t* Name)
 {
 	int Len1 = Elem1->GetFirstChildElement()->GetArrayLength();
-	wprintf(L"%s#Len of top level element's child = %d...", Name, Len1);
+	StkPlWPrintf(L"%s#Len of top level element's child = %d...", Name, Len1);
 	if (Len1 == 25) {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	} else {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	wprintf(L"%s#Acquired element is validated...", Name);
+	StkPlWPrintf(L"%s#Acquired element is validated...", Name);
 	StkObject* Elem3 = Elem1->GetFirstChildElement();
 	for (int Loop = 0; Loop < 21; Loop++) {
 		if (Loop < 20) {
-			if (lstrcmp(Elem3->GetName(), L"Product") != 0 || lstrcmp(Elem3->GetFirstAttribute()->GetStringValue(), L"qwer") != 0) {
-				printf("NG\r\n");
-				exit(0);
+			if (StkPlWcsCmp(Elem3->GetName(), L"Product") != 0 || StkPlWcsCmp(Elem3->GetFirstAttribute()->GetStringValue(), L"qwer") != 0) {
+				StkPlPrintf("NG\r\n");
+				StkPlExit(0);
 			}
 		}
 		Elem3 = Elem3->GetNext();
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	int Len1_1 = Elem3->GetArrayLength();
-	wprintf(L"%s#Len of top level element's 2nd child = %d...", Name, Len1_1);
+	StkPlWPrintf(L"%s#Len of top level element's 2nd child = %d...", Name, Len1_1);
 	if (Len1_1 == 4) {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	} else {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	int Len2 = Elem1->GetArrayLength();
-	wprintf(L"%s#Len of top level element = %d...", Name, Len2);
+	StkPlWPrintf(L"%s#Len of top level element = %d...", Name, Len2);
 	if (Len2 == 1) {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	} else {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	int ElemCount = Elem1->GetChildElementCount();
-	wprintf(L"%s#ElemCount = %d...", Name, ElemCount);
+	StkPlWPrintf(L"%s#ElemCount = %d...", Name, ElemCount);
 	if (ElemCount == Len1) {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	} else {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	int AttrCount = Elem1->GetAttributeCount();
-	wprintf(L"%s#AttrCount = %d...", Name, AttrCount);
+	StkPlWPrintf(L"%s#AttrCount = %d...", Name, AttrCount);
 	if (AttrCount == 3) {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	} else {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	StkObject* Elem4 = Elem3->GetNext();
 	int Elem4ElemCnt = Elem4->GetChildElementCount();
 	int Elem4AttrCnt = Elem4->GetAttributeCount();
-	wprintf(L"%s#SingleElement Count...", Name);
+	StkPlWPrintf(L"%s#SingleElement Count...", Name);
 	if (Elem4ElemCnt == 0 && Elem4AttrCnt == 0) {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	} else {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 }
 
 void GeneralTestCase2(StkObject* Elem1, wchar_t* Name)
 {
-	wprintf(L"%s#Proper count can be acquired.", Name);
+	StkPlWPrintf(L"%s#Proper count can be acquired.", Name);
 	if (Elem1->GetChildElementCount() != Elem1->GetFirstChildElement()->GetArrayLength()) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
-	wprintf(L"%s#Each name is correct...", Name);
-	if (lstrcmp(Elem1->GetName(), L"個人の財産") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetName(), L"乗用車") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetName(), L"時計") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"現金") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"証券") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"%s#Each name is correct...", Name);
+	if (StkPlWcsCmp(Elem1->GetName(), L"個人の財産") != 0 ||
+		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetName(), L"乗用車") != 0 ||
+		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetNext()->GetName(), L"時計") != 0 ||
+		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"現金") != 0 ||
+		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"証券") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
-	wprintf(L"%s#Attribute of car is correct...", Name);
-	if (lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetStringValue(), L"赤") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetNext()->GetStringValue(), L"トヨタ") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"白") != 0 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetNext()->GetStringValue(), L"日産") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"%s#Attribute of car is correct...", Name);
+	if (StkPlWcsCmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetStringValue(), L"赤") != 0 ||
+		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetFirstAttribute()->GetNext()->GetStringValue(), L"トヨタ") != 0 ||
+		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"白") != 0 ||
+		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetNext()->GetStringValue(), L"日産") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
-	wprintf(L"%s#Fetch integer value...", Name);
+	StkPlWPrintf(L"%s#Fetch integer value...", Name);
 	if (Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetIntValue() != 5000000 ||
 		Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 10000000 ||
 		Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetIntValue() != 7000000) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
-	wprintf(L"%s#Fetch tail element...", Name);
+	StkPlWPrintf(L"%s#Fetch tail element...", Name);
 	if (Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetIntValue() != 200000 ||
-		lstrcmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), L"VISA") != 0) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), L"VISA") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 }
 
 void GeneralTestCase3()
 {
-	wprintf(L"GeneralCheck3#Test of Equals 1st ...");
+	StkPlWPrintf(L"GeneralCheck3#Test of Equals 1st ...");
 	StkObject* Origin1 = MakeTestData1();
 	StkObject* Normal1 = MakeTestData1(0);
 	StkObject* Order1 = MakeTestData1(1);
@@ -365,16 +344,16 @@ void GeneralTestCase3()
 	bool Ch2 = Origin1->Equals(Order1);
 	bool Ch3 = Origin1->Equals(Diff1);
 	if (!Ch1 || !Ch2 || Ch3) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete Origin1;
 	delete Normal1;
 	delete Order1;
 	delete Diff1;
 
-	wprintf(L"GeneralCheck3#Test of Equals 2nd ...");
+	StkPlWPrintf(L"GeneralCheck3#Test of Equals 2nd ...");
 	StkObject* Origin2 = MakeTestData2();
 	StkObject* Normal2 = MakeTestData2(0);
 	StkObject* Order2 = MakeTestData2(1);
@@ -383,82 +362,82 @@ void GeneralTestCase3()
 	bool Ci2 = Origin2->Equals(Order2);
 	bool Ci3 = Origin2->Equals(Diff2);
 	if (!Ci1 || !Ci2 || Ci3) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete Origin2;
 	delete Normal2;
 	delete Order2;
 	delete Diff2;
 
-	wprintf(L"GeneralCheck3#Test of Equals 3rd integer match ...");
+	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd integer match ...");
 	StkObject* Obj1a = new StkObject(L"Shinya Takeuchi", 123);
 	StkObject* Obj1b = new StkObject(L"Shinya Takeuchi", 123);
 	if (Obj1a->Equals(Obj1b) == false) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete Obj1a;
 	delete Obj1b;
 
-	wprintf(L"GeneralCheck3#Test of Equals 3rd integer unmatch ...");
+	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd integer unmatch ...");
 	StkObject* Obj2a = new StkObject(L"Shinya Takeuchi", 123);
 	StkObject* Obj2b = new StkObject(L"Shinya Takeuchi", 321);
 	if (Obj2a->Equals(Obj2b) == true) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete Obj2a;
 	delete Obj2b;
 
-	wprintf(L"GeneralCheck3#Test of Equals 3rd float match ...");
+	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd float match ...");
 	StkObject* Obj3a = new StkObject(L"Shinya Takeuchi", 123.45f);
 	StkObject* Obj3b = new StkObject(L"Shinya Takeuchi", 123.45f);
 	if (Obj3a->Equals(Obj3b) == false) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete Obj3a;
 	delete Obj3b;
 
-	wprintf(L"GeneralCheck3#Test of Equals 3rd float unmatch ...");
+	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd float unmatch ...");
 	StkObject* Obj4a = new StkObject(L"Shinya Takeuchi", 123.45f);
 	StkObject* Obj4b = new StkObject(L"Shinya Takeuchi", 123.46f);
 	if (Obj4a->Equals(Obj4b) == true) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete Obj4a;
 	delete Obj4b;
 
-	wprintf(L"GeneralCheck3#Test of Equals 3rd string match ...");
+	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd string match ...");
 	StkObject* Obj5a = new StkObject(L"Shinya Takeuchi", L"Hello, World!");
 	StkObject* Obj5b = new StkObject(L"Shinya Takeuchi", L"Hello, World!");
 	if (Obj5a->Equals(Obj5b) == false) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete Obj5a;
 	delete Obj5b;
 
-	wprintf(L"GeneralCheck3#Test of Equals 3rd string unmatch ...");
+	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd string unmatch ...");
 	StkObject* Obj6a = new StkObject(L"Shinya Takeuchi", L"Hello, World!");
 	StkObject* Obj6b = new StkObject(L"Shinya Takeuchi", L"Hello; World!");
 	if (Obj6a->Equals(Obj6b) == true) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete Obj6a;
 	delete Obj6b;
 
-	wprintf(L"GeneralCheck3#Test of Equals 4th Array of recursive object ...");
+	StkPlWPrintf(L"GeneralCheck3#Test of Equals 4th Array of recursive object ...");
 	StkObject* Elem4 = MakeTestData4(L"RecursiveArray", 2, 3);
 	wchar_t JsonStr[1000000] = L"";
 	wchar_t XmlStr[1000000] = L"";
@@ -471,44 +450,44 @@ void GeneralTestCase3()
 	if (!NewObjXml->Equals(NewObjJson) || !NewObjJson->Equals(NewObjXml)) {
 		delete NewObjXml;
 		delete NewObjJson;
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete NewObjXml;
 	delete NewObjJson;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 }
 
 void GeneralTestCase4()
 {
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (first elem match case) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (first elem match case) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Hello><First>Shinya</First><Last>Takeuchi</Last></Hello>", &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(L"<First>Shinya</First>", &ErrorCode);
 		StkObject* Ret = Origin->Contains(Target);
 		Abort(Ret != NULL &&
-			  lstrcmp(Ret->GetStringValue(), L"Shinya") == 0 &&
-			  lstrcmp(Ret->GetName(), L"First") == 0 &&
-			  lstrcmp(Ret->GetNext()->GetStringValue(), L"Takeuchi") == 0 &&
-			  lstrcmp(Ret->GetNext()->GetName(), L"Last") == 0);
+			  StkPlWcsCmp(Ret->GetStringValue(), L"Shinya") == 0 &&
+			  StkPlWcsCmp(Ret->GetName(), L"First") == 0 &&
+			  StkPlWcsCmp(Ret->GetNext()->GetStringValue(), L"Takeuchi") == 0 &&
+			  StkPlWcsCmp(Ret->GetNext()->GetName(), L"Last") == 0);
 		delete Origin;
 		delete Target;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (last elem match case) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (last elem match case) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>", &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(L"<Last>Takeuchi</Last>", &ErrorCode);
 		StkObject* Ret = Origin->Contains(Target);
 		Abort(Ret != NULL &&
-			  lstrcmp(Ret->GetStringValue(), L"Takeuchi") == 0 &&
-			  lstrcmp(Ret->GetName(), L"Last") == 0);
+			  StkPlWcsCmp(Ret->GetStringValue(), L"Takeuchi") == 0 &&
+			  StkPlWcsCmp(Ret->GetName(), L"Last") == 0);
 		delete Origin;
 		delete Target;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (simple int/float/string element) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (simple int/float/string element) ...");
 		StkObject* OriginInt = new StkObject(L"ObjInt", 345);
 		StkObject* TargetInt = new StkObject(L"ObjInt", 345);
 		StkObject* OriginFloat = new StkObject(L"ObjFloat", 345.6f);
@@ -527,7 +506,7 @@ void GeneralTestCase4()
 		delete TargetStr;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (simple NG case) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (simple NG case) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>", &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(L"<Last>Suzuki</Last>", &ErrorCode);
@@ -537,7 +516,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (Common data 1) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Common data 1) ...");
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target = MakeTestData1();
 		StkObject* Ret = Origin->Contains(Target);
@@ -546,7 +525,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (Common data 1 : advanced) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Common data 1 : advanced) ...");
 		StkObject* Origin = MakeTestData1();
 
 		StkObject* Elem1 = new StkObject(L"SoftwareCompany");
@@ -563,7 +542,7 @@ void GeneralTestCase4()
 		delete Elem1;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (Common data 2) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Common data 2) ...");
 		StkObject* Origin = MakeTestData2();
 		StkObject* Target = MakeTestData2();
 		StkObject* Ret = Origin->Contains(Target);
@@ -572,7 +551,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (Common data 2 : advanced) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Common data 2 : advanced) ...");
 		StkObject* Origin = MakeTestData2();
 		StkObject* Elem1_4 = new StkObject(L"証券");
 		StkObject* Elem1_4_1 = new StkObject(L"株");
@@ -580,12 +559,12 @@ void GeneralTestCase4()
 		Elem1_4_1->AppendChildElement(new StkObject(L"A社", 2000000));
 		Elem1_4->AppendChildElement(Elem1_4_1);
 		StkObject* Ret = Origin->Contains(Elem1_4);
-		Abort(Ret != NULL && lstrcmp(Ret->GetName(), L"証券") == 0 && Ret->GetFirstChildElement()->GetFirstChildElement()->GetIntValue() == 2000000);
+		Abort(Ret != NULL && StkPlWcsCmp(Ret->GetName(), L"証券") == 0 && Ret->GetFirstChildElement()->GetFirstChildElement()->GetIntValue() == 2000000);
 		delete Origin;
 		delete Elem1_4;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (All type of element) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (All type of element) ...");
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target1 = new StkObject(L"ELEM_INT", 123);
 		StkObject* Target2 = new StkObject(L"ELEM_INT", 321);
@@ -600,12 +579,12 @@ void GeneralTestCase4()
 		StkObject* Ret5 = Origin->Contains(Target5);
 		StkObject* Ret6 = Origin->Contains(Target6);
 		Abort(Ret1 != NULL && Ret2 == NULL && Ret3 != NULL && Ret4 == NULL && Ret5 != NULL && Ret6 == NULL &&
-			  lstrcmp(Ret1->GetName(), L"ELEM_INT") == 0 &&
+			  StkPlWcsCmp(Ret1->GetName(), L"ELEM_INT") == 0 &&
 			  Ret1->GetIntValue() == 123 &&
-			  lstrcmp(Ret3->GetName(), L"ELEM_FLOAT") == 0 &&
+			  StkPlWcsCmp(Ret3->GetName(), L"ELEM_FLOAT") == 0 &&
 			  Ret3->GetFloatValue() == 456.7f &&
-			  lstrcmp(Ret5->GetName(), L"ELEM_STRING") == 0 &&
-			  lstrcmp(Ret5->GetStringValue(), L" ABC FFF DDD EEE ") == 0);
+			  StkPlWcsCmp(Ret5->GetName(), L"ELEM_STRING") == 0 &&
+			  StkPlWcsCmp(Ret5->GetStringValue(), L" ABC FFF DDD EEE ") == 0);
 		delete Origin;
 		delete Target1;
 		delete Target2;
@@ -615,7 +594,7 @@ void GeneralTestCase4()
 		delete Target6;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (Hierarchy : normal) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Hierarchy : normal) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>春</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>夏</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>秋</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>冬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>夏</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
@@ -635,9 +614,9 @@ void GeneralTestCase4()
 		StkObject* Ret7 = Origin->Contains(Target7);
 		StkObject* Ret8 = Origin->Contains(Target8);
 		Abort(Ret1 != NULL && Ret2 != NULL && Ret3 != NULL && Ret4 != NULL && Ret5 != NULL && Ret6 != NULL && Ret7 != NULL && Ret8 != NULL &&
-			  lstrcmp(Ret4->GetName(), L"Bbb") == 0 &&
-			  lstrcmp(Ret5->GetName(), L"Ccc") == 0 &&
-			  lstrcmp(Ret6->GetName(), L"Ddd") == 0);
+			  StkPlWcsCmp(Ret4->GetName(), L"Bbb") == 0 &&
+			  StkPlWcsCmp(Ret5->GetName(), L"Ccc") == 0 &&
+			  StkPlWcsCmp(Ret6->GetName(), L"Ddd") == 0);
 		delete Origin;
 		delete Target1;
 		delete Target2;
@@ -649,7 +628,7 @@ void GeneralTestCase4()
 		delete Target8;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (Hierarchy : abnormal) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Hierarchy : abnormal) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>春</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>夏</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>秋</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>冬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>冬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
@@ -680,7 +659,7 @@ void GeneralTestCase4()
 		delete Target8;
 	}
 	{
-		wprintf(L"GeneralCheck4#Test of Contains  (Hierarchy : sequential check) ...");
+		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Hierarchy : sequential check) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb Type=\"文字\"><Ccc Name=\"季節\"><Ddd>春</Ddd><Ddd>夏</Ddd><Ddd>秋</Ddd><Ddd>冬</Ddd></Ccc><Ccc Name=\"方角\"><Ddd>東</Ddd><Ddd>西</Ddd><Ddd>南</Ddd><Ddd>北</Ddd></Ccc></Bbb><Bbb Type=\"氏名\"><Ccc Name=\"家族\"><Ddd>竹内伸也</Ddd><Ddd>常見朱美</Ddd><Ddd>木村優子</Ddd></Ccc><Ccc Name=\"会社メンバー\"><Ddd>山田太郎</Ddd><Ddd>鈴木一郎</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Bbb Type=\"文字\"/>", &ErrorCode);
@@ -692,8 +671,8 @@ void GeneralTestCase4()
 		StkObject* Ret125 = Origin->Contains(Target1)->Contains(Target2)->Contains(Target5);
 		StkObject* Ret134 = Origin->Contains(Target1)->Contains(Target3)->Contains(Target4);
 		StkObject* Ret135 = Origin->Contains(Target1)->Contains(Target3)->Contains(Target5);
-		Abort(lstrcmp(Ret124->GetStringValue(), L"南") == 0 && Ret125 == NULL &&
-			  Ret134 == NULL && lstrcmp(Ret135->GetStringValue(), L"冬") == 0);
+		Abort(StkPlWcsCmp(Ret124->GetStringValue(), L"南") == 0 && Ret125 == NULL &&
+			  Ret134 == NULL && StkPlWcsCmp(Ret135->GetStringValue(), L"冬") == 0);
 		delete Origin;
 		delete Target1;
 		delete Target2;
@@ -705,11 +684,11 @@ void GeneralTestCase4()
 void GeneralTestCase5()
 {
 	{
-		wprintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value ...");
+		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value ...");
 		StkObject* Obj = new StkObject(L"IntValue", 123);
 		Abort(Obj->GetIntValue() == 123 && Obj->GetFloatValue() == 0.0f && Obj->GetStringValue() == NULL);
 
-		wprintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value (Child Element) ...");
+		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value (Child Element) ...");
 		StkObject* ParentObj = new StkObject(L"Parent");
 		ParentObj->AppendChildElement(Obj);
 		ParentObj->GetFirstChildElement()->SetIntValue(321);
@@ -721,11 +700,11 @@ void GeneralTestCase5()
 		delete ParentObj;
 	}
 	{
-		wprintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value ...");
+		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value ...");
 		StkObject* Obj = new StkObject(L"IntValue", 123.4f);
 		Abort(Obj->GetIntValue() == 0 && Obj->GetFloatValue() == 123.4f && Obj->GetStringValue() == NULL);
 
-		wprintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value (Child Element) ...");
+		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value (Child Element) ...");
 		StkObject* ParentObj = new StkObject(L"Parent");
 		ParentObj->AppendChildElement(Obj);
 		ParentObj->GetFirstChildElement()->SetIntValue(999);
@@ -737,11 +716,11 @@ void GeneralTestCase5()
 		delete ParentObj;
 	}
 	{
-		wprintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value ...");
+		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value ...");
 		StkObject* Obj = new StkObject(L"IntValue", L"Test");
 		Abort(Obj->GetIntValue() == 0 && Obj->GetFloatValue() == 0.0f && Obj->GetStringValue() != NULL);
 
-		wprintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value (Child Element) ...");
+		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value (Child Element) ...");
 		StkObject* ParentObj = new StkObject(L"Parent");
 		ParentObj->AppendChildElement(Obj);
 		ParentObj->GetFirstChildElement()->SetIntValue(999);
@@ -750,7 +729,7 @@ void GeneralTestCase5()
 		Abort(ParentObj->GetFirstChildElement()->GetIntValue() == 0 &&
 			ParentObj->GetFirstChildElement()->GetFloatValue() == 0.0f &&
 			ParentObj->GetFirstChildElement()->GetStringValue() != NULL &&
-			lstrcmp(ParentObj->GetFirstChildElement()->GetStringValue(), L"Hello") == 0);
+			StkPlWcsCmp(ParentObj->GetFirstChildElement()->GetStringValue(), L"Hello") == 0);
 		delete ParentObj;
 	}
 }
@@ -758,7 +737,7 @@ void GeneralTestCase5()
 void GeneralTestCase6()
 {
 	{
-		wprintf(L"GeneralCheck6#Identify the presented text is XML or JSON (Normal-1) ...");
+		StkPlWPrintf(L"GeneralCheck6#Identify the presented text is XML or JSON (Normal-1) ...");
 
 		StkObject* Elem1 = MakeTestData1();
 		wchar_t Xml1[8192] = L"";
@@ -785,15 +764,15 @@ void GeneralTestCase6()
 		int RetJson3 = StkObject::Analyze(Json3);
 
 		if (!(RetXml1 == 1 && RetJson1 == 2 && RetXml2 == 1 && RetJson2 == 2 && RetXml3 == 1 && RetJson3 == 2)) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
 	/////////////////////////////////////////////////////////////////
 	{
-		wprintf(L"GeneralCheck6#Identify the presented text is XML or JSON (Normal-2) ...");
+		StkPlWPrintf(L"GeneralCheck6#Identify the presented text is XML or JSON (Normal-2) ...");
 		int RetXml1 = StkObject::Analyze(L"<aaa/>");
 		int RetJson1 = StkObject::Analyze(L"{\"aaa\":1}");
 		int RetXml2 = StkObject::Analyze(L"  \t\r\n  <aaa/>  \t\r\n");
@@ -801,15 +780,15 @@ void GeneralTestCase6()
 		int RetXml3 = StkObject::Analyze(L"  \t\r\n  <aaa>bbb</aaa>  \t\r\n");
 		int RetJson3 = StkObject::Analyze(L"  \t\r\n  \"aaa\" : {\"bbb\":1}  \t\r\n");
 		if (!(RetXml1 == 1 && RetJson1 == 2 && RetXml2 == 1 && RetJson2 == 2 && RetXml3 == 1 && RetJson3 == 2)) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
 	/////////////////////////////////////////////////////////////////
 	{
-		wprintf(L"GeneralCheck6#Identify the presented text is XML or JSON (Abnormal) ...");
+		StkPlWPrintf(L"GeneralCheck6#Identify the presented text is XML or JSON (Abnormal) ...");
 		int RetXml1 = StkObject::Analyze(L"<");
 		int RetJson1 = StkObject::Analyze(L"{");
 		int RetXml2 = StkObject::Analyze(L">");
@@ -822,10 +801,10 @@ void GeneralTestCase6()
 		int RetEmpty2 = StkObject::Analyze(NULL);
 		int RetEmpty3 = StkObject::Analyze(L" \t \r\n \t \r\n ");
 		if (RetXml1 != -1 || RetJson1 != -1 || RetXml2 != -1 || RetJson2 != -1 || RetXml3 != -1 || RetJson3 != -1 || RetXml4 != -1 || RetJson4 != -1 || RetEmpty1 != 0 || RetEmpty2 != 0 || RetEmpty3 != 0) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 }
 
@@ -842,71 +821,71 @@ void JsonEncodingTest1()
 	Obj->AppendChildElement(new StkObject(L"Element8", L"Hello-\t\t\t\t\t-World!!"));
 	wchar_t JsonTxt[2048] = L"";
 	Obj->ToJson(JsonTxt, 2048);
-	wprintf(L"JSON Encoding#Escape ... ");
-	if (StrStr(JsonTxt, L"\"Element1\" : \"Hello-\\\\\\\\\\\\\\\\\\\\-World!!\"") == 0 ||
-		StrStr(JsonTxt, L"\"Element2\" : \"Hello-\\\"\\\"\\\"\\\"\\\"-World!!\"") == 0 ||
-		StrStr(JsonTxt, L"\"Element3\" : \"Hello-\\/\\/\\/\\/\\/-World!!\"") == 0 ||
-		StrStr(JsonTxt, L"\"Element4\" : \"Hello-\\b\\b\\b\\b\\b-World!!\"") == 0 ||
-		StrStr(JsonTxt, L"\"Element5\" : \"Hello-\\f\\f\\f\\f\\f-World!!\"") == 0 ||
-		StrStr(JsonTxt, L"\"Element6\" : \"Hello-\\r\\r\\r\\r\\r-World!!\"") == 0 ||
-		StrStr(JsonTxt, L"\"Element7\" : \"Hello-\\n\\n\\n\\n\\n-World!!\"") == 0 ||
-		StrStr(JsonTxt, L"\"Element8\" : \"Hello-\\t\\t\\t\\t\\t-World!!\"") == 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"JSON Encoding#Escape ... ");
+	if (StkPlWcsStr(JsonTxt, L"\"Element1\" : \"Hello-\\\\\\\\\\\\\\\\\\\\-World!!\"") == 0 ||
+		StkPlWcsStr(JsonTxt, L"\"Element2\" : \"Hello-\\\"\\\"\\\"\\\"\\\"-World!!\"") == 0 ||
+		StkPlWcsStr(JsonTxt, L"\"Element3\" : \"Hello-\\/\\/\\/\\/\\/-World!!\"") == 0 ||
+		StkPlWcsStr(JsonTxt, L"\"Element4\" : \"Hello-\\b\\b\\b\\b\\b-World!!\"") == 0 ||
+		StkPlWcsStr(JsonTxt, L"\"Element5\" : \"Hello-\\f\\f\\f\\f\\f-World!!\"") == 0 ||
+		StkPlWcsStr(JsonTxt, L"\"Element6\" : \"Hello-\\r\\r\\r\\r\\r-World!!\"") == 0 ||
+		StkPlWcsStr(JsonTxt, L"\"Element7\" : \"Hello-\\n\\n\\n\\n\\n-World!!\"") == 0 ||
+		StkPlWcsStr(JsonTxt, L"\"Element8\" : \"Hello-\\t\\t\\t\\t\\t-World!!\"") == 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 	delete Obj;
 }
 
 void JsonEncodingTest2()
 {
-	wprintf(L"JSON Encoding#Triming ... ");
+	StkPlWPrintf(L"JSON Encoding#Triming ... ");
 
 	StkObject* MkDat1 = MakeTestData1();
 	wchar_t JsonTxt1[128];
 	int Ret = 0;
 
-	lstrcpy(JsonTxt1, L"");
+	StkPlLStrCpy(JsonTxt1, L"");
 	Ret = MkDat1->ToJson(JsonTxt1, 32);
-	if (lstrcmp(JsonTxt1, L"\"SoftwareCompany\" : {\r\n  \"@attr") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(JsonTxt1, L"\"SoftwareCompany\" : {\r\n  \"@attr") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	lstrcpy(JsonTxt1, L"");
+	StkPlLStrCpy(JsonTxt1, L"");
 	Ret = MkDat1->ToJson(JsonTxt1, 33);
-	if (lstrcmp(JsonTxt1, L"\"SoftwareCompany\" : {\r\n  \"@attri") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(JsonTxt1, L"\"SoftwareCompany\" : {\r\n  \"@attri") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	lstrcpy(JsonTxt1, L"");
+	StkPlLStrCpy(JsonTxt1, L"");
 	Ret = MkDat1->ToJson(JsonTxt1, 34);
-	if (lstrcmp(JsonTxt1, L"\"SoftwareCompany\" : {\r\n  \"@attrib") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(JsonTxt1, L"\"SoftwareCompany\" : {\r\n  \"@attrib") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 
 	StkObject* MkDat2 = MakeTestData2();
 	wchar_t JsonTxt2[128];
-	lstrcpy(JsonTxt2, L"");
+	StkPlLStrCpy(JsonTxt2, L"");
 	Ret = MkDat2->ToJson(JsonTxt2, 32);
-	if (lstrcmp(JsonTxt2, L"\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(JsonTxt2, L"\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	lstrcpy(JsonTxt2, L"");
+	StkPlLStrCpy(JsonTxt2, L"");
 	Ret = MkDat2->ToJson(JsonTxt2, 33);
-	if (lstrcmp(JsonTxt2, L"\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"カ") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(JsonTxt2, L"\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"カ") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	lstrcpy(JsonTxt2, L"");
+	StkPlLStrCpy(JsonTxt2, L"");
 	Ret = MkDat2->ToJson(JsonTxt2, 34);
-	if (lstrcmp(JsonTxt2, L"\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"カロ") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(JsonTxt2, L"\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"カロ") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
 }
 
@@ -927,31 +906,31 @@ void XmlEncodingTest2()
 	StkObject* Attr1 = Xml2->GetFirstAttribute();
 	wchar_t Attr1Val[2048] = L"";
 	Attr1->ToXml(Attr1Val, 2048);
-	wprintf(L"XmlEncoding(Single)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... ");
-	if (StrStr(Attr1Val, L"Lt=\"&lt;\"") == 0 ||
-		StrStr(Attr1Val, L"Gt=\"&gt;\"") == 0 ||
-		StrStr(Attr1Val, L"Amp=\"&amp;\"") == 0 ||
-		StrStr(Attr1Val, L"Quot=\"&quot;\"") == 0 ||
-		StrStr(Attr1Val, L"Apos=\"&apos;\"") == 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"XmlEncoding(Single)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... ");
+	if (StkPlWcsStr(Attr1Val, L"Lt=\"&lt;\"") == 0 ||
+		StkPlWcsStr(Attr1Val, L"Gt=\"&gt;\"") == 0 ||
+		StkPlWcsStr(Attr1Val, L"Amp=\"&amp;\"") == 0 ||
+		StkPlWcsStr(Attr1Val, L"Quot=\"&quot;\"") == 0 ||
+		StkPlWcsStr(Attr1Val, L"Apos=\"&apos;\"") == 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
 	StkObject* Elem1 = Xml2->GetFirstChildElement();
 	wchar_t Elem1Val[2048] = L"";;
 	Elem1->ToXml(Elem1Val, 2048);
-	wprintf(L"XmlEncoding(Single)#Element value '<', '>', '&', '\"' and '\'' are escaped ... ");
-	if (StrStr(Elem1Val, L">&lt;<") == 0 ||
-		StrStr(Elem1Val, L">&gt;<") == 0 ||
-		StrStr(Elem1Val, L">&amp;<") == 0 ||
-		StrStr(Elem1Val, L">&quot;<") == 0 ||
-		StrStr(Elem1Val, L">&apos;<") == 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"XmlEncoding(Single)#Element value '<', '>', '&', '\"' and '\'' are escaped ... ");
+	if (StkPlWcsStr(Elem1Val, L">&lt;<") == 0 ||
+		StkPlWcsStr(Elem1Val, L">&gt;<") == 0 ||
+		StkPlWcsStr(Elem1Val, L">&amp;<") == 0 ||
+		StkPlWcsStr(Elem1Val, L">&quot;<") == 0 ||
+		StkPlWcsStr(Elem1Val, L">&apos;<") == 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 	delete Xml2;
 }
@@ -973,47 +952,47 @@ void XmlEncodingTest3()
 	StkObject* Attr1 = Xml2->GetFirstAttribute();
 	wchar_t Attr1Val[4096] = L"";
 	Attr1->ToXml(Attr1Val, 4096);
-	wprintf(L"XmlEncoding(Multi)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... ");
-	if (StrStr(Attr1Val, L"Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\"") == 0 ||
-		StrStr(Attr1Val, L"Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\"") == 0 ||
-		StrStr(Attr1Val, L"Amp=\"&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;\"") == 0 ||
-		StrStr(Attr1Val, L"Quot=\"&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;\"") == 0 ||
-		StrStr(Attr1Val, L"Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"") == 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"XmlEncoding(Multi)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... ");
+	if (StkPlWcsStr(Attr1Val, L"Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\"") == 0 ||
+		StkPlWcsStr(Attr1Val, L"Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\"") == 0 ||
+		StkPlWcsStr(Attr1Val, L"Amp=\"&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;\"") == 0 ||
+		StkPlWcsStr(Attr1Val, L"Quot=\"&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;\"") == 0 ||
+		StkPlWcsStr(Attr1Val, L"Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"") == 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
 	StkObject* Elem1 = Xml2->GetFirstChildElement();
 	wchar_t Elem1Val[4096] = L"";
 	Elem1->ToXml(Elem1Val, 4096);
-	wprintf(L"XmlEncoding(Multi)#Element value '<', '>', '&', '\"' and '\'' are escaped ... ");
-	if (StrStr(Elem1Val, L">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<") == 0 ||
-		StrStr(Elem1Val, L">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;<") == 0 ||
-		StrStr(Elem1Val, L">&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;<") == 0 ||
-		StrStr(Elem1Val, L">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;<") == 0 ||
-		StrStr(Elem1Val, L">&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;<") == 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"XmlEncoding(Multi)#Element value '<', '>', '&', '\"' and '\'' are escaped ... ");
+	if (StkPlWcsStr(Elem1Val, L">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<") == 0 ||
+		StkPlWcsStr(Elem1Val, L">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;<") == 0 ||
+		StkPlWcsStr(Elem1Val, L">&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;<") == 0 ||
+		StkPlWcsStr(Elem1Val, L">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;<") == 0 ||
+		StkPlWcsStr(Elem1Val, L">&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;<") == 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 	delete Xml2;
 }
 
 void XmlJsonDecodingTest1()
 {
-	wprintf(L"XmlJsonDecodingTest1 ... ");
+	StkPlWPrintf(L"XmlJsonDecodingTest1 ... ");
 	int Offset;
 
 	StkObject* RetObjJson = StkObject::CreateObjectFromJson(L"\"Abc\" : {\"Xyz\" : \"123\"}", &Offset);
 	StkObject* RetObjXml = StkObject::CreateObjectFromXml(L"<Abc><Xyz>123</Xyz></Abc>", &Offset);
 	if (RetObjJson->Equals(RetObjXml)) {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	} else {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObjJson;
 	delete RetObjXml;
@@ -1097,25 +1076,25 @@ void XmlJsonEncodingTest1()
 	StkObject* ObjFromJson = StkObject::CreateObjectFromJson(JsonTxt, &Offset);
 	wchar_t Temp1[8192] = L"";
 	wchar_t Temp2[8192] = L"";
-	printf("[Obj--->XML--->Obj--->JSON] and [Obj--->JSON--->Obj--->JSON] bring the same result...");
+	StkPlPrintf("[Obj--->XML--->Obj--->JSON] and [Obj--->JSON--->Obj--->JSON] bring the same result...");
 	ObjFromXml->ToJson(Temp1, 8192);
 	ObjFromJson->ToJson(Temp2, 8192);
-	if (lstrcmp(Temp1, Temp2) != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(Temp1, Temp2) != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
-	printf("[Obj--->XML--->Obj--->XML] and [Obj--->JSON--->Obj--->XML] bring the same result...");
-	lstrcpy(Temp1, L"");
-	lstrcpy(Temp2, L"");
+	StkPlPrintf("[Obj--->XML--->Obj--->XML] and [Obj--->JSON--->Obj--->XML] bring the same result...");
+	StkPlLStrCpy(Temp1, L"");
+	StkPlLStrCpy(Temp2, L"");
 	ObjFromXml->ToXml(Temp1, 8192);
 	ObjFromJson->ToXml(Temp2, 8192);
-	if (lstrcmp(Temp1, Temp2) != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(Temp1, Temp2) != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
 	delete TopElem;
 }
@@ -1135,18 +1114,18 @@ void XmlJsonEncodingTest2()
 	TopElem->AppendChildElement(ChildElem);
 	TopElem->ToXml(Temp1, 2048);
 	TopElem->ToJson(Temp2, 2048);
-	printf("XML encoding with no name and no value...");
-	if (StrStr(Temp1, L"<Japan =\"\" A=\"B\">\r\n  <>\r\n    </>\r\n    <></>\r\n    <A>B</A>\r\n  </>\r\n</Japan>") == 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlPrintf("XML encoding with no name and no value...");
+	if (StkPlWcsStr(Temp1, L"<Japan =\"\" A=\"B\">\r\n  <>\r\n    </>\r\n    <></>\r\n    <A>B</A>\r\n  </>\r\n</Japan>") == 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
-	printf("JSON encoding with no name and no value...");
-	if (StrStr(Temp2, L"\"Japan\" : {\r\n  \"@attributes\" : {\r\n    \"\" : \"\", \"A\" : \"B\"\r\n  },\r\n  {\r\n    \"\" : [\r\n      {\r\n      },\r\n      \"\"\r\n    ],\r\n    \"A\" : \"B\"\r\n  }\r\n}") == 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlPrintf("OK\r\n");
+	StkPlPrintf("JSON encoding with no name and no value...");
+	if (StkPlWcsStr(Temp2, L"\"Japan\" : {\r\n  \"@attributes\" : {\r\n    \"\" : \"\", \"A\" : \"B\"\r\n  },\r\n  {\r\n    \"\" : [\r\n      {\r\n      },\r\n      \"\"\r\n    ],\r\n    \"A\" : \"B\"\r\n  }\r\n}") == 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete TopElem;
 }
 
@@ -1157,31 +1136,31 @@ void XmlJsonEncodingTest3()
 
 	StkObject* Dat = MakeTestData1();
 
-	printf("Encoded XML data is stored into unsufficient buffer...");
-	lstrcpy(Tmp, L"");
+	StkPlPrintf("Encoded XML data is stored into unsufficient buffer...");
+	StkPlLStrCpy(Tmp, L"");
 	Dat->ToXml(Tmp, 4096);
 	for (int Len = 4096; Len > 1; Len--) {
-		lstrcpy(Buf, L"");
+		StkPlLStrCpy(Buf, L"");
 		Dat->ToXml(Buf, Len);
-		if (StrStr(Tmp, Buf) == 0) {
-			printf("NG\r\n");
-			exit(0);
+		if (StkPlWcsStr(Tmp, Buf) == 0) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
-	printf("Encoded JSON data is stored into unsufficient buffer...");
-	lstrcpy(Tmp, L"");
+	StkPlPrintf("Encoded JSON data is stored into unsufficient buffer...");
+	StkPlLStrCpy(Tmp, L"");
 	Dat->ToJson(Tmp, 4096);
 	for (int Len = 4096; Len > 1; Len--) {
-		lstrcpy(Buf, L"");
+		StkPlLStrCpy(Buf, L"");
 		Dat->ToJson(Buf, Len);
-		if (StrStr(Tmp, Buf) == 0) {
-			printf("NG\r\n");
-			exit(0);
+		if (StkPlWcsStr(Tmp, Buf) == 0) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 }
 
 void XmlDecodingTest1()
@@ -1212,24 +1191,24 @@ void XmlDecodingTest1()
 	RetObj4->ToXml(Msg4, 1024);
 	RetObj5->ToXml(Msg5, 1024);
 
-	printf("Decoding variation test (sampling check)...");
-	if (lstrcmp(RetObj1->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0 ||
-		lstrcmp(RetObj2->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0 ||
-		lstrcmp(RetObj3->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0 ||
-		lstrcmp(RetObj4->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0 ||
-		lstrcmp(RetObj5->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlPrintf("Decoding variation test (sampling check)...");
+	if (StkPlWcsCmp(RetObj1->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0 ||
+		StkPlWcsCmp(RetObj2->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0 ||
+		StkPlWcsCmp(RetObj3->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0 ||
+		StkPlWcsCmp(RetObj4->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0 ||
+		StkPlWcsCmp(RetObj5->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
-	printf("Decoding variation test (ToXml check)...");
-	if (lstrcmp(Msg1, Msg2) != 0 || lstrcmp(Msg1, Msg3) != 0 || lstrcmp(Msg1, Msg4) != 0 || lstrcmp(Msg1, Msg5) != 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlPrintf("Decoding variation test (ToXml check)...");
+	if (StkPlWcsCmp(Msg1, Msg2) != 0 || StkPlWcsCmp(Msg1, Msg3) != 0 || StkPlWcsCmp(Msg1, Msg4) != 0 || StkPlWcsCmp(Msg1, Msg5) != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
 	delete RetObj1;
@@ -1241,7 +1220,7 @@ void XmlDecodingTest1()
 
 void XmlDecodingTest2()
 {
-	printf("<Aaaa>=</Aaaa> ; <Aaaa>/</Aaaa> ; <Aaaa>?</Aaaa> ; <Aaaa>!</Aaaa> ; ---> Element value can be acquired...");
+	StkPlPrintf("<Aaaa>=</Aaaa> ; <Aaaa>/</Aaaa> ; <Aaaa>?</Aaaa> ; <Aaaa>!</Aaaa> ; ---> Element value can be acquired...");
 	int Offset = 0;
 
 	wchar_t* Xml1 = L"<Aaaa>=</Aaaa>";
@@ -1254,34 +1233,34 @@ void XmlDecodingTest2()
 	StkObject* RetObj3 = StkObject::CreateObjectFromXml(Xml3, &Offset);
 	StkObject* RetObj4 = StkObject::CreateObjectFromXml(Xml4, &Offset);
 
-	if (lstrcmp(RetObj1->GetStringValue(), L"=") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(RetObj1->GetStringValue(), L"=") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	if (lstrcmp(RetObj2->GetStringValue(), L"/") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(RetObj2->GetStringValue(), L"/") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	if (lstrcmp(RetObj3->GetStringValue(), L"?") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(RetObj3->GetStringValue(), L"?") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	if (lstrcmp(RetObj4->GetStringValue(), L"!") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlWcsCmp(RetObj4->GetStringValue(), L"!") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 
 	delete RetObj1;
 	delete RetObj2;
 	delete RetObj3;
 	delete RetObj4;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 }
 
 void XmlDecodingTest3(wchar_t* Name)
 {
 	wchar_t* Xml = new wchar_t[512];
-	lstrcpy(Xml, L"<Aaaa Lt=\"&lt;\" Gt=\"&gt;\" Amp=\"&amp;\" Quot=\"&quot;\" Apos=\"&apos;\"><Bbbb>&lt;</Bbbb><Bbbb>&gt;</Bbbb><Bbbb>&amp;</Bbbb><Bbbb>&quot;</Bbbb><Bbbb>&apos;</Bbbb></Aaaa>");
+	StkPlLStrCpy(Xml, L"<Aaaa Lt=\"&lt;\" Gt=\"&gt;\" Amp=\"&amp;\" Quot=\"&quot;\" Apos=\"&apos;\"><Bbbb>&lt;</Bbbb><Bbbb>&gt;</Bbbb><Bbbb>&amp;</Bbbb><Bbbb>&quot;</Bbbb><Bbbb>&apos;</Bbbb></Aaaa>");
 
 	int Offset = 0;
 	StkObject* Elem =StkObject::CreateObjectFromXml(Xml, &Offset);
@@ -1296,28 +1275,28 @@ void XmlDecodingTest3(wchar_t* Name)
 	StkObject* Elem4 = Elem3->GetNext();
 	StkObject* Elem5 = Elem4->GetNext();
 
-	wprintf(L"%s#Attribute value '&lt;', '&gt;', '&amp;', '&quot;' and '&apos;' are decoded appropriately... ", Name);
-	if (lstrcmp(Attr1->GetStringValue(), L"<") != 0 ||
-		lstrcmp(Attr2->GetStringValue(), L">") != 0 ||
-		lstrcmp(Attr3->GetStringValue(), L"&") != 0 ||
-		lstrcmp(Attr4->GetStringValue(), L"\"") != 0 ||
-		lstrcmp(Attr5->GetStringValue(), L"\'") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"%s#Attribute value '&lt;', '&gt;', '&amp;', '&quot;' and '&apos;' are decoded appropriately... ", Name);
+	if (StkPlWcsCmp(Attr1->GetStringValue(), L"<") != 0 ||
+		StkPlWcsCmp(Attr2->GetStringValue(), L">") != 0 ||
+		StkPlWcsCmp(Attr3->GetStringValue(), L"&") != 0 ||
+		StkPlWcsCmp(Attr4->GetStringValue(), L"\"") != 0 ||
+		StkPlWcsCmp(Attr5->GetStringValue(), L"\'") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
-	wprintf(L"%s#Element value '&lt;', '&gt;', '&amp;', '&quot;' and '&apos;' are decoded appropriately... ", Name);
-	if (lstrcmp(Elem1->GetStringValue(), L"<") != 0 ||
-		lstrcmp(Elem2->GetStringValue(), L">") != 0 ||
-		lstrcmp(Elem3->GetStringValue(), L"&") != 0 ||
-		lstrcmp(Elem4->GetStringValue(), L"\"") != 0 ||
-		lstrcmp(Elem5->GetStringValue(), L"\'") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"%s#Element value '&lt;', '&gt;', '&amp;', '&quot;' and '&apos;' are decoded appropriately... ", Name);
+	if (StkPlWcsCmp(Elem1->GetStringValue(), L"<") != 0 ||
+		StkPlWcsCmp(Elem2->GetStringValue(), L">") != 0 ||
+		StkPlWcsCmp(Elem3->GetStringValue(), L"&") != 0 ||
+		StkPlWcsCmp(Elem4->GetStringValue(), L"\"") != 0 ||
+		StkPlWcsCmp(Elem5->GetStringValue(), L"\'") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
 	delete Elem;
@@ -1327,7 +1306,7 @@ void XmlDecodingTest3(wchar_t* Name)
 void XmlDecodingTest4(wchar_t* Name)
 {
 	wchar_t* Xml = new wchar_t[512];
-	lstrcpy(Xml, L"<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Bbbb>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Bbbb><Bbbb>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Bbbb></Aaaa>");
+	StkPlLStrCpy(Xml, L"<Aaaa Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\" Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"><Bbbb>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</Bbbb><Bbbb>&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</Bbbb></Aaaa>");
 
 	int Offset = 0;
 	StkObject* Elem = StkObject::CreateObjectFromXml(Xml, &Offset);
@@ -1336,22 +1315,22 @@ void XmlDecodingTest4(wchar_t* Name)
 	StkObject* Elem1 = Elem->GetFirstChildElement();
 	StkObject* Elem2 = Elem1->GetNext();
 
-	wprintf(L"%s#Attribute value '&lt;...&lt;' and '&apos;...&apos;' are decoded appropriately... ", Name);
-	if (lstrcmp(Attr1->GetStringValue(), L"<<<<<<<<<<") != 0 ||
-		lstrcmp(Attr2->GetStringValue(), L"\'\'\'\'\'\'\'\'\'\'") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"%s#Attribute value '&lt;...&lt;' and '&apos;...&apos;' are decoded appropriately... ", Name);
+	if (StkPlWcsCmp(Attr1->GetStringValue(), L"<<<<<<<<<<") != 0 ||
+		StkPlWcsCmp(Attr2->GetStringValue(), L"\'\'\'\'\'\'\'\'\'\'") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
-	wprintf(L"%s#Element value '&amp;...&amp;' and '&quot;...&quot;' are decoded appropriately... ", Name);
-	if (lstrcmp(Elem1->GetStringValue(), L"&&&&&&&&&&") != 0 ||
-		lstrcmp(Elem2->GetStringValue(), L"\"\"\"\"\"\"\"\"\"\"") != 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlWPrintf(L"%s#Element value '&amp;...&amp;' and '&quot;...&quot;' are decoded appropriately... ", Name);
+	if (StkPlWcsCmp(Elem1->GetStringValue(), L"&&&&&&&&&&") != 0 ||
+		StkPlWcsCmp(Elem2->GetStringValue(), L"\"\"\"\"\"\"\"\"\"\"") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	} else {
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
 	delete Elem;
@@ -1388,152 +1367,152 @@ void JsonDecodingTest1()
 	StkObject* RetObj;
 
 	////////////////////////////////////////////////////
-	lstrcpy(Msg, L"\"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : 999.9 }");
-	wprintf(L"JSON Decoding : %s ...", Msg);
+	StkPlLStrCpy(Msg, L"\"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : 999.9 }");
+	StkPlWPrintf(L"JSON Decoding : %s ...", Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
-	if (RetObj == NULL || RetObj->GetChildElementCount() != 3 || lstrcmp(RetObj->GetName(), L"Aaa") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), L"This is a test.") != 0 ||
+	if (RetObj == NULL || RetObj->GetChildElementCount() != 3 || StkPlWcsCmp(RetObj->GetName(), L"Aaa") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetStringValue(), L"This is a test.") != 0 ||
 		RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObj;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	////////////////////////////////////////////////////
-	lstrcpy(Msg, L"\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 999.9 }}");
-	wprintf(L"JSON Decoding : %s ...", Msg);
+	StkPlLStrCpy(Msg, L"\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 999.9 }}");
+	StkPlWPrintf(L"JSON Decoding : %s ...", Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
 	if (RetObj == NULL ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), L"D1") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetStringValue(), L"test") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), L"D1") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetStringValue(), L"test") != 0 ||
 		RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObj;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	////////////////////////////////////////////////////
-	lstrcpy(Msg, L"\"Yyy\" : {\"Xxx\" : [\"Aaa\", \"Bbb\", \"Ccc\"]}");
-	wprintf(L"JSON Decoding : %s ...", Msg);
+	StkPlLStrCpy(Msg, L"\"Yyy\" : {\"Xxx\" : [\"Aaa\", \"Bbb\", \"Ccc\"]}");
+	StkPlWPrintf(L"JSON Decoding : %s ...", Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
 	if (RetObj == NULL ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetName(), L"Xxx") != 0 || lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), L"Aaa") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 || lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"Ccc") != 0) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetName(), L"Xxx") != 0 || StkPlWcsCmp(RetObj->GetFirstChildElement()->GetStringValue(), L"Aaa") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 || StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"Ccc") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObj;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	////////////////////////////////////////////////////
-	lstrcpy(Msg, L"\"Yyy\" : {\"Zzz\" : \"\", \"Xxx\" : [\"\", \"\", \"\"]}");
-	wprintf(L"JSON Decoding : %s ...", Msg);
+	StkPlLStrCpy(Msg, L"\"Yyy\" : {\"Zzz\" : \"\", \"Xxx\" : [\"\", \"\", \"\"]}");
+	StkPlWPrintf(L"JSON Decoding : %s ...", Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
 	if (RetObj == NULL ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetName(), L"Zzz") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), L"") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), L"Xxx") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), L"") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"") != 0) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetName(), L"Zzz") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetStringValue(), L"") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), L"Xxx") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), L"") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObj;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	////////////////////////////////////////////////////
-	lstrcpy(Msg, L"{\"Aaa\" : \"\", \"Bbb\" : \"222\", \"Ccc\" : \"\", \"Ddd\" : \"444\"}");
-	wprintf(L"JSON Decoding : %s ...", Msg);
+	StkPlLStrCpy(Msg, L"{\"Aaa\" : \"\", \"Bbb\" : \"222\", \"Ccc\" : \"\", \"Ddd\" : \"444\"}");
+	StkPlWPrintf(L"JSON Decoding : %s ...", Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
 	if (RetObj == NULL ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetName(), L"Aaa") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), L"") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), L"Bbb") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), L"222") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Ccc") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Ddd") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"444") != 0) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetName(), L"Aaa") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetStringValue(), L"") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), L"Bbb") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), L"222") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Ccc") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Ddd") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"444") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObj;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	////////////////////////////////////////////////////
-	lstrcpy(Msg, L"{\"Aaa\" : \"111\", \"Bbb\" : \"\", \"Ccc\" : \"333\", \"Ddd\" : \"\"}");
-	wprintf(L"JSON Decoding : %s ...", Msg);
+	StkPlLStrCpy(Msg, L"{\"Aaa\" : \"111\", \"Bbb\" : \"\", \"Ccc\" : \"333\", \"Ddd\" : \"\"}");
+	StkPlWPrintf(L"JSON Decoding : %s ...", Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
 	if (RetObj == NULL ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetName(), L"Aaa") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetStringValue(), L"111") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), L"Bbb") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), L"") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Ccc") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"333") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Ddd") != 0 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"") != 0) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetName(), L"Aaa") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetStringValue(), L"111") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), L"Bbb") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), L"") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Ccc") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"333") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Ddd") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"") != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObj;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	////////////////////////////////////////////////////
-	lstrcpy(Msg, L"\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}");
-	wprintf(L"JSON Decoding : %s ...", Msg);
+	StkPlLStrCpy(Msg, L"\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}");
+	StkPlWPrintf(L"JSON Decoding : %s ...", Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
 	if (RetObj == NULL ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetIntValue() != 456 ||
-		lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 222) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetIntValue() != 456 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 222) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	delete RetObj;
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	////////////////////////////////////////////////////
 	{
-		lstrcpy(Msg, L"{ \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 999.9 }}");
-		wprintf(L"JSON Decoding : %s ...", Msg);
+		StkPlLStrCpy(Msg, L"{ \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 999.9 }}");
+		StkPlWPrintf(L"JSON Decoding : %s ...", Msg);
 		RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
 		if (RetObj == NULL ||
-			lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), L"D1") != 0 ||
-			lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetStringValue(), L"test") != 0 ||
+			StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), L"D1") != 0 ||
+			StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetStringValue(), L"test") != 0 ||
 			RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 		wchar_t TmpBuf[4096] = L"";
 		RetObj->ToJson(TmpBuf, 4096);
 		StkObject* TmpObj = StkObject::CreateObjectFromJson(TmpBuf, &Offset);
 		if (TmpObj->Equals(RetObj) == false) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 		delete TmpObj;
 		delete RetObj;
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 	////////////////////////////////////////////////////
 	{
-		lstrcpy(Msg, L"{\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}");
-		wprintf(L"JSON Decoding : %s ...", Msg);
+		StkPlLStrCpy(Msg, L"{\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}");
+		StkPlWPrintf(L"JSON Decoding : %s ...", Msg);
 		RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
 		if (RetObj == NULL ||
-			lstrcmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetIntValue() != 456 ||
-			lstrcmp(RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 222) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetIntValue() != 456 ||
+			StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 222) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 		wchar_t TmpBuf[4096] = L"";
 		RetObj->ToJson(TmpBuf, 4096);
 		StkObject* TmpObj = StkObject::CreateObjectFromJson(TmpBuf, &Offset);
 		if (TmpObj->Equals(RetObj) == false) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 		delete TmpObj;
 		delete RetObj;
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 }
 
@@ -1554,10 +1533,10 @@ void JsonDecodingTest2()
 	int Offset;
 
 	////////////////////////////////////////////////////
-	lstrcpy(Msg1, L"\"Aaa\":{\"Bbb\":[{\"Xxx\":123,\"Bbb\":456,\"Ccc\":789},\"test\",0.1]}");
-	lstrcpy(Msg2, L"\"Aaa\"    :    {    \"Bbb\"    :    [    {    \"Xxx\"    :    123    ,    \"Bbb\"    :    456    ,    \"Ccc\"    :    789    }    ,    \"test\"    ,    0.1    ]    }    ");
-	lstrcpy(Msg3, L"\t\t\"Aaa\"\t\t:\t\t{\t\t\"Bbb\"\t\t:\t\t[\t\t{\t\t\"Xxx\"\t\t:\t\t123\t\t,\t\t\"Bbb\"\t\t:\t\t456\t\t,\t\t\"Ccc\"\t\t:\t\t789\t\t}\t\t,\t\t\"test\"\t\t,\t\t0.1\t\t]\t\t}\t\t");
-	lstrcpy(Msg4, L"\r\n\"Aaa\"\r\n:\r\n{\r\n\"Bbb\"\r\n:\r\n[\r\n{\r\n\"Xxx\"\r\n:\r\n123\r\n,\r\n\"Bbb\"\r\n:\r\n456\r\n,\r\n\"Ccc\"\r\n:\r\n789\r\n}\r\n,\r\n\"test\"\r\n,\r\n0.1\r\n]\r\n}\r\n");
+	StkPlLStrCpy(Msg1, L"\"Aaa\":{\"Bbb\":[{\"Xxx\":123,\"Bbb\":456,\"Ccc\":789},\"test\",0.1]}");
+	StkPlLStrCpy(Msg2, L"\"Aaa\"    :    {    \"Bbb\"    :    [    {    \"Xxx\"    :    123    ,    \"Bbb\"    :    456    ,    \"Ccc\"    :    789    }    ,    \"test\"    ,    0.1    ]    }    ");
+	StkPlLStrCpy(Msg3, L"\t\t\"Aaa\"\t\t:\t\t{\t\t\"Bbb\"\t\t:\t\t[\t\t{\t\t\"Xxx\"\t\t:\t\t123\t\t,\t\t\"Bbb\"\t\t:\t\t456\t\t,\t\t\"Ccc\"\t\t:\t\t789\t\t}\t\t,\t\t\"test\"\t\t,\t\t0.1\t\t]\t\t}\t\t");
+	StkPlLStrCpy(Msg4, L"\r\n\"Aaa\"\r\n:\r\n{\r\n\"Bbb\"\r\n:\r\n[\r\n{\r\n\"Xxx\"\r\n:\r\n123\r\n,\r\n\"Bbb\"\r\n:\r\n456\r\n,\r\n\"Ccc\"\r\n:\r\n789\r\n}\r\n,\r\n\"test\"\r\n,\r\n0.1\r\n]\r\n}\r\n");
 	RetObj1 = StkObject::CreateObjectFromJson(Msg1, &Offset);
 	RetObj2 = StkObject::CreateObjectFromJson(Msg2, &Offset);
 	RetObj3 = StkObject::CreateObjectFromJson(Msg3, &Offset);
@@ -1566,12 +1545,12 @@ void JsonDecodingTest2()
 	RetObj2->ToJson(Str2, 1024);
 	RetObj3->ToJson(Str3, 1024);
 	RetObj4->ToJson(Str4, 1024);
-	printf("JSON Decoding (empty charactor)...");
-	if (lstrcmp(Str1, Str2) != 0 || lstrcmp(Str2, Str3) != 0 || lstrcmp(Str3, Str4) != 0) {
-		printf("NG\r\n");
-		exit(0);
+	StkPlPrintf("JSON Decoding (empty charactor)...");
+	if (StkPlWcsCmp(Str1, Str2) != 0 || StkPlWcsCmp(Str2, Str3) != 0 || StkPlWcsCmp(Str3, Str4) != 0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 	delete RetObj1;
 	delete RetObj2;
 	delete RetObj3;
@@ -1608,12 +1587,12 @@ void CloneTest(StkObject* Obj)
 	NewObj1->ToXml(Msg1, 8192);
 	NewObj2->ToXml(Msg2, 8192);
 
-	printf("Clone Test#Validation of two clone's string...");
-	if (lstrcmp(Msg1, Msg2) == 0 && lstrcmp(Msg1, OrgMsg) == 0 && NewObj1->Equals(NewObj2) && NewObj1->Equals(Obj)) {
-		printf("OK\r\n");
+	StkPlPrintf("Clone Test#Validation of two clone's string...");
+	if (StkPlWcsCmp(Msg1, Msg2) == 0 && StkPlWcsCmp(Msg1, OrgMsg) == 0 && NewObj1->Equals(NewObj2) && NewObj1->Equals(Obj)) {
+		StkPlPrintf("OK\r\n");
 	} else {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 
 	delete NewObj1;
@@ -1622,7 +1601,7 @@ void CloneTest(StkObject* Obj)
 
 int MemoryLeakChecking1(StkObject* PassedObj)
 {
-	printf("Checks memory leak (repeat cloning and encoding)...");
+	StkPlPrintf("Checks memory leak (repeat cloning and encoding)...");
 	long MaxMem[30];
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		for (int Loop = 0; Loop < 1000; Loop++) {
@@ -1635,7 +1614,7 @@ int MemoryLeakChecking1(StkObject* PassedObj)
 			wchar_t Msg2[8192] = L"";
 			PassedObj->ToJson(Msg2, 8192);
 		}
-		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
+		MaxMem[CreationLoop] = StkPlGetUsedMemorySizeOfCurrentProcess();
 	}
 	if (MaxMem[0] < MaxMem[3] &&
 		MaxMem[3] < MaxMem[6] &&
@@ -1646,16 +1625,16 @@ int MemoryLeakChecking1(StkObject* PassedObj)
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
-		exit(0);
+		StkPlPrintf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+		StkPlExit(0);
 	}
-	printf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+	StkPlPrintf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
 }
 
 int MemoryLeakChecking2()
 {
-	printf("Checks memory leak (repeat encoding and decoding)...");
+	StkPlPrintf("Checks memory leak (repeat encoding and decoding)...");
 	long MaxMem[30];
 	int Offset = 0;
 	StkObject* NewObj1;
@@ -1692,21 +1671,21 @@ int MemoryLeakChecking2()
 			delete NewObj2;
 
 			wchar_t StrVal4[4096];
-			lstrcpy(StrVal4, L"");
+			StkPlLStrCpy(StrVal4, L"");
 			NewObj2 = StkObject::CreateObjectFromJson(L"\"Aaaa\" : { \"Bbbb\" : \"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\\\"\", \"Bbbb\" : \"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", \"Bbbb\" : \"\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\", \"Bbbb\" : \"\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\", \"Bbbb\" : \"\\f\\f\\f\\f\\f\\f\\f\\f\\f\\f\", \"Bbbb\" : \"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\", \"Bbbb\" : \"\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\", \"Bbbb\" : \"\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\" }", &Offset);
 			NewObj2->ToJson(StrVal4, 4096);
 			delete NewObj2;
-			lstrcpy(StrVal4, L"");
+			StkPlLStrCpy(StrVal4, L"");
 			NewObj2 = StkObject::CreateObjectFromJson(L"\"aaa\" : {\"Hello\" : { \"FirstName\" : \"Shinya\", \"Middle\" : \"Tsunemi\", \"Last\" : \"Takeuchi\" }, \"Bye\" : \"Bye\"}", &Offset);
 			NewObj2->ToJson(StrVal4, 4096);
 			delete NewObj2;
-			lstrcpy(StrVal4, L"");
+			StkPlLStrCpy(StrVal4, L"");
 			NewObj2 = StkObject::CreateObjectFromJson(L"\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}", &Offset);
 			NewObj2->ToJson(StrVal4, 4096);
 			delete NewObj2;
 
 		}
-		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
+		MaxMem[CreationLoop] = StkPlGetUsedMemorySizeOfCurrentProcess();
 	}
 	if (MaxMem[0] < MaxMem[3] &&
 		MaxMem[3] < MaxMem[6] &&
@@ -1717,16 +1696,16 @@ int MemoryLeakChecking2()
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
-		exit(0);
+		StkPlPrintf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+		StkPlExit(0);
 	}
-	printf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+	StkPlPrintf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
 }
 
 int MemoryLeakChecking3()
 {
-	printf("Checks memory leak (repeat abnormal case)...");
+	StkPlPrintf("Checks memory leak (repeat abnormal case)...");
 	long MaxMem[30];
 	int Offset = 0;
 
@@ -1767,7 +1746,7 @@ int MemoryLeakChecking3()
 			StkObject::CreateObjectFromJson(L"\"Aaa\" : {}", &Offset);
 			StkObject::CreateObjectFromJson(L": { \"Aaa\" : \"Xxx\" }",  &Offset);
 		}
-		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
+		MaxMem[CreationLoop] = StkPlGetUsedMemorySizeOfCurrentProcess();
 	}
 	if (MaxMem[0] < MaxMem[3] &&
 		MaxMem[3] < MaxMem[6] &&
@@ -1778,16 +1757,16 @@ int MemoryLeakChecking3()
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
-		exit(0);
+		StkPlPrintf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+		StkPlExit(0);
 	}
-	printf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+	StkPlPrintf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
 }
 
 int MemoryLeakChecking4()
 {
-	printf("Checks memory leak (large data)...");
+	StkPlPrintf("Checks memory leak (large data)...");
 	long MaxMem[30];
 	for (int CreationLoop = 0; CreationLoop < 10; CreationLoop++) {
 		StkObject* NewObj = MakeTestData3(L"Hello", 4, 5);
@@ -1796,7 +1775,7 @@ int MemoryLeakChecking4()
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		StkObject* NewObj = MakeTestData3(L"Hello", 4, 5);
 		delete NewObj;
-		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
+		MaxMem[CreationLoop] = StkPlGetUsedMemorySizeOfCurrentProcess();
 	}
 	if (MaxMem[0] < MaxMem[3] &&
 		MaxMem[3] < MaxMem[6] &&
@@ -1807,38 +1786,38 @@ int MemoryLeakChecking4()
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
-		exit(0);
+		StkPlPrintf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+		StkPlExit(0);
 	}
-	printf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+	StkPlPrintf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
 }
 
 void PerformanceTest()
 {
-	printf("Performance test ... ");
+	StkPlPrintf("Performance test ... ");
 
 	wchar_t JsonTxt[16000000];
-	DWORD PrevMiliSec = 0;
-	DWORD MiliSec = 0;
+	long long PrevMiliSec = 0;
+	long long MiliSec = 0;
 
 	for (int Loop = 2; Loop < 10; Loop++) {
-		lstrcpy(JsonTxt, L"");
+		StkPlLStrCpy(JsonTxt, L"");
 		StkObject* ObjWid = MakeTestData3(L"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほ", 2, Loop);
-		PrevMiliSec = GetTickCount();
+		PrevMiliSec = StkPlGetTickCount();
 		ObjWid->ToJson(JsonTxt, 16000000);
-		MiliSec = GetTickCount() - PrevMiliSec;
-		printf("JsonTxtLength[width=%d] = %d(%f Sec),   ", Loop, lstrlen(JsonTxt), (float)MiliSec / 1000.0f);
+		MiliSec = StkPlGetTickCount() - PrevMiliSec;
+		StkPlPrintf("JsonTxtLength[width=%d] = %d(%f Sec),   ", Loop, StkPlWcsLen(JsonTxt), (float)MiliSec / 1000.0f);
 		delete ObjWid;
 	}
 
-	printf("\r\n");
-	exit(0);
+	StkPlPrintf("\r\n");
+	StkPlExit(0);
 }
 
 void StkObjectTest()
 {
-	printf("StkObjectTest started.\r\n");
+	StkPlPrintf("StkObjectTest started.\r\n");
 
 	//PerformanceTest();
 
@@ -1914,6 +1893,6 @@ void StkObjectTest()
 		MemoryLeakChecking4();
 	}
 
-	printf("StkObjectTest completed.\r\n\r\n\r\n");
+	StkPlPrintf("StkObjectTest completed.\r\n\r\n\r\n");
 
 }

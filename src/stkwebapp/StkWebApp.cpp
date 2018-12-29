@@ -1,6 +1,7 @@
 ﻿#include <windows.h>
 #include <shlwapi.h>
 #include <time.h>
+#include <stdio.h>
 #include "..\stksocket\stksocket.h"
 #include "..\stkthread\stkthread.h"
 #include "..\commonfunc\stkobject.h"
