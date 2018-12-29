@@ -436,7 +436,7 @@ wchar_t* StkObject::Impl::GetValue(wchar_t* TgtValue, int* Len)
 StkObject* StkObject::Impl::ContainsInArray(StkObject* Obj1, StkObject* Obj2)
 {
 	if (Obj1 == NULL || Obj2 == NULL) {
-		return false;
+		return NULL;
 	}
 	do {
 		if (StkPlWcsCmp(Obj1->GetName(), Obj2->GetName()) != 0) {
@@ -550,7 +550,7 @@ bool StkObject::Impl::Equals(StkObject* Obj1, StkObject* Obj2)
 StkObject* StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, bool ParentMatched)
 {
 	if (Obj1 == NULL || Obj2 == NULL) {
-		return false;
+		return NULL;
 	}
 	if (Obj1->GetType() == StkObject::STKOBJECT_ELEMENT) {
 		bool Matched = true;
@@ -758,7 +758,7 @@ StkObject::~StkObject()
 	}
 	if (pImpl->Name != NULL) {
 		int Len = StkPlWcsLen((wchar_t*)pImpl->Name) + 1;
-		delete [Len] pImpl->Name;
+		delete [] pImpl->Name;
 		pImpl->Name = NULL;
 	}
 	if (pImpl->Value != NULL) {
@@ -768,7 +768,7 @@ StkObject::~StkObject()
 			delete (float*)pImpl->Value;
 		} else if (pImpl->Type == StkObject::STKOBJECT_ATTR_STRING || pImpl->Type == StkObject::STKOBJECT_ELEM_STRING || pImpl->Type == StkObject::STKOBJECT_UNKW_STRING) {
 			int Len = StkPlWcsLen((wchar_t*)pImpl->Value) + 1;
-			delete [Len] (wchar_t*)pImpl->Value;
+			delete [] (wchar_t*)pImpl->Value;
 		} else {
 			delete pImpl->Value;
 		}

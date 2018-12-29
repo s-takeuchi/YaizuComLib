@@ -1,6 +1,6 @@
-﻿#include <windows.h>
-#include <stdio.h>
-#include "..\..\src\commonfunc\StkGeneric.h"
+﻿//#include <windows.h>
+//#include <stdio.h>
+//#include "..\..\src\commonfunc\StkGeneric.h"
 
 void StkPropertiesTest();
 void MsgProcTest();
@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	StkObjectTest();
 	StkPropertiesTest();
 	MsgProcTest();
-
+/*
 	////////////////////////////////////////////////////////////////////////
 	printf("Test started.\n");
 
@@ -183,6 +183,6 @@ int main(int argc, char *argv[])
 	}
 
 	printf("Test completed.\n");
-
+*/
 	return 0;
 }

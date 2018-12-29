@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-int StkPlStrLen(const char* Str)
+size_t StkPlStrLen(const char* Str)
 {
 	return strlen(Str);
 }
@@ -26,7 +26,7 @@ char* StkPlStrStr(char* Str1, const char* Str2)
 	return strstr(Str1, Str2);
 }
 
-int StkPlWcsLen(const wchar_t* Wcs)
+size_t StkPlWcsLen(const wchar_t* Wcs)
 {
 	return wcslen(Wcs);
 }
@@ -113,19 +113,19 @@ float StkPlWcsToF(const wchar_t* Str)
 #include <Psapi.h>
 #include <filesystem>
 
-char* StkPlStrCpy(char* Destination, int NumberOfElements, const char* Source)
+char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
 {
 	strcpy_s(Destination, NumberOfElements, Source);
 	return Destination;
 }
 
-wchar_t* StkPlWcsCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
+wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
 {
 	wcsncpy_s(Destination, NumberOfElements, Source, _TRUNCATE);
 	return Destination;
 }
 
-wchar_t* StkPlWcsNCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* Source, int Num)
+wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, int Num)
 {
 	wcsncpy_s(Destination, NumberOfElements, Source, Num);
 	return Destination;
@@ -136,7 +136,7 @@ wchar_t* StkPlLStrCpy(wchar_t* Destination, const wchar_t* Source)
 	return lstrcpy(Destination, Source);
 }
 
-wchar_t* StkPlWcsCat(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
+wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
 {
 	wcscat_s(Destination, NumberOfElements, Source);
 	return Destination;
@@ -191,7 +191,7 @@ int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
 	return 0;
 }
 
-int GetFileSize(wchar_t FilePath[FILENAME_MAX])
+size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
 {
 	uintmax_t FileSize = 0;
 	try {
@@ -205,10 +205,10 @@ int GetFileSize(wchar_t FilePath[FILENAME_MAX])
 	if (FileSize == 0) {
 		return 0;
 	}
-	return (int)FileSize;
+	return (size_t)FileSize;
 }
 
-int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, int FileSize)
+int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
 {
 	HANDLE ReadFileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
@@ -256,17 +256,17 @@ long long StkPlGetTickCount()
 #include <time.h>
 #include <experimental/filesystem>
 
-char* StkPlStrCpy(char* Destination, int NumberOfElements, const char* Source)
+char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
 {
 	return strcpy(Destination, Source);
 }
 
-wchar_t* StkPlWcsCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
+wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
 {
 	return wcscpy(Destination, Source);
 }
 
-wchar_t* StkPlWcsNCpy(wchar_t* Destination, int NumberOfElements, const wchar_t* Source, int Num)
+wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, int Num)
 {
 	return wcsncpy(Destination, Source, Num);
 }
@@ -276,7 +276,7 @@ wchar_t* StkPlLStrCpy(wchar_t* Destination, const wchar_t* Source)
 	return wcscpy(Destination, Source);
 }
 
-wchar_t* StkPlWcsCat(wchar_t* Destination, int NumberOfElements, const wchar_t* Source)
+wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
 {
 	return wcscat(Destination, Source);
 }
@@ -343,7 +343,7 @@ int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
 	return 0;
 }
 
-int GetFileSize(wchar_t FilePath[FILENAME_MAX])
+size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
 {
 	uintmax_t FileSize = 0;
 	try {
@@ -357,10 +357,10 @@ int GetFileSize(wchar_t FilePath[FILENAME_MAX])
 	if (FileSize == 0) {
 		return 0;
 	}
-	return (int)FileSize;
+	return (size_t)FileSize;
 }
 
-int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, int FileSize)
+int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
 {
 	char* FileNameUtf8 = StkPlWideCharToUtf8(FilePath);
 	FILE *fp = fopen(FileNameUtf8, "r");
