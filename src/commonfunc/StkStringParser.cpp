@@ -133,9 +133,9 @@ int StkStringParser::ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar
 	}
 
 	// Make OutStrs
-	wchar_t* OutputBegin[4];
-	wchar_t* OutputEnd[4];
-	wchar_t* CurrStr;
+	const wchar_t* OutputBegin[4];
+	const wchar_t* OutputEnd[4];
+	const wchar_t* CurrStr;
 	int NumberOfParamSet = 0;
 	for (Loop = 0; Loop < 4; Loop++) {
 		if (Loop == 0) {

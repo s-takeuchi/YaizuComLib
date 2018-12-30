@@ -42,10 +42,10 @@ public:
 	static const int ERROR_JSON_INVALID_ARRAY_STRUCTURE = -206;
 	static const int ERROR_JSON_NO_ROOT_ELEMENT = -207;
 
-	StkObject(wchar_t*);
-	StkObject(wchar_t*, int);
-	StkObject(wchar_t*, float);
-	StkObject(wchar_t*, wchar_t*);
+	StkObject(const wchar_t*);
+	StkObject(const wchar_t*, int);
+	StkObject(const wchar_t*, float);
+	StkObject(const wchar_t*, const wchar_t*);
 	virtual ~StkObject();
 
 	StkObject* Clone();
@@ -64,7 +64,7 @@ public:
 	wchar_t* GetStringValue();
 	void SetIntValue(int);
 	void SetFloatValue(float);
-	void SetStringValue(wchar_t*);
+	void SetStringValue(const wchar_t*);
 
 	StkObject* GetFirstChildElement();
 	StkObject* GetLastChildElement();
@@ -79,7 +79,7 @@ public:
 	void ToXml(wchar_t*, int, int Indent = 0); // DO NOT SPECIFY 3RD PARAMETER.
 	int ToJson(wchar_t*, int, int Indent = 0, bool ArrayFlag = false); // DO NOT SPECIFY 3RD AND 4TH PARAMETERS.
 
-	static int Analyze(wchar_t*);
-	static StkObject* CreateObjectFromXml(wchar_t*, int*);
-	static StkObject* CreateObjectFromJson(wchar_t*, int*, StkObject* Obj = 0); // DO NOT SPECIFY 3RD PARAMETER.
+	static int Analyze(const wchar_t*);
+	static StkObject* CreateObjectFromXml(const wchar_t*, int*);
+	static StkObject* CreateObjectFromJson(const wchar_t*, int*, StkObject* Obj = 0); // DO NOT SPECIFY 3RD PARAMETER.
 };

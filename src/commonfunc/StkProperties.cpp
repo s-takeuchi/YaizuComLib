@@ -23,7 +23,7 @@ StkProperties::~StkProperties()
 // Get properties from the specified file name
 // FileName [in] : Target file name which you want to get properties. Do not specify path. The file is searched from Module existing folder.
 // Return : Result code 0:Success, -1:Failure
-int StkProperties::GetProperties(wchar_t* FileName)
+int StkProperties::GetProperties(const wchar_t* FileName)
 {
 	wchar_t Buf[FILENAME_MAX];
 	StkPlGetFullPathFromFileName(FileName, Buf);
@@ -129,7 +129,7 @@ int StkProperties::GetProperties(wchar_t* FileName)
 // This method acquires the value of the specified property name
 // Value [out] : Acquired value (int)
 // Return : Reault code, 0:Success, -1:Failure
-int StkProperties::GetPropertyInt(char* PropName, int* Value)
+int StkProperties::GetPropertyInt(const char* PropName, int* Value)
 {
 	for (int Loop = 0; Loop < pImpl->NumOfProperties; Loop++) {
 		if (StkPlStrCmp(PropName, pImpl->PropertyName[Loop]) == 0) {
@@ -143,7 +143,7 @@ int StkProperties::GetPropertyInt(char* PropName, int* Value)
 // This method acquires the value of the specified property name
 // Value [out] : Acquired value (char[256])
 // Return : Reault code, 0:Success, -1:Failure
-int StkProperties::GetPropertyStr(char* PropName, char Value[256])
+int StkProperties::GetPropertyStr(const char* PropName, char Value[256])
 {
 	for (int Loop = 0; Loop < pImpl->NumOfProperties; Loop++) {
 		if (StkPlStrCmp(PropName, pImpl->PropertyName[Loop]) == 0) {
