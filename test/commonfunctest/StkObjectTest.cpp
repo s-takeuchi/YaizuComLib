@@ -335,7 +335,7 @@ void GeneralTestCase2(StkObject* Elem1, wchar_t* Name)
 
 void GeneralTestCase3()
 {
-	StkPlWPrintf(L"GeneralCheck3#Test of Equals 1st ...");
+	StkPlPrintf("GeneralCheck3#Test of Equals 1st ...");
 	StkObject* Origin1 = MakeTestData1();
 	StkObject* Normal1 = MakeTestData1(0);
 	StkObject* Order1 = MakeTestData1(1);
@@ -353,7 +353,7 @@ void GeneralTestCase3()
 	delete Order1;
 	delete Diff1;
 
-	StkPlWPrintf(L"GeneralCheck3#Test of Equals 2nd ...");
+	StkPlPrintf("GeneralCheck3#Test of Equals 2nd ...");
 	StkObject* Origin2 = MakeTestData2();
 	StkObject* Normal2 = MakeTestData2(0);
 	StkObject* Order2 = MakeTestData2(1);
@@ -371,7 +371,7 @@ void GeneralTestCase3()
 	delete Order2;
 	delete Diff2;
 
-	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd integer match ...");
+	StkPlPrintf("GeneralCheck3#Test of Equals 3rd integer match ...");
 	StkObject* Obj1a = new StkObject(L"Shinya Takeuchi", 123);
 	StkObject* Obj1b = new StkObject(L"Shinya Takeuchi", 123);
 	if (Obj1a->Equals(Obj1b) == false) {
@@ -382,7 +382,7 @@ void GeneralTestCase3()
 	delete Obj1a;
 	delete Obj1b;
 
-	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd integer unmatch ...");
+	StkPlPrintf("GeneralCheck3#Test of Equals 3rd integer unmatch ...");
 	StkObject* Obj2a = new StkObject(L"Shinya Takeuchi", 123);
 	StkObject* Obj2b = new StkObject(L"Shinya Takeuchi", 321);
 	if (Obj2a->Equals(Obj2b) == true) {
@@ -393,7 +393,7 @@ void GeneralTestCase3()
 	delete Obj2a;
 	delete Obj2b;
 
-	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd float match ...");
+	StkPlPrintf("GeneralCheck3#Test of Equals 3rd float match ...");
 	StkObject* Obj3a = new StkObject(L"Shinya Takeuchi", 123.45f);
 	StkObject* Obj3b = new StkObject(L"Shinya Takeuchi", 123.45f);
 	if (Obj3a->Equals(Obj3b) == false) {
@@ -404,7 +404,7 @@ void GeneralTestCase3()
 	delete Obj3a;
 	delete Obj3b;
 
-	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd float unmatch ...");
+	StkPlPrintf("GeneralCheck3#Test of Equals 3rd float unmatch ...");
 	StkObject* Obj4a = new StkObject(L"Shinya Takeuchi", 123.45f);
 	StkObject* Obj4b = new StkObject(L"Shinya Takeuchi", 123.46f);
 	if (Obj4a->Equals(Obj4b) == true) {
@@ -415,7 +415,7 @@ void GeneralTestCase3()
 	delete Obj4a;
 	delete Obj4b;
 
-	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd string match ...");
+	StkPlPrintf("GeneralCheck3#Test of Equals 3rd string match ...");
 	StkObject* Obj5a = new StkObject(L"Shinya Takeuchi", L"Hello, World!");
 	StkObject* Obj5b = new StkObject(L"Shinya Takeuchi", L"Hello, World!");
 	if (Obj5a->Equals(Obj5b) == false) {
@@ -426,7 +426,7 @@ void GeneralTestCase3()
 	delete Obj5a;
 	delete Obj5b;
 
-	StkPlWPrintf(L"GeneralCheck3#Test of Equals 3rd string unmatch ...");
+	StkPlPrintf("GeneralCheck3#Test of Equals 3rd string unmatch ...");
 	StkObject* Obj6a = new StkObject(L"Shinya Takeuchi", L"Hello, World!");
 	StkObject* Obj6b = new StkObject(L"Shinya Takeuchi", L"Hello; World!");
 	if (Obj6a->Equals(Obj6b) == true) {
@@ -437,7 +437,7 @@ void GeneralTestCase3()
 	delete Obj6a;
 	delete Obj6b;
 
-	StkPlWPrintf(L"GeneralCheck3#Test of Equals 4th Array of recursive object ...");
+	StkPlPrintf("GeneralCheck3#Test of Equals 4th Array of recursive object ...");
 	StkObject* Elem4 = MakeTestData4(L"RecursiveArray", 2, 3);
 	wchar_t JsonStr[1000000] = L"";
 	wchar_t XmlStr[1000000] = L"";
@@ -461,7 +461,7 @@ void GeneralTestCase3()
 void GeneralTestCase4()
 {
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (first elem match case) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (first elem match case) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Hello><First>Shinya</First><Last>Takeuchi</Last></Hello>", &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(L"<First>Shinya</First>", &ErrorCode);
@@ -475,7 +475,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (last elem match case) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (last elem match case) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>", &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(L"<Last>Takeuchi</Last>", &ErrorCode);
@@ -487,7 +487,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (simple int/float/string element) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (simple int/float/string element) ...");
 		StkObject* OriginInt = new StkObject(L"ObjInt", 345);
 		StkObject* TargetInt = new StkObject(L"ObjInt", 345);
 		StkObject* OriginFloat = new StkObject(L"ObjFloat", 345.6f);
@@ -506,7 +506,7 @@ void GeneralTestCase4()
 		delete TargetStr;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (simple NG case) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (simple NG case) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Hello><First>Shinya</First><Middle>Tsunemi</Middle><Last>Takeuchi</Last></Hello>", &ErrorCode);
 		StkObject* Target = StkObject::CreateObjectFromXml(L"<Last>Suzuki</Last>", &ErrorCode);
@@ -516,7 +516,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Common data 1) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (Common data 1) ...");
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target = MakeTestData1();
 		StkObject* Ret = Origin->Contains(Target);
@@ -525,7 +525,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Common data 1 : advanced) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (Common data 1 : advanced) ...");
 		StkObject* Origin = MakeTestData1();
 
 		StkObject* Elem1 = new StkObject(L"SoftwareCompany");
@@ -542,7 +542,7 @@ void GeneralTestCase4()
 		delete Elem1;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Common data 2) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (Common data 2) ...");
 		StkObject* Origin = MakeTestData2();
 		StkObject* Target = MakeTestData2();
 		StkObject* Ret = Origin->Contains(Target);
@@ -551,7 +551,7 @@ void GeneralTestCase4()
 		delete Target;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Common data 2 : advanced) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (Common data 2 : advanced) ...");
 		StkObject* Origin = MakeTestData2();
 		StkObject* Elem1_4 = new StkObject(L"証券");
 		StkObject* Elem1_4_1 = new StkObject(L"株");
@@ -564,7 +564,7 @@ void GeneralTestCase4()
 		delete Elem1_4;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (All type of element) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (All type of element) ...");
 		StkObject* Origin = MakeTestData1();
 		StkObject* Target1 = new StkObject(L"ELEM_INT", 123);
 		StkObject* Target2 = new StkObject(L"ELEM_INT", 321);
@@ -594,7 +594,7 @@ void GeneralTestCase4()
 		delete Target6;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Hierarchy : normal) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (Hierarchy : normal) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>春</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>夏</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>秋</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>冬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>夏</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
@@ -628,7 +628,7 @@ void GeneralTestCase4()
 		delete Target8;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Hierarchy : abnormal) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (Hierarchy : abnormal) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Spring\"><Ddd>春</Ddd></Ccc><Ccc Name=\"Summer\"><Ddd>夏</Ddd></Ccc></Bbb><Bbb><Ccc Name=\"Fall\"><Ddd>秋</Ddd></Ccc><Ccc Name=\"Winter\"><Ddd>冬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Aaa><Bbb><Ccc Name=\"Summer\"><Ddd>冬</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
@@ -659,7 +659,7 @@ void GeneralTestCase4()
 		delete Target8;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck4#Test of Contains  (Hierarchy : sequential check) ...");
+		StkPlPrintf("GeneralCheck4#Test of Contains  (Hierarchy : sequential check) ...");
 		int ErrorCode;
 		StkObject* Origin = StkObject::CreateObjectFromXml(L"<Aaa><Bbb Type=\"文字\"><Ccc Name=\"季節\"><Ddd>春</Ddd><Ddd>夏</Ddd><Ddd>秋</Ddd><Ddd>冬</Ddd></Ccc><Ccc Name=\"方角\"><Ddd>東</Ddd><Ddd>西</Ddd><Ddd>南</Ddd><Ddd>北</Ddd></Ccc></Bbb><Bbb Type=\"氏名\"><Ccc Name=\"家族\"><Ddd>竹内伸也</Ddd><Ddd>常見朱美</Ddd><Ddd>木村優子</Ddd></Ccc><Ccc Name=\"会社メンバー\"><Ddd>山田太郎</Ddd><Ddd>鈴木一郎</Ddd></Ccc></Bbb></Aaa>", &ErrorCode);
 		StkObject* Target1 = StkObject::CreateObjectFromXml(L"<Bbb Type=\"文字\"/>", &ErrorCode);
@@ -684,11 +684,11 @@ void GeneralTestCase4()
 void GeneralTestCase5()
 {
 	{
-		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value ...");
+		StkPlPrintf("GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value ...");
 		StkObject* Obj = new StkObject(L"IntValue", 123);
 		Abort(Obj->GetIntValue() == 123 && Obj->GetFloatValue() == 0.0f && Obj->GetStringValue() == NULL);
 
-		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value (Child Element) ...");
+		StkPlPrintf("GeneralCheck5#Test of Fetching the Value of Invalid Type for Int Value (Child Element) ...");
 		StkObject* ParentObj = new StkObject(L"Parent");
 		ParentObj->AppendChildElement(Obj);
 		ParentObj->GetFirstChildElement()->SetIntValue(321);
@@ -700,11 +700,11 @@ void GeneralTestCase5()
 		delete ParentObj;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value ...");
+		StkPlPrintf("GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value ...");
 		StkObject* Obj = new StkObject(L"IntValue", 123.4f);
 		Abort(Obj->GetIntValue() == 0 && Obj->GetFloatValue() == 123.4f && Obj->GetStringValue() == NULL);
 
-		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value (Child Element) ...");
+		StkPlPrintf("GeneralCheck5#Test of Fetching the Value of Invalid Type for Float Value (Child Element) ...");
 		StkObject* ParentObj = new StkObject(L"Parent");
 		ParentObj->AppendChildElement(Obj);
 		ParentObj->GetFirstChildElement()->SetIntValue(999);
@@ -716,11 +716,11 @@ void GeneralTestCase5()
 		delete ParentObj;
 	}
 	{
-		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value ...");
+		StkPlPrintf("GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value ...");
 		StkObject* Obj = new StkObject(L"IntValue", L"Test");
 		Abort(Obj->GetIntValue() == 0 && Obj->GetFloatValue() == 0.0f && Obj->GetStringValue() != NULL);
 
-		StkPlWPrintf(L"GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value (Child Element) ...");
+		StkPlPrintf("GeneralCheck5#Test of Fetching the Value of Invalid Type for String Value (Child Element) ...");
 		StkObject* ParentObj = new StkObject(L"Parent");
 		ParentObj->AppendChildElement(Obj);
 		ParentObj->GetFirstChildElement()->SetIntValue(999);
@@ -737,7 +737,7 @@ void GeneralTestCase5()
 void GeneralTestCase6()
 {
 	{
-		StkPlWPrintf(L"GeneralCheck6#Identify the presented text is XML or JSON (Normal-1) ...");
+		StkPlPrintf("GeneralCheck6#Identify the presented text is XML or JSON (Normal-1) ...");
 
 		StkObject* Elem1 = MakeTestData1();
 		wchar_t Xml1[8192] = L"";
@@ -772,7 +772,7 @@ void GeneralTestCase6()
 
 	/////////////////////////////////////////////////////////////////
 	{
-		StkPlWPrintf(L"GeneralCheck6#Identify the presented text is XML or JSON (Normal-2) ...");
+		StkPlPrintf("GeneralCheck6#Identify the presented text is XML or JSON (Normal-2) ...");
 		int RetXml1 = StkObject::Analyze(L"<aaa/>");
 		int RetJson1 = StkObject::Analyze(L"{\"aaa\":1}");
 		int RetXml2 = StkObject::Analyze(L"  \t\r\n  <aaa/>  \t\r\n");
@@ -788,7 +788,7 @@ void GeneralTestCase6()
 
 	/////////////////////////////////////////////////////////////////
 	{
-		StkPlWPrintf(L"GeneralCheck6#Identify the presented text is XML or JSON (Abnormal) ...");
+		StkPlPrintf("GeneralCheck6#Identify the presented text is XML or JSON (Abnormal) ...");
 		int RetXml1 = StkObject::Analyze(L"<");
 		int RetJson1 = StkObject::Analyze(L"{");
 		int RetXml2 = StkObject::Analyze(L">");
@@ -821,7 +821,7 @@ void JsonEncodingTest1()
 	Obj->AppendChildElement(new StkObject(L"Element8", L"Hello-\t\t\t\t\t-World!!"));
 	wchar_t JsonTxt[2048] = L"";
 	Obj->ToJson(JsonTxt, 2048);
-	StkPlWPrintf(L"JSON Encoding#Escape ... ");
+	StkPlPrintf("JSON Encoding#Escape ... ");
 	if (StkPlWcsStr(JsonTxt, L"\"Element1\" : \"Hello-\\\\\\\\\\\\\\\\\\\\-World!!\"") == 0 ||
 		StkPlWcsStr(JsonTxt, L"\"Element2\" : \"Hello-\\\"\\\"\\\"\\\"\\\"-World!!\"") == 0 ||
 		StkPlWcsStr(JsonTxt, L"\"Element3\" : \"Hello-\\/\\/\\/\\/\\/-World!!\"") == 0 ||
@@ -840,7 +840,7 @@ void JsonEncodingTest1()
 
 void JsonEncodingTest2()
 {
-	StkPlWPrintf(L"JSON Encoding#Triming ... ");
+	StkPlPrintf("JSON Encoding#Triming ... ");
 
 	StkObject* MkDat1 = MakeTestData1();
 	wchar_t JsonTxt1[128];
@@ -906,7 +906,7 @@ void XmlEncodingTest2()
 	StkObject* Attr1 = Xml2->GetFirstAttribute();
 	wchar_t Attr1Val[2048] = L"";
 	Attr1->ToXml(Attr1Val, 2048);
-	StkPlWPrintf(L"XmlEncoding(Single)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... ");
+	StkPlPrintf("XmlEncoding(Single)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... ");
 	if (StkPlWcsStr(Attr1Val, L"Lt=\"&lt;\"") == 0 ||
 		StkPlWcsStr(Attr1Val, L"Gt=\"&gt;\"") == 0 ||
 		StkPlWcsStr(Attr1Val, L"Amp=\"&amp;\"") == 0 ||
@@ -921,7 +921,7 @@ void XmlEncodingTest2()
 	StkObject* Elem1 = Xml2->GetFirstChildElement();
 	wchar_t Elem1Val[2048] = L"";;
 	Elem1->ToXml(Elem1Val, 2048);
-	StkPlWPrintf(L"XmlEncoding(Single)#Element value '<', '>', '&', '\"' and '\'' are escaped ... ");
+	StkPlPrintf("XmlEncoding(Single)#Element value '<', '>', '&', '\"' and '\'' are escaped ... ");
 	if (StkPlWcsStr(Elem1Val, L">&lt;<") == 0 ||
 		StkPlWcsStr(Elem1Val, L">&gt;<") == 0 ||
 		StkPlWcsStr(Elem1Val, L">&amp;<") == 0 ||
@@ -952,7 +952,7 @@ void XmlEncodingTest3()
 	StkObject* Attr1 = Xml2->GetFirstAttribute();
 	wchar_t Attr1Val[4096] = L"";
 	Attr1->ToXml(Attr1Val, 4096);
-	StkPlWPrintf(L"XmlEncoding(Multi)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... ");
+	StkPlPrintf("XmlEncoding(Multi)#Attribute value '<', '>', '&', '\"' and '\'' are escaped ... ");
 	if (StkPlWcsStr(Attr1Val, L"Lt=\"&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\"") == 0 ||
 		StkPlWcsStr(Attr1Val, L"Gt=\"&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;\"") == 0 ||
 		StkPlWcsStr(Attr1Val, L"Amp=\"&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;\"") == 0 ||
@@ -967,7 +967,7 @@ void XmlEncodingTest3()
 	StkObject* Elem1 = Xml2->GetFirstChildElement();
 	wchar_t Elem1Val[4096] = L"";
 	Elem1->ToXml(Elem1Val, 4096);
-	StkPlWPrintf(L"XmlEncoding(Multi)#Element value '<', '>', '&', '\"' and '\'' are escaped ... ");
+	StkPlPrintf("XmlEncoding(Multi)#Element value '<', '>', '&', '\"' and '\'' are escaped ... ");
 	if (StkPlWcsStr(Elem1Val, L">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<") == 0 ||
 		StkPlWcsStr(Elem1Val, L">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;<") == 0 ||
 		StkPlWcsStr(Elem1Val, L">&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;<") == 0 ||
@@ -983,7 +983,7 @@ void XmlEncodingTest3()
 
 void XmlJsonDecodingTest1()
 {
-	StkPlWPrintf(L"XmlJsonDecodingTest1 ... ");
+	StkPlPrintf("XmlJsonDecodingTest1 ... ");
 	int Offset;
 
 	StkObject* RetObjJson = StkObject::CreateObjectFromJson(L"\"Abc\" : {\"Xyz\" : \"123\"}", &Offset);

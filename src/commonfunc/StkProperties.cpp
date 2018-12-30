@@ -26,9 +26,9 @@ StkProperties::~StkProperties()
 int StkProperties::GetProperties(wchar_t* FileName)
 {
 	wchar_t Buf[FILENAME_MAX];
-	GetFullPathFromFileName(FileName, Buf);
+	StkPlGetFullPathFromFileName(FileName, Buf);
 
-	size_t WorkDatLength = GetFileSize(Buf);
+	size_t WorkDatLength = StkPlGetFileSize(Buf);
 	if (WorkDatLength == 0) {
 		return 0;
 	}
@@ -37,7 +37,7 @@ int StkProperties::GetProperties(wchar_t* FileName)
 	}
 
 	char* WorkDat = new char[WorkDatLength + 1];
-	ReadFile(Buf, WorkDat, WorkDatLength);
+	StkPlReadFile(Buf, WorkDat, WorkDatLength);
 	WorkDat[WorkDatLength] = '\0';
 
 	// set line

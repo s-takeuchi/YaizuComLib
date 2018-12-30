@@ -18,7 +18,7 @@ size_t StkPlWcsLen(const wchar_t*);
 int StkPlWcsCmp(const wchar_t*, const wchar_t*);
 wchar_t* StkPlWcsStr(wchar_t*, const wchar_t*);
 wchar_t* StkPlWcsCpy(wchar_t*, size_t, const wchar_t*);
-wchar_t* StkPlWcsNCpy(wchar_t*, size_t, const wchar_t*, int);
+wchar_t* StkPlWcsNCpy(wchar_t*, size_t, const wchar_t*, size_t);
 wchar_t* StkPlLStrCpy(wchar_t*, const wchar_t*);
 wchar_t* StkPlWcsCat(wchar_t*, size_t, const wchar_t*);
 
@@ -30,15 +30,15 @@ char* StkPlWideCharToSjis(const wchar_t*);
 void StkPlExit(int);
 int StkPlPrintf(const char*, ...);
 int StkPlWPrintf(const wchar_t*, ...);
-int StkPlSwPrintf(wchar_t*, int, const wchar_t*, ...);
+int StkPlSwPrintf(wchar_t*, size_t, const wchar_t*, ...);
 int StkPlRand();
 int StkPlAtoi(const char*);
 long int StkPlWcsToL(const wchar_t*);
 float StkPlWcsToF(const wchar_t*);
 
-int GetFullPathFromFileName(wchar_t*, wchar_t[FILENAME_MAX]);
-size_t GetFileSize(wchar_t[FILENAME_MAX]);
-int ReadFile(wchar_t[FILENAME_MAX], char*, size_t);
+int StkPlGetFullPathFromFileName(wchar_t*, wchar_t[FILENAME_MAX]);
+size_t StkPlGetFileSize(wchar_t[FILENAME_MAX]);
+int StkPlReadFile(wchar_t[FILENAME_MAX], char*, size_t);
 
 int StkPlGetUsedMemorySizeOfCurrentProcess();
 long long StkPlGetTickCount();

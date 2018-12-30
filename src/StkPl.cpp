@@ -74,7 +74,7 @@ int StkPlWPrintf(const wchar_t* Format, ...)
 	return Ret;
 }
 
-int StkPlSwPrintf(wchar_t* Str, int Len, const wchar_t* Format, ...)
+int StkPlSwPrintf(wchar_t* Str, size_t Len, const wchar_t* Format, ...)
 {
 	va_list va;
 	va_start(va, Format);
@@ -125,7 +125,7 @@ wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_
 	return Destination;
 }
 
-wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, int Num)
+wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
 {
 	wcsncpy_s(Destination, NumberOfElements, Source, Num);
 	return Destination;
@@ -182,7 +182,7 @@ char* StkPlWideCharToSjis(const wchar_t* Msg)
 // FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
 // FullPath [out] : Acquired full path for the specified file.
 // Return : Always zero
-int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
+int StkPlGetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
 {
 	GetModuleFileName(NULL, FullPath, FILENAME_MAX - 1);
 	std::experimental::filesystem::path CurPath = FullPath;
@@ -191,7 +191,7 @@ int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
 	return 0;
 }
 
-size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
+size_t StkPlGetFileSize(wchar_t FilePath[FILENAME_MAX])
 {
 	uintmax_t FileSize = 0;
 	try {
@@ -208,7 +208,7 @@ size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
 	return (size_t)FileSize;
 }
 
-int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
+int StkPlReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
 {
 	HANDLE ReadFileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
@@ -266,7 +266,7 @@ wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_
 	return wcscpy(Destination, Source);
 }
 
-wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, int Num)
+wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
 {
 	return wcsncpy(Destination, Source, Num);
 }
@@ -333,7 +333,7 @@ char* StkPlWideCharToSjis(const wchar_t* Msg)
 // FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
 // FullPath [out] : Acquired full path for the specified file.
 // Return : Always zero
-int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
+int StkPlGetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
 {
 	char c_full_path[FILENAME_MAX];
 	readlink("/proc/self/exe", c_full_path, sizeof(c_full_path) - 1);
@@ -343,7 +343,7 @@ int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
 	return 0;
 }
 
-size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
+size_t StkPlGetFileSize(wchar_t FilePath[FILENAME_MAX])
 {
 	uintmax_t FileSize = 0;
 	try {
@@ -360,7 +360,7 @@ size_t GetFileSize(wchar_t FilePath[FILENAME_MAX])
 	return (size_t)FileSize;
 }
 
-int ReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
+int StkPlReadFile(wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
 {
 	char* FileNameUtf8 = StkPlWideCharToUtf8(FilePath);
 	FILE *fp = fopen(FileNameUtf8, "r");
