@@ -20,12 +20,12 @@ public:
 	static wchar_t* GetMsg(int);
 	static wchar_t* GetMsgEng(int);
 	static wchar_t* GetMsgJpn(int);
-	static unsigned char* GetMsgSjis(int);
-	static unsigned char* GetMsgSjisEng(int);
-	static unsigned char* GetMsgSjisJpn(int);
-	static unsigned char* GetMsgUtf8(int);
-	static unsigned char* GetMsgUtf8Eng(int);
-	static unsigned char* GetMsgUtf8Jpn(int);
+	static char* GetMsgSjis(int);
+	static char* GetMsgSjisEng(int);
+	static char* GetMsgSjisJpn(int);
+	static char* GetMsgUtf8(int);
+	static char* GetMsgUtf8Eng(int);
+	static char* GetMsgUtf8Jpn(int);
 
 	static void AddEng(int, const wchar_t*);
 	static void AddJpn(int, const wchar_t*);

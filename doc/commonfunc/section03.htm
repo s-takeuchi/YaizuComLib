@@ -26,7 +26,7 @@ StkPropertiesの機能を利用するために，クライアントプログラ�
 
 
 
-<H2 ID="3.3">3.3 int GetProperties(wchar_t* FileName)</H2>
+<H2 ID="3.3">3.3 int GetProperties(const wchar_t* FileName)</H2>
 <div class="topic">
 プロパティファイルからプロパティの名称と値を読み込みます。<br>
 FileNameにはファイルパスではなく，ファイル名を指定する必要があります。GetPropertiesは，現在のモジュール(実行ファイル)が存在するフォルダ内で
@@ -47,7 +47,7 @@ GetPropertiesでプロパティファイルからプロパティの名称と値�
 
 
 
-<H2 ID="3.4">3.4 int GetPropertyInt(char* PropName, int* Value)</H2>
+<H2 ID="3.4">3.4 int GetPropertyInt(const char* PropName, int* Value)</H2>
 <div class="topic">
 GetPropertiesでプロパティファイルから読み込んだプロパティの値(Int型)を取得します。<br>
 <table class="tblstyle">
@@ -59,7 +59,7 @@ GetPropertiesでプロパティファイルから読み込んだプロパティ�
 
 
 
-<H2 ID="3.5">3.5 int GetPropertyStr(char* PropName, char Value[256])</H2>
+<H2 ID="3.5">3.5 int GetPropertyStr(const char* PropName, char Value[256])</H2>
 <div class="topic">
 GetPropertiesでプロパティファイルから読み込んだプロパティの値(char[256]型)を取得します。<br>
 <table class="tblstyle">

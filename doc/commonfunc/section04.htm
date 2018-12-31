@@ -60,10 +60,10 @@ StkObjectの機能を利用するために，クライアントプログラム�
 <div class="topic">
 StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <table class="tblstyle">
-<tr><td>StkObject(wchar_t*)</td><td>コンストラクタ。コンテナ型インスタンス（値を持たないインスタンス）を生成します。</td></tr>
-<tr><td>StkObject(wchar_t*, int)</td><td>コンストラクタ。整数型インスタンス（int型の値を持つインスタンス）を生成します。</td></tr>
-<tr><td>StkObject(wchar_t*, float)</td><td>コンストラクタ。単精度浮動小数点数型インスタンス（float型の値を持つインスタンス）を生成します。</td></tr>
-<tr><td>StkObject(wchar_t*, wchar_t*)</td><td>コンストラクタ。文字列型インスタンス（文字列型の値を持つインスタンス）を生成します。</td></tr>
+<tr><td>StkObject(const wchar_t*)</td><td>コンストラクタ。コンテナ型インスタンス（値を持たないインスタンス）を生成します。</td></tr>
+<tr><td>StkObject(const wchar_t*, int)</td><td>コンストラクタ。整数型インスタンス（int型の値を持つインスタンス）を生成します。</td></tr>
+<tr><td>StkObject(const wchar_t*, float)</td><td>コンストラクタ。単精度浮動小数点数型インスタンス（float型の値を持つインスタンス）を生成します。</td></tr>
+<tr><td>StkObject(const wchar_t*, const wchar_t*)</td><td>コンストラクタ。文字列型インスタンス（文字列型の値を持つインスタンス）を生成します。</td></tr>
 <tr><td>virtual ~StkObject()</td><td>デストラクタ。</td></tr>
 <tr><td>StkObject* Clone()</td><td>StkObjectインスタンスのクローンを生成します。</td></tr>
 <tr><td>bool Equals(StkObject*)</td><td>指定したインスタンスとの同一性を確認します。</td></tr>
@@ -78,7 +78,7 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <tr><td>wchar_t* GetStringValue()</td><td>文字列型のStkObjectインスタンスの値を返します。</td></tr>
 <tr><td>void SetIntValue(int)</td><td>整数型のStkObjectインスタンスに値を設定します。</td></tr>
 <tr><td>void SetFloatValue(float)</td><td>単精度浮動小数点数型のStkObjectインスタンスに値を設定します。</td></tr>
-<tr><td>void SetStringValue(wchar_t*)</td><td>文字列型のStkObjectインスタンスに値を設定します。</td></tr>
+<tr><td>void SetStringValue(const wchar_t*)</td><td>文字列型のStkObjectインスタンスに値を設定します。</td></tr>
 <tr><td>StkObject* GetFirstChildElement()</td><td>子のStkObjectインスタンスのうち，一番先頭のインスタンスを返します。</td></tr>
 <tr><td>StkObject* GetLastChildElement()</td><td>子のStkObjectインスタンスのうち，一番最後のインスタンスを返します。</td></tr>
 <tr><td>StkObject* GetFirstAttribute()</td><td>属性であるStkObjectインスタンスのうち，一番先頭のインスタンスを返します。</td></tr>
@@ -88,15 +88,15 @@ StkObjectクラスが提供するAPI一覧を以下に示します。<br>
 <tr><td>void AppendAttribute(StkObject*)</td><td>属性としてStkObjectインスタンスを追加します。</td></tr>
 <tr><td>void ToXml(std::wstring*)</td><td>StkObjectインスタンスからXMLを生成します。</td></tr>
 <tr><td>void ToJson(std::wstring*)</td><td>StkObjectインスタンスからJSONを生成します。</td></tr>
-<tr><td>static StkObject* CreateObjectFromXml(wchar_t*, int*)</td><td>XMLから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
-<tr><td>static StkObject* CreateObjectFromJson(wchar_t*, int*)</td><td>JSONから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
-<tr><td>static int Analyze(wchar_t*)</td><td>指定した文字列がXMLかJSONかを判定します。</td></tr>
+<tr><td>static StkObject* CreateObjectFromXml(const wchar_t*, int*)</td><td>XMLから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
+<tr><td>static StkObject* CreateObjectFromJson(const wchar_t*, int*)</td><td>JSONから入れ子構造のStkObjectインスタンスを生成します。</td></tr>
+<tr><td>static int Analyze(const wchar_t*)</td><td>指定した文字列がXMLかJSONかを判定します。</td></tr>
 </table><p>
 </div><p>
 
 
 
-<H2 ID="4.4">4.4 StkObject(wchar_t* Name)</H2>
+<H2 ID="4.4">4.4 StkObject(const wchar_t* Name)</H2>
 <div class="topic">
 コンストラクタ。コンテナ型インスタンス（値を持たないインスタンス）を生成します。<br>
 StkObjectインスタンスの型は，STKOBJECT_ELEMENTとなります。<br>
@@ -108,7 +108,7 @@ StkObjectインスタンスの型は，STKOBJECT_ELEMENTとなります。<br>
 
 
 
-<H2 ID="4.5">4.5 StkObject(wchar_t* Name, int IntValue)</H2>
+<H2 ID="4.5">4.5 StkObject(const wchar_t* Name, int IntValue)</H2>
 <div class="topic">
 コンストラクタ。整数型インスタンス（int型の値を持つインスタンス）を生成します。<br>
 StkObjectインスタンスの型は，STKOBJECT_UNKW_INTとなります。<br>
@@ -121,7 +121,7 @@ StkObjectインスタンスの型は，STKOBJECT_UNKW_INTとなります。<br>
 
 
 
-<H2 ID="4.6">4.6 StkObject(wchar_t* Name, float FloatValue)</H2>
+<H2 ID="4.6">4.6 StkObject(const wchar_t* Name, float FloatValue)</H2>
 <div class="topic">
 コンストラクタ。単精度浮動小数点数型インスタンス（float型の値を持つインスタンス）を生成します。<br>
 StkObjectインスタンスの型は，STKOBJECT_UNKW_FLOATとなります。<br>
@@ -134,7 +134,7 @@ StkObjectインスタンスの型は，STKOBJECT_UNKW_FLOATとなります。<br
 
 
 
-<H2 ID="4.7">4.7 StkObject(wchar_t* Name, wchar_t* StringValue)</H2>
+<H2 ID="4.7">4.7 StkObject(const wchar_t* Name, const wchar_t* StringValue)</H2>
 <div class="topic">
 コンストラクタ。文字列型インスタンス（文字列型の値を持つインスタンス）を生成します。<br>
 StkObjectインスタンスの型は，STKOBJECT_UNKW_STRINGとなります。<br>
@@ -323,7 +323,7 @@ StkObjectインスタンスの型を返します。<br>
 
 
 
-<H2 ID="4.22">4.22 void SetStringValue(wchar_t* StringValue)</H2>
+<H2 ID="4.22">4.22 void SetStringValue(const wchar_t* StringValue)</H2>
 <div class="topic">
 文字列型のStkObjectインスタンスに値を設定します。<br>
 文字列型ではないStkObjectインスタンスに対して本APIを呼び出した場合，要求は無視されます。<br>
@@ -468,7 +468,7 @@ StkObjectインスタンスからJSONを生成します。<br>
 
 
 
-<H2 ID="4.32">4.32 static StkObject* CreateObjectFromXml(wchar_t* StrXml, int* ErrorCode)</H2>
+<H2 ID="4.32">4.32 static StkObject* CreateObjectFromXml(const wchar_t* StrXml, int* ErrorCode)</H2>
 <div class="topic">
 XMLから入れ子構造のStkObjectインスタンスを生成します。<br>
 <table class="tblstyle">
@@ -494,7 +494,7 @@ ERROR_XML_SLASH_FOUND_WITHOUT_ELEMENT : スラッシュの前に要素が存在�
 
 
 
-<H2 ID="4.33">4.33 static StkObject* CreateObjectFromJson(wchar_t* StrJson, int* ErrorCode)</H2>
+<H2 ID="4.33">4.33 static StkObject* CreateObjectFromJson(const wchar_t* StrJson, int* ErrorCode)</H2>
 <div class="topic">
 JSONから入れ子構造のStkObjectインスタンスを生成します。<br>
 <table class="tblstyle">
@@ -518,7 +518,7 @@ ERROR_JSON_NO_ROOT_ELEMENT : トップノードが存在しない<br>
 
 
 
-<H2 ID="4.34">4.34 static int Analyze(wchar_t* Txt)</H2>
+<H2 ID="4.34">4.34 static int Analyze(const wchar_t* Txt)</H2>
 <div class="topic">
 指定した文字列がXMLかJSONかを判定します。<br>
 <table class="tblstyle">
