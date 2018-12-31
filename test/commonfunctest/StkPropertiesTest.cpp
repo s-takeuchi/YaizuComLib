@@ -128,7 +128,7 @@ void StkPropertiesTest()
 		StkPlExit(0);
 	}
 
-	StkPlPrintf("Program is loading property file \"propertytest1.prop\" (zero byte data) ...");
+	StkPlPrintf("Program is loading property file (multi bytes file name) ...");
 	Ret = StkProp.GetProperties(L"プロパティファイル4.prop");
 	if (Ret == 0) {
 		StkPlPrintf("Success\n");
