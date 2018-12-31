@@ -376,7 +376,23 @@ int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fil
 
 int StkPlGetUsedMemorySizeOfCurrentProcess()
 {
-	return 999;
+	FILE *fp;
+	char ProcInfo[64];
+	char Buffer[4096];
+	sprintf(ProcInfo, "/proc/%d/status", getpid());
+	if ((fp = fopen(ProcInfo, "r")) == NULL) {
+		return -1;
+	}
+	int ActualFileSize = fread(Buffer, sizeof(char), 4096, fp);
+	fclose(fp);
+	char* Ptr = strstr(Buffer, "VmSize:");
+	if (Ptr == NULL) {
+		return -1;
+	}
+	char DummyStr[32] = "";
+	int VmSize = 0;
+	sscanf(Ptr, "%s %d", DummyStr, &VmSize);
+	return VmSize;
 }
 
 long long StkPlGetTickCount()
