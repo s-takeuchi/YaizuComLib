@@ -128,5 +128,41 @@ void StkPropertiesTest()
 		StkPlExit(0);
 	}
 
+	StkPlPrintf("Program is loading property file \"propertytest1.prop\" (zero byte data) ...");
+	Ret = StkProp.GetProperties(L"プロパティファイル4.prop");
+	if (Ret == 0) {
+		StkPlPrintf("Success\n");
+	} else {
+		StkPlPrintf("Failure\n");
+		StkPlExit(0);
+	}
+
+	Ret = StkProp.GetPropertyStr("testprop1", ValueStr);
+	StkPlPrintf("testprop1=abcdefg?...");
+	if (StkPlStrCmp(ValueStr, "abcdefg") == 0) {
+		StkPlPrintf("OK\n");
+	} else {
+		StkPlPrintf("NG\n");
+		StkPlExit(0);
+	}
+
+	Ret = StkProp.GetPropertyStr("testprop2", ValueStr);
+	StkPlPrintf("testprop2=hijklmn?...");
+	if (StkPlStrCmp(ValueStr, "hijklmn") == 0) {
+		StkPlPrintf("OK\n");
+	} else {
+		StkPlPrintf("NG\n");
+		StkPlExit(0);
+	}
+
+	Ret = StkProp.GetPropertyStr("testprop3", ValueStr);
+	StkPlPrintf("testprop3=opqrstu?...");
+	if (StkPlStrCmp(ValueStr, "opqrstu") == 0) {
+		StkPlPrintf("OK\n");
+	} else {
+		StkPlPrintf("NG\n");
+		StkPlExit(0);
+	}
+
 	StkPlPrintf("StkPropertiesTest completed.\n\n\n");
 }
