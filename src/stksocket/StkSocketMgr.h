@@ -1,6 +1,6 @@
 ﻿#pragma once
+#include <mutex>
 #include <winsock2.h>
-#include <windows.h>
 #include "StkSocketInfo.h"
 
 class StkSocketMgr
@@ -15,9 +15,6 @@ private:
 	StkSocketInfo SocketInfo[MAX_SOCKET_NUMBER];
 	int NumOfSocketInfo;
 
-	// WSADATA
-	WSADATA WsaDat;
-
 	// This instance
 	static StkSocketMgr* ThisInstance;
 
@@ -31,7 +28,7 @@ private:
 	int NumOfLogs;
 
 	// Critical section
-	CRITICAL_SECTION Cs4Log;
+	std::mutex Cs4Log;
 
 private:
 	// Constructor

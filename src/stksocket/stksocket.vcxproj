@@ -59,6 +59,7 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,13 +73,16 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\StkPl.cpp" />
     <ClCompile Include="stksocket.cpp" />
     <ClCompile Include="StkSocketMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\StkPl.h" />
     <ClInclude Include="stksocket.h" />
     <ClInclude Include="StkSocketInfo.h" />
     <ClInclude Include="StkSocketMgr.h" />

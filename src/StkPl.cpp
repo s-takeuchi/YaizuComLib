@@ -74,11 +74,29 @@ int StkPlWPrintf(const wchar_t* Format, ...)
 	return Ret;
 }
 
+int StkPlSPrintf(char* Str, size_t Len, const char* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vsnprintf(Str, Len, Format, va);
+	va_end(va);
+	return Ret;
+}
+
 int StkPlSwPrintf(wchar_t* Str, size_t Len, const wchar_t* Format, ...)
 {
 	va_list va;
 	va_start(va, Format);
 	int Ret = vswprintf(Str, Len, Format, va);
+	va_end(va);
+	return Ret;
+}
+
+int StkPlSScanf(const char* Str, const char* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vsscanf(Str, Format, va);
 	va_end(va);
 	return Ret;
 }

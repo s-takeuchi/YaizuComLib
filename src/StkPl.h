@@ -27,10 +27,14 @@ bool StkPlIsJapaneseLocaleFromEnv();
 char* StkPlWideCharToUtf8(const wchar_t*);
 char* StkPlWideCharToSjis(const wchar_t*);
 
-void StkPlExit(int);
 int StkPlPrintf(const char*, ...);
 int StkPlWPrintf(const wchar_t*, ...);
+int StkPlSPrintf(char*, size_t, const char*, ...);
 int StkPlSwPrintf(wchar_t*, size_t, const wchar_t*, ...);
+
+int StkPlSScanf(const char* Str, const char* Format, ...);
+
+void StkPlExit(int);
 int StkPlRand();
 int StkPlAtoi(const char*);
 long int StkPlWcsToL(const wchar_t*);

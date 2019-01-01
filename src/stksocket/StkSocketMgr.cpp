@@ -1,7 +1,7 @@
-﻿#include <winsock2.h>
-#include <Ws2tcpip.h.>
-#include <windows.h>
-#include <stdio.h>
+﻿#include <mutex>
+#include <winsock2.h>
+#include <Ws2tcpip.h>
+#include "../StkPl.h"
 #include "StkSocketMgr.h"
 
 StkSocketMgr* StkSocketMgr::ThisInstance;
@@ -22,9 +22,9 @@ StkSocketMgr::StkSocketMgr()
 {
 	NumOfSocketInfo = 0;
 	NumOfLogs = 0;
+	static WSADATA WsaDat;
 
 	WSAStartup(MAKEWORD(2,0), &WsaDat);
-	InitializeCriticalSection(&Cs4Log);
 	ClearLog();
 }
 
@@ -36,7 +36,7 @@ StkSocketMgr::~StkSocketMgr()
 
 void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int TmpLogParamInt1, int TmpLogParamInt2)
 {
-	EnterCriticalSection(&Cs4Log);
+	Cs4Log.lock();
 	if (NumOfLogs == MAX_NUM_OF_LOG) {
 		for (int Loop = 0; Loop < MAX_NUM_OF_LOG - 1; Loop++) {
 			Log[Loop] = Log[Loop + 1];
@@ -55,11 +55,12 @@ void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, wchar_t* TmpLogParamStr1, wc
 	LogParamInt1[NumOfLogs] = TmpLogParamInt1;
 	LogParamInt2[NumOfLogs] = TmpLogParamInt2;
 	NumOfLogs++;
-	LeaveCriticalSection(&Cs4Log);
+	Cs4Log.unlock();
 }
 
 void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
 {
+	Cs4Log.lock();
 	if (NumOfLogs <= 0) {
 		*TmpLog = 0;
 		*TmpLogId = 0;
@@ -67,9 +68,9 @@ void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamS
 		*TmpLogParamStr2 = NULL;
 		*TmpLogParamInt1 = 0;
 		*TmpLogParamInt2 = 0;
+		Cs4Log.unlock();
 		return;
 	}
-	EnterCriticalSection(&Cs4Log);
 	NumOfLogs--;
 	*TmpLog = Log[NumOfLogs];
 	*TmpLogId = LogId[NumOfLogs];
@@ -84,11 +85,12 @@ void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamS
 	lstrcpy(LogParamStr2[NumOfLogs], L"");
 	LogParamInt1[NumOfLogs] = 0;
 	LogParamInt2[NumOfLogs] = 0;
-	LeaveCriticalSection(&Cs4Log);
+	Cs4Log.unlock();
 }
 
 void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int* TmpLogParamInt1, int* TmpLogParamInt2)
 {
+	Cs4Log.lock();
 	if (NumOfLogs <= 0) {
 		*TmpLog = 0;
 		*TmpLogId = 0;
@@ -96,9 +98,9 @@ void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParam
 		*TmpLogParamStr2 = NULL;
 		*TmpLogParamInt1 = 0;
 		*TmpLogParamInt2 = 0;
+		Cs4Log.unlock();
 		return;
 	}
-	EnterCriticalSection(&Cs4Log);
 	*TmpLog = Log[0];
 	*TmpLogId = LogId[0];
 	lstrcpyn(TmpLogParamStr1, LogParamStr1[0], 256);
@@ -121,7 +123,7 @@ void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParam
 	lstrcpy(LogParamStr2[NumOfLogs], L"");
 	LogParamInt1[NumOfLogs] = 0;
 	LogParamInt2[NumOfLogs] = 0;
-	LeaveCriticalSection(&Cs4Log);
+	Cs4Log.unlock();
 }
 
 int StkSocketMgr::GetNumOfLogs()
@@ -131,7 +133,7 @@ int StkSocketMgr::GetNumOfLogs()
 
 void StkSocketMgr::ClearLog()
 {
-	EnterCriticalSection(&Cs4Log);
+	Cs4Log.lock();
 	for (int Loop = 0; Loop < MAX_NUM_OF_LOG; Loop++) {
 		Log[Loop] = 0;
 		LogId[Loop] = 0;
@@ -141,7 +143,7 @@ void StkSocketMgr::ClearLog()
 		LogParamInt2[Loop] = 0;
 	}
 	NumOfLogs = 0;
-	LeaveCriticalSection(&Cs4Log);
+	Cs4Log.unlock();
 }
 
 // Add socket information
@@ -346,8 +348,8 @@ int StkSocketMgr::ConnectSocket(int Id)
 			Hints.ai_flags = AI_PASSIVE;
 			char NodeName[256];
 			char ServName[256];
-			sprintf_s(NodeName, 256, "%S", SocketInfo[Loop].HostOrIpAddr);
-			sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
+			StkPlSPrintf(NodeName, 256, "%ls", SocketInfo[Loop].HostOrIpAddr);
+			StkPlSPrintf(ServName, 256, "%d", SocketInfo[Loop].Port);
 			int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 			if (Ret != 0) {
 				PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, WSAGetLastError());
@@ -458,8 +460,8 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				Hints.ai_flags = AI_PASSIVE;
 				char NodeName[256];
 				char ServName[256];
-				sprintf_s(NodeName, 256, "%S", SocketInfo[Loop].HostOrIpAddr);
-				sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
+				StkPlSPrintf(NodeName, 256, "%ls", SocketInfo[Loop].HostOrIpAddr);
+				StkPlSPrintf(ServName, 256, "%d", SocketInfo[Loop].Port);
 				int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 				if (Ret != 0) {
 					PutLog(LOG_NAMESOLVEERR, TargetId, L"", L"", 0, WSAGetLastError());
@@ -827,7 +829,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 					// After size acquisition
 					int TmpSize = 0;
 					if (TmpSizePtr != 0) {
-						sscanf_s((char*)TmpSizePtr, "%x", &TmpSize);
+						StkPlSScanf((char*)TmpSizePtr, "%x", &TmpSize);
 						if (TmpSize == 0) {
 							ChunkEnd = true;
 						}
@@ -1058,8 +1060,8 @@ int StkSocketMgr::SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				Hints.ai_flags = AI_PASSIVE;
 				char NodeName[256];
 				char ServName[256];
-				sprintf_s(NodeName, 256, "%S", SocketInfo[Loop].HostOrIpAddr);
-				sprintf_s(ServName, 256, "%d", SocketInfo[Loop].Port);
+				StkPlSPrintf(NodeName, 256, "%ls", SocketInfo[Loop].HostOrIpAddr);
+				StkPlSPrintf(ServName, 256, "%d", SocketInfo[Loop].Port);
 				int RetMethod = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 				if (RetMethod != 0) {
 					PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, WSAGetLastError());

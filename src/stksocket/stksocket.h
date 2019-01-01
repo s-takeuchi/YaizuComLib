@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <windows.h>
 
 #define STKSOCKET_MAX_NUM_OF_LOG 64
 #define STKSOCKET_MAX_SOCKET_NUMBER 256
