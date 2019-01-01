@@ -985,15 +985,22 @@ DWORD WINAPI TestThreadProc10(LPVOID Param)
 
 	StkSocket_AddInfo(10, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2002);
 	StkSocket_Open(10);
-	StartFlag = true;
 	
 	printf("[Recv/Send] : Receiver's buffer overflow occurrence (Command=%d) ...", RecvType);
+	StartFlag = true;
 	while (true) {
 		if (StkSocket_Accept(10) == 0) {
 			memset(Buffer, '\0', 512);
 			int Ret = StkSocket_Receive(10, 10, Buffer, Size, RecvType, 0, NULL, 0);
 			if (Ret != Size || strncmp((char*)Buffer, (char*)TestStr, Size) != 0) {
-				printf("NG (return=%d, expectation=%d)\r\n", Ret, Size);
+				int TmpLog;
+				int TmpLogId;
+				wchar_t TmpLogParamStr1[256];
+				wchar_t TmpLogParamStr2[256];
+				int TmpLogParamInt1;
+				int TmpLogParamInt2;
+				StkSocket_TakeLastLog(&TmpLog, &TmpLogId, TmpLogParamStr1, TmpLogParamStr2, &TmpLogParamInt1, &TmpLogParamInt2);
+				printf("NG (return=%d, expectation=%d) [%d, %d, %ls, %ls, %d, %d]\r\n", Ret, Size, TmpLog, TmpLogId, TmpLogParamStr1, TmpLogParamStr2, TmpLogParamInt1, TmpLogParamInt2);
 				exit(-1);
 			}
 			break;
@@ -1024,7 +1031,10 @@ DWORD WINAPI TestThreadProc11(LPVOID Param)
 	while (StartFlag == false) {
 		Sleep(100);
 	}
-	StkSocket_Connect(1);
+	while (StkSocket_Connect(1) == -1) {
+		Sleep(100);
+		printf("*");
+	}
 	StkSocket_Send(1, 1, (unsigned char*)Buf, strlen(Buf));
 	while (PeerCloseOkFlag == false) {
 		Sleep(100);

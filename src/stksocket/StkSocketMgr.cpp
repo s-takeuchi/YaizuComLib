@@ -41,8 +41,10 @@ void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, wchar_t* TmpLogParamStr1, wc
 		for (int Loop = 0; Loop < MAX_NUM_OF_LOG - 1; Loop++) {
 			Log[Loop] = Log[Loop + 1];
 			LogId[Loop] = LogId[Loop + 1];
-			lstrcpyn(LogParamStr1[Loop], LogParamStr1[Loop + 1], 256);
-			lstrcpyn(LogParamStr2[Loop], LogParamStr2[Loop + 1], 256);
+			StkPlWcsNCpy(LogParamStr1[Loop], 256, LogParamStr1[Loop + 1], 256);
+			LogParamStr1[Loop][256 - 1] = '\0';
+			StkPlWcsNCpy(LogParamStr2[Loop], 256, LogParamStr2[Loop + 1], 256);
+			LogParamStr2[Loop][256 - 1] = '\0';
 			LogParamInt1[Loop] = LogParamInt1[Loop + 1];
 			LogParamInt2[Loop] = LogParamInt2[Loop + 1];
 		}
@@ -50,8 +52,10 @@ void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, wchar_t* TmpLogParamStr1, wc
 	}
 	Log[NumOfLogs] = TmpLog;
 	LogId[NumOfLogs] = TmpLogId;
-	lstrcpyn(LogParamStr1[NumOfLogs], TmpLogParamStr1, 256);
-	lstrcpyn(LogParamStr2[NumOfLogs], TmpLogParamStr2, 256);
+	StkPlWcsNCpy(LogParamStr1[NumOfLogs], 256, TmpLogParamStr1, 256);
+	LogParamStr1[NumOfLogs][256 - 1] = '\0';
+	StkPlWcsNCpy(LogParamStr2[NumOfLogs], 256, TmpLogParamStr2, 256);
+	LogParamStr2[NumOfLogs][256 - 1] = '\0';
 	LogParamInt1[NumOfLogs] = TmpLogParamInt1;
 	LogParamInt2[NumOfLogs] = TmpLogParamInt2;
 	NumOfLogs++;
@@ -74,15 +78,17 @@ void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamS
 	NumOfLogs--;
 	*TmpLog = Log[NumOfLogs];
 	*TmpLogId = LogId[NumOfLogs];
-	lstrcpyn(TmpLogParamStr1, LogParamStr1[NumOfLogs], 256);
-	lstrcpyn(TmpLogParamStr2, LogParamStr2[NumOfLogs], 256);
+	StkPlWcsNCpy(TmpLogParamStr1, 256, LogParamStr1[NumOfLogs], 256);
+	TmpLogParamStr1[256 - 1] = '\0';
+	StkPlWcsNCpy(TmpLogParamStr2, 256, LogParamStr2[NumOfLogs], 256);
+	TmpLogParamStr2[256 - 1] = '\0';
 	*TmpLogParamInt1 = LogParamInt1[NumOfLogs];
 	*TmpLogParamInt2 = LogParamInt2[NumOfLogs];
 
 	Log[NumOfLogs] = 0;
 	LogId[NumOfLogs] = 0;
-	lstrcpy(LogParamStr1[NumOfLogs], L"");
-	lstrcpy(LogParamStr2[NumOfLogs], L"");
+	StkPlWcsCpy(LogParamStr1[NumOfLogs], 256, L"");
+	StkPlWcsCpy(LogParamStr2[NumOfLogs], 256, L"");
 	LogParamInt1[NumOfLogs] = 0;
 	LogParamInt2[NumOfLogs] = 0;
 	Cs4Log.unlock();
@@ -103,24 +109,26 @@ void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParam
 	}
 	*TmpLog = Log[0];
 	*TmpLogId = LogId[0];
-	lstrcpyn(TmpLogParamStr1, LogParamStr1[0], 256);
-	lstrcpyn(TmpLogParamStr2, LogParamStr2[0], 256);
+	StkPlWcsNCpy(TmpLogParamStr1, 256, LogParamStr1[0], 256);
+	TmpLogParamStr1[256 - 1] = '\0';
+	StkPlWcsNCpy(TmpLogParamStr2, 256, LogParamStr2[0], 256);
+	TmpLogParamStr2[256 - 1] = '\0';
 	*TmpLogParamInt1 = LogParamInt1[0];
 	*TmpLogParamInt2 = LogParamInt2[0];
 
 	for (int Loop = 0; Loop < NumOfLogs - 1; Loop++) {
 		Log[Loop] = Log[Loop + 1];
 		LogId[Loop] = LogId[Loop + 1];
-		lstrcpy(LogParamStr1[Loop], LogParamStr1[Loop + 1]);
-		lstrcpy(LogParamStr2[Loop], LogParamStr2[Loop + 1]);
+		StkPlWcsCpy(LogParamStr1[Loop], 256, LogParamStr1[Loop + 1]);
+		StkPlWcsCpy(LogParamStr2[Loop], 256, LogParamStr2[Loop + 1]);
 		LogParamInt1[Loop] = LogParamInt1[Loop + 1];
 		LogParamInt2[Loop] = LogParamInt2[Loop + 1];
 	}
 	NumOfLogs--;
 	Log[NumOfLogs] = 0;
 	LogId[NumOfLogs] = 0;
-	lstrcpy(LogParamStr1[NumOfLogs], L"");
-	lstrcpy(LogParamStr2[NumOfLogs], L"");
+	StkPlWcsCpy(LogParamStr1[NumOfLogs], 256, L"");
+	StkPlWcsCpy(LogParamStr2[NumOfLogs], 256, L"");
 	LogParamInt1[NumOfLogs] = 0;
 	LogParamInt2[NumOfLogs] = 0;
 	Cs4Log.unlock();
@@ -137,8 +145,8 @@ void StkSocketMgr::ClearLog()
 	for (int Loop = 0; Loop < MAX_NUM_OF_LOG; Loop++) {
 		Log[Loop] = 0;
 		LogId[Loop] = 0;
-		lstrcpy(LogParamStr1[Loop], L"");
-		lstrcpy(LogParamStr2[Loop], L"");
+		StkPlWcsCpy(LogParamStr1[Loop], 256, L"");
+		StkPlWcsCpy(LogParamStr2[Loop], 256, L"");
 		LogParamInt1[Loop] = 0;
 		LogParamInt2[Loop] = 0;
 	}
@@ -179,7 +187,7 @@ int StkSocketMgr::AddSocketInfo(int TargetId, int SockType, int ActionType, wcha
 	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = false;
 	SocketInfo[NumOfSocketInfo].CopySourceId = -1;
 	SocketInfo[NumOfSocketInfo].ForceStop = false;
-	lstrcpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, TargetAddr);
+	StkPlWcsCpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, 256, TargetAddr);
 	NumOfSocketInfo++;
 
 	return 0;
@@ -234,7 +242,7 @@ int StkSocketMgr::CopySocketInfo(int NewId, int ExistingId)
 	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = true;
 	SocketInfo[NumOfSocketInfo].CopySourceId = ExistingId;
 	SocketInfo[NumOfSocketInfo].ForceStop = SocketInfo[FndIndex].ForceStop;
-	lstrcpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, SocketInfo[FndIndex].HostOrIpAddr);
+	StkPlWcsCpy(SocketInfo[NumOfSocketInfo].HostOrIpAddr, 256, SocketInfo[FndIndex].HostOrIpAddr);
 	NumOfSocketInfo++;
 
 	return 0;
@@ -275,7 +283,7 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 		SocketInfo[Loop].AcceptedSock = SocketInfo[NumOfSocketInfo - 1].AcceptedSock;
 		SocketInfo[Loop].CopiedSocketFlag = SocketInfo[NumOfSocketInfo - 1].CopiedSocketFlag;
 		SocketInfo[Loop].CopySourceId = SocketInfo[NumOfSocketInfo - 1].CopySourceId;
-		lstrcpy(SocketInfo[Loop].HostOrIpAddr, SocketInfo[NumOfSocketInfo - 1].HostOrIpAddr);
+		StkPlWcsCpy(SocketInfo[Loop].HostOrIpAddr, 256, SocketInfo[NumOfSocketInfo - 1].HostOrIpAddr);
 		memcpy(&SocketInfo[Loop].LastAccessedAddr, &SocketInfo[NumOfSocketInfo - 1].LastAccessedAddr, sizeof(sockaddr_in));
 	}
 	NumOfSocketInfo--;
@@ -291,7 +299,7 @@ int StkSocketMgr::GetSocketInfo(int Index, int* TargetId, int* SockType, int* Ac
 	*TargetId = SocketInfo[Index].ElementId;
 	*SockType = SocketInfo[Index].SocketType;
 	*ActionType = SocketInfo[Index].ActionType;
-	lstrcpy(TargetAddr, SocketInfo[Index].HostOrIpAddr);
+	StkPlWcsCpy(TargetAddr, 256, SocketInfo[Index].HostOrIpAddr);
 	*TargetPort = SocketInfo[Index].Port;
 	*CopiedFlag = SocketInfo[Index].CopiedSocketFlag;
 	return 0;
@@ -303,7 +311,7 @@ int StkSocketMgr::GetSocketInfo(int TargetId, int* SockType, int* ActionType, wc
 		if (SocketInfo[Loop].ElementId == TargetId) {
 			*SockType = SocketInfo[Loop].SocketType;
 			*ActionType = SocketInfo[Loop].ActionType;
-			lstrcpy(TargetAddr, SocketInfo[Loop].HostOrIpAddr);
+			StkPlWcsCpy(TargetAddr, 256, SocketInfo[Loop].HostOrIpAddr);
 			*TargetPort = SocketInfo[Loop].Port;
 			*CopiedFlag = SocketInfo[Loop].CopiedSocketFlag;
 			return 0;
@@ -702,7 +710,7 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, unsigned char* VarDat, int VarDatSize)
 {
 	// Select用FDS作成
-	DWORD CurrWaitTime = GetTickCount();
+	long long CurrWaitTime = StkPlGetTickCount();
 	timeval Timeout;
 	Timeout.tv_sec = 0;
 	Timeout.tv_usec = 0;
@@ -747,7 +755,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 					return Offset;
 				}
 				if (FinishCondTimeout > 0) {
-					DWORD CurrTime = GetTickCount();
+					long long CurrTime = StkPlGetTickCount();
 					if ((int)(CurrTime - CurrWaitTime) > FinishCondTimeout) {
 						if (Offset == 0) {
 							return -2;
@@ -789,7 +797,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			}
 
 			int Ret = recv(TmpSock, (char*)Buffer + Offset, FetchSize, 0);
-			CurrWaitTime = GetTickCount();
+			CurrWaitTime = StkPlGetTickCount();
 			if (Ret == SOCKET_ERROR) {
 				PutLog(LOG_RECVERROR, LogId, L"", L"", 0, WSAGetLastError());
 				return Ret;

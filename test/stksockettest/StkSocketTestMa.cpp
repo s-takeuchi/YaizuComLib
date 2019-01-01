@@ -195,14 +195,14 @@ void StkSocketTestMa::TestMultiAccept2()
 	printf("OK\r\n");
 	Sleep(1000);
 
-	for (Loop = 0; Loop < 30; Loop++) {
+	for (Loop = 0; Loop < 50; Loop++) {
 		if (ThreadEndCount == 6) {
 			break;
 		}
 		Sleep(100);
 	}
 	printf("[StkSocketTestMa::TestMultiAccept2] : All threads are ended [wait=%d msec] ... ", Loop * 100);
-	if (Loop == 30) {
+	if (Loop == 50) {
 		printf("NG\r\n");
 		exit(-1);
 	}
@@ -338,14 +338,14 @@ void StkSocketTestMa::TestMultiAccept3()
 	printf("OK\r\n");
 	Sleep(1000);
 
-	for (Loop = 0; Loop < 30; Loop++) {
+	for (Loop = 0; Loop < 50; Loop++) {
 		if (ThreadEndCount == 6) {
 			break;
 		}
 		Sleep(100);
 	}
 	printf("[StkSocketTestMa::TestMultiAccept3] : All threads are ended [wait=%d msec] ... ", Loop * 100);
-	if (Loop == 30) {
+	if (Loop == 50) {
 		printf("NG\r\n");
 		exit(-1);
 	}
