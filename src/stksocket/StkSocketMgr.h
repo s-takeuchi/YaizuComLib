@@ -1,6 +1,10 @@
 ﻿#pragma once
 #include <mutex>
+#ifdef WIN32
 #include <winsock2.h>
+#else
+#include <sys/socket.h>
+#endif
 #include "StkSocketInfo.h"
 
 class StkSocketMgr
@@ -37,7 +41,7 @@ private:
 	~StkSocketMgr();
 
 	// Logging method
-	void PutLog(int, int, wchar_t*, wchar_t*, int, int);
+	void PutLog(int, int, const wchar_t*, const wchar_t*, int, int);
 
 	// Safe socket close
 	void CloseSocketWaitForPeerClose(SOCKET);

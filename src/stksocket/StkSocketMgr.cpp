@@ -1,6 +1,11 @@
 ﻿#include <mutex>
+#include <cstring>
+#ifdef WIN32
 #include <winsock2.h>
 #include <Ws2tcpip.h>
+#else
+#include <sys/socket.h>
+#endif
 #include "../StkPl.h"
 #include "StkSocketMgr.h"
 
@@ -34,7 +39,7 @@ StkSocketMgr::~StkSocketMgr()
 	WSACleanup();
 }
 
-void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, wchar_t* TmpLogParamStr1, wchar_t* TmpLogParamStr2, int TmpLogParamInt1, int TmpLogParamInt2)
+void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, const wchar_t* TmpLogParamStr1, const wchar_t* TmpLogParamStr2, int TmpLogParamInt1, int TmpLogParamInt2)
 {
 	Cs4Log.lock();
 	if (NumOfLogs == MAX_NUM_OF_LOG) {
@@ -68,8 +73,8 @@ void StkSocketMgr::TakeLastLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParamS
 	if (NumOfLogs <= 0) {
 		*TmpLog = 0;
 		*TmpLogId = 0;
-		*TmpLogParamStr1 = NULL;
-		*TmpLogParamStr2 = NULL;
+		*TmpLogParamStr1 = L'\0';
+		*TmpLogParamStr2 = L'\0';
 		*TmpLogParamInt1 = 0;
 		*TmpLogParamInt2 = 0;
 		Cs4Log.unlock();
@@ -100,8 +105,8 @@ void StkSocketMgr::TakeFirstLog(int* TmpLog, int* TmpLogId, wchar_t* TmpLogParam
 	if (NumOfLogs <= 0) {
 		*TmpLog = 0;
 		*TmpLogId = 0;
-		*TmpLogParamStr1 = NULL;
-		*TmpLogParamStr2 = NULL;
+		*TmpLogParamStr1 = L'\0';
+		*TmpLogParamStr2 = L'\0';
 		*TmpLogParamInt1 = 0;
 		*TmpLogParamInt2 = 0;
 		Cs4Log.unlock();
@@ -893,7 +898,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 						}
 						if (ContLenEndPtr != NULL && ContLenEndPtr - ContLenPtr <= 10) {
 							char TmpBuf[100];
-							strncpy_s(TmpBuf, 100, (char*)ContLenPtr, (int)(ContLenEndPtr - ContLenPtr + 1));
+							StkPlStrNCpy(TmpBuf, 100, (char*)ContLenPtr, (int)(ContLenEndPtr - ContLenPtr + 1));
 							int ContLen = atoi(TmpBuf);
 							if (ContLen == 0) {
 								// If inappropriate value or zero is set for Content-Length.

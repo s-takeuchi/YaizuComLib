@@ -137,6 +137,12 @@ char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source
 	return Destination;
 }
 
+char* StkPlStrNCpy(char* Destination, size_t NumberOfElements, const char* Source, size_t Num)
+{
+	strncpy_s(Destination, NumberOfElements, Source, Num);
+	return Destination;
+}
+
 wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
 {
 	wcsncpy_s(Destination, NumberOfElements, Source, _TRUNCATE);
@@ -277,6 +283,11 @@ long long StkPlGetTickCount()
 char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
 {
 	return strcpy(Destination, Source);
+}
+
+char* StkPlStrNCpy(char* Destination, size_t NumberOfElements, const char* Source, size_t Num)
+{
+	return strncpy(Destination, Source, Num);
 }
 
 wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
