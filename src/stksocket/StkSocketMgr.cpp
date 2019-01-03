@@ -1,11 +1,17 @@
 ﻿#include <mutex>
 #include <cstring>
+
 #ifdef WIN32
+
 #include <winsock2.h>
 #include <Ws2tcpip.h>
+
 #else
+
 #include <sys/socket.h>
+
 #endif
+
 #include "../StkPl.h"
 #include "StkSocketMgr.h"
 
@@ -27,16 +33,21 @@ StkSocketMgr::StkSocketMgr()
 {
 	NumOfSocketInfo = 0;
 	NumOfLogs = 0;
-	static WSADATA WsaDat;
 
+#ifdef WIN32
+	static WSADATA WsaDat;
 	WSAStartup(MAKEWORD(2,0), &WsaDat);
+#endif
+
 	ClearLog();
 }
 
 // Destructor
 StkSocketMgr::~StkSocketMgr()
 {
+#ifdef WIN32
 	WSACleanup();
+#endif
 }
 
 void StkSocketMgr::PutLog(int TmpLog, int TmpLogId, const wchar_t* TmpLogParamStr1, const wchar_t* TmpLogParamStr2, int TmpLogParamInt1, int TmpLogParamInt2)
@@ -187,8 +198,8 @@ int StkSocketMgr::AddSocketInfo(int TargetId, int SockType, int ActionType, wcha
 	SocketInfo[NumOfSocketInfo].ElementId = TargetId;
 	SocketInfo[NumOfSocketInfo].Status = StkSocketInfo::STATUS_CLOSE;
 	SocketInfo[NumOfSocketInfo].Port = TargetPort;
-	SocketInfo[NumOfSocketInfo].Sock = NULL;
-	SocketInfo[NumOfSocketInfo].AcceptedSock = NULL;
+	SocketInfo[NumOfSocketInfo].Sock = 0;
+	SocketInfo[NumOfSocketInfo].AcceptedSock = 0;
 	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = false;
 	SocketInfo[NumOfSocketInfo].CopySourceId = -1;
 	SocketInfo[NumOfSocketInfo].ForceStop = false;
@@ -243,7 +254,7 @@ int StkSocketMgr::CopySocketInfo(int NewId, int ExistingId)
 	}
 	SocketInfo[NumOfSocketInfo].Port = SocketInfo[FndIndex].Port;
 	SocketInfo[NumOfSocketInfo].Sock = SocketInfo[FndIndex].Sock;
-	SocketInfo[NumOfSocketInfo].AcceptedSock = NULL;
+	SocketInfo[NumOfSocketInfo].AcceptedSock = 0;
 	SocketInfo[NumOfSocketInfo].CopiedSocketFlag = true;
 	SocketInfo[NumOfSocketInfo].CopySourceId = ExistingId;
 	SocketInfo[NumOfSocketInfo].ForceStop = SocketInfo[FndIndex].ForceStop;
@@ -325,7 +336,7 @@ int StkSocketMgr::GetSocketInfo(int TargetId, int* SockType, int* ActionType, wc
 	return -1;
 }
 
-void StkSocketMgr::CloseSocketWaitForPeerClose(SOCKET Target)
+void StkSocketMgr::CloseSocketWaitForPeerClose(STK_SOCKET Target)
 {
 	shutdown(Target, SD_SEND);
 	int Timeo = 10000;
@@ -430,7 +441,7 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, bool WaitForPeerClose)
 			} else {
 				closesocket(SocketInfo[Loop].Sock);
 			}
-			SocketInfo[Loop].Sock = NULL;
+			SocketInfo[Loop].Sock = 0;
 			SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_DGRAM) {
 				PutLog(LOG_UDPSOCKCLOSE, LogId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
@@ -589,7 +600,7 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 				} else {
 					closesocket(SocketInfo[Loop].AcceptedSock);
 				}
-				SocketInfo[Loop].AcceptedSock = NULL;
+				SocketInfo[Loop].AcceptedSock = 0;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 				// If the target is 'copied' StkSocket or If the current element is 'copied' StkSocket associating to 'added' StkSocket of the target.
 				if (Cond1 || Cond2) {
@@ -614,13 +625,13 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 
 			if (CondC1 || CondC2) {
 				// Closing procedure for 'copied' StkSocket.
-				SocketInfo[Loop].Sock = NULL;
+				SocketInfo[Loop].Sock = 0;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 			}
 			if (CondC3) {
 				// If the socket information is not copied, closesocke() is called.
 				closesocket(SocketInfo[Loop].Sock);
-				SocketInfo[Loop].Sock = NULL;
+				SocketInfo[Loop].Sock = 0;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 				if (AcceptSockFnd == false) {
 					PutLog(LOG_SOCKCLOSE, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
@@ -697,7 +708,7 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 			} else {
 				closesocket(SocketInfo[Loop].AcceptedSock);
 			}
-			SocketInfo[Loop].AcceptedSock = NULL;
+			SocketInfo[Loop].AcceptedSock = 0;
 			SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 			PutLog(LOG_CLOSEACCEPTSOCK, LogId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 			return 0;
@@ -722,7 +733,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 	fd_set RecFds;
 
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
-		SOCKET TmpSock = NULL;
+		STK_SOCKET TmpSock = 0;
 		int RecvLog = 0;
 		if (SocketInfo[Loop].ElementId == Id &&
 			SocketInfo[Loop].Status == StkSocketInfo::STATUS_ACCEPT &&
@@ -738,7 +749,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			TmpSock = SocketInfo[Loop].Sock;
 			RecvLog = LOG_CNCTRECV;
 		}
-		if (TmpSock == NULL || RecvLog == 0) {
+		if (TmpSock == 0 || RecvLog == 0) {
 			continue;
 		}
 
@@ -933,7 +944,7 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int Buffe
 	fd_set RecFds;
 
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
-		SOCKET TmpSock = NULL;
+		STK_SOCKET TmpSock = 0;
 		if (SocketInfo[Loop].ElementId == Id &&
 			SocketInfo[Loop].Status == StkSocketInfo::STATUS_OPEN &&
 			SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_DGRAM &&
@@ -941,7 +952,7 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int Buffe
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_SENDER)) {
 			TmpSock = SocketInfo[Loop].Sock;
 		}
-		if (TmpSock == NULL) {
+		if (TmpSock == 0) {
 			continue;
 		}
 		FD_ZERO(&RecFds);

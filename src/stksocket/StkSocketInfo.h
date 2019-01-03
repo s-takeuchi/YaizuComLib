@@ -1,5 +1,18 @@
 ﻿#pragma once
 
+#ifdef WIN32
+
+#include <winsock2.h>
+#define STK_SOCKET SOCKET
+
+#else
+
+#include <sys/socket.h>
+#define STK_SOCKET int
+
+#endif
+
+
 struct StkSocketInfo
 {
 	// Statusのの取り得る値
@@ -14,9 +27,9 @@ struct StkSocketInfo
 	int ElementId;
 
 	// ソケット
-	SOCKET Sock;
+	STK_SOCKET Sock;
 	// Acceptしたソケット
-	SOCKET AcceptedSock;
+	STK_SOCKET AcceptedSock;
 
 	// 状態
 	int Status;
