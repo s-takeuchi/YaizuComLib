@@ -6,6 +6,7 @@
 #include <winsock2.h>
 #include <Ws2tcpip.h>
 #define STKSOCKET_ERRORCODE WSAGetLastError()
+#define STKSOCKET_ERROR SOCKET_ERROR
 
 #else
 
@@ -15,6 +16,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #define STKSOCKET_ERRORCODE errno
+#define STKSOCKET_ERROR -1
 
 #endif
 
@@ -355,7 +357,7 @@ void StkSocketMgr::CloseSocketWaitForPeerClose(STK_SOCKET Target)
 	while (true) {
 		char Buf[10000];
 		int Ret = recv(Target, Buf, 10000, 0);
-		if (Ret == 0 || Ret == SOCKET_ERROR) {
+		if (Ret == 0 || Ret == STKSOCKET_ERROR) {
 			break;
 		}
 	}
@@ -426,7 +428,7 @@ int StkSocketMgr::ConnectSocket(int Id)
 			setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_SNDBUF, (const char *)&Buffr, sizeof(int));
 
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
-				if (connect(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen) == SOCKET_ERROR) {
+				if (connect(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen) == STKSOCKET_ERROR) {
 					PutLog(LOG_CONNERROR, Id, L"", L"", 0, STKSOCKET_ERRORCODE);
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
@@ -540,7 +542,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 
 				// BINDに失敗したらソケットをクローズする
 				int RetBind = bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen);
-				if (RetBind == SOCKET_ERROR) {
+				if (RetBind == STKSOCKET_ERROR) {
 					if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
 						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, STKSOCKET_ERRORCODE);
 					} else {
@@ -558,7 +560,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
 					// LISTENに失敗したらソケットをクローズする
 					int RetListen = listen(SocketInfo[Loop].Sock, 5);
-					if (RetListen == SOCKET_ERROR) {
+					if (RetListen == STKSOCKET_ERROR) {
 						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, STKSOCKET_ERRORCODE);
 						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
@@ -882,7 +884,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 
 			int Ret = recv(TmpSock, (char*)Buffer + Offset, FetchSize, 0);
 			CurrWaitTime = StkPlGetTickCount();
-			if (Ret == SOCKET_ERROR) {
+			if (Ret == STKSOCKET_ERROR) {
 				PutLog(LOG_RECVERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 				return Ret;
 			}
@@ -1040,7 +1042,7 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int Buffe
 		socklen_t SenderAddrLen = sizeof(SenderAddr);
 		int Ret = recvfrom(TmpSock, (char*)Buffer, BufferSize, 0, (sockaddr*)&SenderAddr, &SenderAddrLen);
 #endif
-		if (Ret == SOCKET_ERROR) {
+		if (Ret == STKSOCKET_ERROR) {
 			PutLog(LOG_RECVERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 			return Ret;
 		}
@@ -1111,7 +1113,7 @@ int StkSocketMgr::Send(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 			SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM &&
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER) {
 			int Ret = send(SocketInfo[Loop].AcceptedSock, (char*)Buffer, BufferSize, 0);
-			if (Ret == SOCKET_ERROR) {
+			if (Ret == STKSOCKET_ERROR) {
 				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 				return Ret;
 			}
@@ -1122,7 +1124,7 @@ int StkSocketMgr::Send(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 			SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM &&
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_SENDER) {
 			int Ret = send(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0);
-			if (Ret == SOCKET_ERROR) {
+			if (Ret == STKSOCKET_ERROR) {
 				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 				return Ret;
 			}
@@ -1179,7 +1181,7 @@ int StkSocketMgr::SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, (sockaddr*)&Addr, sizeof(Addr));
 			}
 
-			if (Ret == SOCKET_ERROR) {
+			if (Ret == STKSOCKET_ERROR) {
 				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 				return Ret;
 			}
