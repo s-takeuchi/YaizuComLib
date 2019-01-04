@@ -8,7 +8,11 @@
 
 #else
 
+#include <sys/types.h>
 #include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <netinet/in.h>
 
 #endif
 
@@ -338,7 +342,11 @@ int StkSocketMgr::GetSocketInfo(int TargetId, int* SockType, int* ActionType, wc
 
 void StkSocketMgr::CloseSocketWaitForPeerClose(STK_SOCKET Target)
 {
+#ifdef WIN32
 	shutdown(Target, SD_SEND);
+#else
+	shutdown(Target, SHUT_WR);
+#endif
 	int Timeo = 10000;
 	setsockopt(Target, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Timeo, sizeof(int));
 	while (true) {
@@ -348,8 +356,13 @@ void StkSocketMgr::CloseSocketWaitForPeerClose(STK_SOCKET Target)
 			break;
 		}
 	}
+#ifdef WIN32
 	shutdown(Target, SD_BOTH);
 	closesocket(Target);
+#else
+	shutdown(Target, SHUT_RDWR);
+	close(Target);
+#endif
 }
 
 int StkSocketMgr::ConnectSocket(int Id)
@@ -406,7 +419,11 @@ int StkSocketMgr::ConnectSocket(int Id)
 				if (connect(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen) == SOCKET_ERROR) {
 					PutLog(LOG_CONNERROR, Id, L"", L"", 0, WSAGetLastError());
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
+#ifdef WIN32
 					closesocket(SocketInfo[Loop].Sock);
+#else
+					close(SocketInfo[Loop].Sock);
+#endif
 					freeaddrinfo(ResAddr);
 					return -1;
 				}
@@ -439,7 +456,11 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, bool WaitForPeerClose)
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM && WaitForPeerClose) {
 				CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock);
 			} else {
+#ifdef WIN32
 				closesocket(SocketInfo[Loop].Sock);
+#else
+				close(SocketInfo[Loop].Sock);
+#endif
 			}
 			SocketInfo[Loop].Sock = 0;
 			SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
@@ -509,7 +530,11 @@ int StkSocketMgr::OpenSocket(int TargetId)
 						PutLog(LOG_BINDERR, TargetId, L"", L"", 0, WSAGetLastError());
 					}
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
+#ifdef WIN32
 					closesocket(SocketInfo[Loop].Sock);
+#else
+					close(SocketInfo[Loop].Sock);
+#endif
 					freeaddrinfo(ResAddr);
 					return -1;
 				}
@@ -519,7 +544,11 @@ int StkSocketMgr::OpenSocket(int TargetId)
 					if (RetListen == SOCKET_ERROR) {
 						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, WSAGetLastError());
 						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
+#ifdef WIN32
 						closesocket(SocketInfo[Loop].Sock);
+#else
+						close(SocketInfo[Loop].Sock);
+#endif
 						freeaddrinfo(ResAddr);
 						return -1;
 					}
@@ -598,7 +627,11 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 				if (WaitForPeerClose) {
 					CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock);
 				} else {
+#ifdef WIN32
 					closesocket(SocketInfo[Loop].AcceptedSock);
+#else
+					close(SocketInfo[Loop].AcceptedSock);
+#endif
 				}
 				SocketInfo[Loop].AcceptedSock = 0;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
@@ -630,7 +663,11 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 			}
 			if (CondC3) {
 				// If the socket information is not copied, closesocke() is called.
+#ifdef WIN32
 				closesocket(SocketInfo[Loop].Sock);
+#else
+				close(SocketInfo[Loop].Sock);
+#endif
 				SocketInfo[Loop].Sock = 0;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 				if (AcceptSockFnd == false) {
@@ -644,8 +681,12 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 				continue;
 			}
 			if (SocketInfo[Loop].Status == StkSocketInfo::STATUS_OPEN) {
+#ifdef WIN32
 				closesocket(SocketInfo[Loop].Sock);
-				SocketInfo[Loop].Sock = NULL;
+#else
+				close(SocketInfo[Loop].Sock);
+#endif
+				SocketInfo[Loop].Sock = 0;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 				PutLog(LOG_UDPSOCKCLOSE, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 			}
@@ -706,7 +747,11 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 			if (WaitForPeerClose) {
 				CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock);
 			} else {
+#ifdef WIN32
 				closesocket(SocketInfo[Loop].AcceptedSock);
+#else
+				close(SocketInfo[Loop].AcceptedSock);
+#endif
 			}
 			SocketInfo[Loop].AcceptedSock = 0;
 			SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
@@ -995,8 +1040,10 @@ int StkSocketMgr::GetUdpMaxMessageSize(int Id)
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == Id && SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_DGRAM) {
 			int OptLen = sizeof(int);
-			int OptVal;
+			int OptVal = 65507;
+#ifdef WIN32
 			getsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_MAX_MSG_SIZE, (char*)&OptVal, &OptLen);
+#endif
 			return OptVal;
 		}
 	}
@@ -1090,7 +1137,11 @@ int StkSocketMgr::SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				if (RetMethod != 0) {
 					PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, WSAGetLastError());
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
+#ifdef WIN32
 					closesocket(SocketInfo[Loop].Sock);
+#else
+					close(SocketInfo[Loop].Sock);
+#endif
 					return -1;
 				}
 				Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, ResAddr->ai_addr, ResAddr->ai_addrlen);
