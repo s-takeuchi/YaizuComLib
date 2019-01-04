@@ -5,6 +5,7 @@
 
 #include <winsock2.h>
 #include <Ws2tcpip.h>
+#define STKSOCKET_ERRORCODE WSAGetLastError()
 
 #else
 
@@ -13,11 +14,13 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#define STKSOCKET_ERRORCODE errno
 
 #endif
 
 #include "../StkPl.h"
 #include "StkSocketMgr.h"
+#include "StkSocketInfo.h"
 
 StkSocketMgr* StkSocketMgr::ThisInstance;
 
@@ -389,17 +392,24 @@ int StkSocketMgr::ConnectSocket(int Id)
 			StkPlSPrintf(ServName, 256, "%d", SocketInfo[Loop].Port);
 			int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 			if (Ret != 0) {
-				PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, WSAGetLastError());
+				PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, STKSOCKET_ERRORCODE);
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 				return -1;
 			}
 
 			SocketInfo[Loop].Sock = socket(ResAddr->ai_family, ResAddr->ai_socktype, ResAddr->ai_protocol);
 			// ソケットのオープンに失敗したら"Continue"
+#ifdef WIN32
 			if (SocketInfo[Loop].Sock == INVALID_SOCKET) {
 				freeaddrinfo(ResAddr);
 				return -1;
 			}
+#else
+			if (SocketInfo[Loop].Sock < 0) {
+				freeaddrinfo(ResAddr);
+				return -1;
+			}
+#endif
 
 			// For avoiding java connection reset exception
 			linger Sol;
@@ -417,7 +427,7 @@ int StkSocketMgr::ConnectSocket(int Id)
 
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
 				if (connect(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen) == SOCKET_ERROR) {
-					PutLog(LOG_CONNERROR, Id, L"", L"", 0, WSAGetLastError());
+					PutLog(LOG_CONNERROR, Id, L"", L"", 0, STKSOCKET_ERRORCODE);
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
 					closesocket(SocketInfo[Loop].Sock);
@@ -509,25 +519,32 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				StkPlSPrintf(ServName, 256, "%d", SocketInfo[Loop].Port);
 				int Ret = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 				if (Ret != 0) {
-					PutLog(LOG_NAMESOLVEERR, TargetId, L"", L"", 0, WSAGetLastError());
+					PutLog(LOG_NAMESOLVEERR, TargetId, L"", L"", 0, STKSOCKET_ERRORCODE);
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					return -1;
 				}
 
 				SocketInfo[Loop].Sock = socket(ResAddr->ai_family, ResAddr->ai_socktype, ResAddr->ai_protocol);
 				// ソケットのオープンに失敗したら呼び出し元に戻る
+#ifdef WIN32
 				if (SocketInfo[Loop].Sock == INVALID_SOCKET) {
 					freeaddrinfo(ResAddr);
 					return -1;
 				}
+#else
+				if (SocketInfo[Loop].Sock < 0) {
+					freeaddrinfo(ResAddr);
+					return -1;
+				}
+#endif
 
 				// BINDに失敗したらソケットをクローズする
 				int RetBind = bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen);
 				if (RetBind == SOCKET_ERROR) {
 					if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
-						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, WSAGetLastError());
+						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, STKSOCKET_ERRORCODE);
 					} else {
-						PutLog(LOG_BINDERR, TargetId, L"", L"", 0, WSAGetLastError());
+						PutLog(LOG_BINDERR, TargetId, L"", L"", 0, STKSOCKET_ERRORCODE);
 					}
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
@@ -542,7 +559,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 					// LISTENに失敗したらソケットをクローズする
 					int RetListen = listen(SocketInfo[Loop].Sock, 5);
 					if (RetListen == SOCKET_ERROR) {
-						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, WSAGetLastError());
+						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, STKSOCKET_ERRORCODE);
 						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
 						closesocket(SocketInfo[Loop].Sock);
@@ -714,9 +731,15 @@ int StkSocketMgr::Accept(int Id)
 				return -1;
 			}
 			SocketInfo[Loop].AcceptedSock = accept(SocketInfo[Loop].Sock, NULL, NULL);
+#ifdef WIN32
 			if (SocketInfo[Loop].AcceptedSock == INVALID_SOCKET) {
 				return -1;
 			}
+#else
+			if (SocketInfo[Loop].AcceptedSock < 0) {
+				return -1;
+			}
+#endif
 			SocketInfo[Loop].Status = StkSocketInfo::STATUS_ACCEPT;
 
 			// For avoiding java connection reset exception
@@ -860,7 +883,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			int Ret = recv(TmpSock, (char*)Buffer + Offset, FetchSize, 0);
 			CurrWaitTime = StkPlGetTickCount();
 			if (Ret == SOCKET_ERROR) {
-				PutLog(LOG_RECVERROR, LogId, L"", L"", 0, WSAGetLastError());
+				PutLog(LOG_RECVERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 				return Ret;
 			}
 			if (Ret == 0 && Offset == 0) {
@@ -1010,13 +1033,18 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int Buffe
 		}
 
 		sockaddr_storage SenderAddr;
+#ifdef WIN32
 		int SenderAddrLen = sizeof(SenderAddr);
 		int Ret = recvfrom(TmpSock, (char*)Buffer, BufferSize, 0, (sockaddr*)&SenderAddr, &SenderAddrLen);
+#else
+		socklen_t SenderAddrLen = sizeof(SenderAddr);
+		int Ret = recvfrom(TmpSock, (char*)Buffer, BufferSize, 0, (sockaddr*)&SenderAddr, &SenderAddrLen);
+#endif
 		if (Ret == SOCKET_ERROR) {
-			PutLog(LOG_RECVERROR, LogId, L"", L"", 0, WSAGetLastError());
+			PutLog(LOG_RECVERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 			return Ret;
 		}
-		memcpy(&SocketInfo[Loop].LastAccessedAddr, &SenderAddr, SenderAddrLen);
+		memcpy(&SocketInfo[Loop].LastAccessedAddr, &SenderAddr, (size_t)SenderAddrLen);
 		if (Ret == 0) {
 			// 接続先ソケットがクローズした場合Ret=0となる
 			PutLog(LOG_UDPRECV, LogId, L"", L"", Ret, 0);
@@ -1084,7 +1112,7 @@ int StkSocketMgr::Send(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER) {
 			int Ret = send(SocketInfo[Loop].AcceptedSock, (char*)Buffer, BufferSize, 0);
 			if (Ret == SOCKET_ERROR) {
-				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, WSAGetLastError());
+				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 				return Ret;
 			}
 			PutLog(LOG_ACPTSEND, LogId, L"", L"", BufferSize, 0);
@@ -1095,7 +1123,7 @@ int StkSocketMgr::Send(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_SENDER) {
 			int Ret = send(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0);
 			if (Ret == SOCKET_ERROR) {
-				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, WSAGetLastError());
+				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 				return Ret;
 			}
 			PutLog(LOG_CNCTSEND, LogId, L"", L"", BufferSize, 0);
@@ -1135,7 +1163,7 @@ int StkSocketMgr::SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				StkPlSPrintf(ServName, 256, "%d", SocketInfo[Loop].Port);
 				int RetMethod = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 				if (RetMethod != 0) {
-					PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, WSAGetLastError());
+					PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, STKSOCKET_ERRORCODE);
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
 					closesocket(SocketInfo[Loop].Sock);
@@ -1152,7 +1180,7 @@ int StkSocketMgr::SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			}
 
 			if (Ret == SOCKET_ERROR) {
-				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, WSAGetLastError());
+				PutLog(LOG_SENDERROR, LogId, L"", L"", 0, STKSOCKET_ERRORCODE);
 				return Ret;
 			}
 			PutLog(LOG_UDPSEND, LogId, L"", L"", BufferSize, 0);
