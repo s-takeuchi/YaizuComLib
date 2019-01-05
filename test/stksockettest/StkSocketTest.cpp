@@ -554,7 +554,7 @@ void TestThreadProc0()
 			if (Ret > 0) {
 				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					StkPlPrintf("OK [%S]\r\n", (wchar_t*)Buffer);
+					StkPlPrintf("OK [%ls]\r\n", (wchar_t*)Buffer);
 					const wchar_t* TmpDat = L"Reply Hello, world!!";
 					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
 					StkSocket_CloseAccept(0, 0, true);
@@ -575,7 +575,7 @@ void TestThreadProc0()
 			if (Ret > 0) {
 				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Dummy data!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					StkPlPrintf("OK [%S]\r\n", (wchar_t*)Buffer);
+					StkPlPrintf("OK [%ls]\r\n", (wchar_t*)Buffer);
 					const wchar_t* TmpDat = L"Reply Dummy data!!";
 					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
 					StkSocket_CloseAccept(0, 0, true);
@@ -609,13 +609,15 @@ void TestThreadProc1()
 	int Ret;
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
-	StkSocket_Connect(1);
+	while (StkSocket_Connect(1) == -1) {
+		std::chrono::milliseconds(1000);
+	}
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
-		StkPlPrintf("[Recv/Send] : Send data %S...", Buf);
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("[Recv/Send] : Send data ...");
+		StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
 		exit(-1);
 	}
 	std::chrono::milliseconds(1000);
@@ -629,7 +631,7 @@ void TestThreadProc1()
 				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
 				exit(-1);
 			}
-			StkPlPrintf("OK [%S]\r\n", Buf);
+			StkPlPrintf("OK [%ls]\r\n", Buf);
 		}
 	} while (Ret <= 0);
 	StkSocket_Disconnect(1, 1, true);
@@ -641,7 +643,7 @@ void TestThreadProc1()
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
-		StkPlPrintf("[Recv/Send] : Send data %S...", Buf);
+		StkPlPrintf("[Recv/Send] : Send data %ls...", Buf);
 		StkPlPrintf("NG\r\n");
 		exit(-1);
 	}
@@ -656,7 +658,7 @@ void TestThreadProc1()
 				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
 				exit(-1);
 			}
-			StkPlPrintf("OK [%S]\r\n", Buf);
+			StkPlPrintf("OK [%ls]\r\n", Buf);
 		}
 	} while (Ret <= 0);
 	StkSocket_Disconnect(1, 1, true);
@@ -691,7 +693,7 @@ void TestThreadProc2()
 			if (Ret > 0) {
 				StkPlPrintf("[Recv/Send2] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					StkPlPrintf("OK [%S]\r\n", (wchar_t*)Buffer);
+					StkPlPrintf("OK [%ls]\r\n", (wchar_t*)Buffer);
 					break;
 				} else {
 					StkPlPrintf("NG\r\n");
@@ -727,14 +729,17 @@ void TestThreadProc3()
 
 	StkPlPrintf("[Recv/Send2] : Sender sent data...");
 	StkPlLStrCpy(Buf, L"Hello, world!!");
-	StkSocket_Connect(1);
+	while (StkSocket_Connect(1) == -1) {
+		std::chrono::milliseconds(1000);
+		StkPlPrintf("{Re} ");
+	}
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
 		StkPlPrintf("NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\r\n", Msg, ParamInt1, ParamInt2);
 		exit(-1);
 	}
-	StkPlPrintf("OK [%S]\r\n", Buf);
+	StkPlPrintf("OK [%ls]\r\n", Buf);
 
 	StkSocket_DeleteInfo(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
@@ -790,10 +795,10 @@ void TestThreadProc4()
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsStr((wchar_t*)Buffer, L"Hello, world!!") != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
-				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by receiver...OK [%S]\r\n", (wchar_t*)Buffer);
+				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by receiver...OK [%ls]\r\n", (wchar_t*)Buffer);
 				break;
 			} else {
-				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by receiver...NG [%S:%d]\r\n", (wchar_t*)Buffer, Msg);
+				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by receiver...NG [%ls:%d]\r\n", (wchar_t*)Buffer, Msg);
 				exit(-1);
 			}
 		}
@@ -815,7 +820,7 @@ void TestThreadProc4()
 		StkPlPrintf("[Recv/Send for UDP] : Receiver replied data...NG\r\n");
 		exit(-1);
 	}
-	StkPlPrintf("[Recv/Send for UDP] : Receiver replied data...OK [%S]\r\n", Buf);
+	StkPlPrintf("[Recv/Send for UDP] : Receiver replied data...OK [%ls]\r\n", Buf);
 
 	std::chrono::milliseconds(1000);
 
@@ -854,7 +859,7 @@ void TestThreadProc5()
 		StkPlPrintf("[Recv/Send for UDP] : Sender sent data...NG\r\n");
 		exit(-1);
 	}
-	StkPlPrintf("[Recv/Send for UDP] : Sender sent data...OK [%S]\r\n", Buf);
+	StkPlPrintf("[Recv/Send for UDP] : Sender sent data...OK [%ls]\r\n", Buf);
 
 	unsigned char Buffer[10000]; 
 	while (true) {
@@ -862,10 +867,10 @@ void TestThreadProc5()
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsStr((wchar_t*)Buffer, L"Shinya Takeuchi") != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
-				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by sender...OK [%S]\r\n", (wchar_t*)Buffer);
+				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by sender...OK [%ls]\r\n", (wchar_t*)Buffer);
 				break;
 			} else {
-				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by sender...NG [%S:%d]\r\n", (wchar_t*)Buffer, Msg);
+				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by sender...NG [%ls:%d]\r\n", (wchar_t*)Buffer, Msg);
 				exit(-1);
 			}
 		}
@@ -1115,15 +1120,15 @@ void TestThreadForAcceptSend1()
 	bool S3Flag = false;
 	StkPlStrCpy(Buf, 1024, "Hello, world from #1\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Connect(201);
+		while (StkSocket_Connect(201) == -1 && FindFlagCounter < 3) {
+			std::chrono::milliseconds(500);
+		}
 		StkSocket_Send(201, 201, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(201, 201, false);
 		if (FindFlagCounter >= 3) {
 			break;
 		}
 	}
-
-	FindFlagCounter++;
 	return;
 }
 
@@ -1132,15 +1137,15 @@ void TestThreadForAcceptSend2()
 	char Buf[1024];
 	StkPlStrCpy(Buf, 1024, "Hello, world from #2\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Connect(202);
+		while (StkSocket_Connect(202) == -1 && FindFlagCounter < 3) {
+			std::chrono::milliseconds(500);
+		}
 		StkSocket_Send(202, 202, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(202, 202, false);
 		if (FindFlagCounter >= 3) {
 			break;
 		}
 	}
-
-	FindFlagCounter++;
 	return;
 }
 
@@ -1149,15 +1154,15 @@ void TestThreadForAcceptSend3()
 	char Buf[1024];
 	StkPlStrCpy(Buf, 1024, "Hello, world from #3\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Connect(203);
+		while (StkSocket_Connect(203) == -1 && FindFlagCounter < 3) {
+			std::chrono::milliseconds(500);
+		}
 		StkSocket_Send(203, 203, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(203, 203, false);
 		if (FindFlagCounter >= 3) {
 			break;
 		}
 	}
-
-	FindFlagCounter++;
 	return;
 }
 
