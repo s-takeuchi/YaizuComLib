@@ -98,7 +98,7 @@ public:
 	void ClearLog();
 
 	// Add socket information
-	int AddSocketInfo(int, int, int, wchar_t[256], int);
+	int AddSocketInfo(int, int, int, const wchar_t[256], int);
 	// Copy the socket information for new ACCEPT
 	int CopySocketInfo(int, int);
 	// Delete socket information
@@ -124,7 +124,7 @@ public:
 	// データ受信(TCP)
 	int Receive(int, int, unsigned char*, int, int, int, unsigned char*, int);
 	// データ送信(TCP)
-	int Send(int, int, unsigned char*, int);
+	int Send(int, int, const unsigned char*, int);
 	// データ受信(UDP)
 	int ReceiveUdp(int, int, unsigned char*, int);
 	// データ送信(UDP)

@@ -41,7 +41,7 @@
 #define STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH  -3
 #define STKSOCKET_RECV_FINISHCOND_TIMEOUT        -4
 
-int StkSocket_AddInfo(int, int, int, wchar_t[256], int);
+int StkSocket_AddInfo(int, int, int, const wchar_t[256], int);
 int StkSocket_DeleteInfo(int);
 int StkSocket_GetInfo(int, int*, int*, int*, wchar_t[256], int*, bool*);
 int StkSocket_GetInfo(int, int*, int*, wchar_t[256], int*, bool*);
@@ -57,7 +57,7 @@ int StkSocket_Accept(int);
 int StkSocket_CloseAccept(int, int, bool);
 
 int StkSocket_Receive(int, int, unsigned char*, int, int, int, unsigned char*, int);
-int StkSocket_Send(int, int, unsigned char*, int);
+int StkSocket_Send(int, int, const unsigned char*, int);
 int StkSocket_ReceiveUdp(int, int, unsigned char*, int);
 int StkSocket_SendUdp(int, int, unsigned char*, int);
 int StkSocket_GetUdpMaxMessageSize(int);

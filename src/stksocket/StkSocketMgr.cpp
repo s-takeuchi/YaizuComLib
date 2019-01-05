@@ -185,7 +185,7 @@ void StkSocketMgr::ClearLog()
 // TargetAddr [in] : Host name or IP address
 // TargetPort [in] : Port number
 // Return : 0:Success, -1:Failure
-int StkSocketMgr::AddSocketInfo(int TargetId, int SockType, int ActionType, wchar_t TargetAddr[256], int TargetPort)
+int StkSocketMgr::AddSocketInfo(int TargetId, int SockType, int ActionType, const wchar_t TargetAddr[256], int TargetPort)
 {
 	// Check for maximum number of StkSocketInfos
 	if (NumOfSocketInfo >= MAX_SOCKET_NUMBER) {
@@ -540,6 +540,10 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				}
 #endif
 
+				// For avoiding bind failuer "Address in use"
+				int Yes = 1;
+				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&Yes, sizeof(int));
+
 				// BINDに失敗したらソケットをクローズする
 				int RetBind = bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen);
 				if (RetBind == STKSOCKET_ERROR) {
@@ -584,9 +588,6 @@ int StkSocketMgr::OpenSocket(int TargetId)
 					}
 				}
 
-				// For avoiding bind failuer "Address in use"
-				bool Yes = 1;
-				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&Yes, sizeof(bool));
 				// Timeout setting
 				int Timeo = 10000;
 				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Timeo, sizeof(int));
@@ -1104,7 +1105,7 @@ int StkSocketMgr::GetStatus(int TargetId)
 	return -1;
 }
 
-int StkSocketMgr::Send(int Id, int LogId, unsigned char* Buffer, int BufferSize)
+int StkSocketMgr::Send(int Id, int LogId, const unsigned char* Buffer, int BufferSize)
 {
 	int ErrCode = 0;
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {

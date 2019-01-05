@@ -1,6 +1,6 @@
 ﻿#include "StkSocketMgr.h"
 
-int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, wchar_t TargetAddr[256], int TargetPort)
+int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, const wchar_t TargetAddr[256], int TargetPort)
 {
 	return StkSocketMgr::GetInstance()->AddSocketInfo(TargetId, SockType, ActionType, TargetAddr, TargetPort);
 }
@@ -60,7 +60,7 @@ int StkSocket_Receive(int Id, int LogId, unsigned char* Buffer, int BufferSize, 
 	return StkSocketMgr::GetInstance()->Receive(Id, LogId, Buffer, BufferSize, FinishCondition, FinishCondTimeout, VarDat, VarDatSize);
 }
 
-int StkSocket_Send(int Id, int LogId, unsigned char* Buffer, int BufferSize)
+int StkSocket_Send(int Id, int LogId, const unsigned char* Buffer, int BufferSize)
 {
 	return StkSocketMgr::GetInstance()->Send(Id, LogId, Buffer, BufferSize);
 }

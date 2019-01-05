@@ -1,5 +1,6 @@
 ﻿#include <thread>
 #include <chrono>
+#include <cstring>
 
 #include "../../src/StkPl.h"
 #include "../../src/stksocket/stksocket.h"
@@ -372,7 +373,7 @@ int GenerateLogs()
 
 	StkPlPrintf("[Logging] : Call TakeLastLog() but empty log is returned...");
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg != NULL) {
+	if (Msg != 0) {
 		StkPlPrintf("NG\r\n");
 		return -1;
 	}
@@ -402,7 +403,7 @@ int GenerateLogs()
 
 	StkPlPrintf("[Logging] : Call TakeFirstLog() but empty log is returned...");
 	StkSocket_TakeFirstLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg != NULL) {
+	if (Msg != 0) {
 		StkPlPrintf("NG\r\n");
 		return -1;
 	}
@@ -457,7 +458,7 @@ int GenerateLogs()
 
 	StkPlPrintf("[Logging] : Call TakeFirstLog() but empty log is returned...");
 	StkSocket_TakeFirstLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg != NULL) {
+	if (Msg != 0) {
 		StkPlPrintf("NG\r\n");
 		return -1;
 	}
@@ -546,15 +547,16 @@ void TestThreadProc0()
 	unsigned char Buffer[10000]; 
 	unsigned char CondStr[1000];
 
-	StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 	while (true) {
 		if (StkSocket_Accept(0) == 0) {
 			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
+				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
 					StkPlPrintf("OK [%S]\r\n", (wchar_t*)Buffer);
-					StkSocket_Send(0, 0, (unsigned char*)L"Reply Hello, world!!", 50);
+					const wchar_t* TmpDat = L"Reply Hello, world!!";
+					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
 					StkSocket_CloseAccept(0, 0, true);
 					break;
 				} else {
@@ -566,15 +568,16 @@ void TestThreadProc0()
 	}
 	std::chrono::milliseconds(1000);
 
-	StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 	while (true) {
 		if (StkSocket_Accept(0) == 0) {
 			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (Ret > 0) {
+				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Dummy data!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
 					StkPlPrintf("OK [%S]\r\n", (wchar_t*)Buffer);
-					StkSocket_Send(0, 0, (unsigned char*)L"Reply Dummy data!!", 50);
+					const wchar_t* TmpDat = L"Reply Dummy data!!";
+					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
 					StkSocket_CloseAccept(0, 0, true);
 					break;
 				} else {
@@ -607,8 +610,8 @@ void TestThreadProc1()
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
 	StkSocket_Connect(1);
-	StkSocket_Send(1, 1, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
-	StkSocket_Send(1, 1, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
 		StkPlPrintf("[Recv/Send] : Send data %S...", Buf);
@@ -616,14 +619,14 @@ void TestThreadProc1()
 		exit(-1);
 	}
 	std::chrono::milliseconds(1000);
-	StkPlPrintf("[Recv/Send] : Sender received data...");
 	Ret = 0;
 	do {
-		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 50, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
+		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 100, NULL, 0);
 		if (Ret > 0) {
+			StkPlPrintf("[Recv/Send] : Sender received data...");
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsCmp((wchar_t*)Buf, L"Reply Hello, world!!") != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
-				StkPlPrintf("NG\r\n");
+				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
 				exit(-1);
 			}
 			StkPlPrintf("OK [%S]\r\n", Buf);
@@ -634,8 +637,8 @@ void TestThreadProc1()
 
 	StkPlLStrCpy(Buf, L"Dummy data!!");
 	StkSocket_Connect(1);
-	StkSocket_Send(1, 1, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
-	StkSocket_Send(1, 1, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
 		StkPlPrintf("[Recv/Send] : Send data %S...", Buf);
@@ -643,14 +646,14 @@ void TestThreadProc1()
 		exit(-1);
 	}
 	std::chrono::milliseconds(1000);
-	StkPlPrintf("[Recv/Send] : Sender received data...");
 	Ret = 0;
 	do {
-		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 50, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
+		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 100, NULL, 0);
 		if (Ret > 0) {
+			StkPlPrintf("[Recv/Send] : Sender received data...");
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsCmp((wchar_t*)Buf, L"Reply Dummy data!!") != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
-				StkPlPrintf("NG\r\n");
+				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
 				exit(-1);
 			}
 			StkPlPrintf("OK [%S]\r\n", Buf);
@@ -672,8 +675,12 @@ void TestThreadProc2()
 	int ParamInt1;
 	int ParamInt2;
 
-	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
-	StkSocket_Open(0);
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2020);
+	if (StkSocket_Open(0) == -1) {
+		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		StkPlPrintf("[Recv/Send2] : Appropriate string has been received by receiver... NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\r\n", Msg, ParamInt1, ParamInt2);
+		exit(-1);
+	}
 	unsigned char Buffer[10000]; 
 	unsigned char CondStr[1000];
 
@@ -715,16 +722,16 @@ void TestThreadProc3()
 	int ParamInt2;
 
 	std::chrono::milliseconds(1000);
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2020);
 	wchar_t Buf[10000];
 
 	StkPlPrintf("[Recv/Send2] : Sender sent data...");
 	StkPlLStrCpy(Buf, L"Hello, world!!");
 	StkSocket_Connect(1);
-	StkSocket_Send(1, 1, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\r\n", Msg, ParamInt1, ParamInt2);
 		exit(-1);
 	}
 	StkPlPrintf("OK [%S]\r\n", Buf);
@@ -936,7 +943,7 @@ void TestThreadProc9()
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
 	StkSocket_Connect(1);
-	StkSocket_Send(1, 1, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	std::chrono::milliseconds(3000);
 	StkSocket_ForceStop(0);
 	StkSocket_Disconnect(1, 1, true);
@@ -953,17 +960,17 @@ void TestThreadProc10(int Command)
 
 	if (Command == 0) {
 		RecvType = 256;
-		strcpy_s((char*)TestStr, 65536, "012345678901234567890123456789");
+		StkPlStrCpy((char*)TestStr, 65536, "012345678901234567890123456789");
 		Size = 30;
 	}
 	if (Command >= 1 && Command <= 4) {
 		RecvType = Command * -1;
-		strcpy_s((char*)TestStr, 65536, "01234567890123456789012345678901234567890123456789");
+		StkPlStrCpy((char*)TestStr, 65536, "01234567890123456789012345678901234567890123456789");
 		Size = 50;
 	}
 	if (Command == 5) {
 		RecvType = -3;
-		strcpy_s((char*)TestStr, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTestHello!!!0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
+		StkPlStrCpy((char*)TestStr, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTestHello!!!0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
 		Size = 156;
 	}
 
@@ -976,7 +983,7 @@ void TestThreadProc10(int Command)
 		if (StkSocket_Accept(10) == 0) {
 			memset(Buffer, '\0', 512);
 			int Ret = StkSocket_Receive(10, 10, Buffer, Size, RecvType, 0, NULL, 0);
-			if (Ret != Size || strncmp((char*)Buffer, (char*)TestStr, Size) != 0) {
+			if (Ret != Size || StkPlStrNCmp((char*)Buffer, (char*)TestStr, Size) != 0) {
 				int TmpLog;
 				int TmpLogId;
 				wchar_t TmpLogParamStr1[256];
@@ -1002,10 +1009,10 @@ void TestThreadProc11(int Command)
 {
 	char Buf[65536];
 	if (Command >= 0 && Command <= 4) {
-		strcpy_s(Buf, 65536, "012345678901234567890123456789012345678901234567890123456789");
+		StkPlStrCpy(Buf, 65536, "012345678901234567890123456789012345678901234567890123456789");
 	}
 	if (Command == 5) {
-		strcpy_s(Buf, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n");
+		StkPlStrCpy(Buf, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n");
 	}
 
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2002);
@@ -1017,7 +1024,7 @@ void TestThreadProc11(int Command)
 		std::chrono::milliseconds(100);
 		StkPlPrintf("*");
 	}
-	StkSocket_Send(1, 1, (unsigned char*)Buf, strlen(Buf));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, StkPlStrLen(Buf));
 	while (PeerCloseOkFlag == false) {
 		std::chrono::milliseconds(100);
 	}
@@ -1041,9 +1048,9 @@ void TestThreadForAcceptRecv1()
 	while (true) {
 		if (StkSocket_Accept(101) == 0) {
 			StkSocket_Receive(101, 101, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
-			if (strstr((char*)Buf, "#1") != 0) S1Flag = true;
-			if (strstr((char*)Buf, "#2") != 0) S2Flag = true;
-			if (strstr((char*)Buf, "#3") != 0) S3Flag = true;
+			if (StkPlStrStr((char*)Buf, "#1") != 0) S1Flag = true;
+			if (StkPlStrStr((char*)Buf, "#2") != 0) S2Flag = true;
+			if (StkPlStrStr((char*)Buf, "#3") != 0) S3Flag = true;
 			StkSocket_CloseAccept(101, 101, true);
 			if (S1Flag && S2Flag && S3Flag) break;
 			std::chrono::milliseconds((rand() % 10) * 100);
@@ -1064,9 +1071,9 @@ void TestThreadForAcceptRecv2()
 	while (true) {
 		if (StkSocket_Accept(102) == 0) {
 			StkSocket_Receive(102, 102, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
-			if (strstr((char*)Buf, "#1") != 0) S1Flag = true;
-			if (strstr((char*)Buf, "#2") != 0) S2Flag = true;
-			if (strstr((char*)Buf, "#3") != 0) S3Flag = true;
+			if (StkPlStrStr((char*)Buf, "#1") != 0) S1Flag = true;
+			if (StkPlStrStr((char*)Buf, "#2") != 0) S2Flag = true;
+			if (StkPlStrStr((char*)Buf, "#3") != 0) S3Flag = true;
 			StkSocket_CloseAccept(102, 102, true);
 			if (S1Flag && S2Flag && S3Flag) break;
 			std::chrono::milliseconds((rand() % 10) * 100);
@@ -1087,9 +1094,9 @@ void TestThreadForAcceptRecv3()
 	while (true) {
 		if (StkSocket_Accept(103) == 0) {
 			StkSocket_Receive(103, 103, Buf, 1000000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, NULL, 0);
-			if (strstr((char*)Buf, "#1") != 0) S1Flag = true;
-			if (strstr((char*)Buf, "#2") != 0) S2Flag = true;
-			if (strstr((char*)Buf, "#3") != 0) S3Flag = true;
+			if (StkPlStrStr((char*)Buf, "#1") != 0) S1Flag = true;
+			if (StkPlStrStr((char*)Buf, "#2") != 0) S2Flag = true;
+			if (StkPlStrStr((char*)Buf, "#3") != 0) S3Flag = true;
 			StkSocket_CloseAccept(103, 103, true);
 			if (S1Flag && S2Flag && S3Flag) break;
 			std::chrono::milliseconds((rand() % 10) * 100);
@@ -1106,10 +1113,10 @@ void TestThreadForAcceptSend1()
 	bool S1Flag = false;
 	bool S2Flag = false;
 	bool S3Flag = false;
-	strcpy_s(Buf, 1024, "Hello, world from #1\r\n");
+	StkPlStrCpy(Buf, 1024, "Hello, world from #1\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
 		StkSocket_Connect(201);
-		StkSocket_Send(201, 201, (unsigned char*)Buf, strlen(Buf) + 1);
+		StkSocket_Send(201, 201, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(201, 201, false);
 		if (FindFlagCounter >= 3) {
 			break;
@@ -1123,10 +1130,10 @@ void TestThreadForAcceptSend1()
 void TestThreadForAcceptSend2()
 {
 	char Buf[1024];
-	strcpy_s(Buf, 1024, "Hello, world from #2\r\n");
+	StkPlStrCpy(Buf, 1024, "Hello, world from #2\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
 		StkSocket_Connect(202);
-		StkSocket_Send(202, 202, (unsigned char*)Buf, strlen(Buf) + 1);
+		StkSocket_Send(202, 202, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(202, 202, false);
 		if (FindFlagCounter >= 3) {
 			break;
@@ -1140,10 +1147,10 @@ void TestThreadForAcceptSend2()
 void TestThreadForAcceptSend3()
 {
 	char Buf[1024];
-	strcpy_s(Buf, 1024, "Hello, world from #3\r\n");
+	StkPlStrCpy(Buf, 1024, "Hello, world from #3\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
 		StkSocket_Connect(203);
-		StkSocket_Send(203, 203, (unsigned char*)Buf, strlen(Buf) + 1);
+		StkSocket_Send(203, 203, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(203, 203, false);
 		if (FindFlagCounter >= 3) {
 			break;

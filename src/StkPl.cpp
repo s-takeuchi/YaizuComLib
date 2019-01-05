@@ -21,6 +21,11 @@ int StkPlStrCmp(const char* Str1, const char* Str2)
 	return strcmp(Str1, Str2);
 }
 
+int StkPlStrNCmp(const char* Str1, const char* Str2, size_t Num)
+{
+	return strncmp(Str1, Str2, Num);
+}
+
 const char* StkPlStrStr(const char* Str1, const char* Str2)
 {
 	return strstr(Str1, Str2);

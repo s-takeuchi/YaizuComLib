@@ -11,6 +11,7 @@
 
 size_t StkPlStrLen(const char*);
 int StkPlStrCmp(const char*, const char*);
+int StkPlStrNCmp(const char*, const char*, size_t);
 const char* StkPlStrStr(const char*, const char*);
 char* StkPlStrCpy(char*, size_t, const char*);
 char* StkPlStrNCpy(char*, size_t, const char*, size_t);
