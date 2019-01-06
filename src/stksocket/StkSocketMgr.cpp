@@ -798,10 +798,6 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 {
 	// Select用FDS作成
 	long long CurrWaitTime = StkPlGetTickCount();
-	timeval Timeout;
-	Timeout.tv_sec = 0;
-	Timeout.tv_usec = 0;
-	fd_set RecFds;
 
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		STK_SOCKET TmpSock = 0;
@@ -829,12 +825,16 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 		bool ChunkEnd = false;
 		unsigned char* TmpSizePtr = 0;
 
-			int Offset = 0;
+		int Offset = 0;
 		while (true) {
+			timeval Timeout;
+			Timeout.tv_sec = 0;
+			Timeout.tv_usec = 0;
+			fd_set RecFds;
 			FD_ZERO(&RecFds);
 			FD_SET(TmpSock, &RecFds);
 			// 一定時間待ったあとAcceptedSockに接続があるか確認する
-			select(0, &RecFds, NULL, NULL, &Timeout);
+			select(TmpSock + 1, &RecFds, NULL, NULL, &Timeout);
 			if (!FD_ISSET(TmpSock, &RecFds)) {
 				// Timeout occurrence and no data received
 				if (SocketInfo[Loop].ForceStop == true) {
@@ -1008,12 +1008,6 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 
 int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 {
-	// Select用FDS作成
-	timeval Timeout;
-	Timeout.tv_sec = 0;
-	Timeout.tv_usec = 0;
-	fd_set RecFds;
-
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		STK_SOCKET TmpSock = 0;
 		if (SocketInfo[Loop].ElementId == Id &&
@@ -1026,10 +1020,15 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int Buffe
 		if (TmpSock == 0) {
 			continue;
 		}
+		// Select用FDS作成
+		timeval Timeout;
+		Timeout.tv_sec = 0;
+		Timeout.tv_usec = 0;
+		fd_set RecFds;
 		FD_ZERO(&RecFds);
 		FD_SET(TmpSock, &RecFds);
 		// 一定時間待ったあとTmpSockに接続があるか確認する
-		select(0, &RecFds, NULL, NULL, &Timeout);
+		select(TmpSock + 1, &RecFds, NULL, NULL, &Timeout);
 		if (!FD_ISSET(TmpSock, &RecFds)) {
 			// Timeout occurrence and no data received
 			return -2;

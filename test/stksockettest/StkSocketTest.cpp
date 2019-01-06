@@ -4,12 +4,12 @@
 
 #include "../../src/StkPl.h"
 #include "../../src/stksocket/stksocket.h"
+#include "StkSocketTestHttp.h"
 /***********************
 #include "StkSocketTestMa.h"
 #include "StkSocketTestGetSockInfo.h"
 #include "StkSocketIPv6.h"
 #include "StkSocketMemoryLeak.h"
-#include "StkSocketTestHttp.h"
 ***********************/
 
 bool StartFlag = false;
@@ -566,7 +566,7 @@ void TestThreadProc0()
 			}
 		}
 	}
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	while (true) {
 		if (StkSocket_Accept(0) == 0) {
@@ -587,7 +587,7 @@ void TestThreadProc0()
 			}
 		}
 	}
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
@@ -603,14 +603,14 @@ void TestThreadProc1()
 	int ParamInt1;
 	int ParamInt2;
 
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	wchar_t Buf[10000];
 	int Ret;
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
 	while (StkSocket_Connect(1) == -1) {
-		std::chrono::milliseconds(1000);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
@@ -620,7 +620,7 @@ void TestThreadProc1()
 		StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
 		exit(-1);
 	}
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	Ret = 0;
 	do {
 		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 100, NULL, 0);
@@ -635,7 +635,7 @@ void TestThreadProc1()
 		}
 	} while (Ret <= 0);
 	StkSocket_Disconnect(1, 1, true);
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	StkPlLStrCpy(Buf, L"Dummy data!!");
 	StkSocket_Connect(1);
@@ -647,7 +647,7 @@ void TestThreadProc1()
 		StkPlPrintf("NG\r\n");
 		exit(-1);
 	}
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	Ret = 0;
 	do {
 		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 100, NULL, 0);
@@ -662,7 +662,7 @@ void TestThreadProc1()
 		}
 	} while (Ret <= 0);
 	StkSocket_Disconnect(1, 1, true);
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	StkSocket_Close(1, true);
 	StkSocket_DeleteInfo(1);
@@ -711,7 +711,7 @@ void TestThreadProc2()
 		StkPlPrintf("[Recv/Send2] : Receiver socket close is called...NG\r\n");
 		exit(-1);
 	}
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 void TestThreadProc3()
@@ -723,14 +723,14 @@ void TestThreadProc3()
 	int ParamInt1;
 	int ParamInt2;
 
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2020);
 	wchar_t Buf[10000];
 
 	StkPlPrintf("[Recv/Send2] : Sender sent data...");
 	StkPlLStrCpy(Buf, L"Hello, world!!");
 	while (StkSocket_Connect(1) == -1) {
-		std::chrono::milliseconds(1000);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		StkPlPrintf("{Re} ");
 	}
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
@@ -749,7 +749,7 @@ void TestThreadProc3()
 		StkPlPrintf("[Recv/Send2] : Sender socket close is called...NG\r\n");
 		exit(-1);
 	}
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 void TestThreadProc4()
@@ -807,13 +807,13 @@ void TestThreadProc4()
 	StkSocket_DeleteInfo(20);
 	StkSocket_DeleteInfo(30);
 
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	wchar_t Buf[10000];
 	for (int LoopSnd = 0; LoopSnd < 50; LoopSnd++) {
 		StkPlSwPrintf(Buf, 10000, L"Shinya Takeuchi %d", LoopSnd);
 		int Ret = StkSocket_SendUdp(0, 0, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
-		std::chrono::milliseconds(10);
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
@@ -822,7 +822,7 @@ void TestThreadProc4()
 	}
 	StkPlPrintf("[Recv/Send for UDP] : Receiver replied data...OK [%ls]\r\n", Buf);
 
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
@@ -844,7 +844,7 @@ void TestThreadProc5()
 	int ParamInt1;
 	int ParamInt2;
 
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 
 	wchar_t Buf[10000];
@@ -852,7 +852,7 @@ void TestThreadProc5()
 	for (int LoopSnd = 0; LoopSnd < 50; LoopSnd++) {
 		StkPlSwPrintf(Buf, 10000, L"Hello, world!! %d", LoopSnd);
 		StkSocket_SendUdp(1, 1, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
-		std::chrono::milliseconds(10);
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
@@ -908,14 +908,12 @@ void TestThreadProc6()
 	StkSocket_Close(0, false);
 	StkSocket_DeleteInfo(0);
 	StkPlPrintf("OK\r\n");
-	return;
 }
 
 void TestThreadProc7()
 {
-	std::chrono::milliseconds(3000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	FinishFlag = true;
-	return;
 }
 
 void TestThreadProc8()
@@ -942,14 +940,14 @@ void TestThreadProc8()
 
 void TestThreadProc9()
 {
-	std::chrono::milliseconds(1000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	wchar_t Buf[10000];
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
 	StkSocket_Connect(1);
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
-	std::chrono::milliseconds(3000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	StkSocket_ForceStop(0);
 	StkSocket_Disconnect(1, 1, true);
 	StkSocket_DeleteInfo(1);
@@ -1023,15 +1021,15 @@ void TestThreadProc11(int Command)
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2002);
 
 	while (StartFlag == false) {
-		std::chrono::milliseconds(100);
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	while (StkSocket_Connect(1) == -1) {
-		std::chrono::milliseconds(100);
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		StkPlPrintf("*");
 	}
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, StkPlStrLen(Buf));
 	while (PeerCloseOkFlag == false) {
-		std::chrono::milliseconds(100);
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	StkSocket_Disconnect(1, 1, true);
 
@@ -1058,7 +1056,7 @@ void TestThreadForAcceptRecv1()
 			if (StkPlStrStr((char*)Buf, "#3") != 0) S3Flag = true;
 			StkSocket_CloseAccept(101, 101, true);
 			if (S1Flag && S2Flag && S3Flag) break;
-			std::chrono::milliseconds((rand() % 10) * 100);
+			std::this_thread::sleep_for(std::chrono::milliseconds((rand() % 10) * 100));
 		}
 	}
 	StkPlPrintf("[Multi accepts] : Acceptor #1 is working...OK\r\n");
@@ -1081,7 +1079,7 @@ void TestThreadForAcceptRecv2()
 			if (StkPlStrStr((char*)Buf, "#3") != 0) S3Flag = true;
 			StkSocket_CloseAccept(102, 102, true);
 			if (S1Flag && S2Flag && S3Flag) break;
-			std::chrono::milliseconds((rand() % 10) * 100);
+			std::this_thread::sleep_for(std::chrono::milliseconds((rand() % 10) * 100));
 		}
 	}
 	StkPlPrintf("[Multi accepts] : Acceptor #2 is working...OK\r\n");
@@ -1104,7 +1102,7 @@ void TestThreadForAcceptRecv3()
 			if (StkPlStrStr((char*)Buf, "#3") != 0) S3Flag = true;
 			StkSocket_CloseAccept(103, 103, true);
 			if (S1Flag && S2Flag && S3Flag) break;
-			std::chrono::milliseconds((rand() % 10) * 100);
+			std::this_thread::sleep_for(std::chrono::milliseconds((rand() % 10) * 100));
 		}
 	}
 	StkPlPrintf("[Multi accepts] : Acceptor #3 is working...OK\r\n");
@@ -1121,7 +1119,7 @@ void TestThreadForAcceptSend1()
 	StkPlStrCpy(Buf, 1024, "Hello, world from #1\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
 		while (StkSocket_Connect(201) == -1 && FindFlagCounter < 3) {
-			std::chrono::milliseconds(500);
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
 		StkSocket_Send(201, 201, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(201, 201, false);
@@ -1138,7 +1136,7 @@ void TestThreadForAcceptSend2()
 	StkPlStrCpy(Buf, 1024, "Hello, world from #2\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
 		while (StkSocket_Connect(202) == -1 && FindFlagCounter < 3) {
-			std::chrono::milliseconds(500);
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
 		StkSocket_Send(202, 202, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(202, 202, false);
@@ -1155,7 +1153,7 @@ void TestThreadForAcceptSend3()
 	StkPlStrCpy(Buf, 1024, "Hello, world from #3\r\n");
 	for (int Loop = 0; Loop < 50; Loop++) {
 		while (StkSocket_Connect(203) == -1 && FindFlagCounter < 3) {
-			std::chrono::milliseconds(500);
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
 		StkSocket_Send(203, 203, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(203, 203, false);
@@ -1336,10 +1334,8 @@ int main(int Argc, char* Argv[])
 		return -1;
 	}
 
-	/***********************
 	StkSocketTestHttp TestHttpObj;
 	TestHttpObj.TestHttpTermination();
-	***********************/
 
 	{
 		std::thread *Receiver = new std::thread(TestThreadProc0);

@@ -1,66 +1,63 @@
-﻿#include <stdio.h>
-#include "..\..\src\stksocket\stksocket.h"
+﻿#include <thread>
+#include <chrono>
+
+#include "../../src/StkPl.h"
+#include "../../src/stksocket/stksocket.h"
 #include "StkSocketTestHttp.h"
 
-bool StkSocketTestHttp::FinishSendTest = false;
-bool StkSocketTestHttp::FinishRecvTest = false;
-
-DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination1(LPVOID Param)
+void StkSocketTestHttp::TestRecvHttpTermination1()
 {
 	unsigned char Dat[1024];
 
 	while (true) {
-		Sleep(10);
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		int Ret = StkSocket_Accept(100);
 		if (Ret == -1) {
 			continue;
 		}
 		Ret = StkSocket_Receive(100, 100, Dat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, -1);
 		if (Ret == -1 || Ret == -2) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
-		if (strstr((char*)Dat, "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\0") == NULL) {
-			printf("NG\r\n");
-			exit(0);
+		if (StkPlStrStr((char*)Dat, "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\0") == NULL) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 
-		strcpy_s((char*)Dat, 1024, "");
-		strcat_s((char*)Dat, 1024, "HTTP/1.1 200 OK\n");
-		strcat_s((char*)Dat, 1024, "Content-Length: 51\n");
-		strcat_s((char*)Dat, 1024, "Content-Type: text/html\n");
-		strcat_s((char*)Dat, 1024, "\n");
-		strcat_s((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
-		int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, strlen((char*)Dat) + 1);
+		StkPlStrCpy((char*)Dat, 1024, "");
+		StkPlStrCat((char*)Dat, 1024, "HTTP/1.1 200 OK\n");
+		StkPlStrCat((char*)Dat, 1024, "Content-Length: 51\n");
+		StkPlStrCat((char*)Dat, 1024, "Content-Type: text/html\n");
+		StkPlStrCat((char*)Dat, 1024, "\n");
+		StkPlStrCat((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
+		int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
 		if (RetS <= 0) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 		StkSocket_CloseAccept(100, 100, true);
 		break;
 	}
-
-	FinishRecvTest = true;
-	return 0;
 }
 
-DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
+void StkSocketTestHttp::TestSendHttpTermination1()
 {
 	unsigned char Dat[1024];
 
-	strcpy_s((char*)Dat, 1024, "");
-	strcat_s((char*)Dat, 1024, "POST / HTTP/1.1\n");
-	strcat_s((char*)Dat, 1024, "Content-Type: text/html\n");
-	strcat_s((char*)Dat, 1024, "Content-Length: 101\n");
-	strcat_s((char*)Dat, 1024, "\n");
-	strcat_s((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+	StkPlStrCpy((char*)Dat, 1024, "");
+	StkPlStrCat((char*)Dat, 1024, "POST / HTTP/1.1\n");
+	StkPlStrCat((char*)Dat, 1024, "Content-Type: text/html\n");
+	StkPlStrCat((char*)Dat, 1024, "Content-Length: 101\n");
+	StkPlStrCat((char*)Dat, 1024, "\n");
+	StkPlStrCat((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
 
-	Sleep(3000);
+	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	StkSocket_Connect(101);
-	int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, strlen((char*)Dat) + 1);
+	int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
 	if (RetS <= 0) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	int RetR;
 	for (int Loop = 0; Loop < 10; Loop++) {
@@ -68,23 +65,20 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination1(LPVOID Param)
 		if (RetR > 0) {
 			break;
 		}
-		Sleep(100);
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	StkSocket_Disconnect(101, 101, true);
 	if (RetR <= 0) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	if (strstr((char*)Dat, "0123456789012345678901234567890123456789012345678z\0") == NULL) {
-		printf("NG\r\n");
-		exit(0);
+	if (StkPlStrStr((char*)Dat, "0123456789012345678901234567890123456789012345678z\0") == NULL) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-
-	FinishSendTest = true;
-	return 0;
 }
 
-DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
+void StkSocketTestHttp::TestRecvHttpTermination2()
 {
 	unsigned char Dat[1024];
 	unsigned char TestData[13][256] = {
@@ -105,59 +99,56 @@ DWORD WINAPI StkSocketTestHttp::TestRecvHttpTermination2(LPVOID Param)
 
 	for (int Loop = 0; Loop < 13; Loop++) {
 		while (true) {
-			Sleep(10);
-			int TcB = GetTickCount();
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			long long TcB = StkPlGetTickCount();
 			int Ret = StkSocket_Accept(100);
 			if (Ret == -1) {
 				continue;
 			}
 			Ret = StkSocket_Receive(100, 100, Dat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, -1);
 			if (Ret == -1 || Ret == -2) {
-				printf("NG (1)\r\n");
-				exit(0);
+				StkPlPrintf("NG (1)\r\n");
+				StkPlExit(0);
 			}
 			Dat[Ret] = '\0';
-			if (strcmp((char*)Dat, (char*)TestData[Loop]) != 0) {
-				printf("NG (2)\r\n");
-				exit(0);
+			if (StkPlStrCmp((char*)Dat, (char*)TestData[Loop]) != 0) {
+				StkPlPrintf("NG (2)\r\n");
+				StkPlExit(0);
 			}
-			int TcE = GetTickCount();
-			int Tc = (TcE - TcB) / 1000;
-			printf("<%d> ", Tc);
+			long long TcE = StkPlGetTickCount();
+			int Tc = int(TcE - TcB) / 1000;
+			StkPlPrintf("<%d> ", Tc);
 			if ((Loop == 0 && Tc != 3) || (Loop == 1 && Tc != 3) || (Loop == 2 && Tc != 0) ||
 				(Loop == 3 && Tc != 0) || (Loop == 4 && Tc != 0) || (Loop == 5 && Tc != 3) ||
 				(Loop == 6 && Tc != 0) || (Loop == 7 && Tc != 3) || (Loop == 8 && Tc != 3) ||
 				(Loop == 9 && Tc != 0) || (Loop == 10 && Tc != 3) || (Loop == 11 && Tc != 0) ||
 				(Loop == 12 && Tc != 0)) {
-				printf("NG (3)\r\n");
-				exit(0);
+				StkPlPrintf("NG (3)\r\n");
+				StkPlExit(0);
 			}
 			if (Loop == 12) {
 				StkSocket_CloseAccept(100, 100, true);
 				break;
 			}
 
-			strcpy_s((char*)Dat, 1024, "");
-			strcat_s((char*)Dat, 1024, "HTTP/1.1 200 OK\n");
-			strcat_s((char*)Dat, 1024, "Content-Type: text/html\n");
-			strcat_s((char*)Dat, 1024, "Content-Length: 51\n");
-			strcat_s((char*)Dat, 1024, "\n");
-			strcat_s((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
-			int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, strlen((char*)Dat) + 1);
+			StkPlStrCpy((char*)Dat, 1024, "");
+			StkPlStrCat((char*)Dat, 1024, "HTTP/1.1 200 OK\n");
+			StkPlStrCat((char*)Dat, 1024, "Content-Type: text/html\n");
+			StkPlStrCat((char*)Dat, 1024, "Content-Length: 51\n");
+			StkPlStrCat((char*)Dat, 1024, "\n");
+			StkPlStrCat((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
+			int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
 			if (RetS <= 0) {
-				printf("NG (4)\r\n");
-				exit(0);
+				StkPlPrintf("NG (4)\r\n");
+				StkPlExit(0);
 			}
 			StkSocket_CloseAccept(100, 100, true);
 			break;
 		}
 	}
-
-	FinishRecvTest = true;
-	return 0;
 }
 
-DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
+void StkSocketTestHttp::TestSendHttpTermination2()
 {
 	unsigned char Dat[1024];
 	unsigned char TestData[13][256] = {
@@ -177,18 +168,20 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 	};
 
 	for (int Loop = 0; Loop < 13; Loop++) {
-		strcpy_s((char*)Dat, 1024, (char*)TestData[Loop]);
+		StkPlStrCpy((char*)Dat, 1024, (char*)TestData[Loop]);
 
-		Sleep(3000);
-		StkSocket_Connect(101);
-		int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, strlen((char*)Dat) + 1);
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		while (StkSocket_Connect(101) == -1) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+		int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
 		if (RetS <= 0) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 		if (Loop == 12) {
 			StkSocket_Disconnect(101, 101, true);
-			Sleep(1000);
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			break;
 		}
 		int RetR;
@@ -201,46 +194,43 @@ DWORD WINAPI StkSocketTestHttp::TestSendHttpTermination2(LPVOID Param)
 		}
 		StkSocket_Disconnect(101, 101, true);
 		if (RetR <= 0) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
-		if (strstr((char*)Dat, "0123456789012345678901234567890123456789012345678z\0") == NULL) {
-			printf("NG\r\n");
-			exit(0);
+		if (StkPlStrStr((char*)Dat, "0123456789012345678901234567890123456789012345678z\0") == NULL) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 	}
-
-	FinishSendTest = true;
-	return 0;
 }
 
 void StkSocketTestHttp::TestHttpTermination()
 {
-	DWORD TmpId;
-
 	StkSocket_AddInfo(100, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2100);
 	StkSocket_Open(100);
 	StkSocket_AddInfo(101, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2100);
 
-	printf("[StkSocketTestHttp]:Normal case ... ");
-	FinishRecvTest = false;
-	FinishSendTest = false;
-	CreateThread(NULL, 0, &TestRecvHttpTermination1, NULL, 0, &TmpId);
-	CreateThread(NULL, 0, &TestSendHttpTermination1, NULL, 0, &TmpId);
-	while (FinishRecvTest != true || FinishSendTest != true) {
-		Sleep(100);
+	StkPlPrintf("[StkSocketTestHttp]:Normal case ... ");
+	{
+		std::thread *Receiver = new std::thread(TestRecvHttpTermination1);
+		std::thread *Sender = new std::thread(TestSendHttpTermination1);
+		Receiver->join();
+		Sender->join();
+		delete Receiver;
+		delete Sender;
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
-	printf("[StkSocketTestHttp]:Abnormal case (no Content-Length) ... ");
-	FinishRecvTest = false;
-	FinishSendTest = false;
-	CreateThread(NULL, 0, &TestRecvHttpTermination2, NULL, 0, &TmpId);
-	CreateThread(NULL, 0, &TestSendHttpTermination2, NULL, 0, &TmpId);
-	while (FinishRecvTest != true || FinishSendTest != true) {
-		Sleep(100);
+	StkPlPrintf("[StkSocketTestHttp]:Abnormal case (no Content-Length) ... ");
+	{
+		std::thread *Receiver = new std::thread(TestRecvHttpTermination2);
+		std::thread *Sender = new std::thread(TestSendHttpTermination2);
+		Receiver->join();
+		Sender->join();
+		delete Receiver;
+		delete Sender;
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
 	StkSocket_DeleteInfo(101);
 	StkSocket_Close(100, true);

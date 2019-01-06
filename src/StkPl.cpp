@@ -148,6 +148,12 @@ char* StkPlStrNCpy(char* Destination, size_t NumberOfElements, const char* Sourc
 	return Destination;
 }
 
+char * StkPlStrCat(char* Destination, size_t NumberOfElements, const char* Source)
+{
+	strcat_s(Destination, NumberOfElements, Source);
+	return Destination;
+}
+
 wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
 {
 	wcsncpy_s(Destination, NumberOfElements, Source, _TRUNCATE);
@@ -293,6 +299,11 @@ char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source
 char* StkPlStrNCpy(char* Destination, size_t NumberOfElements, const char* Source, size_t Num)
 {
 	return strncpy(Destination, Source, Num);
+}
+
+char * StkPlStrCat(char* Destination, size_t NumberOfElements, const char* Source)
+{
+	return strcat(Destination, Source);
 }
 
 wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)

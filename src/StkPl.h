@@ -15,7 +15,7 @@ int StkPlStrNCmp(const char*, const char*, size_t);
 const char* StkPlStrStr(const char*, const char*);
 char* StkPlStrCpy(char*, size_t, const char*);
 char* StkPlStrNCpy(char*, size_t, const char*, size_t);
-
+char * StkPlStrCat(char*, size_t, const char*);
 
 size_t StkPlWcsLen(const wchar_t*);
 int StkPlWcsCmp(const wchar_t*, const wchar_t*);

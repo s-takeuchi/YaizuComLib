@@ -1,15 +1,12 @@
 ﻿#pragma once
-#include <windows.h>
 
 class StkSocketTestHttp
 {
 public:
-	static DWORD WINAPI TestRecvHttpTermination1(LPVOID);
-	static DWORD WINAPI TestSendHttpTermination1(LPVOID);
-	static DWORD WINAPI TestRecvHttpTermination2(LPVOID);
-	static DWORD WINAPI TestSendHttpTermination2(LPVOID);
-	static bool FinishSendTest;
-	static bool FinishRecvTest;
+	static void TestRecvHttpTermination1();
+	static void TestSendHttpTermination1();
+	static void TestRecvHttpTermination2();
+	static void TestSendHttpTermination2();
 
 	void TestHttpTermination();
 };
