@@ -5,8 +5,8 @@
 #include "../../src/StkPl.h"
 #include "../../src/stksocket/stksocket.h"
 #include "StkSocketTestHttp.h"
-/***********************
 #include "StkSocketTestMa.h"
+/***********************
 #include "StkSocketTestGetSockInfo.h"
 #include "StkSocketIPv6.h"
 #include "StkSocketMemoryLeak.h"
@@ -1393,11 +1393,11 @@ int main(int Argc, char* Argv[])
 	TestThreadForAcceptSendRecv();
 	TestMultiAccept1();
 
-	/***********************
 	StkSocketTestMa objStkSocketTestMa;
 	objStkSocketTestMa.TestMultiAccept2();
 	objStkSocketTestMa.TestMultiAccept3();
 
+	/***********************
 	StkSocketTestGetSockInfo objStkSocketGetSockInfo;
 	if (objStkSocketGetSockInfo.TestAddDel() != 0) {
 		return -1;

@@ -1,15 +1,14 @@
 ﻿#pragma once
-#include <windows.h>
 
 class StkSocketTestMa
 {
 private:
-	static DWORD WINAPI TestThreadForAccept2Send1(LPVOID);
-	static DWORD WINAPI TestThreadForAccept2Send2(LPVOID);
-	static DWORD WINAPI TestThreadForAccept2Send3(LPVOID);
-	static DWORD WINAPI TestThreadForAccept2Recv1(LPVOID);
-	static DWORD WINAPI TestThreadForAccept2Recv2(LPVOID);
-	static DWORD WINAPI TestThreadForAccept2Recv3(LPVOID);
+	static void TestThreadForAccept2Send1();
+	static void TestThreadForAccept2Send2();
+	static void TestThreadForAccept2Send3();
+	static void TestThreadForAccept2Recv1();
+	static void TestThreadForAccept2Recv2();
+	static void TestThreadForAccept2Recv3();
 
 	static int ThreadStartCount;
 	static int ThreadEndCount;
