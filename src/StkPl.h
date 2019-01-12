@@ -39,6 +39,8 @@ int StkPlSScanf(const char* Str, const char* Format, ...);
 
 void StkPlExit(int);
 int StkPlRand();
+void StkPlSleepMs(int);
+
 int StkPlAtoi(const char*);
 long int StkPlWcsToL(const wchar_t*);
 float StkPlWcsToF(const wchar_t*);

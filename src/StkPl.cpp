@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstdarg>
+#include <thread>
+#include <chrono>
 
 #include "StkPl.h"
 
@@ -109,6 +111,11 @@ int StkPlSScanf(const char* Str, const char* Format, ...)
 int StkPlRand()
 {
 	return rand();
+}
+
+void StkPlSleepMs(int MilliSec)
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(MilliSec));
 }
 
 int StkPlAtoi(const char* Str)

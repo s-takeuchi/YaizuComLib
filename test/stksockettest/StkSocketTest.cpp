@@ -6,9 +6,9 @@
 #include "../../src/stksocket/stksocket.h"
 #include "StkSocketTestHttp.h"
 #include "StkSocketTestMa.h"
+#include "StkSocketIPv6.h"
 /***********************
 #include "StkSocketTestGetSockInfo.h"
-#include "StkSocketIPv6.h"
 #include "StkSocketMemoryLeak.h"
 ***********************/
 
@@ -1397,15 +1397,15 @@ int main(int Argc, char* Argv[])
 	objStkSocketTestMa.TestMultiAccept2();
 	objStkSocketTestMa.TestMultiAccept3();
 
+	StkSocketIPv6 objStkSocketIPv6;
+	objStkSocketIPv6.TestIPv6();
+	objStkSocketIPv6.TestIPv6Udp();
+
 	/***********************
 	StkSocketTestGetSockInfo objStkSocketGetSockInfo;
 	if (objStkSocketGetSockInfo.TestAddDel() != 0) {
 		return -1;
 	}
-
-	StkSocketIPv6 objStkSocketIPv6;
-	objStkSocketIPv6.TestIPv6();
-	objStkSocketIPv6.TestIPv6Udp();
 
 	StkSocketMemoryLeak objStkSocketMemoryLeak;
 	objStkSocketMemoryLeak.CheckLeakTcp();
