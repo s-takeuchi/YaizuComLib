@@ -1,20 +1,20 @@
-﻿#include <stdio.h>
-#include "..\..\src\stksocket\stksocket.h"
+﻿#include "../../src/StkPl.h"
+#include "../../src/stksocket/stksocket.h"
 #include "StkSocketTestGetSockInfo.h"
 
 int StkSocketTestGetSockInfo::TestAddDel()
 {
 	{
-		printf("[GetSockInfo] : Current number of existing sock info is zero ... ");
+		StkPlPrintf("[GetSockInfo] : Current number of existing sock info is zero ... ");
 		if (StkSocket_GetNumOfStkInfos() != 0) {
-			printf("NG\r\n");
+			StkPlPrintf("NG\r\n");
 			return -1;
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 	/////////////////////////
 	{
-		printf("[GetSockInfo] : No socket information is acquired ... ");
+		StkPlPrintf("[GetSockInfo] : No socket information is acquired ... ");
 		int TargetId;
 		int SocketType;
 		int ActionType;
@@ -23,21 +23,21 @@ int StkSocketTestGetSockInfo::TestAddDel()
 		bool CopiedFlag;
 		int Ret = StkSocket_GetInfo(0, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret != -1) {
-			printf("NG\r\n");
+			StkPlPrintf("NG\r\n");
 			return -1;
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 	/////////////////////////
 	{
-		printf("[GetSockInfo] : Added elements can be acquired ... ");
+		StkPlPrintf("[GetSockInfo] : Added elements can be acquired ... ");
 		StkSocket_AddInfo(21, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2221);
 		StkSocket_AddInfo(22, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2222);
 		StkSocket_AddInfo(23, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2223);
 		StkSocket_AddInfo(24, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2224);
 		StkSocket_AddInfo(25, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2225);
 		if (StkSocket_GetNumOfStkInfos() != 5) {
-			printf("NG[0]\r\n");
+			StkPlPrintf("NG[0]\r\n");
 			return -1;
 		}
 		int TargetId;
@@ -50,58 +50,58 @@ int StkSocketTestGetSockInfo::TestAddDel()
 
 		Ret = StkSocket_GetInfo(21, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret != 0) {
-			printf("NG[1]\r\n");
+			StkPlPrintf("NG[1]\r\n");
 			return -1;
 		}
 		Ret = StkSocket_GetInfo(25, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret != 0) {
-			printf("NG[1]\r\n");
+			StkPlPrintf("NG[1]\r\n");
 			return -1;
 		}
 		Ret = StkSocket_GetInfo(20, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret != -1) {
-			printf("NG[1]\r\n");
+			StkPlPrintf("NG[1]\r\n");
 			return -1;
 		}
 		Ret = StkSocket_GetInfo(26, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret != -1) {
-			printf("NG[1]\r\n");
+			StkPlPrintf("NG[1]\r\n");
 			return -1;
 		}
 
 		Ret = StkSocket_GetInfo(0, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret == -1 || TargetId < 21 || TargetId > 25) {
-			printf("NG[1]\r\n");
+			StkPlPrintf("NG[1]\r\n");
 			return -1;
 		}
 		Ret = StkSocket_GetInfo(2, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret == -1 || TargetId < 21 || TargetId > 25) {
-			printf("NG[2]\r\n");
+			StkPlPrintf("NG[2]\r\n");
 			return -1;
 		}
 		Ret = StkSocket_GetInfo(4, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret == -1 || TargetId < 21 || TargetId > 25) {
-			printf("NG[3]\r\n");
+			StkPlPrintf("NG[3]\r\n");
 			return -1;
 		}
 		if (StkSocket_GetInfo(-1, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag) != -1) {
-			printf("NG[4]\r\n");
+			StkPlPrintf("NG[4]\r\n");
 			return -1;
 		}
 		if (StkSocket_GetInfo(5, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag) != -1) {
-			printf("NG[5]\r\n");
+			StkPlPrintf("NG[5]\r\n");
 			return -1;
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 	/////////////////////////
 	{
-		printf("[GetSockInfo] : Deleted elements cannot be acquired ... ");
+		StkPlPrintf("[GetSockInfo] : Deleted elements cannot be acquired ... ");
 		StkSocket_DeleteInfo(23);
 		StkSocket_DeleteInfo(21);
 		StkSocket_DeleteInfo(25);
 		if (StkSocket_GetNumOfStkInfos() != 2) {
-			printf("NG[0]\r\n");
+			StkPlPrintf("NG[0]\r\n");
 			return -1;
 		}
 		int TargetId;
@@ -113,31 +113,31 @@ int StkSocketTestGetSockInfo::TestAddDel()
 		int Ret;
 		Ret = StkSocket_GetInfo(0, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret == -1 || (TargetId != 22 && TargetId != 24)) {
-			printf("NG[1]\r\n");
+			StkPlPrintf("NG[1]\r\n");
 			return -1;
 		}
 		Ret = StkSocket_GetInfo(1, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret == -1 || (TargetId != 22 && TargetId != 24)) {
-			printf("NG[2]\r\n");
+			StkPlPrintf("NG[2]\r\n");
 			return -1;
 		}
 		if (StkSocket_GetInfo(-1, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag) != -1) {
-			printf("NG[3]\r\n");
+			StkPlPrintf("NG[3]\r\n");
 			return -1;
 		}
 		if (StkSocket_GetInfo(2, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag) != -1) {
-			printf("NG[4]\r\n");
+			StkPlPrintf("NG[4]\r\n");
 			return -1;
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 	/////////////////////////
 	{
-		printf("[GetSockInfo] : All elements are deleted. No elements are aquired ... ");
+		StkPlPrintf("[GetSockInfo] : All elements are deleted. No elements are aquired ... ");
 		StkSocket_DeleteInfo(22);
 		StkSocket_DeleteInfo(24);
 		if (StkSocket_GetNumOfStkInfos() != 0) {
-			printf("NG[0]\r\n");
+			StkPlPrintf("NG[0]\r\n");
 			return -1;
 		}
 		int TargetId;
@@ -149,10 +149,10 @@ int StkSocketTestGetSockInfo::TestAddDel()
 		int Ret;
 		Ret = StkSocket_GetInfo(0, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret != -1) {
-			printf("NG[1]\r\n");
+			StkPlPrintf("NG[1]\r\n");
 			return -1;
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 	return 0;
 }
