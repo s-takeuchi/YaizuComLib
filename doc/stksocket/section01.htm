@@ -18,7 +18,7 @@
 このAPIはスレッドセーフではありません。StkSocketの他のAPIと同時に呼び出したときの動作は保証されていません。<p>
 <u>シグネチャ</u>
 <div class="topic">
-int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, wchar_t TargetAddr[256], int TargetPort)
+int StkSocket_AddInfo(int TargetId, int SockType, int ActionType, const wchar_t TargetAddr[256], int TargetPort)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
@@ -392,7 +392,7 @@ FALSE: ただちにソケットをクローズする。</td></tr>
 指定したソケットでデータを受信します。<p>
 <u>シグネチャ</u>
 <div class="topic">
-int StkSocket_Receive(int Id, int LogId, BYTE* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, BYTE* VarDat, int VarDatSize)
+int StkSocket_Receive(int Id, int LogId, unsigned char* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, unsigned char* VarDat, int VarDatSize)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
@@ -437,7 +437,7 @@ HTTPヘッダにTransfer-Encoding: chunkedが指定されている場合: Chunk�
 指定したソケットでデータを送信します。<p>
 <u>シグネチャ</u>
 <div class="topic">
-int StkSocket_Send(int Id, int LogId, BYTE* Buffer, int BufferSize)
+int StkSocket_Send(int Id, int LogId, const unsigned char* Buffer, int BufferSize)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
@@ -465,7 +465,7 @@ int StkSocket_Send(int Id, int LogId, BYTE* Buffer, int BufferSize)
 指定したDatagram用ソケットでデータを受信します。<p>
 <u>シグネチャ</u>
 <div class="topic">
-int StkSocket_ReceiveUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
+int StkSocket_ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int BufferSize)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
@@ -494,7 +494,7 @@ int StkSocket_ReceiveUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
 指定したDatagram用ソケットでデータを送信します。<p>
 <u>シグネチャ</u>
 <div class="topic">
-int StkSocket_SendUdp(int Id, int LogId, BYTE* Buffer, int BufferSize)
+int StkSocket_SendUdp(int Id, int LogId, const unsigned char* Buffer, int BufferSize)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">

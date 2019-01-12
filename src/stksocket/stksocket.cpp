@@ -70,7 +70,7 @@ int StkSocket_ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int BufferSiz
 	return StkSocketMgr::GetInstance()->ReceiveUdp(Id, LogId, Buffer, BufferSize);
 }
 
-int StkSocket_SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSize)
+int StkSocket_SendUdp(int Id, int LogId, const unsigned char* Buffer, int BufferSize)
 {
 	return StkSocketMgr::GetInstance()->SendUdp(Id, LogId, Buffer, BufferSize);
 }

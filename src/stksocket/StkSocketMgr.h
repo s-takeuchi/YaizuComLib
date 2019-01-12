@@ -128,7 +128,7 @@ public:
 	// データ受信(UDP)
 	int ReceiveUdp(int, int, unsigned char*, int);
 	// データ送信(UDP)
-	int SendUdp(int, int, unsigned char*, int);
+	int SendUdp(int, int, const unsigned char*, int);
 
 	// Acquire UDP max message size
 	int GetUdpMaxMessageSize(int);

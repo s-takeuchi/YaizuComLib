@@ -59,7 +59,7 @@ int StkSocket_CloseAccept(int, int, bool);
 int StkSocket_Receive(int, int, unsigned char*, int, int, int, unsigned char*, int);
 int StkSocket_Send(int, int, const unsigned char*, int);
 int StkSocket_ReceiveUdp(int, int, unsigned char*, int);
-int StkSocket_SendUdp(int, int, unsigned char*, int);
+int StkSocket_SendUdp(int, int, const unsigned char*, int);
 int StkSocket_GetUdpMaxMessageSize(int);
 int StkSocket_ForceStop(int);
 

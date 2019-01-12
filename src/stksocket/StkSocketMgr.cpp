@@ -1136,7 +1136,7 @@ int StkSocketMgr::Send(int Id, int LogId, const unsigned char* Buffer, int Buffe
 	return -1;
 }
 
-int StkSocketMgr::SendUdp(int Id, int LogId, unsigned char* Buffer, int BufferSize)
+int StkSocketMgr::SendUdp(int Id, int LogId, const unsigned char* Buffer, int BufferSize)
 {
 	addrinfo Hints;
 	addrinfo* ResAddr = NULL;
