@@ -1,10 +1,10 @@
-﻿#include <windows.h>
-#include <shlwapi.h>
+﻿#include <mutex>
+
+#include "../../src/StkPl.h"
 #include "StkThreadElement.h"
 
 int StkThreadElement::NumOfRunThread;
-CRITICAL_SECTION StkThreadElement::CriticalSection;
-
+std::mutex StkThreadElement::CritSec;
 
 StkThreadElement::StkThreadElement()
 {
@@ -16,14 +16,13 @@ StkThreadElement::StkThreadElement(int IDen, wchar_t* Na, wchar_t* De, void* Ini
 	if (OneTimeInit == true) {
 		OneTimeInit = false;
 		NumOfRunThread = 0;
-		InitializeCriticalSection(&CriticalSection);
 	}
 
 	StartStopFlag = false;
 	Status = STKTHREAD_STATUS_READY;
 	Id = IDen;
-	StrCpyN(Name, Na, MAX_LENGTH_OF_STKTHREAD_NAME);
-	StrCpyN(Desc, De, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION);
+	StkPlWcsCpy(Name, MAX_LENGTH_OF_STKTHREAD_NAME, Na);
+	StkPlWcsCpy(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, De);
 	ElemStkThreadInit = (int (*)(int))Init;
 	ElemStkThreadFinal = (int (*)(int))Final;
 	ElemStkThreadMain = (int (*)(int))Main;
@@ -80,7 +79,7 @@ wchar_t* StkThreadElement::GetName()
 
 void StkThreadElement::SetName(wchar_t* Na)
 {
-	StrCpyN(Name, Na, MAX_LENGTH_OF_STKTHREAD_NAME);
+	StkPlWcsCpy(Name, MAX_LENGTH_OF_STKTHREAD_NAME, Na);
 }
 
 wchar_t* StkThreadElement::GetDescription()
@@ -90,31 +89,31 @@ wchar_t* StkThreadElement::GetDescription()
 
 void StkThreadElement::SetDescription(wchar_t* De)
 {
-	StrCpyN(Desc, De, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION);
+	StkPlWcsCpy(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, De);
 }
 
 int StkThreadElement::StkThreadLoop()
 {
-	EnterCriticalSection(&CriticalSection);
+	CritSec.lock();
 	NumOfRunThread++;
 	StkThreadInit();
 	SetStatus(STKTHREAD_STATUS_RUNNING);
-	LeaveCriticalSection(&CriticalSection);
-	Sleep(1000); // 暫定修正StkFwのスレッド同時実行時にInit処理が終わる前にMainが実行されてしまうことへの対策
+	CritSec.unlock();
+	StkPlSleepMs(1000); // 暫定修正StkFwのスレッド同時実行時にInit処理が終わる前にMainが実行されてしまうことへの対策
 
 	while (true) {
 		StkThreadMain();
 		if (StartStopFlag == false) {
 			break;
 		}
-		Sleep(Interval);
+		StkPlSleepMs(Interval);
 	}
 
-	EnterCriticalSection(&CriticalSection);
+	CritSec.lock();
 	StkThreadFinal();
 	SetStatus(STKTHREAD_STATUS_READY);
 	NumOfRunThread--;
-	LeaveCriticalSection(&CriticalSection);
+	CritSec.unlock();
 
 	return 0;
 }

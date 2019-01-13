@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <windows.h>
-#include <commctrl.h>
 #include "StkThreadElement.h"
 
 class StkThreadManager

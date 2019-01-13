@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <windows.h>
 
 #define MAX_NUM_OF_STKTHREADS 1000
 #define MAX_LENGTH_OF_STKTHREAD_NAME 32

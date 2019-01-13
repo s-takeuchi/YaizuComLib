@@ -1,4 +1,7 @@
-﻿#include <windows.h>
+﻿#pragma once
+#include <mutex>
+#include <thread>
+#include <Windows.h>
 
 class StkThreadElement
 {
@@ -38,12 +41,13 @@ private:
 	// Default constructor cannot be called from upper layer class.
 	StkThreadElement();
 
-	static CRITICAL_SECTION CriticalSection;
+	static std::mutex CritSec;
 
 public:
 	static int NumOfRunThread;
 
 	DWORD ThId;
+	std::thread *MyThread;
 
 	StkThreadElement(int, wchar_t*, wchar_t*, void*, void*, void*, void*, void*);
 	virtual ~StkThreadElement();

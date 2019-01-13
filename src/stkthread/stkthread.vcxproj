@@ -59,6 +59,7 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -73,17 +74,20 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat />
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\StkPl.cpp" />
     <ClCompile Include="stkthread.cpp" />
     <ClCompile Include="StkThreadElement.cpp" />
     <ClCompile Include="StkThreadManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\StkPl.h" />
     <ClInclude Include="stkthread.h" />
     <ClInclude Include="StkThreadElement.h" />
     <ClInclude Include="StkThreadManager.h" />

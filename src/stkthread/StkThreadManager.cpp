@@ -1,4 +1,5 @@
-﻿#include "StkThreadManager.h"
+﻿#include "../../src/StkPl.h"
+#include "StkThreadManager.h"
 
 
 StkThreadManager* StkThreadManager::ThisInstance;
@@ -52,6 +53,7 @@ int StkThreadManager::StartSpecifiedStkThreads(int Ids[MAX_NUM_OF_STKTHREADS], i
 		for (int Loop = 0; Loop < TargetCount; Loop++) {
 			Index[Loop] = TargetId[Loop];
 			CreateThread(NULL, 0, &StkThreadManager::ThreadProc, &Index[Loop], 0, &StkThreadArray[TargetTh[Loop]]->ThId);
+			StkThreadArray[TargetTh[Loop]]->MyThread = NULL;
 		}
 	}
 	return NumOfRunThreads;
@@ -177,7 +179,7 @@ void StkThreadManager::CheckAndExecProcAfterLastThreadStops(int Ids[MAX_NUM_OF_S
 				}
 				return;
 			} else {
-				Sleep(100);
+				StkPlSleepMs(100);
 			}
 		}
 	}
@@ -241,7 +243,7 @@ void StkThreadManager::DeleteStkThread(int CmpId)
 			Ids[0] = CmpId;
 			StopSpecifiedStkThreads(Ids, 1);
 			while (CurStkThread->GetStatus() != STKTHREAD_STATUS_READY) {
-				Sleep(1);
+				StkPlSleepMs(1);
 			}
 			// Delete the thread
 			delete CurStkThread;
@@ -361,7 +363,7 @@ int StkThreadManager::GetStkThreadName(int TargetId, wchar_t Name[MAX_LENGTH_OF_
 {
 	for (int IdLoop = 0; IdLoop < StkThreadElementCount; IdLoop++) {
 		if (StkThreadArray[IdLoop]->GetId() == TargetId) {
-			lstrcpy(Name, StkThreadArray[IdLoop]->GetName());
+			StkPlWcsCpy(Name, MAX_LENGTH_OF_STKTHREAD_NAME, StkThreadArray[IdLoop]->GetName());
 			return 0;
 		}
 	}
@@ -377,7 +379,7 @@ int StkThreadManager::GetStkThreadNameByIndex(int TargetIndex, wchar_t Name[MAX_
 	if (TargetIndex < 0 || TargetIndex >= StkThreadElementCount) {
 		return -1;
 	}
-	lstrcpy(Name, StkThreadArray[TargetIndex]->GetName());
+	StkPlWcsCpy(Name, MAX_LENGTH_OF_STKTHREAD_NAME, StkThreadArray[TargetIndex]->GetName());
 	return 0;
 }
 
@@ -389,7 +391,7 @@ int StkThreadManager::GetStkThreadDescription(int TargetId, wchar_t Desc[MAX_LEN
 {
 	for (int IdLoop = 0; IdLoop < StkThreadElementCount; IdLoop++) {
 		if (StkThreadArray[IdLoop]->GetId() == TargetId) {
-			lstrcpy(Desc, StkThreadArray[IdLoop]->GetDescription());
+			StkPlWcsCpy(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, StkThreadArray[IdLoop]->GetDescription());
 			return 0;
 		}
 	}
@@ -405,7 +407,7 @@ int StkThreadManager::GetStkThreadDescriptionByIndex(int TargetIndex, wchar_t De
 	if (TargetIndex < 0 || TargetIndex >= StkThreadElementCount) {
 		return -1;
 	}
-	lstrcpy(Desc, StkThreadArray[TargetIndex]->GetDescription());
+	StkPlWcsCpy(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, StkThreadArray[TargetIndex]->GetDescription());
 	return 0;
 }
 

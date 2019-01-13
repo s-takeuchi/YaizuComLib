@@ -1,5 +1,4 @@
-﻿#include <windows.h>
-#include "StkThreadManager.h"
+﻿#include "StkThreadManager.h"
 
 int GetNumOfRunStkThread()
 {
