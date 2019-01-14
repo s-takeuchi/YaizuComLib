@@ -1,7 +1,5 @@
-﻿#include <windows.h>
-#include <stdio.h>
-#include <Psapi.h>
-#include "..\..\src\stkthread\stkthread.h"
+﻿#include "../../src/StkPl.h"
+#include "../../src/stkthread/stkthread.h"
 
 int ProcCount = 0;
 
@@ -44,53 +42,21 @@ void ProcAfter()
 	ProcCount--;
 }
 
-int GetUsedMemorySizeOfCurrentProcess()
-{
-	DWORD dwProcessID = GetCurrentProcessId();
-	HANDLE hProcess;
-	PROCESS_MEMORY_COUNTERS pmc = { 0 };
-
-	long Size;
-	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
-		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
-			Size = pmc.WorkingSetSize;
-		}
-	}
-	CloseHandle(hProcess);
-	return Size;
-}
-
-int GetMaxUsedMemorySizeOfCurrentProcess()
-{
-	DWORD dwProcessID = GetCurrentProcessId();
-	HANDLE hProcess;
-	PROCESS_MEMORY_COUNTERS pmc = { 0 };
-
-	long Size;
-	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
-		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
-			Size = pmc.PeakWorkingSetSize;
-		}
-	}
-	CloseHandle(hProcess);
-	return Size;
-}
-
 int MemoryLeakChecking1()
 {
-	printf("Checks memory leak between AddStkThread and DeleteStkThread...");
+	StkPlPrintf("Checks memory leak between AddStkThread and DeleteStkThread...");
 	long MaxMem[30];
 	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		wchar_t BufName[32];
 		for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
-			wsprintf(BufName, L"person#%04d", Loop);
+			StkPlSwPrintf(BufName, 32, L"person#%04d", Loop);
 			AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 		}
 		while (GetNumOfStkThread() >= 1) {
 			int TargetId = GetStkThreadIdByIndex(0);
 			DeleteStkThread(TargetId);
 		}
-		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
+		MaxMem[CreationLoop] = StkPlGetUsedMemorySizeOfCurrentProcess();
 	}
 	if (MaxMem[0] < MaxMem[3] &&
 		MaxMem[3] < MaxMem[6] &&
@@ -101,20 +67,20 @@ int MemoryLeakChecking1()
 		MaxMem[18] < MaxMem[21] &&
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
-		printf("[NG] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+		StkPlPrintf("[NG] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 		return -1;
 	}
-	printf("[OK] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
+	StkPlPrintf("[OK] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
 }
 
 int MemoryLeakChecking2()
 {
-	printf("Checks memory leak between StartStkThread and StopStkThread...");
+	StkPlPrintf("Checks memory leak between StartStkThread and StopStkThread...");
 	long MaxMem[20];
 	wchar_t BufName[32];
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
-		wsprintf(BufName, L"person#%04d", Loop);
+		StkPlSwPrintf(BufName, 32, L"person#%04d", Loop);
 		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 
@@ -124,9 +90,9 @@ int MemoryLeakChecking2()
 			Ths[Loop] = Loop;
 		}
 		StartSpecifiedStkThreads(Ths, 1000);
-		Sleep(1000);
+		StkPlSleepMs(1000);
 		StopSpecifiedStkThreads(Ths, 1000);
-		MaxMem[CreationLoop] = GetUsedMemorySizeOfCurrentProcess();
+		MaxMem[CreationLoop] = StkPlGetUsedMemorySizeOfCurrentProcess();
 	}
 
 	while (GetNumOfStkThread() >= 1) {
@@ -138,118 +104,118 @@ int MemoryLeakChecking2()
 		MaxMem[8] < MaxMem[12] &&
 		MaxMem[12] < MaxMem[16] &&
 		MaxMem[16] < MaxMem[20]) {
-		printf("[NG] : %d %d %d %d %d \r\n", MaxMem[0], MaxMem[4], MaxMem[8], MaxMem[12], MaxMem[16]);
+		StkPlPrintf("[NG] : %d %d %d %d %d \r\n", MaxMem[0], MaxMem[4], MaxMem[8], MaxMem[12], MaxMem[16]);
 		return -1;
 	}
-	printf("[OK] : %d %d %d %d %d \r\n", MaxMem[0], MaxMem[4], MaxMem[8], MaxMem[12], MaxMem[16]);
+	StkPlPrintf("[OK] : %d %d %d %d %d \r\n", MaxMem[0], MaxMem[4], MaxMem[8], MaxMem[12], MaxMem[16]);
 	return 0;
 }
 
 int Create1000Threads()
 {
 	//////////////////////////////
-	printf("Checks whether number of current threads is 0 ...");
+	StkPlPrintf("Checks whether number of current threads is 0 ...");
 	if (GetNumOfStkThread() != 0) {
-		printf("[NG] %d \r\n", GetNumOfStkThread());
+		StkPlPrintf("[NG] %d \r\n", GetNumOfStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 	//////////////////////////////
-	printf("Checks whether number of running threads is 0 ...");
+	StkPlPrintf("Checks whether number of running threads is 0 ...");
 	if (GetNumOfRunStkThread() != 0) {
-		printf("[NG] %d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] %d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	//////////////////////////////
-	printf("Creates 1000 threads...");
+	StkPlPrintf("Creates 1000 threads...");
 	wchar_t BufName[32];
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
-		wsprintf(BufName, L"person#%04d", Loop);
+		StkPlSwPrintf(BufName, 32, L"person#%04d", Loop);
 		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 	if (GetNumOfStkThread() != 1000) {
-		printf("[NG] NumOfStkThread=%d \r\n", GetNumOfStkThread());
+		StkPlPrintf("[NG] NumOfStkThread=%d \r\n", GetNumOfStkThread());
 		return -1;
 	}
 	if (GetNumOfRunStkThread() != 0) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK] (NumOfStkThread=%d)\r\n", GetNumOfStkThread());
+	StkPlPrintf("[OK] (NumOfStkThread=%d)\r\n", GetNumOfStkThread());
 
 	//////////////////////////////
-	printf("Starts 1000 threads...");
+	StkPlPrintf("Starts 1000 threads...");
 	int Ths[MAX_NUM_OF_STKTHREADS];
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
 		Ths[Loop] = Loop;
 	}
 	StartSpecifiedStkThreads(Ths, 1000);
-	Sleep(2000);
+	StkPlSleepMs(2000);
 	if (GetNumOfRunStkThread() != 1000) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
+	StkPlPrintf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
 
 	//////////////////////////////
-	printf("Stops 1000 threads...");
+	StkPlPrintf("Stops 1000 threads...");
 	StopSpecifiedStkThreads(Ths, 1000);
-	Sleep(2000);
+	StkPlSleepMs(2000);
 	if (GetNumOfRunStkThread() != 0) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
+	StkPlPrintf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
 
 	//////////////////////////////
-	printf("Check Number of threads...");
+	StkPlPrintf("Check Number of threads...");
 	int TmpIds[MAX_NUM_OF_STKTHREADS];
 	int NumOfIds = GetStkThreadIds(TmpIds);
 	if (NumOfIds != 1000) {
-		printf("[NG] NumOfIds=%d \r\n", NumOfIds);
+		StkPlPrintf("[NG] NumOfIds=%d \r\n", NumOfIds);
 		return -1;
 	}
 	for (int Loop = 0; Loop < NumOfIds; Loop++) {
 		if (TmpIds[Loop] < 0 || TmpIds[Loop] >= 1000) {
-			printf("[NG] Invalid ID[%d] = %d \r\n", Loop, TmpIds[Loop]);
+			StkPlPrintf("[NG] Invalid ID[%d] = %d \r\n", Loop, TmpIds[Loop]);
 			return -1;
 		}
 	}
-	printf("[OK] (NumOfIds=%d)\r\n", NumOfIds);
+	StkPlPrintf("[OK] (NumOfIds=%d)\r\n", NumOfIds);
 
 	//////////////////////////////
-	printf("Starts all threads...");
+	StkPlPrintf("Starts all threads...");
 	StartAllOfStkThreads();
-	Sleep(2000);
+	StkPlSleepMs(2000);
 	if (GetNumOfRunStkThread() != 1000) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
+	StkPlPrintf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
 
 	//////////////////////////////
-	printf("Stops all threads...");
+	StkPlPrintf("Stops all threads...");
 	StopAllOfStkThreads();
-	Sleep(2000);
+	StkPlSleepMs(2000);
 	if (GetNumOfRunStkThread() != 0) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
+	StkPlPrintf("[OK] (NumOfRunStkThread=%d)\r\n", GetNumOfRunStkThread());
 
 	//////////////////////////////
-	printf("Deletes 1000 threads...");
+	StkPlPrintf("Deletes 1000 threads...");
 	while (GetNumOfStkThread() >= 1) {
 		int TargetId = GetStkThreadIdByIndex(0);
 		DeleteStkThread(TargetId);
 	}
 	if (GetNumOfStkThread() != 0) {
-		printf("[NG] %d \r\n", GetNumOfStkThread());
+		StkPlPrintf("[NG] %d \r\n", GetNumOfStkThread());
 		return -1;
 	}
-	printf("[OK] (NumOfStkThread=%d)\r\n", GetNumOfStkThread());
+	StkPlPrintf("[OK] (NumOfStkThread=%d)\r\n", GetNumOfStkThread());
 
 	return 0;
 }
@@ -258,7 +224,7 @@ int TestProcBeforeAfterThreadOperation()
 {
 	wchar_t BufName[32];
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
-		wsprintf(BufName, L"person#%04d", Loop);
+		StkPlSwPrintf(BufName, 32, L"person#%04d", Loop);
 		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 
@@ -271,108 +237,108 @@ int TestProcBeforeAfterThreadOperation()
 	}
 
 	//////////
-	printf("Start only one thread. Check ProcBeforeFirstStkThreadStarts is called...");
+	StkPlPrintf("Start only one thread. Check ProcBeforeFirstStkThreadStarts is called...");
 	StartSpecifiedStkThreads(&Ths[0], 1);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (ProcCount != 1) {
-		printf("[NG] ProcCount=%d \r\n", ProcCount);
+		StkPlPrintf("[NG] ProcCount=%d \r\n", ProcCount);
 	}
 	if (GetNumOfRunStkThread() != 1) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	//////////
-	printf("Stop only one thread. Check ProcAfterLastStkThreadStops is called...");
+	StkPlPrintf("Stop only one thread. Check ProcAfterLastStkThreadStops is called...");
 	StopSpecifiedStkThreads(&Ths[0], 1);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (ProcCount != 0) {
-		printf("[NG] ProcCount=%d \r\n", ProcCount);
+		StkPlPrintf("[NG] ProcCount=%d \r\n", ProcCount);
 	}
 	if (GetNumOfRunStkThread() != 0) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	//////////
-	printf("Stop the same thread one more time. But ProcAfterLastStkThreadStops is not called more...");
+	StkPlPrintf("Stop the same thread one more time. But ProcAfterLastStkThreadStops is not called more...");
 	StopSpecifiedStkThreads(&Ths[0], 1);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (ProcCount != 0) {
-		printf("[NG] ProcCount=%d \r\n", ProcCount);
+		StkPlPrintf("[NG] ProcCount=%d \r\n", ProcCount);
 	}
 	if (GetNumOfRunStkThread() != 0) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	//////////
-	printf("Start three threads. Check ProcBeforeFirstStkThreadStarts is called...");
+	StkPlPrintf("Start three threads. Check ProcBeforeFirstStkThreadStarts is called...");
 	StartSpecifiedStkThreads(&Ths[0], 3);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (ProcCount != 1) {
-		printf("[NG] ProcCount=%d \r\n", ProcCount);
+		StkPlPrintf("[NG] ProcCount=%d \r\n", ProcCount);
 	}
 	if (GetNumOfRunStkThread() != 3) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	//////////
-	printf("Start four more threads. But ProcBeforeFirstStkThreadStarts is not called more...");
+	StkPlPrintf("Start four more threads. But ProcBeforeFirstStkThreadStarts is not called more...");
 	StartSpecifiedStkThreads(&Ths[3], 4);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (ProcCount != 1) {
-		printf("[NG] ProcCount=%d \r\n", ProcCount);
+		StkPlPrintf("[NG] ProcCount=%d \r\n", ProcCount);
 	}
 	if (GetNumOfRunStkThread() != 7) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	//////////
-	printf("Stop two threads. But ProcAfterLastStkThreadStops is not called...");
+	StkPlPrintf("Stop two threads. But ProcAfterLastStkThreadStops is not called...");
 	StopSpecifiedStkThreads(&Ths[5], 2);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (ProcCount != 1) {
-		printf("[NG] ProcCount=%d \r\n", ProcCount);
+		StkPlPrintf("[NG] ProcCount=%d \r\n", ProcCount);
 	}
 	if (GetNumOfRunStkThread() != 5) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	//////////
-	printf("Stop three more threads. But ProcAfterLastStkThreadStops is not called...");
+	StkPlPrintf("Stop three more threads. But ProcAfterLastStkThreadStops is not called...");
 	StopSpecifiedStkThreads(&Ths[2], 3);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (ProcCount != 1) {
-		printf("[NG] ProcCount=%d \r\n", ProcCount);
+		StkPlPrintf("[NG] ProcCount=%d \r\n", ProcCount);
 	}
 	if (GetNumOfRunStkThread() != 2) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	//////////
-	printf("Stop two more threads. Check ProcAfterLastStkThreadStops is called...");
+	StkPlPrintf("Stop two more threads. Check ProcAfterLastStkThreadStops is called...");
 	StopSpecifiedStkThreads(&Ths[0], 2);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (ProcCount != 0) {
-		printf("[NG] ProcCount=%d \r\n", ProcCount);
+		StkPlPrintf("[NG] ProcCount=%d \r\n", ProcCount);
 	}
 	if (GetNumOfRunStkThread() != 0) {
-		printf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
+		StkPlPrintf("[NG] NumOfRunStkThread=%d \r\n", GetNumOfRunStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	while (GetNumOfStkThread() >= 1) {
 		int TargetId = GetStkThreadIdByIndex(0);
@@ -389,7 +355,7 @@ int DeleteWithRunningThreads()
 
 	wchar_t BufName[32];
 	for (int Loop = 0; Loop < 10; Loop++) {
-		wsprintf(BufName, L"person#%04d", Loop);
+		StkPlSwPrintf(BufName, 32, L"person#%04d", Loop);
 		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 
@@ -399,11 +365,11 @@ int DeleteWithRunningThreads()
 	}
 
 	//////////
-	printf("Delete 10 running threads...");
+	StkPlPrintf("Delete 10 running threads...");
 	StartSpecifiedStkThreads(&Ths[0], 10);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (GetNumOfStkThread() != 10 || GetNumOfRunStkThread() != 10) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
 	while (GetNumOfStkThread() >= 1) {
@@ -411,10 +377,10 @@ int DeleteWithRunningThreads()
 		DeleteStkThread(TargetId);
 	}
 	if (GetNumOfStkThread() != 0 || GetNumOfRunStkThread() != 0) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	return 0;
 }
@@ -428,38 +394,38 @@ int AbnormalCase()
 	wchar_t Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
 	/////
-	printf("Try to add more than 1000 threads. Check the number of added threads is 1000...");
+	StkPlPrintf("Try to add more than 1000 threads. Check the number of added threads is 1000...");
 	wchar_t BufName[32];
 	for (int Loop = 0; Loop < 1010; Loop++) {
-		wsprintf(BufName, L"person#%04d", Loop);
+		StkPlSwPrintf(BufName, 32, L"person#%04d", Loop);
 		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 	if (GetNumOfStkThread() != 1000) {
-		printf("[NG] NumOfStkThread=%d \r\n", GetNumOfStkThread());
+		StkPlPrintf("[NG] NumOfStkThread=%d \r\n", GetNumOfStkThread());
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Delete non-existing threads...");
+	StkPlPrintf("Delete non-existing threads...");
 	DeleteStkThread(2000);
 	DeleteStkThread(3000);
 	if (GetNumOfStkThread() != 1000 || GetNumOfRunStkThread() != 0) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Delete 1000 running threads...");
+	StkPlPrintf("Delete 1000 running threads...");
 	int Ths[1000];
 	for (int Loop = 0; Loop < 1000; Loop++) {
 		Ths[Loop] = Loop;
 	}
 	StartSpecifiedStkThreads(&Ths[0], 1000);
-	Sleep(1000);
+	StkPlSleepMs(1000);
 	if (GetNumOfStkThread() != 1000 || GetNumOfRunStkThread() != 1000) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
 	while (GetNumOfStkThread() >= 1) {
@@ -467,98 +433,98 @@ int AbnormalCase()
 		DeleteStkThread(TargetId);
 	}
 	if (GetNumOfStkThread() != 0 || GetNumOfRunStkThread() != 0) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Start non-existing threads...");
+	StkPlPrintf("Start non-existing threads...");
 	if (StartSpecifiedStkThreads(Ths, 1000) != 0) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
 	if (GetNumOfStkThread() != 0 || GetNumOfRunStkThread() != 0) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Stop non-existing threads...");
+	StkPlPrintf("Stop non-existing threads...");
 	if (StopSpecifiedStkThreads(Ths, 1000) != 0) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
 	if (GetNumOfStkThread() != 0 || GetNumOfRunStkThread() != 0) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Call GetStkThreadStatus for non-existing threads. -1 is returned...");
+	StkPlPrintf("Call GetStkThreadStatus for non-existing threads. -1 is returned...");
 	if (GetStkThreadStatus(0) != -1) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Call GetStkThreadStatusByIndex for non-existing threads. -1 is returned...");
+	StkPlPrintf("Call GetStkThreadStatusByIndex for non-existing threads. -1 is returned...");
 	if (GetStkThreadStatusByIndex(0) != -1) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Call GetInterval. -1 is returned...");
+	StkPlPrintf("Call GetInterval. -1 is returned...");
 	if (GetStkThreadInterval(0) != -1) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Call GetStkThreadIdByIndex. -1 is returned...");
+	StkPlPrintf("Call GetStkThreadIdByIndex. -1 is returned...");
 	if (GetStkThreadIdByIndex(0) != -1) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Call GetStkThreadName. -1 is returned...");
+	StkPlPrintf("Call GetStkThreadName. -1 is returned...");
 	if (GetStkThreadName(0, Name) != -1) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Call GetStkThreadNameByIndex. -1 is returned...");
+	StkPlPrintf("Call GetStkThreadNameByIndex. -1 is returned...");
 	if (GetStkThreadNameByIndex(0, Name) != -1) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Call GetStkThreadDescription. -1 is returned...");
+	StkPlPrintf("Call GetStkThreadDescription. -1 is returned...");
 	if (GetStkThreadDescription(0, Desc) != -1) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Call GetStkThreadDescriptionByIndex. -1 is returned...");
+	StkPlPrintf("Call GetStkThreadDescriptionByIndex. -1 is returned...");
 	if (GetStkThreadDescriptionByIndex(0, Desc) != -1) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	return 0;
 }
@@ -571,61 +537,61 @@ int NormalCase()
 	/////
 	wchar_t BufName[32];
 	for (int Loop = 0; Loop < 10; Loop++) {
-		wsprintf(BufName, L"person#%04d", Loop);
+		StkPlSwPrintf(BufName, 32, L"person#%04d", Loop);
 		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 
 	/////
-	printf("Check the name of StkThread is correct...");
+	StkPlPrintf("Check the name of StkThread is correct...");
 	wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME];
 	if (GetStkThreadName(2, Name) != 0) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	if (lstrcmp(Name, L"person#0002") != 0) {
-		printf("[NG] %S\r\n", Name);
+	if (StkPlWcsCmp(Name, L"person#0002") != 0) {
+		StkPlPrintf("[NG] %S\r\n", Name);
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Check the description of StkThread is correct...");
+	StkPlPrintf("Check the description of StkThread is correct...");
 	wchar_t Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 	if (GetStkThreadDescription(4, Desc) != 0) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	if (lstrcmp(Desc, L"Dummy thread") != 0) {
-		printf("[NG]\r\n");
+	if (StkPlWcsCmp(Desc, L"Dummy thread") != 0) {
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	/////
-	printf("Check the interval can be configured...");
+	StkPlPrintf("Check the interval can be configured...");
 	SetStkThreadInterval(0, 100);
 	SetStkThreadInterval(1, 200);
 	SetStkThreadInterval(2, 300);
 	if (GetStkThreadInterval(0) != 100) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
 	if (GetStkThreadInterval(1) != 200) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
 	if (GetStkThreadInterval(2) != 300) {
-		printf("[NG]\r\n");
+		StkPlPrintf("[NG]\r\n");
 		return -1;
 	}
-	printf("[OK]\r\n");
+	StkPlPrintf("[OK]\r\n");
 
 	return 0;
 }
 
 int main(int Argc, char* Argv[])
 {
-	printf("Test started.\r\n");
+	StkPlPrintf("Test started.\r\n");
 
 	if (Create1000Threads() != 0) {
 		return -1;
@@ -649,7 +615,7 @@ int main(int Argc, char* Argv[])
 		return -1;
 	}
 
-	printf("Test completed.\r\n");
+	StkPlPrintf("Test completed.\r\n");
 
 	return 0;
 }

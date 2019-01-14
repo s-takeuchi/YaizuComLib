@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include <mutex>
-#include <thread>
-#include <Windows.h>
 
 class StkThreadElement
 {
@@ -46,10 +44,7 @@ private:
 public:
 	static int NumOfRunThread;
 
-	DWORD ThId;
-	std::thread *MyThread;
-
-	StkThreadElement(int, wchar_t*, wchar_t*, void*, void*, void*, void*, void*);
+	StkThreadElement(int, const wchar_t*, const wchar_t*, int(*)(int), int(*)(int), int(*)(int), int(*)(int), int(*)(int));
 	virtual ~StkThreadElement();
 
 	bool GetStartStopFlag();

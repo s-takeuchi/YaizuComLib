@@ -10,7 +10,7 @@ StkThreadElement::StkThreadElement()
 {
 }
 
-StkThreadElement::StkThreadElement(int IDen, wchar_t* Na, wchar_t* De, void* Init, void* Final, void* Main, void* Start, void* Stop)
+StkThreadElement::StkThreadElement(int IDen, const wchar_t* Na, const wchar_t* De, int(*Init)(int), int(*Final)(int), int(*Main)(int), int(*Start)(int), int(*Stop)(int))
 {
 	static bool OneTimeInit = true;
 	if (OneTimeInit == true) {

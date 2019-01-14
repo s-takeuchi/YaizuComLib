@@ -1,16 +1,16 @@
-﻿#include "../../src/StkPl.h"
-#include "StkThreadManager.h"
+﻿#include <thread>
 
+#include "../../src/StkPl.h"
+#include "StkThreadManager.h"
 
 StkThreadManager* StkThreadManager::ThisInstance;
 
 
-DWORD WINAPI StkThreadManager::ThreadProc(LPVOID Param)
+void StkThreadManager::ThreadProc(int Param)
 {
-	int* Id = (int*)Param;
 	StkThreadManager* StkThMgr = GetInstance();
 	for (int RowLoop = 0; RowLoop < StkThMgr->StkThreadElementCount; RowLoop++) {
-		if (StkThMgr->StkThreadArray[RowLoop]->GetId() == *Id) {
+		if (StkThMgr->StkThreadArray[RowLoop]->GetId() == Param) {
 			if (StkThMgr->StkThreadArray[RowLoop]->GetStartStopFlag() == true &&
 				StkThMgr->StkThreadArray[RowLoop]->GetStatus() == STKTHREAD_STATUS_STARTING) {
 				StkThMgr->StkThreadArray[RowLoop]->StkThreadLoop();
@@ -18,7 +18,6 @@ DWORD WINAPI StkThreadManager::ThreadProc(LPVOID Param)
 			}
 		}
 	}
-	return 0;
 }
 
 // This method starts the specified threads.
@@ -52,8 +51,8 @@ int StkThreadManager::StartSpecifiedStkThreads(int Ids[MAX_NUM_OF_STKTHREADS], i
 		// Start threads which are specified.
 		for (int Loop = 0; Loop < TargetCount; Loop++) {
 			Index[Loop] = TargetId[Loop];
-			CreateThread(NULL, 0, &StkThreadManager::ThreadProc, &Index[Loop], 0, &StkThreadArray[TargetTh[Loop]]->ThId);
-			StkThreadArray[TargetTh[Loop]]->MyThread = NULL;
+			std::thread MyThread(ThreadProc, Index[Loop]);
+			MyThread.detach();
 		}
 	}
 	return NumOfRunThreads;
@@ -76,8 +75,6 @@ int StkThreadManager::StopSpecifiedStkThreads(int Ids[MAX_NUM_OF_STKTHREADS], in
 				}
 			}
 		}
-	}
-	if (NumOfRunThreads != 0) {
 		CheckAndExecProcAfterLastThreadStops(Ids, NumOfIds);
 	}
 	return NumOfRunThreads;
@@ -210,12 +207,12 @@ StkThreadManager* StkThreadManager::GetInstance()
 
 // Add StkThreadElement instance to queue and list-view
 // [out] Nothing
-void StkThreadManager::AddStkThread(int Id, wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME], wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)
+void StkThreadManager::AddStkThread(int Id, const wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME], const wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], int(*Init)(int), int(*Final)(int), int(*Main)(int), int(*Start)(int), int(*Stop)(int))
 {
 	if (StkThreadElementCount >= MAX_NUM_OF_STKTHREADS) {
 		return;
 	}
-	if (lstrlen(Name) >= MAX_LENGTH_OF_STKTHREAD_NAME || lstrlen(Description) >= MAX_LENGTH_OF_STKTHREAD_DESCRIPTION) {
+	if (StkPlWcsLen(Name) >= MAX_LENGTH_OF_STKTHREAD_NAME || StkPlWcsLen(Description) >= MAX_LENGTH_OF_STKTHREAD_DESCRIPTION) {
 		return;
 	}
 	for (int Loop = 0; Loop < StkThreadElementCount; Loop++) {
@@ -257,12 +254,12 @@ void StkThreadManager::DeleteStkThread(int CmpId)
 	}
 }
 
-void StkThreadManager::SetProcBeforeFirstThreadStarts(void* Proc)
+void StkThreadManager::SetProcBeforeFirstThreadStarts(void(*Proc)())
 {
 	ProcBeforeFirstThreadStarts = (void (*)(void))Proc;
 }
 
-void StkThreadManager::SetProcAfterLastThreadStops(void* Proc)
+void StkThreadManager::SetProcAfterLastThreadStops(void(*Proc)())
 {
 	ProcAfterLastThreadStops = (void (*)(void))Proc;
 }

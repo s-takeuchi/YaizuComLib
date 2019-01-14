@@ -30,7 +30,7 @@ void SetStkThreadInterval(int TargetId, int Millisec)
 	StkThreadManager::GetInstance()->SetStkThreadInterval(TargetId, Millisec);
 }
 
-void AddStkThread(int Id, wchar_t Name[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_NAME], wchar_t Description[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)
+void AddStkThread(int Id, const wchar_t Name[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_NAME], const wchar_t Description[StkThreadManager::MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], int(*Init)(int), int(*Final)(int), int(*Main)(int), int(*Start)(int), int(*Stop)(int))
 {
 	StkThreadManager::GetInstance()->AddStkThread(Id, Name, Description, Init, Final, Main, Start, Stop);
 }
@@ -80,12 +80,12 @@ int GetStkThreadDescriptionByIndex(int Index, wchar_t Desc[StkThreadManager::MAX
 	return StkThreadManager::GetInstance()->GetStkThreadDescriptionByIndex(Index, Desc);
 }
 
-void SetProcBeforeFirstStkThreadStarts(void* Proc)
+void SetProcBeforeFirstStkThreadStarts(void(*Proc)())
 {
 	StkThreadManager::GetInstance()->SetProcBeforeFirstThreadStarts(Proc);
 }
 
-void SetProcAfterLastStkThreadStops(void* Proc)
+void SetProcAfterLastStkThreadStops(void(*Proc)())
 {
 	StkThreadManager::GetInstance()->SetProcAfterLastThreadStops(Proc);
 }

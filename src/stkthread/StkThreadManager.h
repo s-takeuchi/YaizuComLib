@@ -20,7 +20,7 @@ private:
 	// Array of StkThreadElement
 	StkThreadElement* StkThreadArray[MAX_NUM_OF_STKTHREADS];
 	// Call back function for CreateThread.
-	static DWORD WINAPI ThreadProc(LPVOID);
+	static void ThreadProc(int);
 
 	StkThreadManager();
 	~StkThreadManager();
@@ -46,7 +46,7 @@ public:
 	int GetStkThreadInterval(int);
 	void SetStkThreadInterval(int, int);
 
-	void AddStkThread(int, wchar_t[MAX_LENGTH_OF_STKTHREAD_NAME], wchar_t[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void*, void*, void*, void*, void*);
+	void AddStkThread(int, const wchar_t[MAX_LENGTH_OF_STKTHREAD_NAME], const wchar_t[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], int(*)(int), int(*)(int), int(*)(int), int(*)(int), int(*)(int));
 	void DeleteStkThread(int);
 
 	int GetStkThreadIdByIndex(int);
@@ -58,8 +58,8 @@ public:
 	int GetStkThreadDescription(int, wchar_t[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION]);
 	int GetStkThreadDescriptionByIndex(int, wchar_t[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION]);
 
-	void SetProcBeforeFirstThreadStarts(void*);
-	void SetProcAfterLastThreadStops(void*);
+	void SetProcBeforeFirstThreadStarts(void(*)());
+	void SetProcAfterLastThreadStops(void(*)());
 	int StartSpecifiedStkThreads(int[MAX_NUM_OF_STKTHREADS], int);
 	int StopSpecifiedStkThreads(int[MAX_NUM_OF_STKTHREADS], int);
 	int StartAllStkThreads();
