@@ -2,7 +2,7 @@
 #include <windows.h>
 
 int ShowStkThreadController(HWND, int, wchar_t*);
-void AddStkThreadForGui(int, wchar_t*, wchar_t*, void*, void*, void*, void*, void*);
+void AddStkThreadForGui(int, wchar_t*, wchar_t*, int(*)(int), int(*)(int), int(*)(int), int(*)(int), int(*)(int));
 void DeleteStkThreadForGui(int);
 void StartAllStkThreads();
 void StopAllStkThreads();

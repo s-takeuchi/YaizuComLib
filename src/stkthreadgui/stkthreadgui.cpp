@@ -7,7 +7,7 @@ int ShowStkThreadController(HWND hWnd, int ParentIconId, wchar_t* Title)
 	return StkThreadGuiManager::GetInstance()->ShowStkThreadController(hWnd, ParentIconId, Title);
 }
 
-void AddStkThreadForGui(int Id, wchar_t* Name, wchar_t* Description, void* Init, void* Final, void* Main, void* Start, void* Stop)
+void AddStkThreadForGui(int Id, wchar_t* Name, wchar_t* Description, int(*Init)(int), int(*Final)(int), int(*Main)(int), int(*Start)(int), int(*Stop)(int))
 {
 	StkThreadGuiManager::GetInstance()->AddStkThreadForGui(Id, Name, Description, Init, Final, Main, Start, Stop);
 }

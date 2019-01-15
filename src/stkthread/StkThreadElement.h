@@ -39,8 +39,6 @@ private:
 	// Default constructor cannot be called from upper layer class.
 	StkThreadElement();
 
-	static std::mutex CritSec;
-
 public:
 	static int NumOfRunThread;
 

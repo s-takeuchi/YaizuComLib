@@ -4,7 +4,6 @@
 #include "StkThreadElement.h"
 
 int StkThreadElement::NumOfRunThread;
-std::mutex StkThreadElement::CritSec;
 
 StkThreadElement::StkThreadElement()
 {
@@ -94,6 +93,8 @@ void StkThreadElement::SetDescription(wchar_t* De)
 
 int StkThreadElement::StkThreadLoop()
 {
+	static std::mutex CritSec;
+
 	CritSec.lock();
 	NumOfRunThread++;
 	StkThreadInit();

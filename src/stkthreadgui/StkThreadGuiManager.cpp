@@ -524,7 +524,7 @@ void StkThreadGuiManager::StopAllThreads()
 	StopThreads(true);
 }
 
-void StkThreadGuiManager::AddStkThreadForGui(int Id, wchar_t* Name, wchar_t* Description, void* Init, void* Final, void* Main, void* Start, void* Stop)
+void StkThreadGuiManager::AddStkThreadForGui(int Id, wchar_t* Name, wchar_t* Description, int(*Init)(int), int(*Final)(int), int(*Main)(int), int(*Start)(int), int(*Stop)(int))
 {
 	int NumOfStkThread = GetNumOfStkThread();
 	AddStkThread(Id, Name, Description, Init, Final, Main, Start, Stop);

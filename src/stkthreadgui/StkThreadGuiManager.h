@@ -49,6 +49,6 @@ public:
 	int ShowStkThreadController(HWND, int, wchar_t*);
 	void StartAllThreads();
 	void StopAllThreads();
-	void AddStkThreadForGui(int, wchar_t*, wchar_t*, void*, void*, void*, void*, void*);
+	void AddStkThreadForGui(int, wchar_t*, wchar_t*, int(*)(int), int(*)(int), int(*)(int), int(*)(int), int(*)(int));
 	void DeleteStkThreadForGui(int);
 };
