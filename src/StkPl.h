@@ -29,6 +29,8 @@ bool StkPlIsJapaneseLocale();
 bool StkPlIsJapaneseLocaleFromEnv();
 char* StkPlWideCharToUtf8(const wchar_t*);
 char* StkPlWideCharToSjis(const wchar_t*);
+wchar_t* StkPlUtf8ToWideChar(const char*);
+wchar_t* StkPlSjisToWideChar(const char*);
 
 int StkPlPrintf(const char*, ...);
 int StkPlWPrintf(const wchar_t*, ...);
