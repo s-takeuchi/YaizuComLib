@@ -15,10 +15,10 @@ StkThreadのユーザープログラム用APIの一覧を以下に示します�
 <tr><th>APIシグネチャ</th><th>概要</th></tr>
 <tr><td>int GetNumOfRunStkThread()</td><td>現在実行中のスレッドの数を返却します。</td></tr>
 <tr><td>int GetNumOfStkThread()</td><td>登録済の全てのスレッドの数を返却します。</td></tr>
-<tr><td>void AddStkThread(int Id, wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME], wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)</td><td>新たなスレッドを登録します。</td></tr>
+<tr><td>void AddStkThread(int Id, const wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME], const wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], int(*Init)(int), int(*Final)(int), int(*Main)(int), int(*Start)(int), int(*Stop)(int))</td><td>新たなスレッドを登録します。</td></tr>
 <tr><td>void DeleteStkThread(int Id)</td><td>登録されているスレッドを削除します。</td></tr>
-<tr><td>void SetProcBeforeFirstStkThreadStarts(void* Proc)</td><td>コールバックメソッドProcBeforeFirstStkThreadStartsのポインタを設定します。</td></tr>
-<tr><td>void SetProcAfterLastStkThreadStops(void* Proc)</td><td>コールバックメソッドProcAfterLastStkThreadStopsのポインタを設定します。</td></tr>
+<tr><td>void SetProcBeforeFirstStkThreadStarts(void(*Proc)())</td><td>コールバックメソッドProcBeforeFirstStkThreadStartsのポインタを設定します。</td></tr>
+<tr><td>void SetProcAfterLastStkThreadStops(void(*Proc)())</td><td>コールバックメソッドProcAfterLastStkThreadStopsのポインタを設定します。</td></tr>
 <tr><td>int StartSpecifiedStkThreads(int Ids[MAX_NUM_OF_STKTHREADS], int NumOfIds)</td><td>指定されたIDのスレッドを開始します。</td></tr>
 <tr><td>int StopSpecifiedStkThreads(int Ids[MAX_NUM_OF_STKTHREADS], int NumOfIds)</td><td>指定されたIDのスレッドを停止します。</td></tr>
 <tr><td>int StartAllOfStkThreads()</td><td>登録されているすべてのスレッドを開始します。</td></tr>
@@ -62,7 +62,7 @@ AddStkThreadメソッドおよびDeleteStkThreadメソッドを用いて実施�
 </div><p>
 
 
-<H3 ID="3.2.3">3.2.3 void AddStkThread(int Id, wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME], wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], void* Init, void* Final, void* Main, void* Start, void* Stop)</H3>
+<H3 ID="3.2.3">3.2.3 void AddStkThread(int Id, const wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME], const wchar_t Description[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION], int(*Init)(int), int(*Final)(int), int(*Main)(int), int(*Start)(int), int(*Stop)(int))</H3>
 <div class="topic">
 新たなスレッドを登録します。<br>
 下記の何れかに該当する場合，本メソッドはスレッドを登録せず処理は呼び出し元に戻ります。
@@ -101,7 +101,7 @@ AddStkThreadメソッドおよびDeleteStkThreadメソッドを用いて実施�
 </div><p>
 
 
-<H3 ID="3.2.5">3.2.5 void SetProcBeforeFirstStkThreadStarts(void* Proc)</H3>
+<H3 ID="3.2.5">3.2.5 void SetProcBeforeFirstStkThreadStarts(void(*Proc)())</H3>
 <div class="topic">
 ProcBeforeFirstStkThreadStarts(コールバックメソッド)を設定します。<br>
 <table class="tblstyle">
@@ -111,7 +111,7 @@ ProcBeforeFirstStkThreadStarts(コールバックメソッド)を設定します
 </div><p>
 
 
-<H3 ID="3.2.6">3.2.6 void SetProcAfterLastStkThreadStops(void* Proc)</H3>
+<H3 ID="3.2.6">3.2.6 void SetProcAfterLastStkThreadStops(void(*Proc)())</H3>
 <div class="topic">
 ProcAfterLastStkThreadStops(コールバックメソッド)を設定します。<br>
 <table class="tblstyle">
