@@ -1,7 +1,8 @@
 @echo off
 
-call build.bat
 
+set CURRENTPATH=%cd%
+set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
 
 rem ########## Testing libraries ##########
 echo;
