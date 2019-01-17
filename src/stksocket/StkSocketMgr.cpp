@@ -729,7 +729,7 @@ int StkSocketMgr::Accept(int Id)
 			FD_ZERO(&AccFds);
 			FD_SET(SocketInfo[Loop].Sock, &AccFds);
 			// 一定時間待ったあとSockに接続があるか確認する
-			select(0, &AccFds, NULL, NULL, &Timeout);
+			select(SocketInfo[Loop].Sock + 1, &AccFds, NULL, NULL, &Timeout);
 			if (!FD_ISSET(SocketInfo[Loop].Sock, &AccFds)) {
 				return -1;
 			}
