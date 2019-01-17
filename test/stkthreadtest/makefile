@@ -6,3 +6,9 @@ stkthreadtest : stkthreadtest.o
 stkthreadtest.o : stkthreadtest.cpp
 	g++ -c stkthreadtest.cpp -std=c++1z
 
+clean :
+	rm -f *.o *.a stkthreadtest
+	cd ../../src/stkthread; make clean
+
+all : clean stkthreadtest
+

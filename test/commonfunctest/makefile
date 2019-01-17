@@ -18,3 +18,9 @@ MsgProcTest.o : MsgProcTest.cpp
 commonfunctest.o : commonfunctest.cpp
 	g++ -c commonfunctest.cpp -std=c++1z
 
+clean :
+	rm -f *.o *.a commonfunctest
+	cd ../../src/commonfunc; make clean
+
+all : clean commonfunctest
+

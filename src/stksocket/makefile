@@ -10,3 +10,8 @@ StkSocketMgr.o : StkSocketMgr.cpp
 stksocket.o : stksocket.cpp
 	g++ -c stksocket.cpp -std=c++1z
 
+clean :
+	rm -f *.o *.a
+
+all : clean stksocket.a
+

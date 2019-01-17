@@ -21,3 +21,9 @@ StkSocketTestHttp.o : StkSocketTestHttp.cpp
 StkSocketTestMa.o : StkSocketTestMa.cpp
 	g++ -c StkSocketTestMa.cpp -std=c++1z
 
+clean :
+	rm -f *.o *.a stksockettest
+	cd ../../src/stksocket; make clean
+
+all : clean stksockettest
+

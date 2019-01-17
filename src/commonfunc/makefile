@@ -16,3 +16,8 @@ StkStringParser.o : StkStringParser.cpp
 msgproc.o : msgproc.cpp
 	g++ -c msgproc.cpp -std=c++1z
 
+clean :
+	rm -f *.o *.a
+
+all : clean commonfunc.a
+

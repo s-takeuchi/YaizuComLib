@@ -13,3 +13,8 @@ StkThreadManager.o : StkThreadManager.cpp
 stkthread.o : stkthread.cpp
 	g++ -c stkthread.cpp -std=c++1z
 
+clean :
+	rm -f *.o *.a
+
+all : clean stkthread.a
+
