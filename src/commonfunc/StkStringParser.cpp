@@ -1,37 +1,37 @@
 ﻿#include "../StkPl.h"
 #include "StkStringParser.h"
 
-int StkStringParser::ParseInto1Param(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1)
+int StkStringParser::ParseInto1Param(const wchar_t* OriginStr, const wchar_t* Format, wchar_t Target, wchar_t* OutStr1)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, NULL, -1, NULL, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto1Param(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len)
+int StkStringParser::ParseInto1Param(const wchar_t* OriginStr, const wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, NULL, -1, NULL, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto2Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2)
+int StkStringParser::ParseInto2Params(const wchar_t* OriginStr, const wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, NULL, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto2Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len)
+int StkStringParser::ParseInto2Params(const wchar_t* OriginStr, const wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, OutStr2, OutStr2Len, NULL, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto3Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3)
+int StkStringParser::ParseInto3Params(const wchar_t* OriginStr, const wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, OutStr3, -1, NULL, -1);
 }
 
-int StkStringParser::ParseInto3Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len)
+int StkStringParser::ParseInto3Params(const wchar_t* OriginStr, const wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, OutStr1Len, OutStr2, OutStr2Len, OutStr3, OutStr3Len, NULL, -1);
 }
 
-int StkStringParser::ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3, wchar_t* OutStr4)
+int StkStringParser::ParseInto4Params(const wchar_t* OriginStr, const wchar_t* Format, wchar_t Target, wchar_t* OutStr1, wchar_t* OutStr2, wchar_t* OutStr3, wchar_t* OutStr4)
 {
 	return ParseInto4Params(OriginStr, Format, Target, OutStr1, -1, OutStr2, -1, OutStr3, -1, OutStr4, -1);
 }
@@ -47,7 +47,7 @@ int StkStringParser::ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar
 // Return: Result code (0: Number of parameters to be set differs from the number of targets,
 //                      1: Number of parameters to be set is same as the number of targets,
 //                     -1: Invalid OriginStrWk or FormatWk was presented)
-int StkStringParser::ParseInto4Params(wchar_t* OriginStr, wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len, wchar_t* OutStr4, int OutStr4Len)
+int StkStringParser::ParseInto4Params(const wchar_t* OriginStr, const wchar_t* Format, wchar_t Target, wchar_t* OutStr1, int OutStr1Len, wchar_t* OutStr2, int OutStr2Len, wchar_t* OutStr3, int OutStr3Len, wchar_t* OutStr4, int OutStr4Len)
 {
 	if (OutStr1 != NULL) {
 		OutStr1[0] = L'\0';
