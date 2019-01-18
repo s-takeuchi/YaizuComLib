@@ -63,7 +63,7 @@ StkWebAppExecクラスの派生クラスでは，個別のAPIの処理を定義�
 <H2 ID="2.4">2.4 StkWebAppクラス</H2>
 <div class="topic">
 
-<p>StkWebApp(int* TargetIds, int Count, wchar_t* HostName, int TargetPort)</p>
+<p>StkWebApp(int* TargetIds, int Count, const wchar_t* HostName, int TargetPort)</p>
 StkWebAppインスタンスを生成すると同時に，以下を行います。<br/>
 <ul>
 <li>ワーカースレッドの生成および起動</li>
@@ -85,7 +85,7 @@ StkWebAppインスタンスを生成すると同時に，以下を行います�
 </ul><br/>
 <hr/>
 
-<p>int AddReqHandler(int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)</p>
+<p>int AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)</p>
 ある特定のメソッドおよびURLと関連付くリクエストを処理するハンドラを登録します。<br/>
 <table class="tblstyle">
 <tr><td>
@@ -103,7 +103,7 @@ StkWebAppExec::STKWEBAPP_METHOD_DELETE<br/>
 </table>
 <hr/>
 
-<p>int DeleteReqHandler(int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])</p>
+<p>int DeleteReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])</p>
 登録済のハンドラを削除します。<br/>
 <table class="tblstyle">
 <tr><td>Method[入力]</td><td>削除するハンドラを登録したときに指定したメソッドおよびその論理積<br/></td></tr>

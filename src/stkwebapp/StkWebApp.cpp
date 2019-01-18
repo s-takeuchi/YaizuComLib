@@ -45,8 +45,8 @@ public:
 
 	static int ElemStkThreadMainRecv(int);
 
-	int AddReqHandler(int, wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
-	int DeleteReqHandler(int, wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
+	int AddReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
+	int DeleteReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
 };
 
 const wchar_t* StkWebApp::Impl::SkipHttpHeader(wchar_t* Txt)
@@ -343,7 +343,7 @@ int StkWebApp::Impl::ElemStkThreadMainRecv(int Id)
 	return Obj->ThreadLoop(Id);
 }
 
-int StkWebApp::Impl::AddReqHandler(int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
+int StkWebApp::Impl::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
 {
 	ReqHandlerCs.lock();
 	for (int Loop = 0; Loop < HandlerCount; Loop++) {
@@ -360,7 +360,7 @@ int StkWebApp::Impl::AddReqHandler(int Method, wchar_t UrlPath[StkWebAppExec::UR
 	return HandlerCount;
 }
 
-int StkWebApp::Impl::DeleteReqHandler(int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])
+int StkWebApp::Impl::DeleteReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])
 {
 	ReqHandlerCs.lock();
 	for (int Loop = 0; Loop < HandlerCount; Loop++) {
@@ -495,7 +495,7 @@ StkWebApp* StkWebApp::GetStkWebAppByThreadId(int ThreadId)
 	return NULL;
 }
 
-StkWebApp::StkWebApp(int* TargetIds, int Count, wchar_t* HostName, int TargetPort)
+StkWebApp::StkWebApp(int* TargetIds, int Count, const wchar_t* HostName, int TargetPort)
 {
 	pImpl = new Impl;
 	pImpl->WebThreadCount = 0;
@@ -609,12 +609,12 @@ StkWebApp::~StkWebApp()
 	delete pImpl;
 };
 
-int StkWebApp::AddReqHandler(int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
+int StkWebApp::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
 {
 	return pImpl->AddReqHandler(Method, UrlPath, HandlerObj);
 }
 
-int StkWebApp::DeleteReqHandler(int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])
+int StkWebApp::DeleteReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])
 {
 	return pImpl->DeleteReqHandler(Method, UrlPath);
 }

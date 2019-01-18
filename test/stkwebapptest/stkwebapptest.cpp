@@ -64,7 +64,7 @@ bool CompObjs(unsigned char* Dat, unsigned char* RecvDat)
 	return Ret;
 }
 
-StkObject* MakeLargeTestData(wchar_t Name[64], int Width, int Height, int CurrentLevel = 0)
+StkObject* MakeLargeTestData(const wchar_t Name[64], int Width, int Height, int CurrentLevel = 0)
 {
 	StkObject* Obj = new StkObject(Name);
 	if (CurrentLevel > Height) {
@@ -83,7 +83,7 @@ StkObject* MakeLargeTestData(wchar_t Name[64], int Width, int Height, int Curren
 	return Obj;
 }
 
-bool SendTestData(int Id, char* Dat)
+bool SendTestData(int Id, const char* Dat)
 {
 	unsigned char RecvDat[1000000];
 	StkSocket_Connect(Id);
@@ -131,7 +131,7 @@ bool SendTestData(int Id, char* Dat)
 	}
 }
 
-int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode, wchar_t Header[256] = NULL, int ContLen = -1)
+int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, const char* ContType, int* ErrorCode, wchar_t Header[256] = NULL, int ContLen = -1)
 {
 	char Tmp[256];
 	unsigned char RecvDat[8192];

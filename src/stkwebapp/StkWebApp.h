@@ -9,7 +9,7 @@ private:
 	Impl* pImpl;
 
 public:
-	StkWebApp(int*, int, wchar_t*, int);
+	StkWebApp(int*, int, const wchar_t*, int);
 	virtual ~StkWebApp();
 
 	int GetSendBufSize();
@@ -20,8 +20,8 @@ public:
 	int GetTimeoutInterval();
 	void SetTimeoutInterval(int);
 
-	int AddReqHandler(int, wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
-	int DeleteReqHandler(int, wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
+	int AddReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
+	int DeleteReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
 
 	void TheLoop();
 
