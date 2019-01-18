@@ -1,12 +1,10 @@
-﻿#include <windows.h>
-#include <shlwapi.h>
-#include <time.h>
-#include <stdio.h>
-#include "..\stksocket\stksocket.h"
-#include "..\stkthread\stkthread.h"
-#include "..\commonfunc\stkobject.h"
-#include "..\commonfunc\StkStringParser.h"
-#include "..\commonfunc\MsgProc.h"
+﻿#include <mutex>
+#include "../StkPl.h"
+#include "../stksocket/stksocket.h"
+#include "../stkthread/stkthread.h"
+#include "../commonfunc/StkObject.h"
+#include "../commonfunc/StkStringParser.h"
+#include "../commonfunc/msgproc.h"
 #include "StkWebApp.h"
 #include "StkWebAppExec.h"
 
@@ -20,7 +18,7 @@ StkWebApp* StkWebAppArray[MAX_IMPL_COUNT];
 class StkWebApp::Impl
 {
 public:
-	CRITICAL_SECTION ReqHandlerCs;
+	std::mutex ReqHandlerCs;
 
 	int WebThreadCount;
 	int WebThreadIds[MAX_THREAD_COUNT];
@@ -38,10 +36,7 @@ public:
 	int TimeoutInterval;
 
 public:
-	wchar_t* SkipHttpHeader(wchar_t*);
-
-	wchar_t* Uft8ToWideChar(unsigned char* Txt);
-	unsigned char* WideCharToUtf8(wchar_t*);
+	const wchar_t* SkipHttpHeader(wchar_t*);
 
 	unsigned char* MakeHttpHeader(int, int, int);
 	StkObject* RecvRequest(int, int*, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t[3]);
@@ -54,20 +49,20 @@ public:
 	int DeleteReqHandler(int, wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
 };
 
-wchar_t* StkWebApp::Impl::SkipHttpHeader(wchar_t* Txt)
+const wchar_t* StkWebApp::Impl::SkipHttpHeader(wchar_t* Txt)
 {
-	wchar_t* Ptr = NULL;
-	Ptr = StrStr(Txt, L"\r\n\r\n");
+	const wchar_t* Ptr = NULL;
+	Ptr = StkPlWcsStr(Txt, L"\r\n\r\n");
 	if (Ptr != NULL) {
 		Ptr += 4;
 		return Ptr;
 	}
-	Ptr = StrStr(Txt, L"\n\r\n\r");
+	Ptr = StkPlWcsStr(Txt, L"\n\r\n\r");
 	if (Ptr != NULL) {
 		Ptr += 4;
 		return Ptr;
 	}
-	Ptr = StrStr(Txt, L"\n\n");
+	Ptr = StkPlWcsStr(Txt, L"\n\n");
 	if (Ptr != NULL) {
 		Ptr += 2;
 		return Ptr;
@@ -75,34 +70,10 @@ wchar_t* StkWebApp::Impl::SkipHttpHeader(wchar_t* Txt)
 	return Txt;
 }
 
-wchar_t* StkWebApp::Impl::Uft8ToWideChar(unsigned char* Txt)
-{
-	int WcSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, NULL, NULL);
-	if (WcSize > 0) {
-		wchar_t* WcTxt = new wchar_t[WcSize + 1];
-		WcSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, WcTxt, WcSize);
-		WcTxt[WcSize] = '\0';
-		return WcTxt;
-	}
-	return NULL;
-}
-
-unsigned char* StkWebApp::Impl::WideCharToUtf8(wchar_t* Txt)
-{
-	int Utf8Size = WideCharToMultiByte(CP_UTF8, 0, Txt, -1, NULL, 0, NULL, NULL);
-	if (Utf8Size > 0) {
-		unsigned char* Utf8Txt = new unsigned char[Utf8Size + 1];
-		Utf8Size = WideCharToMultiByte(CP_UTF8, 0, Txt, -1, (LPSTR)Utf8Txt, Utf8Size, NULL, NULL);
-		Utf8Txt[Utf8Size] = '\0';
-		return Utf8Txt;
-	}
-	return NULL;
-}
-
 unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJsonType)
 {
 	char* HeaderData = new char[1024];
-	strcpy_s(HeaderData, 1024, "");
+	StkPlStrCpy(HeaderData, 1024, "");
 
 	char Status[32] = "";
 	char RespLine[64] = "";
@@ -114,105 +85,90 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 
 	/***** Make response status begin *****/
 	switch (ResultCode) {
-	case 100:	strcpy_s(Status, 32, "Continue"); break;
-	case 101:	strcpy_s(Status, 32, "Switching Protocols"); break;
-	case 102:	strcpy_s(Status, 32, "Processing"); break;
-	case 200:	strcpy_s(Status, 32, "OK"); break;
-	case 201:	strcpy_s(Status, 32, "Created"); break;
-	case 202:	strcpy_s(Status, 32, "Accepted"); break;
-	case 203:	strcpy_s(Status, 32, "Non-Authoritative Information"); break;
-	case 204:	strcpy_s(Status, 32, "No Content"); break;
-	case 205:	strcpy_s(Status, 32, "Reset Content"); break;
-	case 206:	strcpy_s(Status, 32, "Partial Content"); break;
-	case 207:	strcpy_s(Status, 32, "Multi-Status"); break;
-	case 208:	strcpy_s(Status, 32, "Already Reported"); break;
-	case 226:	strcpy_s(Status, 32, "IM Used"); break;
-	case 300:	strcpy_s(Status, 32, "Multiple Choices"); break;
-	case 301:	strcpy_s(Status, 32, "Moved Permanently"); break;
-	case 302:	strcpy_s(Status, 32, "Found"); break;
-	case 303:	strcpy_s(Status, 32, "See Other"); break;
-	case 304:	strcpy_s(Status, 32, "Not Modified"); break;
-	case 305:	strcpy_s(Status, 32, "Use Proxy"); break;
-	case 307:	strcpy_s(Status, 32, "Temporary Redirect"); break;
-	case 308:	strcpy_s(Status, 32, "Permanent Redirect"); break;
-	case 400:	strcpy_s(Status, 32, "Bad Request"); break;
-	case 401:	strcpy_s(Status, 32, "Unauthorized"); break;
-	case 402:	strcpy_s(Status, 32, "Payment Required"); break;
-	case 403:	strcpy_s(Status, 32, "Forbidden"); break;
-	case 404:	strcpy_s(Status, 32, "Not Found"); break;
-	case 405:	strcpy_s(Status, 32, "Method Not Allowed"); break;
-	case 406:	strcpy_s(Status, 32, "Not Acceptable"); break;
-	case 407:	strcpy_s(Status, 32, "Proxy Authentication Required"); break;
-	case 408:	strcpy_s(Status, 32, "Request Timeout"); break;
-	case 409:	strcpy_s(Status, 32, "Conflict"); break;
-	case 410:	strcpy_s(Status, 32, "Gone"); break;
-	case 411:	strcpy_s(Status, 32, "Length Required"); break;
-	case 412:	strcpy_s(Status, 32, "Precondition Failed"); break;
-	case 413:	strcpy_s(Status, 32, "Payload Too Large"); break;
-	case 414:	strcpy_s(Status, 32, "URI Too Long"); break;
-	case 415:	strcpy_s(Status, 32, "Unsupported Media Type"); break;
-	case 416:	strcpy_s(Status, 32, "Range Not Satisfiable"); break;
-	case 417:	strcpy_s(Status, 32, "Expectation Failed"); break;
-	case 418:	strcpy_s(Status, 32, "I'm a teapot"); break;
-	case 421:	strcpy_s(Status, 32, "Misdirected Request"); break;
-	case 422:	strcpy_s(Status, 32, "Unprocessable Entity"); break;
-	case 423:	strcpy_s(Status, 32, "Locked"); break;
-	case 424:	strcpy_s(Status, 32, "Failed Dependency"); break;
-	case 426:	strcpy_s(Status, 32, "Upgrade Required"); break;
-	case 451:	strcpy_s(Status, 32, "Unavailable For Legal Reasons"); break;
-	case 500:	strcpy_s(Status, 32, "Internal Server Error"); break;
-	case 501:	strcpy_s(Status, 32, "Not Implemented"); break;
-	case 502:	strcpy_s(Status, 32, "Bad Gateway"); break;
-	case 503:	strcpy_s(Status, 32, "Service Unavailable"); break;
-	case 504:	strcpy_s(Status, 32, "Gateway Timeout"); break;
-	case 505:	strcpy_s(Status, 32, "HTTP Version Not Supported"); break;
-	case 506:	strcpy_s(Status, 32, "Variant Also Negotiates"); break;
-	case 507:	strcpy_s(Status, 32, "Insufficient Storage"); break;
-	case 508:	strcpy_s(Status, 32, "Loop Detected"); break;
-	case 509:	strcpy_s(Status, 32, "Bandwidth Limit Exceeded"); break;
-	case 510:	strcpy_s(Status, 32, "Not Extended"); break;
+	case 100:	StkPlStrCpy(Status, 32, "Continue"); break;
+	case 101:	StkPlStrCpy(Status, 32, "Switching Protocols"); break;
+	case 102:	StkPlStrCpy(Status, 32, "Processing"); break;
+	case 200:	StkPlStrCpy(Status, 32, "OK"); break;
+	case 201:	StkPlStrCpy(Status, 32, "Created"); break;
+	case 202:	StkPlStrCpy(Status, 32, "Accepted"); break;
+	case 203:	StkPlStrCpy(Status, 32, "Non-Authoritative Information"); break;
+	case 204:	StkPlStrCpy(Status, 32, "No Content"); break;
+	case 205:	StkPlStrCpy(Status, 32, "Reset Content"); break;
+	case 206:	StkPlStrCpy(Status, 32, "Partial Content"); break;
+	case 207:	StkPlStrCpy(Status, 32, "Multi-Status"); break;
+	case 208:	StkPlStrCpy(Status, 32, "Already Reported"); break;
+	case 226:	StkPlStrCpy(Status, 32, "IM Used"); break;
+	case 300:	StkPlStrCpy(Status, 32, "Multiple Choices"); break;
+	case 301:	StkPlStrCpy(Status, 32, "Moved Permanently"); break;
+	case 302:	StkPlStrCpy(Status, 32, "Found"); break;
+	case 303:	StkPlStrCpy(Status, 32, "See Other"); break;
+	case 304:	StkPlStrCpy(Status, 32, "Not Modified"); break;
+	case 305:	StkPlStrCpy(Status, 32, "Use Proxy"); break;
+	case 307:	StkPlStrCpy(Status, 32, "Temporary Redirect"); break;
+	case 308:	StkPlStrCpy(Status, 32, "Permanent Redirect"); break;
+	case 400:	StkPlStrCpy(Status, 32, "Bad Request"); break;
+	case 401:	StkPlStrCpy(Status, 32, "Unauthorized"); break;
+	case 402:	StkPlStrCpy(Status, 32, "Payment Required"); break;
+	case 403:	StkPlStrCpy(Status, 32, "Forbidden"); break;
+	case 404:	StkPlStrCpy(Status, 32, "Not Found"); break;
+	case 405:	StkPlStrCpy(Status, 32, "Method Not Allowed"); break;
+	case 406:	StkPlStrCpy(Status, 32, "Not Acceptable"); break;
+	case 407:	StkPlStrCpy(Status, 32, "Proxy Authentication Required"); break;
+	case 408:	StkPlStrCpy(Status, 32, "Request Timeout"); break;
+	case 409:	StkPlStrCpy(Status, 32, "Conflict"); break;
+	case 410:	StkPlStrCpy(Status, 32, "Gone"); break;
+	case 411:	StkPlStrCpy(Status, 32, "Length Required"); break;
+	case 412:	StkPlStrCpy(Status, 32, "Precondition Failed"); break;
+	case 413:	StkPlStrCpy(Status, 32, "Payload Too Large"); break;
+	case 414:	StkPlStrCpy(Status, 32, "URI Too Long"); break;
+	case 415:	StkPlStrCpy(Status, 32, "Unsupported Media Type"); break;
+	case 416:	StkPlStrCpy(Status, 32, "Range Not Satisfiable"); break;
+	case 417:	StkPlStrCpy(Status, 32, "Expectation Failed"); break;
+	case 418:	StkPlStrCpy(Status, 32, "I'm a teapot"); break;
+	case 421:	StkPlStrCpy(Status, 32, "Misdirected Request"); break;
+	case 422:	StkPlStrCpy(Status, 32, "Unprocessable Entity"); break;
+	case 423:	StkPlStrCpy(Status, 32, "Locked"); break;
+	case 424:	StkPlStrCpy(Status, 32, "Failed Dependency"); break;
+	case 426:	StkPlStrCpy(Status, 32, "Upgrade Required"); break;
+	case 451:	StkPlStrCpy(Status, 32, "Unavailable For Legal Reasons"); break;
+	case 500:	StkPlStrCpy(Status, 32, "Internal Server Error"); break;
+	case 501:	StkPlStrCpy(Status, 32, "Not Implemented"); break;
+	case 502:	StkPlStrCpy(Status, 32, "Bad Gateway"); break;
+	case 503:	StkPlStrCpy(Status, 32, "Service Unavailable"); break;
+	case 504:	StkPlStrCpy(Status, 32, "Gateway Timeout"); break;
+	case 505:	StkPlStrCpy(Status, 32, "HTTP Version Not Supported"); break;
+	case 506:	StkPlStrCpy(Status, 32, "Variant Also Negotiates"); break;
+	case 507:	StkPlStrCpy(Status, 32, "Insufficient Storage"); break;
+	case 508:	StkPlStrCpy(Status, 32, "Loop Detected"); break;
+	case 509:	StkPlStrCpy(Status, 32, "Bandwidth Limit Exceeded"); break;
+	case 510:	StkPlStrCpy(Status, 32, "Not Extended"); break;
 	default:
-		strcpy_s(Status, 32, "Internal Server Error");
+		StkPlStrCpy(Status, 32, "Internal Server Error");
 		break;
 	};
-	sprintf_s(RespLine, "HTTP/1.1 %d %s\r\n", ResultCode, Status);
+	StkPlSPrintf(RespLine, 64, "HTTP/1.1 %d %s\r\n", ResultCode, Status);
 	/***** Make response status end *****/
 
 	if (XmlJsonType == 1) {
-		strcpy_s(ContType, 64, "Content-Type: application/xml\r\n");
+		StkPlStrCpy(ContType, 64, "Content-Type: application/xml\r\n");
 	} else if (XmlJsonType == 2) {
-		strcpy_s(ContType, 64, "Content-Type: application/json\r\n");
+		StkPlStrCpy(ContType, 64, "Content-Type: application/json\r\n");
 	} else if (XmlJsonType == 0) {
 	}
-	sprintf_s(ContLen, 64, "Content-Length: %d\r\n", DataLength);
-	sprintf_s(Connection, 64, "Connection: close\r\n");
-	sprintf_s(CacheCont, 64, "Cache-Control: no-cache\r\n");
+	StkPlSPrintf(ContLen, 64, "Content-Length: %d\r\n", DataLength);
+	StkPlSPrintf(Connection, 64, "Connection: close\r\n");
+	StkPlSPrintf(CacheCont, 64, "Cache-Control: no-cache\r\n");
 
-	/***** Make time string begin *****/
-	struct tm GmtTime;
-	__int64 Ltime;
-	_time64(&Ltime);
-	_gmtime64_s(&GmtTime, &Ltime);
-	char MonStr[12][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-	char WdayStr[7][4] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-	sprintf_s(Date, 64, "Date: %s, %02d %s %d %02d:%02d:%02d GMT\r\n",
-		WdayStr[GmtTime.tm_wday],
-		GmtTime.tm_mday,
-		MonStr[GmtTime.tm_mon],
-		GmtTime.tm_year + 1900,
-		GmtTime.tm_hour,
-		GmtTime.tm_min,
-		GmtTime.tm_sec);
-	/***** Make time string end *****/
+	StkPlGetTimeInRfc822(Date);
 
-	strcat_s(HeaderData, 1024, RespLine);
-	strcat_s(HeaderData, 1024, ContType);
-	strcat_s(HeaderData, 1024, ContLen);
-	strcat_s(HeaderData, 1024, Connection);
-	strcat_s(HeaderData, 1024, CacheCont);
-	strcat_s(HeaderData, 1024, Date);
+	StkPlStrCat(HeaderData, 1024, RespLine);
+	StkPlStrCat(HeaderData, 1024, ContType);
+	StkPlStrCat(HeaderData, 1024, ContLen);
+	StkPlStrCat(HeaderData, 1024, Connection);
+	StkPlStrCat(HeaderData, 1024, CacheCont);
+	StkPlStrCat(HeaderData, 1024, Date);
 
-	strcat_s(HeaderData, 1024, "\r\n");
+	StkPlStrCat(HeaderData, 1024, "\r\n");
 
 	return (unsigned char*)HeaderData;
 }
@@ -221,7 +177,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 {
 	*XmlJsonType = -1;
 	*Method = StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED;
-	lstrcpy(UrlPath, L"");
+	StkPlWcsCpy(UrlPath, StkWebAppExec::URL_PATH_LENGTH, L"");
 
 	int Ret = StkSocket_Accept(TargetId);
 	if (Ret == -1) {
@@ -239,7 +195,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	} else {
 		Dat[Ret] = '\0';
 	}
-	wchar_t *DatWc = Uft8ToWideChar(Dat);
+	wchar_t *DatWc = StkPlUtf8ToWideChar((char*)Dat);
 	delete Dat;
 	if (DatWc == NULL) {
 		StkSocket_CloseAccept(TargetId, TargetId, true);
@@ -247,7 +203,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	}
 
 	// Acquire HTTP header
-	wchar_t* Req = SkipHttpHeader(DatWc);
+	const wchar_t* Req = SkipHttpHeader(DatWc);
 	if (Req == DatWc) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
 		delete DatWc;
@@ -255,21 +211,21 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	}
 	int HttpHeaderLen = Req - DatWc + 1;
 	wchar_t* HttpHeader = new wchar_t[HttpHeaderLen];
-	memcpy(HttpHeader, DatWc, HttpHeaderLen * sizeof(wchar_t));
+	StkPlMemCpy(HttpHeader, DatWc, HttpHeaderLen * sizeof(wchar_t));
 	HttpHeader[HttpHeaderLen - 1] = L'\0';
 
 	// Acquire METHOD and URL path
 	wchar_t MethodStr[16];
 	StkStringParser::ParseInto3Params(HttpHeader, L"# # HTTP#", L'#', MethodStr, 16, UrlPath, StkWebAppExec::URL_PATH_LENGTH, NULL, -1);
-	if (lstrcmp(MethodStr, L"GET") == 0) {
+	if (StkPlWcsCmp(MethodStr, L"GET") == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_GET;
-	} else if (lstrcmp(MethodStr, L"HEAD") == 0) {
+	} else if (StkPlWcsCmp(MethodStr, L"HEAD") == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_HEAD;
-	} else if (lstrcmp(MethodStr, L"POST") == 0) {
+	} else if (StkPlWcsCmp(MethodStr, L"POST") == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_POST;
-	} else if (lstrcmp(MethodStr, L"PUT") == 0) {
+	} else if (StkPlWcsCmp(MethodStr, L"PUT") == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_PUT;
-	} else if (lstrcmp(MethodStr, L"DELETE") == 0) {
+	} else if (StkPlWcsCmp(MethodStr, L"DELETE") == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_DELETE;
 	} else {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
@@ -289,7 +245,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		wchar_t Buf[1024];
 		wchar_t ContentType[32];
 		StkStringParser::ParseInto3Params(HttpHeader, L"#Content-Type: #\n#", L'#', Buf, 1024, ContentType, 32, NULL, -1);
-		if (StrStr(ContentType, L"application/json") == NULL && lstrcmp(ContentType, L"") != 0) {
+		if (StkPlWcsStr(ContentType, L"application/json") == NULL && StkPlWcsCmp(ContentType, L"") != 0) {
 			*XmlJsonType = -1;
 			delete DatWc;
 			delete HttpHeader;
@@ -298,7 +254,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	}
 
 	// Acquire a locale
-	lstrcpy(Locale, L"");
+	StkPlWcsCpy(Locale, 3, L"");
 	StkStringParser::ParseInto2Params(HttpHeader, L"#Accept-Language: #", L'#', NULL, 0, Locale, 3);
 
 	// Create JSON object
@@ -329,34 +285,34 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 			ResultCode = 500;
 		} else if ((XmlJsonType == 0 || XmlJsonType == 2) && Obj != NULL) {
 			wchar_t* XmlOrJson = new wchar_t[SendBufSize];
-			lstrcpy(XmlOrJson, L"");
+			StkPlWcsCpy(XmlOrJson, SendBufSize, L"");
 			int Length = Obj->ToJson(XmlOrJson, SendBufSize);
 			if (Length == SendBufSize - 1) {
 				ResultCode = 500;
 				StkObject* ErrObj = MakeErrorResponse(1006);
 				wchar_t TmpBuf[1024] = L"";
 				ErrObj->ToJson(TmpBuf, 1024);
-				Dat = WideCharToUtf8(TmpBuf);
-				DatLength = strlen((char*)Dat);
+				Dat = (unsigned char*)StkPlWideCharToUtf8(TmpBuf);
+				DatLength = StkPlStrLen((char*)Dat);
 				delete XmlOrJson;
 			} else {
-				Dat = WideCharToUtf8(XmlOrJson);
-				DatLength = strlen((char*)Dat);
+				Dat = (unsigned char*)StkPlWideCharToUtf8(XmlOrJson);
+				DatLength = StkPlStrLen((char*)Dat);
 				delete XmlOrJson;
 			}
 		}
 	}
 
 	unsigned char* HeaderDat = MakeHttpHeader(ResultCode, DatLength, XmlJsonType);
-	int HeaderDatLength = strlen((char*)HeaderDat);
+	int HeaderDatLength = StkPlStrLen((char*)HeaderDat);
 
 	int RespDatLength = DatLength + HeaderDatLength;
 	unsigned char* RespDat = new unsigned char[RespDatLength + 1];
 
-	strcpy_s((char*)RespDat, RespDatLength + 1, "");
-	strcat_s((char*)RespDat, RespDatLength + 1, (char*)HeaderDat);
+	StkPlStrCpy((char*)RespDat, RespDatLength + 1, "");
+	StkPlStrCat((char*)RespDat, RespDatLength + 1, (char*)HeaderDat);
 	if (Dat != NULL) {
-		strcat_s((char*)RespDat, RespDatLength + 1, (char*)Dat);
+		StkPlStrCat((char*)RespDat, RespDatLength + 1, (char*)Dat);
 	}
 
 	int RetD = StkSocket_Send(TargetId, TargetId, RespDat, RespDatLength);
@@ -389,41 +345,41 @@ int StkWebApp::Impl::ElemStkThreadMainRecv(int Id)
 
 int StkWebApp::Impl::AddReqHandler(int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
 {
-	EnterCriticalSection(&ReqHandlerCs);
+	ReqHandlerCs.lock();
 	for (int Loop = 0; Loop < HandlerCount; Loop++) {
-		if (Method == HandlerMethod[Loop] && lstrcmp(UrlPath, HandlerUrlPath[Loop]) == 0) {
-			LeaveCriticalSection(&ReqHandlerCs);
+		if (Method == HandlerMethod[Loop] && StkPlWcsCmp(UrlPath, HandlerUrlPath[Loop]) == 0) {
+			ReqHandlerCs.unlock();
 			return -1;
 		}
 	}
 	HandlerMethod[HandlerCount] = Method;
-	lstrcpy(HandlerUrlPath[HandlerCount], UrlPath);
+	StkPlWcsCpy(HandlerUrlPath[HandlerCount], StkWebAppExec::URL_PATH_LENGTH, UrlPath);
 	Handler[HandlerCount] = HandlerObj;
 	HandlerCount++;
-	LeaveCriticalSection(&ReqHandlerCs);
+	ReqHandlerCs.unlock();
 	return HandlerCount;
 }
 
 int StkWebApp::Impl::DeleteReqHandler(int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])
 {
-	EnterCriticalSection(&ReqHandlerCs);
+	ReqHandlerCs.lock();
 	for (int Loop = 0; Loop < HandlerCount; Loop++) {
-		if (Method != HandlerMethod[Loop] || lstrcmp(UrlPath, HandlerUrlPath[Loop]) != 0) {
+		if (Method != HandlerMethod[Loop] || StkPlWcsCmp(UrlPath, HandlerUrlPath[Loop]) != 0) {
 			continue;
 		}
 		HandlerMethod[Loop] = StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED;
-		lstrcpy(HandlerUrlPath[Loop], L"");
+		StkPlWcsCpy(HandlerUrlPath[Loop], StkWebAppExec::URL_PATH_LENGTH, L"");
 		delete Handler[Loop];
 		for (int Loop2 = Loop; Loop2 < HandlerCount - 1; Loop2++) {
 			HandlerMethod[Loop2] = HandlerMethod[Loop2 + 1];
-			lstrcpy(HandlerUrlPath[Loop2], HandlerUrlPath[Loop2 + 1]);
+			StkPlWcsCpy(HandlerUrlPath[Loop2], StkWebAppExec::URL_PATH_LENGTH, HandlerUrlPath[Loop2 + 1]);
 			Handler[Loop2] = Handler[Loop2 + 1];
 		}
 		HandlerCount--;
-		LeaveCriticalSection(&ReqHandlerCs);
+		ReqHandlerCs.unlock();
 		return HandlerCount;
 	}
-	LeaveCriticalSection(&ReqHandlerCs);
+	ReqHandlerCs.unlock();
 	return -1;
 }
 
@@ -441,10 +397,10 @@ void StkWebApp::TheLoop()
 {
 	while (true) {
 		if (pImpl->StopFlag) {
-			Sleep(100);
+			StkPlSleepMs(100);
 			break;
 		}
-		Sleep(100);
+		StkPlSleepMs(100);
 	}
 }
 
@@ -459,7 +415,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath, Locale);
 
 	// If no request is received, return from this method.
-	if (StkObjReq == NULL && Method == StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED && lstrcmp(UrlPath, L"") == 0 && XmlJsonType == -1) {
+	if (StkObjReq == NULL && Method == StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED && StkPlWcsCmp(UrlPath, L"") == 0 && XmlJsonType == -1) {
 		return 0;
 	}
 
@@ -491,7 +447,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	}
 
 	// If service stop request is presented...
-	if (FndFlag == false && Method == StkWebAppExec::STKWEBAPP_METHOD_POST && lstrcmp(UrlPath, L"/service/") == 0) {
+	if (FndFlag == false && Method == StkWebAppExec::STKWEBAPP_METHOD_POST && StkPlWcsCmp(UrlPath, L"/service/") == 0) {
 		int ErrorCode;
 		StkObject* TmpObj = StkObject::CreateObjectFromJson(L"{ \"Operation\" : \"Stop\" }", &ErrorCode);
 		if (StkObjReq->Equals(TmpObj) == true) {
@@ -542,7 +498,6 @@ StkWebApp* StkWebApp::GetStkWebAppByThreadId(int ThreadId)
 StkWebApp::StkWebApp(int* TargetIds, int Count, wchar_t* HostName, int TargetPort)
 {
 	pImpl = new Impl;
-	InitializeCriticalSection(&pImpl->ReqHandlerCs);
 	pImpl->WebThreadCount = 0;
 	pImpl->HandlerCount = 0;
 	pImpl->StopFlag = false;
@@ -580,7 +535,7 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, wchar_t* HostName, int TargetPor
 
 	// Add and open socket
 	if (pImpl->WebThreadCount >= 1) {
-		StkSocket_AddInfo(pImpl->WebThreadIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, HostName, TargetPort);
+		StkSocket_AddInfo(pImpl->WebThreadIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, HostName, TargetPort);
 		for (int Loop = 1; Loop < pImpl->WebThreadCount; Loop++) {
 			StkSocket_CopyInfo(pImpl->WebThreadIds[Loop], pImpl->WebThreadIds[0]);
 		}
@@ -591,8 +546,8 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, wchar_t* HostName, int TargetPor
 	wchar_t Name[32];
 	wchar_t Desc[32];
 	for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
-		wsprintf(Name, L"Recv-%d", Loop);
-		wsprintf(Desc, L"Worker thread", Loop);
+		StkPlSwPrintf(Name, 32, L"Recv-%d", Loop);
+		StkPlSwPrintf(Desc, 32, L"Worker thread", Loop);
 		AddStkThread(pImpl->WebThreadIds[Loop], Name, Desc, NULL, NULL, Impl::ElemStkThreadMainRecv, NULL, NULL);
 		SetStkThreadInterval(pImpl->WebThreadIds[Loop], 1);
 	}
@@ -601,7 +556,7 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, wchar_t* HostName, int TargetPor
 	StartSpecifiedStkThreads(pImpl->WebThreadIds, pImpl->WebThreadCount);
 	bool ThreadsStarted = false;
 	while (ThreadsStarted == false) {
-		Sleep(100);
+		StkPlSleepMs(100);
 		ThreadsStarted = true;
 		for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
 			if (GetStkThreadStatus(pImpl->WebThreadIds[Loop]) != STKTHREAD_STATUS_RUNNING) {
@@ -625,7 +580,7 @@ StkWebApp::~StkWebApp()
 	StopSpecifiedStkThreads(pImpl->WebThreadIds, pImpl->WebThreadCount);
 	bool ThreadsStopped = false;
 	while (ThreadsStopped == false) {
-		Sleep(100);
+		StkPlSleepMs(100);
 		ThreadsStopped = true;
 		for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
 			if (GetStkThreadStatus(pImpl->WebThreadIds[Loop]) != STKTHREAD_STATUS_READY) {

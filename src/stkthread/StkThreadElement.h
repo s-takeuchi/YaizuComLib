@@ -7,7 +7,7 @@ public:
 	static const int STKTHREAD_STATUS_READY = 100;
 	static const int STKTHREAD_STATUS_STARTING = 101;
 	static const int STKTHREAD_STATUS_RUNNING = 102;
-	static const int STKTHREAD_STATUS_STOPPING = 104;
+	static const int STKTHREAD_STATUS_STOPPING = 103;
 	static const int MAX_LENGTH_OF_STKTHREAD_NAME = 32;
 	static const int MAX_LENGTH_OF_STKTHREAD_DESCRIPTION = 256;
 

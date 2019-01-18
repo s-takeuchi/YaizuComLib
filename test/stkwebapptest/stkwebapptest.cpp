@@ -1,13 +1,9 @@
-﻿#include <windows.h>
-#include <shlwapi.h>
-#include <stdio.h>
-#include <string.h>
-#include <Psapi.h>
-#include "..\..\src\stkthread\stkthread.h"
-#include "..\..\src\commonfunc\StkObject.h"
-#include "..\..\src\stksocket\stksocket.h"
-#include "..\..\src\stkwebapp\StkWebApp.h"
-#include "..\..\src\stkwebapp\StkWebAppExec.h"
+﻿#include "../../src/StkPl.h"
+#include "../../src/stkthread/stkthread.h"
+#include "../../src/commonfunc/StkObject.h"
+#include "../../src/stksocket/stksocket.h"
+#include "../../src/stkwebapp/StkWebApp.h"
+#include "../../src/stkwebapp/StkWebAppExec.h"
 #include "StkWebAppTest1.h"
 #include "StkWebAppTest2.h"
 #include "StkWebAppTest3.h"
@@ -20,34 +16,18 @@
 bool SendTestDataFailed = false;
 int SendTestDataCount = 0;
 
-int GetUsedMemorySizeOfCurrentProcess()
+const wchar_t* FindNewLine(wchar_t* Dat)
 {
-	DWORD dwProcessID = GetCurrentProcessId();
-	HANDLE hProcess;
-	PROCESS_MEMORY_COUNTERS pmc = { 0 };
-
-	long Size;
-	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
-		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
-			Size = pmc.WorkingSetSize;
-		}
-	}
-	CloseHandle(hProcess);
-	return Size;
-}
-
-wchar_t* FindNewLine(wchar_t* Dat)
-{
-	wchar_t* Ret;
-	Ret = StrStr(Dat, L"\r\n\r\n");
+	const wchar_t* Ret;
+	Ret = StkPlWcsStr(Dat, L"\r\n\r\n");
 	if (Ret != 0) {
 		return Ret + 4;
 	}
-	Ret = StrStr(Dat, L"\n\r\n\r");
+	Ret = StkPlWcsStr(Dat, L"\n\r\n\r");
 	if (Ret != 0) {
 		return Ret + 4;
 	}
-	Ret = StrStr(Dat, L"\n\n");
+	Ret = StkPlWcsStr(Dat, L"\n\n");
 	if (Ret != 0) {
 		return Ret + 2;
 	}
@@ -58,11 +38,9 @@ bool CompObjs(unsigned char* Dat, unsigned char* RecvDat)
 {
 	bool Ret = true;
 	int ErrCode;
-	wchar_t SendDatW[1000000];
-	_snwprintf_s(SendDatW, 1000000, _TRUNCATE, L"%S", Dat);
-	wchar_t RecvDatW[1000000];
-	_snwprintf_s(RecvDatW, 1000000, _TRUNCATE, L"%S", RecvDat);
-	wchar_t* Skip = FindNewLine(RecvDatW);
+	wchar_t *SendDatW = StkPlUtf8ToWideChar((char*)Dat);
+	wchar_t *RecvDatW = StkPlUtf8ToWideChar((char*)RecvDat);
+	const wchar_t* Skip = FindNewLine(RecvDatW);
 	StkObject* SendObj = NULL;
 	StkObject* RecvObj = NULL;
 	if (StkObject::Analyze(SendDatW) == 1) {
@@ -81,6 +59,8 @@ bool CompObjs(unsigned char* Dat, unsigned char* RecvDat)
 	if (RecvObj != NULL) {
 		delete RecvObj;
 	}
+	delete SendDatW;
+	delete RecvDatW;
 	return Ret;
 }
 
@@ -96,7 +76,7 @@ StkObject* MakeLargeTestData(wchar_t Name[64], int Width, int Height, int Curren
 	} else {
 		for (int Loop = 0; Loop < Width; Loop++) {
 			wchar_t Buf[25];
-			wsprintf(Buf, L"Elem_%d:%d", CurrentLevel, Loop);
+			StkPlSwPrintf(Buf, 25, L"Elem_%d:%d", CurrentLevel, Loop);
 			Obj->AppendChildElement(MakeLargeTestData(Buf, Width, Height, CurrentLevel + 1));
 		}
 	}
@@ -111,30 +91,30 @@ bool SendTestData(int Id, char* Dat)
 	char TmpHeader[256];
 	char UrlPath[StkWebAppExec::URL_PATH_LENGTH];
 	if (Id % 3 == 0) {
-		strcpy_s(UrlPath, StkWebAppExec::URL_PATH_LENGTH, "/aaa/bbb/");
+		StkPlStrCpy(UrlPath, StkWebAppExec::URL_PATH_LENGTH, "/aaa/bbb/");
 	} else if (Id % 3 == 1) {
-		strcpy_s(UrlPath, StkWebAppExec::URL_PATH_LENGTH, "/aaa/ccc/");
+		StkPlStrCpy(UrlPath, StkWebAppExec::URL_PATH_LENGTH, "/aaa/ccc/");
 	} else {
-		strcpy_s(UrlPath, StkWebAppExec::URL_PATH_LENGTH, "/aaa/ddd/");
+		StkPlStrCpy(UrlPath, StkWebAppExec::URL_PATH_LENGTH, "/aaa/ddd/");
 	}
-	sprintf_s(TmpHeader, 256, "POST %s HTTP/1.1\nContent-Length: %d\nAccept-Language: ja-JP;q=0.5,en-US;q=0.3,en-GB;q=0.2\nContent-Type: application/json\n\n", UrlPath, strlen(Dat) + 1);
+	StkPlSPrintf(TmpHeader, 256, "POST %s HTTP/1.1\nContent-Length: %d\nAccept-Language: ja-JP;q=0.5,en-US;q=0.3,en-GB;q=0.2\nContent-Type: application/json\n\n", UrlPath, StkPlStrLen(Dat) + 1);
 
-	if (StkSocket_Send(Id, Id, (unsigned char*)TmpHeader, strlen((char*)TmpHeader)) <= 0) {
+	if (StkSocket_Send(Id, Id, (unsigned char*)TmpHeader, StkPlStrLen((char*)TmpHeader)) <= 0) {
 		return false;
 	}
-	if (StkSocket_Send(Id, Id, (unsigned char*)Dat, strlen(Dat) + 1) <= 0) {
+	if (StkSocket_Send(Id, Id, (unsigned char*)Dat, StkPlStrLen(Dat) + 1) <= 0) {
 		return false;
 	}
 	int RetR;
 	while (true) {
-		RetR = StkSocket_Receive(Id, Id, RecvDat, 1000000, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1);
+		RetR = StkSocket_Receive(Id, Id, RecvDat, 1000000, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 20000, NULL, -1);
 		if (RetR > 0) {
 			RecvDat[RetR] = '\0';
 			break;
 		}
 		if (RetR <= 0) {
-			printf("... NG (Ret=%d)\r\n", RetR);
-			exit(0);
+			StkPlPrintf("... NG (Ret=%d)\r\n", RetR);
+			StkPlExit(0);
 		}
 	}
 	StkSocket_Disconnect(Id, Id, true);
@@ -144,14 +124,14 @@ bool SendTestData(int Id, char* Dat)
 	if (RetR == 0) {
 		return true;
 	}
-	if (RetR > 0 && strstr((char*)RecvDat, "200 OK") == 0) {
+	if (RetR > 0 && StkPlStrStr((char*)RecvDat, "200 OK") == 0) {
 		return false;
 	} else {
 		return CompObjs((unsigned char*)Dat, (unsigned char*)RecvDat);
 	}
 }
 
-int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode, wchar_t Header[64] = NULL, int ContLen = -1)
+int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, int* ErrorCode, wchar_t Header[256] = NULL, int ContLen = -1)
 {
 	char Tmp[256];
 	unsigned char RecvDat[8192];
@@ -161,13 +141,13 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, in
 	int RetS = 0;
 
 	if (Method == NULL && Url == NULL) {
-		sprintf_s(Tmp, 256, "%s", Dat);
+		StkPlSPrintf(Tmp, 256, "%s", Dat);
 	} else if (ContLen == -1) {
-		sprintf_s(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, strlen(Dat), ContType, Dat);
+		StkPlSPrintf(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, StkPlStrLen(Dat), ContType, Dat);
 	} else {
-		sprintf_s(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, ContLen, ContType, Dat);
+		StkPlSPrintf(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, ContLen, ContType, Dat);
 	}
-	if ((RetS = StkSocket_Send(Id, Id, (unsigned char*)Tmp, strlen((char*)Tmp))) <= 0) {
+	if ((RetS = StkSocket_Send(Id, Id, (unsigned char*)Tmp, StkPlStrLen((char*)Tmp))) <= 0) {
 		return -1;
 	}
 	int RetR;
@@ -184,25 +164,20 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, in
 	}
 
 	// Change UTF-8 into UTF-16
-	wchar_t* RecvDatW = NULL;
-	int WcSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)RecvDat, -1, NULL, NULL);
-	if (WcSize > 0) {
-		RecvDatW = new wchar_t[WcSize + 1];
-		WcSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)RecvDat, -1, RecvDatW, WcSize);
-		RecvDatW[WcSize] = '\0';
-	}
+	wchar_t* RecvDatW = StkPlUtf8ToWideChar((char*)RecvDat);
 
 	if (Header != NULL) {
-		lstrcpyn(Header, RecvDatW, 64);
+		StkPlWcsNCpy(Header, 256, RecvDatW, 256 - 1);
+		Header[255] = L'\0';
 	}
 
 	// Skip HTTP header
-	wchar_t* DatPtr = StrStr(RecvDatW, L"\n\n");
+	const wchar_t* DatPtr = StkPlWcsStr(RecvDatW, L"\n\n");
 	if (DatPtr == NULL) {
-		DatPtr = StrStr(RecvDatW, L"\r\n\r\n");
+		DatPtr = StkPlWcsStr(RecvDatW, L"\r\n\r\n");
 	}
 	if (DatPtr == NULL) {
-		DatPtr = StrStr(RecvDatW, L"\n\r\n\r");
+		DatPtr = StkPlWcsStr(RecvDatW, L"\n\r\n\r");
 	}
 
 	// Make StkObject from HTTP response data
@@ -223,10 +198,10 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, in
 		wchar_t* ErrorCodeStr = NULL;
 		StkObject* TmpObj = DatObj->GetFirstChildElement();
 		while (TmpObj != NULL) {
-			if (lstrcmp(TmpObj->GetName(), L"Code") == 0) {
+			if (StkPlWcsCmp(TmpObj->GetName(), L"Code") == 0) {
 				if (XmlJsonType == 1) {
 					ErrorCodeStr = TmpObj->GetStringValue();
-					*ErrorCode = _wtoi(ErrorCodeStr);
+					*ErrorCode = StkPlWcsToL(ErrorCodeStr);
 				}
 				if (XmlJsonType == 2) {
 					*ErrorCode = TmpObj->GetIntValue();
@@ -239,10 +214,10 @@ int SendTestData2(int Id, char* Method, char* Url, char* Dat, char* ContType, in
 	}
 
 	// Acquire status code
-	char* ValStr = strstr((char*)RecvDat, "HTTP/1.1");
+	const char* ValStr = StkPlStrStr((char*)RecvDat, "HTTP/1.1");
 	ValStr += 9;
 	int Val;
-	sscanf_s(ValStr, "%d", &Val);
+	StkPlSScanf(ValStr, "%d", &Val);
 	return Val;
 }
 
@@ -268,107 +243,107 @@ int ElemStkThreadMainSend2(int Id)
 {
 	int ErrorCode;
 
-	printf("StkWebAppTest2:Invalid request 1 == 400");
+	StkPlPrintf("StkWebAppTest2:Invalid request 1 == 400");
 	if (SendTestData2(Id, NULL, NULL, "dummy", "", &ErrorCode) != 400 || ErrorCode != 1005) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest2:Invalid request 2 == 400");
+	StkPlPrintf("StkWebAppTest2:Invalid request 2 == 400");
 	if (SendTestData2(Id, NULL, NULL, "Aaaaaaaaaaaaaaaaaaaaaaaaa\r\n\r\n Bbbbbbbbbbbbbb HTTP Cccccccccccccccccccccccccccc", "", &ErrorCode) != 400 || ErrorCode != 1005) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest2:GET /aaa/ [{ \"AAA\":123 } with No Content-Type] == 404");
+	StkPlPrintf("StkWebAppTest2:GET /aaa/ [{ \"AAA\":123 } with No Content-Type] == 404");
 	if (SendTestData2(Id, NULL, NULL, "GET /aaa/ HTTP/1.1\r\n\r\n{ \"AAA\":123 }\n", "", &ErrorCode) != 404 || ErrorCode != 1001) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest2:GET /abc/ [{ \"AAA\":123 }] == 404");
+	StkPlPrintf("StkWebAppTest2:GET /abc/ [{ \"AAA\":123 }] == 404");
 	if (SendTestData2(Id, "GET", "/abc/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 404 || ErrorCode != 1001) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest2:GET /abc/ [\"aaa\" : {\"bbb\" : \"xxx\"}] == 404");
+	StkPlPrintf("StkWebAppTest2:GET /abc/ [\"aaa\" : {\"bbb\" : \"xxx\"}] == 404");
 	if (SendTestData2(Id, "GET", "/abc/", "\"aaa\" : {\"bbb\" : \"xxx\"}\n", "application/json", &ErrorCode) != 404 || ErrorCode != 1001) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest2:GET /abc/ [{ \"AAA\":123 } with application/xml] == 400");
+	StkPlPrintf("StkWebAppTest2:GET /abc/ [{ \"AAA\":123 } with application/xml] == 400");
 	if (SendTestData2(Id, "GET", "/abc/", "{ \"AAA\":123 }\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1002) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest2:GET /abc/ [XYZ] == 400");
+	StkPlPrintf("StkWebAppTest2:GET /abc/ [XYZ] == 400");
 	if (SendTestData2(Id, "GET", "/abc/", "XYZ\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1002) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest2:GET /abc/ [<Aaa><Bbb/></Aaa>] == 400");
+	StkPlPrintf("StkWebAppTest2:GET /abc/ [<Aaa><Bbb/></Aaa>] == 400");
 	if (SendTestData2(Id, "GET", "/abc/", "<Aaa><Bbb/></Aaa>\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1002) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
 	// Timeout detection start
 	{
-		wchar_t Header[64];
+		wchar_t Header[256];
 
 		int Ret = 0;
-		DWORD StartTime = 0;
-		DWORD EndTime = 0;
+		long long StartTime = 0;
+		long long EndTime = 0;
 
-		printf("StkWebAppTest2:Invalid Content-Length (Timeout default 3000 milliseconds)");
-		StartTime = GetTickCount();
+		StkPlPrintf("StkWebAppTest2:Invalid Content-Length (Timeout default 3000 milliseconds)");
+		StartTime = StkPlGetTickCount();
 		if ((Ret = SendTestData2(Id, "POST", "/test/", "{ \"Test\" : \"1\" }\n", "application/json", &ErrorCode, Header, 1024)) != 404 || ErrorCode != 1001) {
-			printf("... NG\r\n");
-			exit(0);
+			StkPlPrintf("... NG\r\n");
+			StkPlExit(0);
 		}
-		EndTime = GetTickCount();
+		EndTime = StkPlGetTickCount();
 		if ((EndTime - StartTime) < 3000 || (EndTime - StartTime) > 4000) {
-			printf("... NG\r\n");
-			exit(0);
+			StkPlPrintf("... NG\r\n");
+			StkPlExit(0);
 		}
-		printf("... OK\r\n");
+		StkPlPrintf("... OK\r\n");
 	}
 	// Timeout detection end
 
-	printf("StkWebAppTest2:POST /service/ [{ \"Operation\" : \"Start\" }] == 400");
+	StkPlPrintf("StkWebAppTest2:POST /service/ [{ \"Operation\" : \"Start\" }] == 400");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Start\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1004) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest2:POST /service/ [{ \"Stop\" : \"YES\" }] == 400");
+	StkPlPrintf("StkWebAppTest2:POST /service/ [{ \"Stop\" : \"YES\" }] == 400");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Stop\" : \"YES\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1004) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest2:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
+	StkPlPrintf("StkWebAppTest2:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	Sleep(1000);
+	StkPlSleepMs(1000);
 
 	return 0;
 }
@@ -376,116 +351,127 @@ int ElemStkThreadMainSend2(int Id)
 int ElemStkThreadMainSend3(int Id)
 {
 	int ErrorCode;
-	wchar_t Header[64];
+	wchar_t Header[256];
 
-	printf("StkWebAppTest3:GET /aaa/100/ [{ \"AAA\":\"aaa\" }] == 100 Continue");
-	if (SendTestData2(Id, "GET", "/aaa/100/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 100 || StrStr(Header, L"Continue") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/100/ [{ \"AAA\":\"aaa\" }] == 100 Continue");
+	if (SendTestData2(Id, "GET", "/aaa/100/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 100 || StkPlWcsStr(Header, L"Continue") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/102/ [{ \"AAA\":\"aaa\" }] == 102 Processing");
-	if (SendTestData2(Id, "GET", "/aaa/102/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 102 || StrStr(Header, L"Processing") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/102/ [{ \"AAA\":\"aaa\" }] == 102 Processing");
+	if (SendTestData2(Id, "GET", "/aaa/102/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 102 || StkPlWcsStr(Header, L"Processing") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/202/ [{ \"AAA\":\"aaa\" }] == 202 Accepted");
-	if (SendTestData2(Id, "GET", "/aaa/202/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 202 || StrStr(Header, L"Accepted") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/202/ [{ \"AAA\":\"aaa\" }] == 202 Accepted");
+	if (SendTestData2(Id, "GET", "/aaa/202/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 202 || StkPlWcsStr(Header, L"Accepted") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/204/ [{ \"AAA\":\"aaa\" }] == 204 No Content");
-	if (SendTestData2(Id, "GET", "/aaa/204/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 204 || StrStr(Header, L"No Content") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/204/ [{ \"AAA\":\"aaa\" }] == 204 No Content");
+	if (SendTestData2(Id, "GET", "/aaa/204/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 204 || StkPlWcsStr(Header, L"No Content") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
+	const wchar_t* TmpHeader = StkPlWcsStr(Header, L"Date:");
+	wchar_t TmpDate[32];
+	wchar_t TmpWDay[32];
+	int TmpDay;
+	StkPlSwScanf(TmpHeader, L"%s %s %d", TmpDate, TmpWDay, &TmpDay);
+	StkPlPrintf("StkWebAppTest3: Check whether proper date is set in HTTP header or not.");
+	if (TmpDay < 1 || TmpDay > 31) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
+	}
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/304/ [{ \"AAA\":\"aaa\" }] == 304 Not Modified");
-	if (SendTestData2(Id, "GET", "/aaa/304/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 304 || StrStr(Header, L"Not Modified") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/304/ [{ \"AAA\":\"aaa\" }] == 304 Not Modified");
+	if (SendTestData2(Id, "GET", "/aaa/304/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 304 || StkPlWcsStr(Header, L"Not Modified") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/400/ [{ \"AAA\":\"aaa\" }] == 400 Bad Request");
-	if (SendTestData2(Id, "GET", "/aaa/400/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 400 || StrStr(Header, L"Bad Request") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/400/ [{ \"AAA\":\"aaa\" }] == 400 Bad Request");
+	if (SendTestData2(Id, "GET", "/aaa/400/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 400 || StkPlWcsStr(Header, L"Bad Request") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/401/ [{ \"AAA\":\"aaa\" }] == 401 Unauthorized");
-	if (SendTestData2(Id, "GET", "/aaa/401/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 401 || StrStr(Header, L"Unauthorized") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/401/ [{ \"AAA\":\"aaa\" }] == 401 Unauthorized");
+	if (SendTestData2(Id, "GET", "/aaa/401/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 401 || StkPlWcsStr(Header, L"Unauthorized") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/404/ [{ \"AAA\":\"aaa\" }] == 404 Not Found");
-	if (SendTestData2(Id, "GET", "/aaa/404/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 404 || StrStr(Header, L"Not Found") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/404/ [{ \"AAA\":\"aaa\" }] == 404 Not Found");
+	if (SendTestData2(Id, "GET", "/aaa/404/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 404 || StkPlWcsStr(Header, L"Not Found") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/414/ [{ \"AAA\":\"aaa\" }] == 414 URI Too Long");
-	if (SendTestData2(Id, "GET", "/aaa/414/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 414 || StrStr(Header, L"URI Too Long") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/414/ [{ \"AAA\":\"aaa\" }] == 414 URI Too Long");
+	if (SendTestData2(Id, "GET", "/aaa/414/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 414 || StkPlWcsStr(Header, L"URI Too Long") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/500/ [{ \"AAA\":\"aaa\" }] == 500 Internal Server Error");
-	if (SendTestData2(Id, "GET", "/aaa/500/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 500 || StrStr(Header, L"Internal Server Error") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/500/ [{ \"AAA\":\"aaa\" }] == 500 Internal Server Error");
+	if (SendTestData2(Id, "GET", "/aaa/500/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 500 || StkPlWcsStr(Header, L"Internal Server Error") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest3:GET /aaa/510/ [{ \"AAA\":\"aaa\" }] == 510 Not Extended");
-	if (SendTestData2(Id, "GET", "/aaa/510/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 510 || StrStr(Header, L"Not Extended") == NULL || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+	StkPlPrintf("StkWebAppTest3:GET /aaa/510/ [{ \"AAA\":\"aaa\" }] == 510 Not Extended");
+	if (SendTestData2(Id, "GET", "/aaa/510/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 510 || StkPlWcsStr(Header, L"Not Extended") == NULL || ErrorCode != -1) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
 	// Timeout detection start
 	{
-		wchar_t Header[64];
+		wchar_t Header[256];
 
 		int Ret = 0;
-		DWORD StartTime = 0;
-		DWORD EndTime = 0;
+		long long StartTime = 0;
+		long long EndTime = 0;
 
-		printf("StkWebAppTest3:Invalid Content-Length (Timeout 5000 milliseconds)");
-		StartTime = GetTickCount();
+		StkPlPrintf("StkWebAppTest3:Invalid Content-Length (Timeout 5000 milliseconds)");
+		StartTime = StkPlGetTickCount();
 		if ((Ret = SendTestData2(Id, "GET", "/aaa/200/", "{ \"Test\" : \"1\" }\n", "application/json", &ErrorCode, Header, 1024)) != 200 || ErrorCode != -1) {
-			printf("... NG\r\n");
-			exit(0);
+			StkPlPrintf("... NG\r\n");
+			StkPlExit(0);
 		}
-		EndTime = GetTickCount();
+		EndTime = StkPlGetTickCount();
 		if ((EndTime - StartTime) < 5000 || (EndTime - StartTime) > 6000) {
-			printf("... NG\r\n");
-			exit(0);
+			StkPlPrintf("... NG\r\n");
+			StkPlExit(0);
 		}
-		printf("... OK\r\n");
+		StkPlPrintf("... OK\r\n");
 	}
 	// Timeout detection end
 
-	printf("StkWebAppTest3:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
+	StkPlPrintf("StkWebAppTest3:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	Sleep(1000);
+	StkPlSleepMs(1000);
 
 	return 0;
 }
@@ -494,42 +480,42 @@ int ElemStkThreadMainSend4(int Id)
 {
 	int ErrorCode;
 
-	printf("StkWebAppTest4:GET /bigdata/ [{ \"AAA\":123 }] == 500 buffer over flow");
+	StkPlPrintf("StkWebAppTest4:GET /bigdata/ [{ \"AAA\":123 }] == 500 buffer over flow");
 	if (SendTestData2(Id, "GET", "/bigdata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500 || ErrorCode != 1006) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest4:GET /middledata/ [{ \"AAA\":123 }] == 500 buffer over flow");
+	StkPlPrintf("StkWebAppTest4:GET /middledata/ [{ \"AAA\":123 }] == 500 buffer over flow");
 	if (SendTestData2(Id, "GET", "/middledata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500 || ErrorCode != 1006) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest4:GET /smalldata/ [{ \"AAA\":123 }] == 200 sufficient buffer allocated");
+	StkPlPrintf("StkWebAppTest4:GET /smalldata/ [{ \"AAA\":123 }] == 200 sufficient buffer allocated");
 	if (SendTestData2(Id, "GET", "/smalldata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 200) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest4:POST /smalldata/ [{ \"AAAAAAAAAABBBBBBBBBB\":\"CCCCCCCCCCDDDDDDDDDD\" }] == 400 read buffer over flow");
+	StkPlPrintf("StkWebAppTest4:POST /smalldata/ [{ \"AAAAAAAAAABBBBBBBBBB\":\"CCCCCCCCCCDDDDDDDDDD\" }] == 400 read buffer over flow");
 	if (SendTestData2(Id, "POST", "/smalldata/", "{ \"AAAAAAAAAABBBBBBBBBB\":\"CCCCCCCCCCDDDDDDDDDD\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1002) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	printf("StkWebAppTest4:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
+	StkPlPrintf("StkWebAppTest4:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
-		printf("... NG\r\n");
-		exit(0);
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
 	}
-	printf("... OK\r\n");
+	StkPlPrintf("... OK\r\n");
 
-	Sleep(1000);
+	StkPlSleepMs(1000);
 
 	return 0;
 }
@@ -541,8 +527,8 @@ int ElemStkThreadMainSend5(int Id)
 	char TestObjStr[1000000];
 	StkObject* TestObj = MakeLargeTestData(L"testObject", 3, 3);
 	TestObj->ToJson(TestObjWstr, 1000000);
-	sprintf_s(TestObjStr, 1000000, "%S", TestObjWstr);
-	int l = strlen(TestObjStr);
+	StkPlSPrintf(TestObjStr, 1000000, "%ls", TestObjWstr);
+	int l = StkPlStrLen(TestObjStr);
 	Ret = SendTestData(Id, TestObjStr);
 	SendTestDataCount++;
 	delete TestObj;
@@ -555,8 +541,8 @@ int ElemStkThreadMainSend5(int Id)
 
 void ReqResTest1(bool LargeFlag)
 {
-	printf("StkWebAppTest1:one minute performance ");
-	LargeFlag == true ? printf("Large ") : printf("Small ");
+	StkPlPrintf("StkWebAppTest1:one minute performance ");
+	LargeFlag == true ? StkPlPrintf("Large ") : StkPlPrintf("Small ");
 
 	int Ids[10] = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 	int SendIds[10] = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40};
@@ -564,14 +550,14 @@ void ReqResTest1(bool LargeFlag)
 	wchar_t Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
 	for (int Loop = 0; Loop < THREADNUM; Loop++) {
-		wsprintf(Name, L"Send-%d", Loop);
-		wsprintf(Desc, L"Description-%d", Loop);
+		StkPlSwPrintf(Name, MAX_LENGTH_OF_STKTHREAD_NAME, L"Send-%d", Loop);
+		StkPlSwPrintf(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, L"Description-%d", Loop);
 		if (LargeFlag) {
 			AddStkThread(SendIds[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainSend5, NULL, NULL);
 		} else {
 			AddStkThread(SendIds[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainSend, NULL, NULL);
 		}
-		StkSocket_AddInfo(SendIds[Loop], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
+		StkSocket_AddInfo(SendIds[Loop], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
 	}
 
 	StkWebApp* Soc = new StkWebApp(Ids, THREADNUM, L"localhost", 8080);
@@ -587,19 +573,19 @@ void ReqResTest1(bool LargeFlag)
 	////////// Main logic starts
 	StartSpecifiedStkThreads(SendIds, THREADNUM);
 	while (GetNumOfRunStkThread() != GetNumOfStkThread()) {
-		Sleep(100);
+		StkPlSleepMs(100);
 	}
-	Sleep(30000);
+	StkPlSleepMs(30000);
 	int MemChk[6];
 	for (int Loop = 0; Loop < 6; Loop++) {
-		Sleep(5000);
-		MemChk[Loop] = GetUsedMemorySizeOfCurrentProcess();
-		printf("%d,", MemChk[Loop]);
+		StkPlSleepMs(5000);
+		MemChk[Loop] = StkPlGetUsedMemorySizeOfCurrentProcess();
+		StkPlPrintf("%d,", MemChk[Loop]);
 	}
-	printf("(Repeat=%d)", SendTestDataCount);
+	StkPlPrintf("(Repeat=%d)", SendTestDataCount);
 	StopSpecifiedStkThreads(SendIds, THREADNUM);
 	while (GetNumOfRunStkThread() != THREADNUM) {
-		Sleep(100);
+		StkPlSleepMs(100);
 	}
 	////////// Main logic ends
 
@@ -615,17 +601,17 @@ void ReqResTest1(bool LargeFlag)
 	}
 
 	if (SendTestDataFailed == true) {
-		printf("... NG(1)\r\n");
-		exit(0);
+		StkPlPrintf("... NG(1)\r\n");
+		StkPlExit(0);
 	} else if (MemChk[0] < MemChk[1] && MemChk[1] < MemChk[2] && MemChk[2] < MemChk[3] &&
 				MemChk[3] < MemChk[4] && MemChk[4] < MemChk[5]) {
-		printf("... NG(2)\r\n");
-		exit(0);
+		StkPlPrintf("... NG(2)\r\n");
+		StkPlExit(0);
 	} else if (Add1 != 1 || Add2 != 2 || Add3 != 3 || Del1 != 2 || Del2 != 1 || Del3 != 0) {
-		printf("... NG(3)\r\n");
-		exit(0);
+		StkPlPrintf("... NG(3)\r\n");
+		StkPlExit(0);
 	}else {
-		printf("... OK\r\n");
+		StkPlPrintf("... OK\r\n");
 	}
 }
 
@@ -636,10 +622,10 @@ void ReqResTest2()
 	wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME];
 	wchar_t Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
-	wsprintf(Name, L"Sender");
-	wsprintf(Desc, L"Description");
+	StkPlSwPrintf(Name, MAX_LENGTH_OF_STKTHREAD_NAME, L"Sender");
+	StkPlSwPrintf(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, L"Description");
 	AddStkThread(SendIds[0], Name, Desc, NULL, NULL, ElemStkThreadMainSend2, NULL, NULL);
-	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
+	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 8080);
 
@@ -660,10 +646,10 @@ void ReqResTest3()
 	wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME];
 	wchar_t Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
-	wsprintf(Name, L"Sender");
-	wsprintf(Desc, L"Description");
+	StkPlSwPrintf(Name, MAX_LENGTH_OF_STKTHREAD_NAME, L"Sender");
+	StkPlSwPrintf(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, L"Description");
 	AddStkThread(SendIds[0], Name, Desc, NULL, NULL, ElemStkThreadMainSend3, NULL, NULL);
-	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
+	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 8080);
 	Soc->SetTimeoutInterval(5000);
@@ -688,24 +674,24 @@ void ReqResTest4()
 	wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME];
 	wchar_t Desc[MAX_LENGTH_OF_STKTHREAD_DESCRIPTION];
 
-	wsprintf(Name, L"Sender");
-	wsprintf(Desc, L"Description");
+	StkPlSwPrintf(Name, MAX_LENGTH_OF_STKTHREAD_NAME, L"Sender");
+	StkPlSwPrintf(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, L"Description");
 	AddStkThread(SendIds[0], Name, Desc, NULL, NULL, ElemStkThreadMainSend4, NULL, NULL);
-	StkSocket_AddInfo(SendIds[0], SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
+	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 8080);
-	printf("StkWebAppTest4:Test GetSendBufSize, GetRecvBufSize, SetSendBufSize, SetRecvBufSize ... ");
+	StkPlPrintf("StkWebAppTest4:Test GetSendBufSize, GetRecvBufSize, SetSendBufSize, SetRecvBufSize ... ");
 	if (Soc->GetSendBufSize() != 1000000 || Soc->GetRecvBufSize() != 1000000) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
 	Soc->SetSendBufSize(2000);
 	Soc->SetRecvBufSize(100);
 	if (Soc->GetSendBufSize() != 2000 || Soc->GetRecvBufSize() != 100) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 
 	StkWebAppTest5* Test5aHndl = new StkWebAppTest5();
 	StkWebAppTest5* Test5bHndl = new StkWebAppTest5();
@@ -730,16 +716,16 @@ void ReqResTest4()
 void AddDeleteStkWebAppTest()
 {
 	{
-		printf("Search StkWebApp which contains specified ID (No StkWebApp exists) ... ");
+		StkPlPrintf("Search StkWebApp which contains specified ID (No StkWebApp exists) ... ");
 		if (StkWebApp::GetStkWebAppByThreadId(1) != NULL) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 
 	{
-		printf("Search StkWebApp which contains specified ID (Normal case) ... ");
+		StkPlPrintf("Search StkWebApp which contains specified ID (Normal case) ... ");
 		int TmpIds1[3] = {11, 12, 13};
 		int TmpIds2[4] = {21, 22, 23, 24};
 		int TmpIds3[1] = {31};
@@ -751,34 +737,34 @@ void AddDeleteStkWebAppTest()
 			StkWebApp::GetStkWebAppByThreadId(21) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(24) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 		StkWebApp* AcquiredApp2 = StkWebApp::GetStkWebAppByThreadId(23);
 		if (AcquiredApp2 == NULL ||
 			AcquiredApp2->Contains(22) == false || AcquiredApp2->Contains(11) == true || AcquiredApp2->Contains(25) == true) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 
-		printf("Search StkWebApp which contains specified ID (Abnormal case) ... ");
+		StkPlPrintf("Search StkWebApp which contains specified ID (Abnormal case) ... ");
 		if (StkWebApp::GetStkWebAppByThreadId(41) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(1) != NULL) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 
-		printf("Search StkWebApp which contains specified ID (Search deleted StkWebApp) ... ");
+		StkPlPrintf("Search StkWebApp which contains specified ID (Search deleted StkWebApp) ... ");
 		delete TmpApp2;
 		if (StkWebApp::GetStkWebAppByThreadId(11) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(13) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(21) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(24) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 		delete TmpApp1;
 		if (StkWebApp::GetStkWebAppByThreadId(11) != NULL ||
@@ -786,8 +772,8 @@ void AddDeleteStkWebAppTest()
 			StkWebApp::GetStkWebAppByThreadId(21) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(24) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
 		delete TmpApp3;
 		if (StkWebApp::GetStkWebAppByThreadId(11) != NULL ||
@@ -795,16 +781,16 @@ void AddDeleteStkWebAppTest()
 			StkWebApp::GetStkWebAppByThreadId(21) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(24) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(31) != NULL) {
-			printf("NG\r\n");
-			exit(0);
+			StkPlPrintf("NG\r\n");
+			StkPlExit(0);
 		}
-		printf("OK\r\n");
+		StkPlPrintf("OK\r\n");
 	}
 }
 
 void AddDeleteReqHandlerTest()
 {
-	printf("Add / Delete ReqHandler ... ");
+	StkPlPrintf("Add / Delete ReqHandler ... ");
 	int TmpIds1[3] = {11, 12, 13};
 	int TmpIds2[3] = {21, 22, 23};
 	StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, L"localhost", 8081);
@@ -828,10 +814,10 @@ void AddDeleteReqHandlerTest()
 	delete TmpApp2;
 
 	if (Add1 != 1 || Add2 != -1 || Add3 != 1 || Del1 != 0 || Del2 != -1 || Del3 != 0) {
-		printf("NG\r\n");
-		exit(0);
+		StkPlPrintf("NG\r\n");
+		StkPlExit(0);
 	}
-	printf("OK\r\n");
+	StkPlPrintf("OK\r\n");
 }
 
 int main(int Argc, char* Argv[])

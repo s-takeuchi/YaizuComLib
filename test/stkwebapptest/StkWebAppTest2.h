@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "..\..\src\stkwebapp\StkWebAppExec.h"
+#include "../../src/stkwebapp/StkWebAppExec.h"
 
 class StkWebAppTest2 : StkWebAppExec
 {

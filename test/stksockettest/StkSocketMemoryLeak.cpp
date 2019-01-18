@@ -130,8 +130,6 @@ void StkSocketMemoryLeak::CheckLeakUdp()
 
 	Receiver->detach();
 	Sender->detach();
-	delete Receiver;
-	delete Sender;
 
 	if (MaxMem[0] < MaxMem[3] &&
 		MaxMem[3] < MaxMem[6] &&

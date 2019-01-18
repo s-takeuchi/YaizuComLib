@@ -48,6 +48,11 @@ const wchar_t* StkPlWcsStr(const wchar_t* Wcs1, const wchar_t* Wcs2)
 	return wcsstr(Wcs1, Wcs2);
 }
 
+void* StkPlMemCpy(void* Destination, const void* Source, size_t NumberOfElements)
+{
+	return memcpy(Destination, Source, NumberOfElements);
+}
+
 bool StkPlIsJapaneseLocale()
 {
 	setlocale(LC_ALL, "");
@@ -108,6 +113,15 @@ int StkPlSScanf(const char* Str, const char* Format, ...)
 	return Ret;
 }
 
+int StkPlSwScanf(const wchar_t* Str, const wchar_t* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vswscanf(Str, Format, va);
+	va_end(va);
+	return Ret;
+}
+
 int StkPlRand()
 {
 	return rand();
@@ -142,6 +156,7 @@ float StkPlWcsToF(const wchar_t* Str)
 #include <windows.h>
 #include <Psapi.h>
 #include <filesystem>
+#include <time.h>
 
 char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
 {
@@ -318,6 +333,24 @@ long long StkPlGetTickCount()
 	return GetTickCount();
 }
 
+void StkPlGetTimeInRfc822(char Date[64])
+{
+	struct tm GmtTime;
+	__int64 Ltime;
+	_time64(&Ltime);
+	_gmtime64_s(&GmtTime, &Ltime);
+	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	sprintf_s(Date, 64, "Date: %s, %02d %s %d %02d:%02d:%02d GMT\r\n",
+		WdayStr[GmtTime.tm_wday],
+		GmtTime.tm_mday,
+		MonStr[GmtTime.tm_mon],
+		GmtTime.tm_year + 1900,
+		GmtTime.tm_hour,
+		GmtTime.tm_min,
+		GmtTime.tm_sec);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -326,6 +359,7 @@ long long StkPlGetTickCount()
 
 #include <unistd.h>
 #include <time.h>
+#include <ctime>
 #include <experimental/filesystem>
 
 char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
@@ -510,6 +544,24 @@ long long StkPlGetTickCount()
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	return (long long)(ts.tv_nsec / 1000000) + ((long long)ts.tv_sec * 1000ull);
+}
+
+void StkPlGetTimeInRfc822(char Date[64])
+{
+	struct tm* GmtTime;
+	time_t Ltime;
+	time(&Ltime);
+	GmtTime = gmtime(&Ltime);
+	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	sprintf(Date, "Date: %s, %02d %s %d %02d:%02d:%02d GMT\r\n",
+		WdayStr[GmtTime->tm_wday],
+		GmtTime->tm_mday,
+		MonStr[GmtTime->tm_mon],
+		GmtTime->tm_year + 1900,
+		GmtTime->tm_hour,
+		GmtTime->tm_min,
+		GmtTime->tm_sec);
 }
 
 #endif

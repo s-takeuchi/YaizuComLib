@@ -25,6 +25,8 @@ wchar_t* StkPlWcsNCpy(wchar_t*, size_t, const wchar_t*, size_t);
 wchar_t* StkPlLStrCpy(wchar_t*, const wchar_t*);
 wchar_t* StkPlWcsCat(wchar_t*, size_t, const wchar_t*);
 
+void* StkPlMemCpy(void*, const void*, size_t);
+
 bool StkPlIsJapaneseLocale();
 bool StkPlIsJapaneseLocaleFromEnv();
 char* StkPlWideCharToUtf8(const wchar_t*);
@@ -38,6 +40,7 @@ int StkPlSPrintf(char*, size_t, const char*, ...);
 int StkPlSwPrintf(wchar_t*, size_t, const wchar_t*, ...);
 
 int StkPlSScanf(const char* Str, const char* Format, ...);
+int StkPlSwScanf(const wchar_t* Str, const wchar_t* Format, ...);
 
 void StkPlExit(int);
 int StkPlRand();
@@ -53,3 +56,4 @@ int StkPlReadFile(const wchar_t[FILENAME_MAX], char*, size_t);
 
 int StkPlGetUsedMemorySizeOfCurrentProcess();
 long long StkPlGetTickCount();
+void StkPlGetTimeInRfc822(char[64]);

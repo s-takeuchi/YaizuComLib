@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "..\commonfunc\stkobject.h"
+#include "../commonfunc/StkObject.h"
 
 class StkWebAppExec
 {
