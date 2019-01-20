@@ -33,4 +33,11 @@ public:
 	static void DelJpn(int);
 
 	static void ClearAllMsg();
+
+	static size_t StkPlConvUtf16leToUtf32le(char32_t*, size_t, const char16_t*);
+	static size_t StkPlConvUtf32leToUtf16le(char16_t*, size_t, const char32_t*);
+	static size_t StkPlConvUtf8ToUtf32le(char*, size_t, const char*);
+	static size_t StkPlConvUtf32leToUtf8(char*, size_t, const char*);
+	static size_t StkPlConvUtf8ToUtf16le(char*, size_t, const char*);
+	static size_t StkPlConvUtf16leToUtf8(char*, size_t, const char*);
 };

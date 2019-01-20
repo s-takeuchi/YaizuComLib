@@ -293,3 +293,81 @@ void MessageProc::ClearAllMsg()
 	}
 	Impl::Instance->pImpl->AllClear();
 }
+
+size_t MessageProc::StkPlConvUtf16leToUtf32le(char32_t* Utf32le, size_t SizeInWord, const char16_t* Utf16le)
+{
+	const char16_t* Utf16lePtr = Utf16le;
+	char32_t* Utf32lePtr = Utf32le;
+	size_t ActualSize = 0;
+	if (SizeInWord == 0) {
+		return 0;
+	}
+	while (*Utf16lePtr != u'\0' && ActualSize < SizeInWord - 1) {
+		if ((*Utf16lePtr & 0b1101100000000000) == 0b1101100000000000) {
+			if ((*(Utf16lePtr + 1) & 0b1101110000000000) != 0b1101110000000000) {
+				break;
+			}
+			char32_t Val = 0x10000 + (*Utf16lePtr - 0b1101100000000000) * 0x400 + (*(Utf16lePtr + 1) - 0b1101110000000000);
+			*Utf32lePtr = Val;
+			Utf16lePtr += 2;
+		} else {
+			*Utf32lePtr = (char32_t)*Utf16lePtr;
+			Utf16lePtr++;
+		}
+		Utf32lePtr++;
+		ActualSize++;
+	}
+	*Utf32lePtr = U'\0';
+	return ActualSize;
+}
+
+size_t MessageProc::StkPlConvUtf32leToUtf16le(char16_t* Utf16le, size_t SizeInWord, const char32_t* Utf32le)
+{
+	const char32_t* Utf32lePtr = Utf32le;
+	char16_t* Utf16lePtr = Utf16le;
+	size_t ActualSize = 0;
+	if (SizeInWord == 0) {
+		return 0;
+	}
+	while (*Utf32lePtr != u'\0' && ActualSize < SizeInWord - 1) {
+		if (*Utf32lePtr < 0x10000) {
+			*Utf16lePtr = (char16_t)*Utf32lePtr;
+			Utf16lePtr++;
+			ActualSize++;
+		} else {
+			if (ActualSize + 1 < SizeInWord - 1) {
+				char16_t Hi = (char16_t)((*Utf32lePtr - 0x10000) / 0x400 + 0b1101100000000000);
+				char16_t Lo = (char16_t)((*Utf32lePtr - 0x10000) % 0x400 + 0b1101110000000000);
+				*Utf16lePtr = Hi;
+				*(Utf16lePtr + 1) = Lo;
+				Utf16lePtr += 2;
+				ActualSize += 2;
+			} else {
+				break;
+			}
+		}
+		Utf32lePtr++;
+	}
+	*Utf16lePtr = u'\0';
+	return ActualSize;
+}
+
+size_t MessageProc::StkPlConvUtf8ToUtf32le(char* Utf32le, size_t SizeInWord, const char* Utf8)
+{
+	return 0;
+}
+size_t MessageProc::StkPlConvUtf32leToUtf8(char*Utf8, size_t SizeInWord, const char* Utf32le)
+{
+	return 0;
+}
+
+size_t MessageProc::StkPlConvUtf8ToUtf16le(char* Utf16le, size_t SizeInWord, const char* Utf8)
+{
+
+	return 0;
+}
+
+size_t MessageProc::StkPlConvUtf16leToUtf8(char* Utf8, size_t SizeInWord, const char* Utf16le)
+{
+	return 0;
+}

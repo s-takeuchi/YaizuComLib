@@ -104,5 +104,52 @@ void MsgProcTest()
 	MessageProc::DelEng(102);
 	StkPlPrintf("Japanese locale check ... OK case\n");
 
+	{
+		char16_t* Utf16leStr = (char16_t*)u"𠮷野家𠮷野家𠮷野家";
+		char32_t Utf32leStr[32];
+		char16_t Utf16leStrRst[32];
+		size_t LenUtf32 = MessageProc::StkPlConvUtf16leToUtf32le(Utf32leStr, 32, Utf16leStr);
+		size_t LenUtf16 = MessageProc::StkPlConvUtf32leToUtf16le(Utf16leStrRst, 32, Utf32leStr);
+		if (LenUtf32 != 9 || LenUtf16 != 12 || StkPlWcsCmp((wchar_t*)Utf16leStr, (wchar_t*)Utf16leStrRst) != 0 || StkPlWcsCmp(L"𠮷野家𠮷野家𠮷野家", (wchar_t*)Utf16leStrRst) != 0) {
+			StkPlPrintf("UTF16 -> UTF32 -> UTF16 ... NG case\n");
+			StkPlExit(0);
+		}
+		StkPlPrintf("UTF16 -> UTF32 -> UTF16 ... OK case\n");
+	}
+
+	{
+		char16_t* Utf16leStr = (char16_t*)u"あいうえおかきくけこ";
+		char32_t* Utf32leStr = (char32_t*)U"あいうえおかきくけこ";
+		char16_t Utf16le[5] = u"";
+		char32_t Utf32le[5] = U"";
+		for (int Loop = 0; Loop <= 5; Loop++) {
+			size_t LenUtf32 = MessageProc::StkPlConvUtf16leToUtf32le(Utf32le, Loop, Utf16leStr);
+			size_t LenUtf16 = MessageProc::StkPlConvUtf32leToUtf16le(Utf16le, Loop, Utf32leStr);
+			if (Loop == 0 && (LenUtf16 != 0 || LenUtf32 != 0)) {
+				StkPlPrintf("To UTF32 with size specification , To UTF16 with size=0 specification ... NG case\n");
+				StkPlExit(0);
+			}
+			if ((Loop >= 1 && Loop <= 5) && (LenUtf16 != Loop - 1 || LenUtf32 != Loop - 1)) {
+				StkPlPrintf("To UTF32 with size specification , To UTF16 with size=0 specification ... NG case\n");
+				StkPlExit(0);
+			}
+		}
+		if (StkPlWcsCmp((wchar_t*)Utf16le, L"あいうえ") != 0) {
+			StkPlPrintf("To UTF32 with size specification , To UTF16 with size=0 specification ... NG case\n");
+			StkPlExit(0);
+		}
+		StkPlPrintf("To UTF32 with size=0 specification , To UTF16 with size=0 specification ... OK case\n");
+	}
+
+	{
+		char32_t* Utf32leStr = (char32_t*)U"𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿";
+		char16_t Utf16le[11] = u"";
+		size_t LenUtf16 = MessageProc::StkPlConvUtf32leToUtf16le(Utf16le, 11, Utf32leStr);
+		if (LenUtf16 != 10 || StkPlWcsCmp((wchar_t*)Utf16le, L"𠀋𡈽𡌛𡑮𡢽") != 0) {
+			StkPlPrintf("UTF32 -> UTF16 with lacking buffer ... NG case\n");
+			StkPlExit(0);
+		}
+		StkPlPrintf("UTF32 -> UTF16 with lacking buffer ... OK case\n");
+	}
 	StkPlPrintf("MsgProcTest completed.\n\n\n");
 }
