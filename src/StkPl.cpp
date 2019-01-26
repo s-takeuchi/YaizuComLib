@@ -48,6 +48,11 @@ const wchar_t* StkPlWcsStr(const wchar_t* Wcs1, const wchar_t* Wcs2)
 	return wcsstr(Wcs1, Wcs2);
 }
 
+int StkPlMemCmp(const void* Ptr1, const void* Ptr2, size_t Num)
+{
+	return memcmp(Ptr1, Ptr2, Num);
+}
+
 void* StkPlMemCpy(void* Destination, const void* Source, size_t NumberOfElements)
 {
 	return memcpy(Destination, Source, NumberOfElements);

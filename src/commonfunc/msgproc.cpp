@@ -294,80 +294,149 @@ void MessageProc::ClearAllMsg()
 	Impl::Instance->pImpl->AllClear();
 }
 
-size_t MessageProc::StkPlConvUtf16leToUtf32le(char32_t* Utf32le, size_t SizeInWord, const char16_t* Utf16le)
+size_t MessageProc::StkPlConvUtf16ToUtf32(char32_t* Utf32, size_t SizeInWord, const char16_t* Utf16)
 {
-	const char16_t* Utf16lePtr = Utf16le;
-	char32_t* Utf32lePtr = Utf32le;
+	const char16_t* Utf16Ptr = Utf16;
+	char32_t* Utf32Ptr = Utf32;
 	size_t ActualSize = 0;
 	if (SizeInWord == 0) {
 		return 0;
 	}
-	while (*Utf16lePtr != u'\0' && ActualSize < SizeInWord - 1) {
-		if ((*Utf16lePtr & 0b1101100000000000) == 0b1101100000000000) {
-			if ((*(Utf16lePtr + 1) & 0b1101110000000000) != 0b1101110000000000) {
+	while (*Utf16Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if ((*Utf16Ptr & 0b1101100000000000) == 0b1101100000000000) {
+			if ((*(Utf16Ptr + 1) & 0b1101110000000000) != 0b1101110000000000) {
 				break;
 			}
-			char32_t Val = 0x10000 + (*Utf16lePtr - 0b1101100000000000) * 0x400 + (*(Utf16lePtr + 1) - 0b1101110000000000);
-			*Utf32lePtr = Val;
-			Utf16lePtr += 2;
+			*Utf32Ptr = 0x10000 + (*Utf16Ptr - 0b1101100000000000) * 0x400 + (*(Utf16Ptr + 1) - 0b1101110000000000);
+			Utf16Ptr += 2;
 		} else {
-			*Utf32lePtr = (char32_t)*Utf16lePtr;
-			Utf16lePtr++;
+			*Utf32Ptr = (char32_t)*Utf16Ptr;
+			Utf16Ptr++;
 		}
-		Utf32lePtr++;
+		Utf32Ptr++;
 		ActualSize++;
 	}
-	*Utf32lePtr = U'\0';
+	*Utf32Ptr = U'\0';
 	return ActualSize;
 }
 
-size_t MessageProc::StkPlConvUtf32leToUtf16le(char16_t* Utf16le, size_t SizeInWord, const char32_t* Utf32le)
+size_t MessageProc::StkPlConvUtf32ToUtf16(char16_t* Utf16, size_t SizeInWord, const char32_t* Utf32)
 {
-	const char32_t* Utf32lePtr = Utf32le;
-	char16_t* Utf16lePtr = Utf16le;
+	const char32_t* Utf32Ptr = Utf32;
+	char16_t* Utf16Ptr = Utf16;
 	size_t ActualSize = 0;
 	if (SizeInWord == 0) {
 		return 0;
 	}
-	while (*Utf32lePtr != u'\0' && ActualSize < SizeInWord - 1) {
-		if (*Utf32lePtr < 0x10000) {
-			*Utf16lePtr = (char16_t)*Utf32lePtr;
-			Utf16lePtr++;
+	while (*Utf32Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if (*Utf32Ptr < 0x10000) {
+			*Utf16Ptr = (char16_t)*Utf32Ptr;
+			Utf16Ptr++;
 			ActualSize++;
 		} else {
 			if (ActualSize + 1 < SizeInWord - 1) {
-				char16_t Hi = (char16_t)((*Utf32lePtr - 0x10000) / 0x400 + 0b1101100000000000);
-				char16_t Lo = (char16_t)((*Utf32lePtr - 0x10000) % 0x400 + 0b1101110000000000);
-				*Utf16lePtr = Hi;
-				*(Utf16lePtr + 1) = Lo;
-				Utf16lePtr += 2;
+				*Utf16Ptr = (char16_t)((*Utf32Ptr - 0x10000) / 0x400 + 0b1101100000000000);
+				*(Utf16Ptr + 1) = (char16_t)((*Utf32Ptr - 0x10000) % 0x400 + 0b1101110000000000);
+				Utf16Ptr += 2;
 				ActualSize += 2;
 			} else {
 				break;
 			}
 		}
-		Utf32lePtr++;
+		Utf32Ptr++;
 	}
-	*Utf16lePtr = u'\0';
+	*Utf16Ptr = u'\0';
 	return ActualSize;
 }
 
-size_t MessageProc::StkPlConvUtf8ToUtf32le(char* Utf32le, size_t SizeInWord, const char* Utf8)
+size_t MessageProc::StkPlConvUtf8ToUtf32(char32_t* Utf32, size_t SizeInWord, const char* Utf8)
 {
-	return 0;
+	const unsigned char* Utf8Ptr = (unsigned char*)Utf8;
+	char32_t* Utf32Ptr = Utf32;
+	size_t ActualSize = 0;
+	if (SizeInWord == 0) {
+		return 0;
+	}
+	while (*Utf8Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if (*Utf8Ptr < 0x80) {
+			*Utf32Ptr = (char32_t)*Utf8Ptr;
+			Utf8Ptr++;
+		} else if ((*Utf8Ptr & 0b11100000) == 0b11000000) {
+			// Following value is evaluated from left to right. There is no case the element after zero-terminating character is accessed.
+			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000) {
+				break;
+			}
+			*Utf32Ptr = (*Utf8Ptr - 0b11000000) * 0x40 + (*(Utf8Ptr + 1) - 0b10000000);
+			Utf8Ptr += 2;
+		} else if ((*Utf8Ptr & 0b11110000) == 0b11100000) {
+			// Following value is evaluated from left to right. There is no case the element after zero-terminating character is accessed.
+			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 2) & 0b10000000) != 0b10000000) {
+				break;
+			}
+			*Utf32Ptr = (*Utf8Ptr - 0b11100000) * 0x1000 + (*(Utf8Ptr + 1) - 0b10000000) * 0x40 + (*(Utf8Ptr + 2) - 0b10000000);
+			Utf8Ptr += 3;
+		} else if ((*Utf8Ptr & 0b11111000) == 0b11110000) {
+			// Following value is evaluated from left to right. There is no case the element after zero-terminating character is accessed.
+			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 2) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 3) & 0b10000000) != 0b10000000) {
+				break;
+			}
+			*Utf32Ptr = (*Utf8Ptr - 0b11110000) * 0x40000 + (*(Utf8Ptr + 1) - 0b10000000) * 0x1000 + (*(Utf8Ptr + 2) - 0b10000000) * 40 + (*(Utf8Ptr + 3) - 0b10000000);
+			Utf8Ptr += 4;
+		} else {
+			break;
+		}
+		Utf32Ptr++;
+		ActualSize++;
+	}
+	*Utf32Ptr = U'\0';
+	return ActualSize;
 }
-size_t MessageProc::StkPlConvUtf32leToUtf8(char*Utf8, size_t SizeInWord, const char* Utf32le)
+
+size_t MessageProc::StkPlConvUtf32ToUtf8(char* Utf8, size_t SizeInWord, const char32_t* Utf32)
 {
+	const char32_t* Utf32Ptr = (const char32_t*)Utf32;
+	unsigned char* Utf8Ptr = (unsigned char*)Utf8;
+	size_t ActualSize = 0;
+	if (SizeInWord == 0) {
+		return 0;
+	}
+	while (*Utf32Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if (*Utf32Ptr < 0x0080) {
+			*Utf8Ptr = (unsigned char)*Utf32Ptr;
+			Utf8Ptr++;
+			ActualSize++;
+		} else if (*Utf32Ptr < 0x0800) {
+			*Utf8Ptr = (unsigned char)(*Utf32Ptr / 0x40) + 0b11000000;
+			*(Utf8Ptr + 1) = (unsigned char)(*Utf32Ptr & 0b00111111) + 0b10000000;
+			Utf8Ptr += 2;
+			ActualSize += 2;
+		} else if (*Utf32Ptr < 0x10000) {
+			*Utf8Ptr = (unsigned char)(*Utf32Ptr / 0x1000) + 0b11100000;
+			*(Utf8Ptr + 1) = (unsigned char)((*Utf32Ptr / 0x40) & 0b00111111) + 0b10000000;
+			*(Utf8Ptr + 2) = (unsigned char)(*Utf32Ptr & 0b00111111) + 0b10000000;
+			Utf8Ptr += 3;
+			ActualSize += 3;
+		} else if (*Utf32Ptr < 0x200000) {
+			*Utf8Ptr = (unsigned char)(*Utf32Ptr / 0x40000) + 0b11110000;
+			*(Utf8Ptr + 1) = (unsigned char)((*Utf32Ptr / 0x1000) & 0b00111111) + 0b10000000;
+			*(Utf8Ptr + 2) = (unsigned char)((*Utf32Ptr / 0x40) & 0b00111111) + 0b10000000;
+			*(Utf8Ptr + 3) = (unsigned char)(*Utf32Ptr & 0b00111111) + 0b10000000;
+			Utf8Ptr += 4;
+			ActualSize += 4;
+		}
+		Utf32Ptr++;
+	}
+	*Utf8Ptr = U'\0';
+	return ActualSize;
+}
+
+size_t MessageProc::StkPlConvUtf8ToUtf16(char16_t* Utf16le, size_t SizeInWord, const char* Utf8)
+{
+
 	return 0;
 }
 
-size_t MessageProc::StkPlConvUtf8ToUtf16le(char* Utf16le, size_t SizeInWord, const char* Utf8)
-{
-
-	return 0;
-}
-
-size_t MessageProc::StkPlConvUtf16leToUtf8(char* Utf8, size_t SizeInWord, const char* Utf16le)
+size_t MessageProc::StkPlConvUtf16ToUtf8(char* Utf8, size_t SizeInWord, const char16_t* Utf16le)
 {
 	return 0;
 }
