@@ -380,7 +380,7 @@ size_t MessageProc::StkPlConvUtf8ToUtf32(char32_t* Utf32, size_t SizeInWord, con
 			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 2) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 3) & 0b10000000) != 0b10000000) {
 				break;
 			}
-			*Utf32Ptr = (*Utf8Ptr - 0b11110000) * 0x40000 + (*(Utf8Ptr + 1) - 0b10000000) * 0x1000 + (*(Utf8Ptr + 2) - 0b10000000) * 40 + (*(Utf8Ptr + 3) - 0b10000000);
+			*Utf32Ptr = (*Utf8Ptr - 0b11110000) * 0x40000 + (*(Utf8Ptr + 1) - 0b10000000) * 0x1000 + (*(Utf8Ptr + 2) - 0b10000000) * 0x40 + (*(Utf8Ptr + 3) - 0b10000000);
 			Utf8Ptr += 4;
 		} else {
 			break;
@@ -406,17 +406,26 @@ size_t MessageProc::StkPlConvUtf32ToUtf8(char* Utf8, size_t SizeInWord, const ch
 			Utf8Ptr++;
 			ActualSize++;
 		} else if (*Utf32Ptr < 0x0800) {
+			if (ActualSize + 1 >= SizeInWord - 1) {
+				break;
+			}
 			*Utf8Ptr = (unsigned char)(*Utf32Ptr / 0x40) + 0b11000000;
 			*(Utf8Ptr + 1) = (unsigned char)(*Utf32Ptr & 0b00111111) + 0b10000000;
 			Utf8Ptr += 2;
 			ActualSize += 2;
 		} else if (*Utf32Ptr < 0x10000) {
+			if (ActualSize + 2 >= SizeInWord - 1) {
+				break;
+			}
 			*Utf8Ptr = (unsigned char)(*Utf32Ptr / 0x1000) + 0b11100000;
 			*(Utf8Ptr + 1) = (unsigned char)((*Utf32Ptr / 0x40) & 0b00111111) + 0b10000000;
 			*(Utf8Ptr + 2) = (unsigned char)(*Utf32Ptr & 0b00111111) + 0b10000000;
 			Utf8Ptr += 3;
 			ActualSize += 3;
 		} else if (*Utf32Ptr < 0x200000) {
+			if (ActualSize + 3 >= SizeInWord - 1) {
+				break;
+			}
 			*Utf8Ptr = (unsigned char)(*Utf32Ptr / 0x40000) + 0b11110000;
 			*(Utf8Ptr + 1) = (unsigned char)((*Utf32Ptr / 0x1000) & 0b00111111) + 0b10000000;
 			*(Utf8Ptr + 2) = (unsigned char)((*Utf32Ptr / 0x40) & 0b00111111) + 0b10000000;
