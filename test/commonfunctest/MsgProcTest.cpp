@@ -27,6 +27,19 @@ void Test_Conv_Utf8_Utf32(char32_t* MsgPtr, int NumOfByte)
 	StkPlPrintf("UTF32 -> UTF8(%d byte) -> UTF32 ... OK case\n", NumOfByte);
 }
 
+void Test_Conv_Utf8_Utf16(char16_t* MsgPtr, int NumOfByte)
+{
+	char Utf8[256] = "";
+	char16_t Utf16[256] = u"";
+	size_t LenUtf8 = MessageProc::StkPlConvUtf16ToUtf8(Utf8, 256, MsgPtr);
+	size_t LenUtf16 = MessageProc::StkPlConvUtf8ToUtf16(Utf16, 256, Utf8);
+	if (LenUtf8 != LenUtf16 * NumOfByte || StkPlMemCmp(MsgPtr, Utf16, LenUtf16 * sizeof(char16_t)) != 0) {
+		StkPlPrintf("UTF16 -> UTF8(%d byte) -> UTF16 ... NG case\n", NumOfByte);
+		StkPlExit(0);
+	}
+	StkPlPrintf("UTF16 -> UTF8(%d byte) -> UTF16 ... OK case\n", NumOfByte);
+}
+
 size_t Test_Insufficient_Buffer_Utf16_Utf32(char16_t* MsgPtr, size_t Size)
 {
 	StkPlPrintf("UTF16 -> UTF32 with insufficient buffer ... ");
@@ -87,9 +100,39 @@ size_t Test_Insufficient_Buffer_Utf32_Utf8(char32_t* MsgPtr, size_t Size)
 	return LenUtf8;
 }
 
+size_t Test_Insufficient_Buffer_Utf8_Utf16(char* MsgPtr, size_t Size)
+{
+	StkPlPrintf("UTF8 -> UTF16 with insufficient buffer ... ");
+	char16_t Utf16[256] = u"";
+	char16_t Utf16f[256] = u"";
+	size_t LenUtf16 = MessageProc::StkPlConvUtf8ToUtf16(Utf16, Size, MsgPtr);
+	size_t LenUtf16f = MessageProc::StkPlConvUtf8ToUtf16(Utf16f, 256, MsgPtr);
+	if (LenUtf16 > Size - 1 || LenUtf16 >= LenUtf16f || StkPlMemCmp(Utf16, Utf16f, LenUtf16 * sizeof(char16_t)) != 0) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(0);
+	}
+	StkPlPrintf("OK case\n");
+	return LenUtf16;
+}
+
+size_t Test_Insufficient_Buffer_Utf16_Utf8(char16_t* MsgPtr, size_t Size)
+{
+	StkPlPrintf("UTF16 -> UTF8 with insufficient buffer ... ");
+	char Utf8[256] = "";
+	char Utf8f[256] = "";
+	size_t LenUtf8 = MessageProc::StkPlConvUtf16ToUtf8(Utf8, Size, MsgPtr);
+	size_t LenUtf8f = MessageProc::StkPlConvUtf16ToUtf8(Utf8f, 256, MsgPtr);
+	if (LenUtf8 > Size - 1 || LenUtf8 >= LenUtf8f || StkPlMemCmp(Utf8, Utf8f, LenUtf8) != 0) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(0);
+	}
+	StkPlPrintf("OK case\n");
+	return LenUtf8;
+}
+
 void Test_Invalid_String_Utf16_Utf32(char16_t* MsgPtr, int Count)
 {
-	StkPlPrintf("Invalid string (UTF16) is presented ... ");
+	StkPlPrintf("Invalid string (UTF16->UTF32) is presented ... ");
 	char32_t Buf[256];
 	size_t LenUtf32 = MessageProc::StkPlConvUtf16ToUtf32(Buf, 256, MsgPtr);
 	if (LenUtf32 != Count) {
@@ -101,10 +144,22 @@ void Test_Invalid_String_Utf16_Utf32(char16_t* MsgPtr, int Count)
 
 void Test_Invalid_String_Utf8_Utf32(char* MsgPtr, int Count)
 {
-	StkPlPrintf("Invalid string (UTF8) is presented ... ");
+	StkPlPrintf("Invalid string (UTF8->UTF32) is presented ... ");
 	char32_t Buf[256];
 	size_t LenUtf32 = MessageProc::StkPlConvUtf8ToUtf32(Buf, 256, MsgPtr);
 	if (LenUtf32 != Count) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(0);
+	}
+	StkPlPrintf("OK case\n");
+}
+
+void Test_Invalid_String_Utf8_Utf16(char* MsgPtr, int Count)
+{
+	StkPlPrintf("Invalid string (UTF8->UTF16) is presented ... ");
+	char16_t Buf[256];
+	size_t LenUtf16 = MessageProc::StkPlConvUtf8ToUtf16(Buf, 256, MsgPtr);
+	if (LenUtf16 != Count) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
 	}
@@ -219,13 +274,14 @@ void MsgProcTest()
 	{
 		Test_Conv_Utf16_Utf32(u"abcdexyz-0123456789あいうえおかきくけこさしすせそたちつてと", 1);
 		Test_Conv_Utf16_Utf32(u"𠮷𠮷𠮷𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿", 2);
-	}
-
-	{
 		Test_Conv_Utf8_Utf32(U" !\"#$z{|}~abcdexyz012789", 1);
 		Test_Conv_Utf8_Utf32(U"¡¢£¶»¾ÀÁÂÃÄ߶߷߸߹ߺǖǖǛʥʧΠθωҖ", 2);
 		Test_Conv_Utf8_Utf32(U"東西南北春夏秋冬魑魅魍魎焼肉定食老若男女", 3);
 		Test_Conv_Utf8_Utf32(U"🀀🀁🀂🀃🀄🀅🀆𠀋𡈽𡌛𡑮𡢽", 4);
+		Test_Conv_Utf8_Utf16(u"abcdexyz-0123456789", 1);
+		Test_Conv_Utf8_Utf16(u"¡¢£¶»¾ÀÁÂÃÄ߶߷߸߹ߺǖǖǛʥʧΠθωҖ", 2);
+		Test_Conv_Utf8_Utf16(u"𠮷𠮷𠮷𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿", 2);
+		Test_Conv_Utf8_Utf16(u"あいうえおかきくけこさしすせそたちつてと", 3);
 	}
 
 	{
@@ -235,6 +291,8 @@ void MsgProcTest()
 		Test_Insufficient_Buffer_Utf32_Utf16(U"魑魅魍魎サザンクロス", 5);
 		Test_Insufficient_Buffer_Utf8_Utf32("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 5);
 		Test_Insufficient_Buffer_Utf32_Utf8(U"君が代は千代に八千代にさざれ石の巌となりて苔のむすまで", 5);
+		Test_Insufficient_Buffer_Utf8_Utf16("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 5);
+		Test_Insufficient_Buffer_Utf16_Utf8(u"君が代は千代に八千代にさざれ石の巌となりて苔のむすまで", 5);
 	}
 
 	{
@@ -250,6 +308,15 @@ void MsgProcTest()
 		Test_Invalid_String_Utf8_Utf32("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\x00\xf0\x90\x8c\xb0", 3);
 		Test_Invalid_String_Utf8_Utf32("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x00\xb0\xf0\x90\x8c\xb0", 3);
 		Test_Invalid_String_Utf8_Utf32("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x00\x8c\xb0\xf0\x90\x8c\xb0", 3);
+	}
+
+	{
+		Test_Invalid_String_Utf8_Utf16("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x00\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 2);
+		Test_Invalid_String_Utf8_Utf16("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x00\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 3);
+		Test_Invalid_String_Utf8_Utf16("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x00\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 3);
+		Test_Invalid_String_Utf8_Utf16("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\x00\xf0\x90\x8c\xb0", 6);
+		Test_Invalid_String_Utf8_Utf16("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x00\xb0\xf0\x90\x8c\xb0", 6);
+		Test_Invalid_String_Utf8_Utf16("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x00\x8c\xb0\xf0\x90\x8c\xb0", 6);
 	}
 
 	StkPlPrintf("MsgProcTest completed.\n\n\n");
