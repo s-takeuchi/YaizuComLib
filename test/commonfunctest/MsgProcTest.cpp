@@ -299,18 +299,14 @@ void MsgProcTest()
 		char16_t Input[32] = u"𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿";
 		Input[5] = u'\0';
 		Test_Invalid_String_Utf16_Utf32(Input, 2);
-	}
 
-	{
 		Test_Invalid_String_Utf8_Utf32("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x00\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 2);
 		Test_Invalid_String_Utf8_Utf32("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x00\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 3);
 		Test_Invalid_String_Utf8_Utf32("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x00\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 3);
 		Test_Invalid_String_Utf8_Utf32("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\x00\xf0\x90\x8c\xb0", 3);
 		Test_Invalid_String_Utf8_Utf32("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x00\xb0\xf0\x90\x8c\xb0", 3);
 		Test_Invalid_String_Utf8_Utf32("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x00\x8c\xb0\xf0\x90\x8c\xb0", 3);
-	}
 
-	{
 		Test_Invalid_String_Utf8_Utf16("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x00\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 2);
 		Test_Invalid_String_Utf8_Utf16("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x00\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 3);
 		Test_Invalid_String_Utf8_Utf16("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x00\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 3);
@@ -318,6 +314,28 @@ void MsgProcTest()
 		Test_Invalid_String_Utf8_Utf16("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x00\xb0\xf0\x90\x8c\xb0", 6);
 		Test_Invalid_String_Utf8_Utf16("\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x90\x8c\xb0\xf0\x00\x8c\xb0\xf0\x90\x8c\xb0", 6);
 	}
+
+	StkPlPrintf("Length check with size=0 specification ... ");
+	char32_t Utf32[256] = U"";
+	char16_t Utf16[256] = u"";
+	char Utf8[256] = "";
+	size_t Len32f_16 = MessageProc::StkPlConvUtf16ToUtf32(Utf32, 256, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len32n_16 = MessageProc::StkPlConvUtf16ToUtf32(NULL, 0, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len16f_32 = MessageProc::StkPlConvUtf32ToUtf16(Utf16, 256, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len16n_32 = MessageProc::StkPlConvUtf32ToUtf16(NULL, 0, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len8f_32  = MessageProc::StkPlConvUtf32ToUtf8(Utf8, 256, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len8n_32  = MessageProc::StkPlConvUtf32ToUtf8(NULL, 0, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len32f_8  = MessageProc::StkPlConvUtf8ToUtf32(Utf32, 256, Utf8);
+	size_t Len32n_8  = MessageProc::StkPlConvUtf8ToUtf32(NULL, 0, Utf8);
+	size_t Len8f_16 = MessageProc::StkPlConvUtf16ToUtf8(Utf8, 256, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len8n_16 = MessageProc::StkPlConvUtf16ToUtf8(NULL, 0, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len16f_8 = MessageProc::StkPlConvUtf8ToUtf16(Utf16, 256, Utf8);
+	size_t Len16n_8 = MessageProc::StkPlConvUtf8ToUtf16(NULL, 0, Utf8);
+	if (Len32f_16 != Len32n_16 || Len16f_32 != Len16n_32 || Len32f_8 != Len32n_8 || Len8f_32 != Len8n_32 || Len8f_16 != Len8n_16 || Len16f_8 != Len16n_8) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(0);
+	}
+	StkPlPrintf("OK case\n");
 
 	StkPlPrintf("MsgProcTest completed.\n\n\n");
 }
