@@ -337,38 +337,82 @@ void MsgProcTest()
 	}
 	StkPlPrintf("OK case\n");
 
-	StkPlPrintf("Create UTF16 string ... ");
-	char* Utf8a = MessageProc::CreateUtf8FromUtf16(u"abcdeあいうえお");
-	char* Utf8b = MessageProc::CreateUtf8FromUtf32(U"abcdeあいうえお");
-	if (StkPlMemCmp(Utf8a, Utf8b, 15) != 0) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(0);
-	}
-	delete Utf8a;
-	delete Utf8b;
-	StkPlPrintf("OK case\n");
+	{
+		StkPlPrintf("Create UTF16 string ... ");
+		char* Utf8a = MessageProc::CreateUtf8FromUtf16(u"abcdeあいうえお");
+		char* Utf8b = MessageProc::CreateUtf8FromUtf32(U"abcdeあいうえお");
+		if (StkPlMemCmp(Utf8a, Utf8b, 15) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(0);
+		}
+		delete Utf8a;
+		delete Utf8b;
+		StkPlPrintf("OK case\n");
 
-	StkPlPrintf("Create UTF32 & UTF16 string ... ");
-	char32_t* Utf32a = MessageProc::CreateUtf32FromUtf16(u"abcdeあいうえお");
-	char16_t* Utf16a = MessageProc::CreateUtf16FromUtf32(U"abcdeあいうえお");
-	if (StkPlMemCmp(Utf32a, U"abcdeあいうえお", 10) != 0 || StkPlMemCmp(Utf16a, u"abcdeあいうえお", 15) != 0) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(0);
-	}
-	delete Utf32a;
-	delete Utf16a;
-	StkPlPrintf("OK case\n");
+		StkPlPrintf("Create UTF32 & UTF16 string ... ");
+		char32_t* Utf32a = MessageProc::CreateUtf32FromUtf16(u"abcdeあいうえお");
+		char16_t* Utf16a = MessageProc::CreateUtf16FromUtf32(U"abcdeあいうえお");
+		if (StkPlMemCmp(Utf32a, U"abcdeあいうえお", 10) != 0 || StkPlMemCmp(Utf16a, u"abcdeあいうえお", 15) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(0);
+		}
+		delete Utf32a;
+		delete Utf16a;
+		StkPlPrintf("OK case\n");
 
-	StkPlPrintf("Create from UTF8 string ... ");
-	char32_t* Utf32b = MessageProc::CreateUtf32FromUtf8("\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090 abcde");
-	char16_t* Utf16b = MessageProc::CreateUtf16FromUtf8("\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090 abcde");
-	if (StkPlMemCmp(Utf32b, U"㛐㛐㛐㛐㛐㛐㛐 abcde", 10) != 0 || StkPlMemCmp(Utf16b, u"㛐㛐㛐㛐㛐㛐㛐 abcde", 15) != 0) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlPrintf("Create from UTF8 string ... ");
+		char32_t* Utf32b = MessageProc::CreateUtf32FromUtf8("\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090 abcde");
+		char16_t* Utf16b = MessageProc::CreateUtf16FromUtf8("\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090 abcde");
+		if (StkPlMemCmp(Utf32b, U"㛐㛐㛐㛐㛐㛐㛐 abcde", 10) != 0 || StkPlMemCmp(Utf16b, u"㛐㛐㛐㛐㛐㛐㛐 abcde", 15) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(0);
+		}
+		delete Utf32b;
+		delete Utf16b;
+		StkPlPrintf("OK case\n");
 	}
-	delete Utf32b;
-	delete Utf16b;
-	StkPlPrintf("OK case\n");
+
+	{
+		StkPlPrintf("Wide char conversion ... ");
+		wchar_t* Str1 = MessageProc::CreateWideCharFromUtf16(u"abcdeあいうえお㛐㛐魑魅魍魎 0123456789 𠮷野家㛐㛐わをんxyz!!!");
+		char32_t* Str2 = MessageProc::CreateUtf32FromWideChar(Str1);
+		wchar_t* Str3 = MessageProc::CreateWideCharFromUtf32(Str2);
+		char* Str4 = MessageProc::CreateUtf8FromWideChar(Str3);
+		wchar_t* Str5 = MessageProc::CreateWideCharFromUtf8(Str4);
+		char16_t* Str6 = MessageProc::CreateUtf16FromWideChar(Str5);
+		wchar_t* Str7 = MessageProc::CreateWideCharFromUtf16(Str6);
+		if (StkPlWcsCmp(Str7, Str1) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(0);
+		}
+		wchar_t StrA[128];
+		wchar_t StrB[128];
+		wchar_t StrC[128];
+		char Utf8[128];
+		char16_t Utf16[128];
+		char32_t Utf32[128];
+		MessageProc::ConvUtf8ToWideChar(StrA, 128, Str4);
+		MessageProc::ConvUtf16ToWideChar(StrB, 128, Str6);
+		MessageProc::ConvUtf32ToWideChar(StrC, 128, Str2);
+		MessageProc::ConvWideCharToUtf8(Utf8, 128, Str1);
+		MessageProc::ConvWideCharToUtf16(Utf16, 128, Str3);
+		MessageProc::ConvWideCharToUtf32(Utf32, 128, Str5);
+		if (StkPlWcsCmp(StrA, Str1) != 0 || StkPlWcsCmp(StrB, Str3) != 0 || StkPlWcsCmp(StrC, Str5) != 0 ||
+			StkPlMemCmp(Utf8, Str4, 30) != 0 || StkPlMemCmp(Utf16, Str6, 30) != 0 || StkPlMemCmp(Utf32, Str2, 30) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(0);
+		}
+
+
+		StkPlPrintf("OK case\n");
+		delete Str1;
+		delete Str2;
+		delete Str3;
+		delete Str4;
+		delete Str5;
+		delete Str6;
+		delete Str7;
+	}
 
 	StkPlPrintf("MsgProcTest completed.\n\n\n");
 }

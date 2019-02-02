@@ -620,6 +620,64 @@ size_t MessageProc::ConvUtf16ToUtf8(char* Utf8, size_t SizeInWord, const char16_
 	return ActualSize;
 }
 
+size_t MessageProc::ConvUtf16ToWideChar(wchar_t* Wc, size_t SizeInWord, const char16_t* Utf16)
+{
+#ifdef WIN32
+	StkPlWcsCpy(Wc, SizeInWord, (wchar_t*)Utf16);
+	return StkPlWcsLen(Wc);
+#else
+	return ConvUtf16ToUtf32((char32_t*)Wc, SizeInWord, Utf16);
+#endif
+}
+
+size_t MessageProc::ConvWideCharToUtf16(char16_t* Utf16, size_t SizeInWord, const wchar_t* Wc)
+{
+#ifdef WIN32
+	StkPlWcsCpy((wchar_t*)Utf16, SizeInWord, Wc);
+	return StkPlWcsLen(Wc);
+#else
+	return ConvUtf32ToUtf16(Utf16, SizeInWord, (char32_t*)Wc);
+#endif
+}
+
+size_t MessageProc::ConvWideCharToUtf32(char32_t* Utf32, size_t SizeInWord, const wchar_t* Wc)
+{
+#ifdef WIN32
+	return ConvUtf16ToUtf32(Utf32, SizeInWord, (char16_t*)Wc);
+#else
+	StkPlWcsCpy((wchar_t*)Utf32, SizeInWord, Wc);
+	return StkPlWcsLen(Wc);
+#endif
+}
+
+size_t MessageProc::ConvUtf32ToWideChar(wchar_t* Wc, size_t SizeInWord, const char32_t* Utf32)
+{
+#ifdef WIN32
+	return ConvUtf32ToUtf16((char16_t*)Wc, SizeInWord, Utf32);
+#else
+	StkPlWcsCpy(Wc, SizeInWord, (wchar_t*)Utf32);
+	return StkPlWcsLen(Wc);
+#endif
+}
+
+size_t MessageProc::ConvUtf8ToWideChar(wchar_t* Wc, size_t SizeInWord, const char* Utf8)
+{
+#ifdef WIN32
+	return ConvUtf8ToUtf16((char16_t*)Wc, SizeInWord, Utf8);
+#else
+	return ConvUtf8ToUtf32((char32_t*)Wc, SizeInWord, Utf8);
+#endif
+}
+
+size_t MessageProc::ConvWideCharToUtf8(char* Utf8, size_t SizeInWord, const wchar_t* Wc)
+{
+#ifdef WIN32
+	return ConvUtf16ToUtf8(Utf8, SizeInWord, (char16_t*)Wc);
+#else
+	return ConvUtf32ToUtf8(Utf8, SizeInWord, (char32_t*)Wc);
+#endif
+}
+
 char32_t* MessageProc::CreateUtf32FromUtf16(const char16_t* Utf16)
 {
 	int Len = ConvUtf16ToUtf32(NULL, 0, Utf16) + 1;
@@ -666,4 +724,70 @@ char* MessageProc::CreateUtf8FromUtf16(const char16_t* Utf16)
 	char* Utf8 = new char[Len];
 	ConvUtf16ToUtf8(Utf8, Len, Utf16);
 	return Utf8;
+}
+
+wchar_t* MessageProc::CreateWideCharFromUtf16(const char16_t* Utf16)
+{
+#ifdef WIN32
+	int Len = StkPlWcsLen((wchar_t*)Utf16) + 1;
+	wchar_t* Wc = new wchar_t[Len];
+	StkPlWcsCpy(Wc, Len, (wchar_t*)Utf16);
+	return Wc;
+#else
+	return (wchar_t*)CreateUtf32FromUtf16(Utf16);
+#endif
+}
+
+char16_t* MessageProc::CreateUtf16FromWideChar(const wchar_t* Wc)
+{
+#ifdef WIN32
+	int Len = StkPlWcsLen((wchar_t*)Wc) + 1;
+	char16_t* Utf16 = new char16_t[Len];
+	StkPlWcsCpy((wchar_t*)Utf16, Len, Wc);
+	return Utf16;
+#else
+	return CreateUtf16FromUtf32((char32_t*)Wc);
+#endif
+}
+
+char32_t* MessageProc::CreateUtf32FromWideChar(const wchar_t* Wc)
+{
+#ifdef WIN32
+	return CreateUtf32FromUtf16((char16_t*)Wc);
+#else
+	int Len = StkPlWcsLen((wchar_t*)Wc) + 1;
+	char32_t* Utf32 = new char32_t[Len];
+	StkPlWcsCpy((wchar_t*)Utf32, Len, Wc);
+	return Utf32;
+#endif
+}
+
+wchar_t* MessageProc::CreateWideCharFromUtf32(const char32_t* Utf32)
+{
+#ifdef WIN32
+	return (wchar_t*)CreateUtf16FromUtf32(Utf32);
+#else
+	int Len = StkPlWcsLen((wchar_t*)Utf32) + 1;
+	wchar_t* Wc = new wchar_t[Len];
+	StkPlWcsCpy(Wc, Len, (wchar_t*)Utf32);
+	return Wc;
+#endif
+}
+
+wchar_t* MessageProc::CreateWideCharFromUtf8(const char* Utf8)
+{
+#ifdef WIN32
+	return (wchar_t*)CreateUtf16FromUtf8(Utf8);
+#else
+	return (wchar_t*)CreateUtf32FromUtf8(Utf8);
+#endif
+}
+
+char* MessageProc::CreateUtf8FromWideChar(const wchar_t* Wc)
+{
+#ifdef WIN32
+	return CreateUtf8FromUtf16((char16_t*)Wc);
+#else
+	return CreateUtf8FromUtf32((char32_t*)Wc);
+#endif
 }
