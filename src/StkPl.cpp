@@ -220,19 +220,6 @@ bool StkPlIsJapaneseLocaleFromEnv()
 	return false;
 }
 
-char* StkPlWideCharToUtf8(const wchar_t* Txt)
-{
-	int MltBufLen = WideCharToMultiByte(CP_UTF8, 0, Txt, -1, (LPSTR)NULL, 0, NULL, NULL);
-	if (MltBufLen > 0) {
-		char* MltBuf = (char*)new char[MltBufLen + 1];
-		if (WideCharToMultiByte(CP_UTF8, 0, Txt, -1, MltBuf, MltBufLen, NULL, NULL) != 0) {
-			MltBuf[MltBufLen] = '\0';
-		}
-		return MltBuf;
-	}
-	return NULL;
-}
-
 char* StkPlWideCharToSjis(const wchar_t* Txt)
 {
 	int MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Txt, -1, (LPSTR)NULL, 0, NULL, NULL);
@@ -242,18 +229,6 @@ char* StkPlWideCharToSjis(const wchar_t* Txt)
 			MltBuf[MltBufLen] = '\0';
 		}
 		return MltBuf;
-	}
-	return NULL;
-}
-
-wchar_t* StkPlUtf8ToWideChar(const char* Txt)
-{
-	int WcBufLen = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, NULL, NULL);
-	if (WcBufLen > 0) {
-		wchar_t* WcTxt = new wchar_t[WcBufLen + 1];
-		WcBufLen = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, WcTxt, WcBufLen);
-		WcTxt[WcBufLen] = L'\0';
-		return WcTxt;
 	}
 	return NULL;
 }
@@ -414,22 +389,6 @@ bool StkPlIsJapaneseLocaleFromEnv()
 	return false;
 }
 
-char* StkPlWideCharToUtf8(const wchar_t* Txt)
-{
-	setlocale(LC_CTYPE, "");
-	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.UTF-8");
-	mbstate_t MbState;
-	memset((void*)&MbState, 0, sizeof(MbState));
-	int ActualSize = wcsrtombs(NULL, &Txt, 1, &MbState);
-	if (ActualSize == -1 || ConfLc == NULL) {
-		return NULL;
-	}
-	char* NewMbs = new char[ActualSize + 1];
-	wcsrtombs(NewMbs, &Txt, ActualSize, &MbState);
-	NewMbs[ActualSize] = '\0';
-	return NewMbs;
-}
-
 char* StkPlWideCharToSjis(const wchar_t* Txt)
 {
 	setlocale(LC_CTYPE, "");
@@ -444,22 +403,6 @@ char* StkPlWideCharToSjis(const wchar_t* Txt)
 	wcsrtombs(NewMbs, &Txt, ActualSize, &MbState);
 	NewMbs[ActualSize] = '\0';
 	return NewMbs;
-}
-
-wchar_t* StkPlUtf8ToWideChar(const char* Txt)
-{
-	setlocale(LC_CTYPE, "");
-	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.UTF-8");
-	mbstate_t MbState;
-	memset((void*)&MbState, 0, sizeof(MbState));
-	int ActualSize = mbsrtowcs(NULL, &Txt, 1, &MbState);
-	if (ActualSize == -1 || ConfLc == NULL) {
-		return NULL;
-	}
-	wchar_t* NewWcs = new wchar_t[ActualSize + 1];
-	mbsrtowcs(NewWcs, &Txt, ActualSize, &MbState);
-	NewWcs[ActualSize] = L'\0';
-	return NewWcs;
 }
 
 wchar_t* StkPlSjisToWideChar(const char* Txt)

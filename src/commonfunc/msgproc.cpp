@@ -72,7 +72,7 @@ void MessageProc::Impl::Eng(int Id, const wchar_t* Msg)
 	if (StkMsgUtf8[Id][ENG] != NULL) {
 		delete StkMsgUtf8[Id][ENG];
 	}
-	StkMsgUtf8[Id][ENG] = (char*)StkPlWideCharToUtf8(Msg);
+	StkMsgUtf8[Id][ENG] = CreateUtf8FromWideChar(Msg);
 }
 
 void MessageProc::Impl::Jpn(int Id, const wchar_t* Msg)
@@ -93,7 +93,7 @@ void MessageProc::Impl::Jpn(int Id, const wchar_t* Msg)
 	if (StkMsgUtf8[Id][JPN] != NULL) {
 		delete StkMsgUtf8[Id][JPN];
 	}
-	StkMsgUtf8[Id][JPN] = (char*)StkPlWideCharToUtf8(Msg);
+	StkMsgUtf8[Id][JPN] = (char*)CreateUtf8FromWideChar(Msg);
 }
 
 void MessageProc::Impl::InitMsg()

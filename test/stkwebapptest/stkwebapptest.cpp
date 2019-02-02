@@ -1,6 +1,7 @@
 ﻿#include "../../src/StkPl.h"
 #include "../../src/stkthread/stkthread.h"
 #include "../../src/commonfunc/StkObject.h"
+#include "../../src/commonfunc/msgproc.h"
 #include "../../src/stksocket/stksocket.h"
 #include "../../src/stkwebapp/StkWebApp.h"
 #include "../../src/stkwebapp/StkWebAppExec.h"
@@ -38,8 +39,8 @@ bool CompObjs(unsigned char* Dat, unsigned char* RecvDat)
 {
 	bool Ret = true;
 	int ErrCode;
-	wchar_t *SendDatW = StkPlUtf8ToWideChar((char*)Dat);
-	wchar_t *RecvDatW = StkPlUtf8ToWideChar((char*)RecvDat);
+	wchar_t *SendDatW = MessageProc::CreateWideCharFromUtf8((char*)Dat);
+	wchar_t *RecvDatW = MessageProc::CreateWideCharFromUtf8((char*)RecvDat);
 	const wchar_t* Skip = FindNewLine(RecvDatW);
 	StkObject* SendObj = NULL;
 	StkObject* RecvObj = NULL;
@@ -164,7 +165,7 @@ int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, 
 	}
 
 	// Change UTF-8 into UTF-16
-	wchar_t* RecvDatW = StkPlUtf8ToWideChar((char*)RecvDat);
+	wchar_t* RecvDatW = MessageProc::CreateWideCharFromUtf8((char*)RecvDat);
 
 	if (Header != NULL) {
 		StkPlWcsNCpy(Header, 256, RecvDatW, 256 - 1);

@@ -195,7 +195,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	} else {
 		Dat[Ret] = '\0';
 	}
-	wchar_t *DatWc = StkPlUtf8ToWideChar((char*)Dat);
+	wchar_t *DatWc = MessageProc::CreateWideCharFromUtf8((char*)Dat);
 	delete Dat;
 	if (DatWc == NULL) {
 		StkSocket_CloseAccept(TargetId, TargetId, true);
@@ -292,11 +292,11 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 				StkObject* ErrObj = MakeErrorResponse(1006);
 				wchar_t TmpBuf[1024] = L"";
 				ErrObj->ToJson(TmpBuf, 1024);
-				Dat = (unsigned char*)StkPlWideCharToUtf8(TmpBuf);
+				Dat = (unsigned char*)MessageProc::CreateUtf8FromWideChar(TmpBuf);
 				DatLength = StkPlStrLen((char*)Dat);
 				delete XmlOrJson;
 			} else {
-				Dat = (unsigned char*)StkPlWideCharToUtf8(XmlOrJson);
+				Dat = (unsigned char*)MessageProc::CreateUtf8FromWideChar(XmlOrJson);
 				DatLength = StkPlStrLen((char*)Dat);
 				delete XmlOrJson;
 			}
