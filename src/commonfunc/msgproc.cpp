@@ -294,7 +294,7 @@ void MessageProc::ClearAllMsg()
 	Impl::Instance->pImpl->AllClear();
 }
 
-size_t MessageProc::StkPlConvUtf16ToUtf32(char32_t* Utf32, size_t SizeInWord, const char16_t* Utf16)
+size_t MessageProc::ConvUtf16ToUtf32(char32_t* Utf32, size_t SizeInWord, const char16_t* Utf16)
 {
 	const char16_t* Utf16Ptr = Utf16;
 	char32_t* Utf32Ptr = Utf32;
@@ -328,7 +328,7 @@ size_t MessageProc::StkPlConvUtf16ToUtf32(char32_t* Utf32, size_t SizeInWord, co
 	return ActualSize;
 }
 
-size_t MessageProc::StkPlConvUtf32ToUtf16(char16_t* Utf16, size_t SizeInWord, const char32_t* Utf32)
+size_t MessageProc::ConvUtf32ToUtf16(char16_t* Utf16, size_t SizeInWord, const char32_t* Utf32)
 {
 	const char32_t* Utf32Ptr = Utf32;
 	char16_t* Utf16Ptr = Utf16;
@@ -365,7 +365,7 @@ size_t MessageProc::StkPlConvUtf32ToUtf16(char16_t* Utf16, size_t SizeInWord, co
 	return ActualSize;
 }
 
-size_t MessageProc::StkPlConvUtf8ToUtf32(char32_t* Utf32, size_t SizeInWord, const char* Utf8)
+size_t MessageProc::ConvUtf8ToUtf32(char32_t* Utf32, size_t SizeInWord, const char* Utf8)
 {
 	const unsigned char* Utf8Ptr = (unsigned char*)Utf8;
 	char32_t* Utf32Ptr = Utf32;
@@ -420,7 +420,7 @@ size_t MessageProc::StkPlConvUtf8ToUtf32(char32_t* Utf32, size_t SizeInWord, con
 	return ActualSize;
 }
 
-size_t MessageProc::StkPlConvUtf32ToUtf8(char* Utf8, size_t SizeInWord, const char32_t* Utf32)
+size_t MessageProc::ConvUtf32ToUtf8(char* Utf8, size_t SizeInWord, const char32_t* Utf32)
 {
 	const char32_t* Utf32Ptr = (const char32_t*)Utf32;
 	unsigned char* Utf8Ptr = (unsigned char*)Utf8;
@@ -481,7 +481,7 @@ size_t MessageProc::StkPlConvUtf32ToUtf8(char* Utf8, size_t SizeInWord, const ch
 	return ActualSize;
 }
 
-size_t MessageProc::StkPlConvUtf8ToUtf16(char16_t* Utf16, size_t SizeInWord, const char* Utf8)
+size_t MessageProc::ConvUtf8ToUtf16(char16_t* Utf16, size_t SizeInWord, const char* Utf8)
 {
 	const unsigned char* Utf8Ptr = (unsigned char*)Utf8;
 	char16_t* Utf16Ptr = Utf16;
@@ -547,7 +547,7 @@ size_t MessageProc::StkPlConvUtf8ToUtf16(char16_t* Utf16, size_t SizeInWord, con
 	return ActualSize;
 }
 
-size_t MessageProc::StkPlConvUtf16ToUtf8(char* Utf8, size_t SizeInWord, const char16_t* Utf16)
+size_t MessageProc::ConvUtf16ToUtf8(char* Utf8, size_t SizeInWord, const char16_t* Utf16)
 {
 	const char16_t* Utf16Ptr = Utf16;
 	char* Utf8Ptr = Utf8;
@@ -618,4 +618,52 @@ size_t MessageProc::StkPlConvUtf16ToUtf8(char* Utf8, size_t SizeInWord, const ch
 		*Utf8Ptr = U'\0';
 	}
 	return ActualSize;
+}
+
+char32_t* MessageProc::CreateUtf32FromUtf16(const char16_t* Utf16)
+{
+	int Len = ConvUtf16ToUtf32(NULL, 0, Utf16) + 1;
+	char32_t* Utf32 = new char32_t[Len];
+	ConvUtf16ToUtf32(Utf32, Len, Utf16);
+	return Utf32;
+}
+
+char16_t* MessageProc::CreateUtf16FromUtf32(const char32_t* Utf32)
+{
+	int Len = ConvUtf32ToUtf16(NULL, 0, Utf32) + 1;
+	char16_t* Utf16 = new char16_t[Len];
+	ConvUtf32ToUtf16(Utf16, Len, Utf32);
+	return Utf16;
+}
+
+char32_t* MessageProc::CreateUtf32FromUtf8(const char* Utf8)
+{
+	int Len = ConvUtf8ToUtf32(NULL, 0, Utf8) + 1;
+	char32_t* Utf32 = new char32_t[Len];
+	ConvUtf8ToUtf32(Utf32, Len, Utf8);
+	return Utf32;
+}
+
+char* MessageProc::CreateUtf8FromUtf32(const char32_t* Utf32)
+{
+	int Len = ConvUtf32ToUtf8(NULL, 0, Utf32) + 1;
+	char* Utf8 = new char[Len];
+	ConvUtf32ToUtf8(Utf8, Len, Utf32);
+	return Utf8;
+}
+
+char16_t* MessageProc::CreateUtf16FromUtf8(const char* Utf8)
+{
+	int Len = ConvUtf8ToUtf16(NULL, 0, Utf8) + 1;
+	char16_t* Utf16 = new char16_t[Len];
+	ConvUtf8ToUtf16(Utf16, Len, Utf8);
+	return Utf16;
+}
+
+char* MessageProc::CreateUtf8FromUtf16(const char16_t* Utf16)
+{
+	int Len = ConvUtf16ToUtf8(NULL, 0, Utf16) + 1;
+	char* Utf8 = new char[Len];
+	ConvUtf16ToUtf8(Utf8, Len, Utf16);
+	return Utf8;
 }
