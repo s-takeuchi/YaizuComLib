@@ -27,6 +27,7 @@ wchar_t* StkPlWcsCat(wchar_t*, size_t, const wchar_t*);
 
 int StkPlMemCmp(const void*, const void*, size_t);
 void* StkPlMemCpy(void*, const void*, size_t);
+void* StkPlMemSet(void*, int, size_t);
 
 bool StkPlIsJapaneseLocale();
 bool StkPlIsJapaneseLocaleFromEnv();

@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <windows.h>
 
 // Lock type
 #define LOCK_FREE       0

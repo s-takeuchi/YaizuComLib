@@ -1,17 +1,17 @@
-﻿#include <windows.h>
-#include <string.h>
-#include "stkdata.h"
+﻿#include "stkdata.h"
+#include "../StkPl.h"
 
 // Constructor
 ColumnDataStr::ColumnDataStr(wchar_t* ColumnName, char* Value)
 {
-	lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE);
+	StkPlWcsNCpy(m_ColumnName, COLUMN_NAME_SIZE, ColumnName, COLUMN_NAME_SIZE - 1);
+	m_ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';
 	m_ColumnType = COLUMN_TYPE_STR;
 	m_ComparisonOperator = COMP_EQUAL;
 	if (Value == NULL) {
-		strcpy_s(m_Value, 256, "");
+		StkPlStrCpy(m_Value, 256, "");
 	} else {
-		strcpy_s(m_Value, 256, Value);
+		StkPlStrCpy(m_Value, 256, Value);
 	}
 }
 

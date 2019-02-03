@@ -1,10 +1,10 @@
-﻿#include <windows.h>
-#include "stkdata.h"
+﻿#include "stkdata.h"
+#include "../StkPl.h"
 
 // Constructor
 ColumnDef::ColumnDef()
 {
-	lstrcpy(m_ColumnName, L"");
+	StkPlWcsCpy(m_ColumnName, COLUMN_NAME_SIZE, L"");
 	m_ColumnType = -1;
 }
 
@@ -17,9 +17,8 @@ ColumnDef::~ColumnDef()
 // [in] wchar_t* : Column name
 void ColumnDef::SetColumnName(wchar_t* ColumnName)
 {
-	if (lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE) == NULL) {
-		lstrcpy(m_ColumnName, L"");
-	}
+	StkPlWcsNCpy(m_ColumnName, COLUMN_NAME_SIZE, ColumnName, COLUMN_NAME_SIZE - 1);
+	m_ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';
 }
 
 // Get column name

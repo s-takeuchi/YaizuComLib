@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <windows.h>
 
 // Max number
 #define MAX_TABLE_NUMBER   16

@@ -1,19 +1,19 @@
-﻿#include <windows.h>
-#include <string.h>
-#include "stkdata.h"
+﻿#include "stkdata.h"
+#include "../StkPl.h"
 
 // Constructor
 ColumnDataBin::ColumnDataBin(wchar_t* ColumnName, unsigned char* Value, int Length)
 {
-	lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE);
+	StkPlWcsNCpy(m_ColumnName, COLUMN_NAME_SIZE, ColumnName, COLUMN_NAME_SIZE - 1);
+	m_ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';
 	m_ColumnType = COLUMN_TYPE_BIN;
 	m_ComparisonOperator = COMP_EQUAL;
 	m_Value = new unsigned char[Length];
 	if (Value == NULL) {
-		FillMemory(m_Value, Length, 0);
+		StkPlMemSet(m_Value, 0, Length);
 	} else {
-		FillMemory(m_Value, Length, 0);
-		CopyMemory(m_Value, Value, Length);
+		StkPlMemSet(m_Value, 0, Length);
+		StkPlMemCpy(m_Value, Value, Length);
 	}
 }
 

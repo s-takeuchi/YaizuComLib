@@ -1,7 +1,4 @@
-﻿#include <windows.h>
-#include <string.h>
-#include <stdio.h>
-#include "DataAcController.h"
+﻿#include "DataAcController.h"
 #include "stkdata.h"
 #include "stkdataapi.h"
 

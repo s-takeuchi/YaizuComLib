@@ -1,10 +1,11 @@
-﻿#include <windows.h>
-#include "stkdata.h"
+﻿#include "stkdata.h"
+#include "../StkPl.h"
 
 // Constructor
 ColumnDataFloat::ColumnDataFloat(wchar_t* ColumnName, float Value)
 {
-	lstrcpyn(m_ColumnName, ColumnName, COLUMN_NAME_SIZE);
+	StkPlWcsNCpy(m_ColumnName, COLUMN_NAME_SIZE, ColumnName, COLUMN_NAME_SIZE - 1);
+	m_ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';
 	m_ColumnType = COLUMN_TYPE_FLOAT;
 	m_ComparisonOperator = COMP_EQUAL;
 	m_Value = Value;

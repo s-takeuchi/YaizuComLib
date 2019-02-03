@@ -58,6 +58,11 @@ void* StkPlMemCpy(void* Destination, const void* Source, size_t NumberOfElements
 	return memcpy(Destination, Source, NumberOfElements);
 }
 
+void* StkPlMemSet(void* Ptr, int Value, size_t Size)
+{
+	return memset(Ptr, Value, Size);
+}
+
 bool StkPlIsJapaneseLocale()
 {
 	setlocale(LC_ALL, "");
