@@ -1,5 +1,5 @@
-﻿#include <windows.h>
-#include "stkdata.h"
+﻿#include "stkdata.h"
+#include "../StkPl.h"
 
 RecordData::RecordData()
 {
@@ -8,7 +8,8 @@ RecordData::RecordData()
 		m_ColumnData[Loop] = NULL;
 	}
 	m_CurrentColumnNum = 0;
-	lstrcpyn(m_TableName, L"", TABLE_NAME_SIZE);
+	StkPlWcsNCpy(m_TableName, TABLE_NAME_SIZE, L"", TABLE_NAME_SIZE - 1);
+	m_TableName[TABLE_NAME_SIZE - 1] = L'\0';
 	m_NextRecord = NULL;
 }
 
@@ -30,7 +31,8 @@ RecordData::RecordData(wchar_t TableName[TABLE_NAME_SIZE], ColumnData** ColDat, 
 	for (; Loop < MAX_COLUMN_NUMBER; Loop++) {
 		m_ColumnData[Loop] = NULL;
 	}
-	lstrcpyn(m_TableName, TableName, TABLE_NAME_SIZE);
+	StkPlWcsNCpy(m_TableName, TABLE_NAME_SIZE, TableName, TABLE_NAME_SIZE - 1);
+	m_TableName[TABLE_NAME_SIZE - 1] = L'\0';
 	m_NextRecord = NULL;
 }
 
@@ -81,7 +83,7 @@ ColumnData* RecordData::GetColumn(wchar_t* ColumnName)
 		if (ColDat != NULL) {
 			wchar_t* ColDatName = ColDat->GetColumnName();
 			if (ColDatName != NULL) {
-				if (lstrcmp(ColDatName, ColumnName) == 0) {
+				if (StkPlWcsCmp(ColDatName, ColumnName) == 0) {
 					return ColDat;
 				}
 			}
@@ -92,7 +94,8 @@ ColumnData* RecordData::GetColumn(wchar_t* ColumnName)
 
 void RecordData::SetTableName(wchar_t TableName[TABLE_NAME_SIZE])
 {
-	lstrcpyn(m_TableName, TableName, TABLE_NAME_SIZE);
+	StkPlWcsNCpy(m_TableName, TABLE_NAME_SIZE, TableName, TABLE_NAME_SIZE - 1);
+	m_TableName[TABLE_NAME_SIZE - 1] = L'\0';
 }
 
 wchar_t* RecordData::GetTableName()

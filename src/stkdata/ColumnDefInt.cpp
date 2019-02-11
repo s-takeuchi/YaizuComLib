@@ -1,5 +1,6 @@
 ﻿#include "stkdata.h"
 #include "../StkPl.h"
+
 // Constructor
 ColumnDefInt::ColumnDefInt()
 {

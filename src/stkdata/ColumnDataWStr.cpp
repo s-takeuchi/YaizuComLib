@@ -10,8 +10,10 @@ ColumnDataWStr::ColumnDataWStr(wchar_t* ColumnName, wchar_t* Value)
 	m_ComparisonOperator = COMP_EQUAL;
 	if (Value == NULL) {
 		StkPlWcsNCpy(m_Value, 256, L"", 256 - 1);
+		m_Value[256 - 1] = L'\0';
 	} else {
 		StkPlWcsNCpy(m_Value, 256, Value, 256 - 1);
+		m_Value[256 - 1] = L'\0';
 	}
 }
 

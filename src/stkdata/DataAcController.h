@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include <windows.h>
+#include <mutex>
 #include "stkdata.h"
+#include "../StkPl.h"
 
 #define OPE_GET    1
 #define OPE_DELETE 2
@@ -14,12 +15,12 @@ public:
 
 private:
 	wchar_t  m_TableName[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
-	LPVOID m_TableAddr[MAX_TABLE_NUMBER];
-	SIZE_T m_TableSize[MAX_TABLE_NUMBER];
+	void* m_TableAddr[MAX_TABLE_NUMBER];
+	size_t m_TableSize[MAX_TABLE_NUMBER];
 	int    m_TableLock[MAX_TABLE_NUMBER];
 	int    m_TableVer[MAX_TABLE_NUMBER];
 
-	SIZE_T m_RecordSize[MAX_TABLE_NUMBER];
+	size_t m_RecordSize[MAX_TABLE_NUMBER];
 	int    m_RecordCount[MAX_TABLE_NUMBER];
 
 	wchar_t  m_ColumnName[MAX_TABLE_NUMBER][MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE];
@@ -29,15 +30,15 @@ private:
 	int    m_ColumnCount[MAX_TABLE_NUMBER];
 
 	// Offset of target column for SortCompare() function
-	static __declspec(thread) int m_CompareColOffset;
+	static thread_local int m_CompareColOffset;
 	// Type for target column for SortCompare() function
-	static __declspec(thread) int m_CompareColType;
+	static thread_local int m_CompareColType;
 	// Size for target column for SortCompare() function
-	static __declspec(thread) int m_CompareColSize;
+	static thread_local int m_CompareColSize;
 
 	// Critical Section
-	CRITICAL_SECTION Cs4Lock;
-	CRITICAL_SECTION Cs4AutoSave;
+	std::mutex Cs4Lock;
+	std::mutex Cs4AutoSave;
 
 private:
 	// Constructor
@@ -63,7 +64,7 @@ private:
 	static int ZaSortCompare(const void*, const void*);
 
 	// Allocate data area of the specified table ID
-	int AllocDataArea(SIZE_T, int);
+	int AllocDataArea(size_t, int);
 	// Release data area of the specified table ID
 	int FreeDataArea(int);
 	// Commit the reserved area
@@ -81,10 +82,9 @@ private:
 	void IncrementTableVersion(int);
 
 	int AutoSaveInterval;
-	ULONG AutoSaveThreadId;
 	wchar_t AutoSaveFilePath[256];
-	DWORD AutoSaveThreadProc();
-	static DWORD WINAPI AutoSaveThreadProcDummy(LPVOID);
+	void AutoSaveThreadProc();
+	static void AutoSaveThreadProcDummy(void*);
 
 public:
 	// Get this instance

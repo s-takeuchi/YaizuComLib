@@ -1,10 +1,10 @@
-﻿#include <windows.h>
-#include "stkdata.h"
+﻿#include "stkdata.h"
+#include "../StkPl.h"
 
 // Constructor
 TableDef::TableDef()
 {
-	lstrcpy(m_TableName, L"");
+	StkPlWcsCpy(m_TableName, TABLE_NAME_SIZE, L"");
 	for (int Loop = 0; Loop < MAX_COLUMN_NUMBER; Loop++) {
 		m_Column[Loop] = NULL;
 	}
@@ -20,9 +20,8 @@ TableDef::TableDef(wchar_t* TableName, int MaxRecord)
 	}
 	m_NumberOfColumn = 0;
 	m_MaxRecord = MaxRecord;
-	if (lstrcpyn(m_TableName, TableName, TABLE_NAME_SIZE) == NULL) {
-		lstrcpy(m_TableName, L"");
-	}
+	StkPlWcsNCpy(m_TableName, TABLE_NAME_SIZE, TableName, TABLE_NAME_SIZE - 1);
+	m_TableName[TABLE_NAME_SIZE - 1] = L'\0';
 }
 
 // Destructor
@@ -34,9 +33,8 @@ TableDef::~TableDef()
 // [in] wchar_t* : Table Name
 void TableDef::SetTableName(wchar_t* TableName)
 {
-	if (lstrcpyn(m_TableName, TableName, TABLE_NAME_SIZE) == NULL) {
-		lstrcpy(m_TableName, L"");
-	}
+	StkPlWcsNCpy(m_TableName, TABLE_NAME_SIZE, TableName, TABLE_NAME_SIZE - 1);
+	m_TableName[TABLE_NAME_SIZE - 1] = L'\0';
 }
 
 // Get table name
