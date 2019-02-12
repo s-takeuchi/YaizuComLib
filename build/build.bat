@@ -29,11 +29,17 @@ if not defined APPVEYOR (
   echo 4. 7-Zip 9.20
   echo 5. Line Counter
 
-  if not exist %MSBUILD% exit
-  if not exist %WKHTMLTOPDF% exit
-  if not exist %PDFTK% exit
-  if not exist %SEVENZIP% exit
-  if not exist %LCOUNTER% exit
+  if not exist %MSBUILD% (
+    exit
+  ) else if not exist %WKHTMLTOPDF% (
+    exit
+  ) else if not exist %PDFTK% (
+    exit
+  ) else if not exist %SEVENZIP% (
+    exit
+  ) else if not exist %LCOUNTER% (
+    exit
+  )
 )
 
 echo;
