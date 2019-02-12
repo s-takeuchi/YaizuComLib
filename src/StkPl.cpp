@@ -957,7 +957,7 @@ size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
 
 int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
 {
-	char* FileNameUtf8 = StkPlWideCharToUtf8(FilePath);
+	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
 	FILE *fp = fopen(FileNameUtf8, "r");
 	if (fp == NULL) {
 		return -1;

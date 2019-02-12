@@ -39,8 +39,8 @@ bool CompObjs(unsigned char* Dat, unsigned char* RecvDat)
 {
 	bool Ret = true;
 	int ErrCode;
-	wchar_t *SendDatW = MessageProc::CreateWideCharFromUtf8((char*)Dat);
-	wchar_t *RecvDatW = MessageProc::CreateWideCharFromUtf8((char*)RecvDat);
+	wchar_t *SendDatW = StkPlCreateWideCharFromUtf8((char*)Dat);
+	wchar_t *RecvDatW = StkPlCreateWideCharFromUtf8((char*)RecvDat);
 	const wchar_t* Skip = FindNewLine(RecvDatW);
 	StkObject* SendObj = NULL;
 	StkObject* RecvObj = NULL;
@@ -165,7 +165,7 @@ int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, 
 	}
 
 	// Change UTF-8 into UTF-16
-	wchar_t* RecvDatW = MessageProc::CreateWideCharFromUtf8((char*)RecvDat);
+	wchar_t* RecvDatW = StkPlCreateWideCharFromUtf8((char*)RecvDat);
 
 	if (Header != NULL) {
 		StkPlWcsNCpy(Header, 256, RecvDatW, 256 - 1);
