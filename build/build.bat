@@ -1,6 +1,7 @@
 @echo off
 
 if defined APPVEYOR (
+  echo For AppVeyor
   set MSBUILD="msbuild.exe"
   set SEVENZIP="7z.exe"
 )
