@@ -33,32 +33,4 @@ public:
 	static void DelJpn(int);
 
 	static void ClearAllMsg();
-
-	static size_t ConvUtf16ToUtf32(char32_t*, size_t, const char16_t*);
-	static size_t ConvUtf32ToUtf16(char16_t*, size_t, const char32_t*);
-	static size_t ConvUtf8ToUtf32(char32_t*, size_t, const char*);
-	static size_t ConvUtf32ToUtf8(char*, size_t, const char32_t*);
-	static size_t ConvUtf8ToUtf16(char16_t*, size_t, const char*);
-	static size_t ConvUtf16ToUtf8(char*, size_t, const char16_t*);
-
-	static size_t ConvUtf16ToWideChar(wchar_t*, size_t, const char16_t*);
-	static size_t ConvWideCharToUtf16(char16_t*, size_t, const wchar_t*);
-	static size_t ConvWideCharToUtf32(char32_t*, size_t, const wchar_t*);
-	static size_t ConvUtf32ToWideChar(wchar_t*, size_t, const char32_t*);
-	static size_t ConvUtf8ToWideChar(wchar_t*, size_t, const char*);
-	static size_t ConvWideCharToUtf8(char*, size_t, const wchar_t*);
-
-	static char32_t* CreateUtf32FromUtf16(const char16_t*);
-	static char16_t* CreateUtf16FromUtf32(const char32_t*);
-	static char32_t* CreateUtf32FromUtf8(const char*);
-	static char* CreateUtf8FromUtf32(const char32_t*);
-	static char16_t* CreateUtf16FromUtf8(const char*);
-	static char* CreateUtf8FromUtf16(const char16_t*);
-
-	static wchar_t* CreateWideCharFromUtf16(const char16_t*);
-	static char16_t* CreateUtf16FromWideChar(const wchar_t*);
-	static char32_t* CreateUtf32FromWideChar(const wchar_t*);
-	static wchar_t* CreateWideCharFromUtf32(const char32_t*);
-	static wchar_t* CreateWideCharFromUtf8(const char*);
-	static char* CreateUtf8FromWideChar(const wchar_t*);
 };

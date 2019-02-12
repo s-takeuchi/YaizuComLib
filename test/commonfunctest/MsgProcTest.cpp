@@ -5,8 +5,8 @@ void Test_Conv_Utf16_Utf32(const char16_t* MsgPtr, int NumOfByte)
 {
 	char32_t Utf32[256] = U"";
 	char16_t Utf16[256] = u"";
-	size_t LenUtf32 = MessageProc::ConvUtf16ToUtf32(Utf32, 256, MsgPtr);
-	size_t LenUtf16 = MessageProc::ConvUtf32ToUtf16(Utf16, 256, Utf32);
+	size_t LenUtf32 = StkPlConvUtf16ToUtf32(Utf32, 256, MsgPtr);
+	size_t LenUtf16 = StkPlConvUtf32ToUtf16(Utf16, 256, Utf32);
 	if (LenUtf16 != LenUtf32 * NumOfByte || StkPlMemCmp(MsgPtr, Utf16, LenUtf16 * sizeof(char16_t)) != 0) {
 		StkPlPrintf("UTF16(%d word) -> UTF32 -> UTF16(%d word) ... NG case\n", NumOfByte, NumOfByte);
 		StkPlExit(0);
@@ -18,8 +18,8 @@ void Test_Conv_Utf8_Utf32(const char32_t* MsgPtr, int NumOfByte)
 {
 	char Utf8[256] = "";
 	char32_t Utf32[256] = U"";
-	size_t LenUtf8 = MessageProc::ConvUtf32ToUtf8(Utf8, 256, MsgPtr);
-	size_t LenUtf32 = MessageProc::ConvUtf8ToUtf32(Utf32, 256, Utf8);
+	size_t LenUtf8 = StkPlConvUtf32ToUtf8(Utf8, 256, MsgPtr);
+	size_t LenUtf32 = StkPlConvUtf8ToUtf32(Utf32, 256, Utf8);
 	if (LenUtf8 != LenUtf32 * NumOfByte || StkPlMemCmp(MsgPtr, Utf32, LenUtf32 * sizeof(char32_t)) != 0) {
 		StkPlPrintf("UTF32 -> UTF8(%d byte) -> UTF32 ... NG case\n", NumOfByte);
 		StkPlExit(0);
@@ -31,8 +31,8 @@ void Test_Conv_Utf8_Utf16(const char16_t* MsgPtr, int NumOfByte)
 {
 	char Utf8[256] = "";
 	char16_t Utf16[256] = u"";
-	size_t LenUtf8 = MessageProc::ConvUtf16ToUtf8(Utf8, 256, MsgPtr);
-	size_t LenUtf16 = MessageProc::ConvUtf8ToUtf16(Utf16, 256, Utf8);
+	size_t LenUtf8 = StkPlConvUtf16ToUtf8(Utf8, 256, MsgPtr);
+	size_t LenUtf16 = StkPlConvUtf8ToUtf16(Utf16, 256, Utf8);
 	if (LenUtf8 != LenUtf16 * NumOfByte || StkPlMemCmp(MsgPtr, Utf16, LenUtf16 * sizeof(char16_t)) != 0) {
 		StkPlPrintf("UTF16 -> UTF8(%d byte) -> UTF16 ... NG case\n", NumOfByte);
 		StkPlExit(0);
@@ -45,8 +45,8 @@ size_t Test_Insufficient_Buffer_Utf16_Utf32(const char16_t* MsgPtr, size_t Size)
 	StkPlPrintf("UTF16 -> UTF32 with insufficient buffer ... ");
 	char32_t Utf32[256] = U"";
 	char32_t Utf32f[256] = U"";
-	size_t LenUtf32 = MessageProc::ConvUtf16ToUtf32(Utf32, Size, MsgPtr);
-	size_t LenUtf32f = MessageProc::ConvUtf16ToUtf32(Utf32f, 256, MsgPtr);
+	size_t LenUtf32 = StkPlConvUtf16ToUtf32(Utf32, Size, MsgPtr);
+	size_t LenUtf32f = StkPlConvUtf16ToUtf32(Utf32f, 256, MsgPtr);
 	if (LenUtf32 > Size - 1 || LenUtf32 >= LenUtf32f || StkPlMemCmp(Utf32, Utf32f, LenUtf32 * sizeof(char32_t)) != 0) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -60,8 +60,8 @@ size_t Test_Insufficient_Buffer_Utf32_Utf16(const char32_t* MsgPtr, size_t Size)
 	StkPlPrintf("UTF32 -> UTF16 with insufficient buffer ... ");
 	char16_t Utf16[256] = u"";
 	char16_t Utf16f[256] = u"";
-	size_t LenUtf16 = MessageProc::ConvUtf32ToUtf16(Utf16, Size, MsgPtr);
-	size_t LenUtf16f = MessageProc::ConvUtf32ToUtf16(Utf16f, 256, MsgPtr);
+	size_t LenUtf16 = StkPlConvUtf32ToUtf16(Utf16, Size, MsgPtr);
+	size_t LenUtf16f = StkPlConvUtf32ToUtf16(Utf16f, 256, MsgPtr);
 	if (LenUtf16 > Size - 1 || LenUtf16 >= LenUtf16f || StkPlMemCmp(Utf16, Utf16f, LenUtf16 * sizeof(char16_t)) != 0) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -75,8 +75,8 @@ size_t Test_Insufficient_Buffer_Utf8_Utf32(const char* MsgPtr, size_t Size)
 	StkPlPrintf("UTF8 -> UTF32 with insufficient buffer ... ");
 	char32_t Utf32[256] = U"";
 	char32_t Utf32f[256] = U"";
-	size_t LenUtf32 = MessageProc::ConvUtf8ToUtf32(Utf32, Size, MsgPtr);
-	size_t LenUtf32f = MessageProc::ConvUtf8ToUtf32(Utf32f, 256, MsgPtr);
+	size_t LenUtf32 = StkPlConvUtf8ToUtf32(Utf32, Size, MsgPtr);
+	size_t LenUtf32f = StkPlConvUtf8ToUtf32(Utf32f, 256, MsgPtr);
 	if (LenUtf32 > Size - 1 || LenUtf32 >= LenUtf32f || StkPlMemCmp(Utf32, Utf32f, LenUtf32 * sizeof(char32_t)) != 0) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -90,8 +90,8 @@ size_t Test_Insufficient_Buffer_Utf32_Utf8(const char32_t* MsgPtr, size_t Size)
 	StkPlPrintf("UTF32 -> UTF8 with insufficient buffer ... ");
 	char Utf8[256] = "";
 	char Utf8f[256] = "";
-	size_t LenUtf8 = MessageProc::ConvUtf32ToUtf8(Utf8, Size, MsgPtr);
-	size_t LenUtf8f = MessageProc::ConvUtf32ToUtf8(Utf8f, 256, MsgPtr);
+	size_t LenUtf8 = StkPlConvUtf32ToUtf8(Utf8, Size, MsgPtr);
+	size_t LenUtf8f = StkPlConvUtf32ToUtf8(Utf8f, 256, MsgPtr);
 	if (LenUtf8 > Size - 1 || LenUtf8 >= LenUtf8f || StkPlMemCmp(Utf8, Utf8f, LenUtf8) != 0) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -105,8 +105,8 @@ size_t Test_Insufficient_Buffer_Utf8_Utf16(const char* MsgPtr, size_t Size)
 	StkPlPrintf("UTF8 -> UTF16 with insufficient buffer ... ");
 	char16_t Utf16[256] = u"";
 	char16_t Utf16f[256] = u"";
-	size_t LenUtf16 = MessageProc::ConvUtf8ToUtf16(Utf16, Size, MsgPtr);
-	size_t LenUtf16f = MessageProc::ConvUtf8ToUtf16(Utf16f, 256, MsgPtr);
+	size_t LenUtf16 = StkPlConvUtf8ToUtf16(Utf16, Size, MsgPtr);
+	size_t LenUtf16f = StkPlConvUtf8ToUtf16(Utf16f, 256, MsgPtr);
 	if (LenUtf16 > Size - 1 || LenUtf16 >= LenUtf16f || StkPlMemCmp(Utf16, Utf16f, LenUtf16 * sizeof(char16_t)) != 0) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -120,8 +120,8 @@ size_t Test_Insufficient_Buffer_Utf16_Utf8(const char16_t* MsgPtr, size_t Size)
 	StkPlPrintf("UTF16 -> UTF8 with insufficient buffer ... ");
 	char Utf8[256] = "";
 	char Utf8f[256] = "";
-	size_t LenUtf8 = MessageProc::ConvUtf16ToUtf8(Utf8, Size, MsgPtr);
-	size_t LenUtf8f = MessageProc::ConvUtf16ToUtf8(Utf8f, 256, MsgPtr);
+	size_t LenUtf8 = StkPlConvUtf16ToUtf8(Utf8, Size, MsgPtr);
+	size_t LenUtf8f = StkPlConvUtf16ToUtf8(Utf8f, 256, MsgPtr);
 	if (LenUtf8 > Size - 1 || LenUtf8 >= LenUtf8f || StkPlMemCmp(Utf8, Utf8f, LenUtf8) != 0) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -134,7 +134,7 @@ void Test_Invalid_String_Utf16_Utf32(const char16_t* MsgPtr, int Count)
 {
 	StkPlPrintf("Invalid string (UTF16->UTF32) is presented ... ");
 	char32_t Buf[256];
-	size_t LenUtf32 = MessageProc::ConvUtf16ToUtf32(Buf, 256, MsgPtr);
+	size_t LenUtf32 = StkPlConvUtf16ToUtf32(Buf, 256, MsgPtr);
 	if (LenUtf32 != Count) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -146,7 +146,7 @@ void Test_Invalid_String_Utf8_Utf32(const char* MsgPtr, int Count)
 {
 	StkPlPrintf("Invalid string (UTF8->UTF32) is presented ... ");
 	char32_t Buf[256];
-	size_t LenUtf32 = MessageProc::ConvUtf8ToUtf32(Buf, 256, MsgPtr);
+	size_t LenUtf32 = StkPlConvUtf8ToUtf32(Buf, 256, MsgPtr);
 	if (LenUtf32 != Count) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -158,7 +158,7 @@ void Test_Invalid_String_Utf8_Utf16(const char* MsgPtr, int Count)
 {
 	StkPlPrintf("Invalid string (UTF8->UTF16) is presented ... ");
 	char16_t Buf[256];
-	size_t LenUtf16 = MessageProc::ConvUtf8ToUtf16(Buf, 256, MsgPtr);
+	size_t LenUtf16 = StkPlConvUtf8ToUtf16(Buf, 256, MsgPtr);
 	if (LenUtf16 != Count) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -319,18 +319,18 @@ void MsgProcTest()
 	char32_t Utf32[256] = U"";
 	char16_t Utf16[256] = u"";
 	char Utf8[256] = "";
-	size_t Len32f_16 = MessageProc::ConvUtf16ToUtf32(Utf32, 256, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
-	size_t Len32n_16 = MessageProc::ConvUtf16ToUtf32(NULL, 0, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
-	size_t Len16f_32 = MessageProc::ConvUtf32ToUtf16(Utf16, 256, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
-	size_t Len16n_32 = MessageProc::ConvUtf32ToUtf16(NULL, 0, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
-	size_t Len8f_32  = MessageProc::ConvUtf32ToUtf8(Utf8, 256, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
-	size_t Len8n_32  = MessageProc::ConvUtf32ToUtf8(NULL, 0, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
-	size_t Len32f_8  = MessageProc::ConvUtf8ToUtf32(Utf32, 256, Utf8);
-	size_t Len32n_8  = MessageProc::ConvUtf8ToUtf32(NULL, 0, Utf8);
-	size_t Len8f_16 = MessageProc::ConvUtf16ToUtf8(Utf8, 256, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
-	size_t Len8n_16 = MessageProc::ConvUtf16ToUtf8(NULL, 0, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
-	size_t Len16f_8 = MessageProc::ConvUtf8ToUtf16(Utf16, 256, Utf8);
-	size_t Len16n_8 = MessageProc::ConvUtf8ToUtf16(NULL, 0, Utf8);
+	size_t Len32f_16 = StkPlConvUtf16ToUtf32(Utf32, 256, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len32n_16 = StkPlConvUtf16ToUtf32(NULL, 0, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len16f_32 = StkPlConvUtf32ToUtf16(Utf16, 256, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len16n_32 = StkPlConvUtf32ToUtf16(NULL, 0, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len8f_32  = StkPlConvUtf32ToUtf8(Utf8, 256, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len8n_32  = StkPlConvUtf32ToUtf8(NULL, 0, U"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len32f_8  = StkPlConvUtf8ToUtf32(Utf32, 256, Utf8);
+	size_t Len32n_8  = StkPlConvUtf8ToUtf32(NULL, 0, Utf8);
+	size_t Len8f_16 = StkPlConvUtf16ToUtf8(Utf8, 256, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len8n_16 = StkPlConvUtf16ToUtf8(NULL, 0, u"abcde◆□■敬景桂𩀀𩀁𩀂ЀЁЂ");
+	size_t Len16f_8 = StkPlConvUtf8ToUtf16(Utf16, 256, Utf8);
+	size_t Len16n_8 = StkPlConvUtf8ToUtf16(NULL, 0, Utf8);
 	if (Len32f_16 != Len32n_16 || Len16f_32 != Len16n_32 || Len32f_8 != Len32n_8 || Len8f_32 != Len8n_32 || Len8f_16 != Len8n_16 || Len16f_8 != Len16n_8) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(0);
@@ -339,8 +339,8 @@ void MsgProcTest()
 
 	{
 		StkPlPrintf("Create UTF16 string ... ");
-		char* Utf8a = MessageProc::CreateUtf8FromUtf16(u"abcdeあいうえお");
-		char* Utf8b = MessageProc::CreateUtf8FromUtf32(U"abcdeあいうえお");
+		char* Utf8a = StkPlCreateUtf8FromUtf16(u"abcdeあいうえお");
+		char* Utf8b = StkPlCreateUtf8FromUtf32(U"abcdeあいうえお");
 		if (StkPlMemCmp(Utf8a, Utf8b, 15) != 0) {
 			StkPlPrintf("NG case\n");
 			StkPlExit(0);
@@ -350,8 +350,8 @@ void MsgProcTest()
 		StkPlPrintf("OK case\n");
 
 		StkPlPrintf("Create UTF32 & UTF16 string ... ");
-		char32_t* Utf32a = MessageProc::CreateUtf32FromUtf16(u"abcdeあいうえお");
-		char16_t* Utf16a = MessageProc::CreateUtf16FromUtf32(U"abcdeあいうえお");
+		char32_t* Utf32a = StkPlCreateUtf32FromUtf16(u"abcdeあいうえお");
+		char16_t* Utf16a = StkPlCreateUtf16FromUtf32(U"abcdeあいうえお");
 		if (StkPlMemCmp(Utf32a, U"abcdeあいうえお", 10) != 0 || StkPlMemCmp(Utf16a, u"abcdeあいうえお", 15) != 0) {
 			StkPlPrintf("NG case\n");
 			StkPlExit(0);
@@ -361,8 +361,8 @@ void MsgProcTest()
 		StkPlPrintf("OK case\n");
 
 		StkPlPrintf("Create from UTF8 string ... ");
-		char32_t* Utf32b = MessageProc::CreateUtf32FromUtf8("\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090 abcde");
-		char16_t* Utf16b = MessageProc::CreateUtf16FromUtf8("\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090 abcde");
+		char32_t* Utf32b = StkPlCreateUtf32FromUtf8("\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090 abcde");
+		char16_t* Utf16b = StkPlCreateUtf16FromUtf8("\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090 abcde");
 		if (StkPlMemCmp(Utf32b, U"㛐㛐㛐㛐㛐㛐㛐 abcde", 10) != 0 || StkPlMemCmp(Utf16b, u"㛐㛐㛐㛐㛐㛐㛐 abcde", 15) != 0) {
 			StkPlPrintf("NG case\n");
 			StkPlExit(0);
@@ -374,13 +374,13 @@ void MsgProcTest()
 
 	{
 		StkPlPrintf("Wide char conversion ... ");
-		wchar_t* Str1 = MessageProc::CreateWideCharFromUtf16(u"abcdeあいうえお㛐㛐魑魅魍魎 0123456789 𠮷野家㛐㛐わをんxyz!!!");
-		char32_t* Str2 = MessageProc::CreateUtf32FromWideChar(Str1);
-		wchar_t* Str3 = MessageProc::CreateWideCharFromUtf32(Str2);
-		char* Str4 = MessageProc::CreateUtf8FromWideChar(Str3);
-		wchar_t* Str5 = MessageProc::CreateWideCharFromUtf8(Str4);
-		char16_t* Str6 = MessageProc::CreateUtf16FromWideChar(Str5);
-		wchar_t* Str7 = MessageProc::CreateWideCharFromUtf16(Str6);
+		wchar_t* Str1 = StkPlCreateWideCharFromUtf16(u"abcdeあいうえお㛐㛐魑魅魍魎 0123456789 𠮷野家㛐㛐わをんxyz!!!");
+		char32_t* Str2 = StkPlCreateUtf32FromWideChar(Str1);
+		wchar_t* Str3 = StkPlCreateWideCharFromUtf32(Str2);
+		char* Str4 = StkPlCreateUtf8FromWideChar(Str3);
+		wchar_t* Str5 = StkPlCreateWideCharFromUtf8(Str4);
+		char16_t* Str6 = StkPlCreateUtf16FromWideChar(Str5);
+		wchar_t* Str7 = StkPlCreateWideCharFromUtf16(Str6);
 		if (StkPlWcsCmp(Str7, Str1) != 0) {
 			StkPlPrintf("NG case\n");
 			StkPlExit(0);
@@ -391,12 +391,12 @@ void MsgProcTest()
 		char Utf8[128];
 		char16_t Utf16[128];
 		char32_t Utf32[128];
-		MessageProc::ConvUtf8ToWideChar(StrA, 128, Str4);
-		MessageProc::ConvUtf16ToWideChar(StrB, 128, Str6);
-		MessageProc::ConvUtf32ToWideChar(StrC, 128, Str2);
-		MessageProc::ConvWideCharToUtf8(Utf8, 128, Str1);
-		MessageProc::ConvWideCharToUtf16(Utf16, 128, Str3);
-		MessageProc::ConvWideCharToUtf32(Utf32, 128, Str5);
+		StkPlConvUtf8ToWideChar(StrA, 128, Str4);
+		StkPlConvUtf16ToWideChar(StrB, 128, Str6);
+		StkPlConvUtf32ToWideChar(StrC, 128, Str2);
+		StkPlConvWideCharToUtf8(Utf8, 128, Str1);
+		StkPlConvWideCharToUtf16(Utf16, 128, Str3);
+		StkPlConvWideCharToUtf32(Utf32, 128, Str5);
 		if (StkPlWcsCmp(StrA, Str1) != 0 || StkPlWcsCmp(StrB, Str3) != 0 || StkPlWcsCmp(StrC, Str5) != 0 ||
 			StkPlMemCmp(Utf8, Str4, 30) != 0 || StkPlMemCmp(Utf16, Str6, 30) != 0 || StkPlMemCmp(Utf32, Str2, 30) != 0) {
 			StkPlPrintf("NG case\n");

@@ -103,5 +103,124 @@ FileNameにはファイルパスではなく，ファイル名を指定する必
 
 
 
+<H2 ID="1.7">1.7 StkPl API一覧</H2>
+<div class="topic">
+StkPlが提供するAPI一覧を以下に示します。<p>
+<table class="tblstyle">
+<tr><td>
+size_t StkPlConvUtf16ToUtf32(char32_t*, size_t, const char16_t*)</br>
+size_t StkPlConvUtf32ToUtf16(char16_t*, size_t, const char32_t*)</br>
+size_t StkPlConvUtf8ToUtf32(char32_t*, size_t, const char*)</br>
+size_t StkPlConvUtf32ToUtf8(char*, size_t, const char32_t*)</br>
+size_t StkPlConvUtf8ToUtf16(char16_t*, size_t, const char*)</br>
+size_t StkPlConvUtf16ToUtf8(char*, size_t, const char16_t*)</br>
+<td>異なるUTFコードに変換します。</td></td></tr>
+<tr><td>
+size_t StkPlConvUtf16ToWideChar(wchar_t*, size_t, const char16_t*)</br>
+size_t StkPlConvWideCharToUtf16(char16_t*, size_t, const wchar_t*)</br>
+size_t StkPlConvWideCharToUtf32(char32_t*, size_t, const wchar_t*)</br>
+size_t StkPlConvUtf32ToWideChar(wchar_t*, size_t, const char32_t*)</br>
+size_t StkPlConvUtf8ToWideChar(wchar_t*, size_t, const char*)</br>
+size_t StkPlConvWideCharToUtf8(char*, size_t, const wchar_t*)</br>
+<td>UTFとワイドキャラクタ文字列を相互に変換します。</td></td></tr>
+<tr><td>
+char32_t* StkPlCreateUtf32FromUtf16(const char16_t*)</br>
+char16_t* StkPlCreateUtf16FromUtf32(const char32_t*)</br>
+char32_t* StkPlCreateUtf32FromUtf8(const char*)</br>
+char* StkPlCreateUtf8FromUtf32(const char32_t*)</br>
+char16_t* StkPlCreateUtf16FromUtf8(const char*)</br>
+char* StkPlCreateUtf8FromUtf16(const char16_t*)</br>
+<td>異なるUTFコードに変換します。同時に必要な領域を確保します。</td></td></tr>
+<tr><td>
+wchar_t* StkPlCreateWideCharFromUtf16(const char16_t*)</br>
+char16_t* StkPlCreateUtf16FromWideChar(const wchar_t*)</br>
+char32_t* StkPlCreateUtf32FromWideChar(const wchar_t*)</br>
+wchar_t* StkPlCreateWideCharFromUtf32(const char32_t*)</br>
+wchar_t* StkPlCreateWideCharFromUtf8(const char*)</br>
+char* StkPlCreateUtf8FromWideChar(const wchar_t*)</br>
+<td>UTFとワイドキャラクタ文字列を相互に変換します。同時に必要な領域を確保します。</td></td></tr>
+</table><p>
+</div><p>
+
+
+
+<H2 ID="1.8">1.8</br>
+size_t StkPlConvUtf16ToUtf32(char32_t* UtfRes, size_t Size, const char16_t* Utf)</br>
+size_t StkPlConvUtf32ToUtf16(char16_t* UtfRes, size_t Size, const char32_t* Utf)</br>
+size_t StkPlConvUtf8ToUtf32(char32_t* UtfRes, size_t Size, const char* Utf)</br>
+size_t StkPlConvUtf32ToUtf8(char* UtfRes, size_t Size, const char32_t* Utf)</br>
+size_t StkPlConvUtf8ToUtf16(char16_t* UtfRes, size_t Size, const char* Utf)</br>
+size_t StkPlConvUtf16ToUtf8(char* UtfRes, size_t Size, const char16_t* Utf)</br>
+</H2>
+<div class="topic">
+異なるUTFコードに変換します。</br>
+Sizeに0を指定した場合，変換を行わず，変換後の領域のサイズを返します。このときUtfResは使用されません。</br>
+<table class="tblstyle">
+<tr><td>UtfRes[出力]</td><td>変換後のUTFコードが格納される領域</td></tr>
+<tr><td>Size[入力]</td><td>変換後のUTFコードが格納される領域のサイズ(終端文字'\0'を含めたサイズ)</td></tr>
+<tr><td>Utf[入力]</td><td>変換前のUTFコードが格納される領域)</td></tr>
+<tr><td>[戻り値]</td><td>変換後のUTFコードのサイズ</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="1.9">1.9</br>
+size_t StkPlConvUtf16ToWideChar(wchar_t* Res, size_t Size, const char16_t* Str)</br>
+size_t StkPlConvWideCharToUtf16(char16_t* Res, size_t Size, const wchar_t* Str)</br>
+size_t StkPlConvWideCharToUtf32(char32_t* Res, size_t Size, const wchar_t* Str)</br>
+size_t StkPlConvUtf32ToWideChar(wchar_t* Res, size_t Size, const char32_t* Str)</br>
+size_t StkPlConvUtf8ToWideChar(wchar_t* Res, size_t Size, const char* Str)</br>
+size_t StkPlConvWideCharToUtf8(char* Res, size_t Size, const wchar_t* Str)</br>
+</H2>
+<div class="topic">
+UTFとワイドキャラクタ文字列を相互に変換します。</br>
+Sizeに0を指定した場合，変換を行わず，変換後の領域のサイズを返します。このときUtfResは使用されません。</br>
+<table class="tblstyle">
+<tr><td>Res[出力]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
+<tr><td>Size[入力]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列が格納される領域のサイズ(終端文字'\0'を含めたサイズ)</td></tr>
+<tr><td>Utf[入力]</td><td>変換前のUTFコードまたはワイドキャラクタ文字列が格納される領域)</td></tr>
+<tr><td>[戻り値]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列のサイズ</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="1.10">1.10</br>
+char32_t* StkPlCreateUtf32FromUtf16(const char16_t* Utf)</br>
+char16_t* StkPlCreateUtf16FromUtf32(const char32_t* Utf)</br>
+char32_t* StkPlCreateUtf32FromUtf8(const char* Utf)</br>
+char* StkPlCreateUtf8FromUtf32(const char32_t* Utf)</br>
+char16_t* StkPlCreateUtf16FromUtf8(const char* Utf)</br>
+char* StkPlCreateUtf8FromUtf16(const char16_t* Utf)</br>
+</H2>
+<div class="topic">
+異なるUTFコードに変換します。同時に必要な領域を確保します。</br>
+<table class="tblstyle">
+<tr><td>Utf[入力]</td><td>変換前のUTFコードが格納される領域</td></tr>
+<tr><td>[戻り値]</td><td>変換後のUTFコードが格納される領域</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="1.11">1.11</br>
+wchar_t* StkPlCreateWideCharFromUtf16(const char16_t* Str)</br>
+char16_t* StkPlCreateUtf16FromWideChar(const wchar_t* Str)</br>
+char32_t* StkPlCreateUtf32FromWideChar(const wchar_t* Str)</br>
+wchar_t* StkPlCreateWideCharFromUtf32(const char32_t* Str)</br>
+wchar_t* StkPlCreateWideCharFromUtf8(const char* Str)</br>
+char* StkPlCreateUtf8FromWideChar(const wchar_t* Str)</br>
+</H2>
+<div class="topic">
+UTFとワイドキャラクタ文字列を相互に変換します。同時に必要な領域を確保します。</br>
+<table class="tblstyle">
+<tr><td>Str[入力]</td><td>変換前のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
+<tr><td>[戻り値]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
+</table>
+</div><p>
+
+
+
 </div>
 </BODY>

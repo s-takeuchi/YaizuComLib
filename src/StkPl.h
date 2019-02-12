@@ -34,6 +34,38 @@ bool StkPlIsJapaneseLocaleFromEnv();
 char* StkPlWideCharToSjis(const wchar_t*);
 wchar_t* StkPlSjisToWideChar(const char*);
 
+//////////////////////////////////////////////////////////////////////////////
+
+size_t StkPlConvUtf16ToUtf32(char32_t*, size_t, const char16_t*);
+size_t StkPlConvUtf32ToUtf16(char16_t*, size_t, const char32_t*);
+size_t StkPlConvUtf8ToUtf32(char32_t*, size_t, const char*);
+size_t StkPlConvUtf32ToUtf8(char*, size_t, const char32_t*);
+size_t StkPlConvUtf8ToUtf16(char16_t*, size_t, const char*);
+size_t StkPlConvUtf16ToUtf8(char*, size_t, const char16_t*);
+
+size_t StkPlConvUtf16ToWideChar(wchar_t*, size_t, const char16_t*);
+size_t StkPlConvWideCharToUtf16(char16_t*, size_t, const wchar_t*);
+size_t StkPlConvWideCharToUtf32(char32_t*, size_t, const wchar_t*);
+size_t StkPlConvUtf32ToWideChar(wchar_t*, size_t, const char32_t*);
+size_t StkPlConvUtf8ToWideChar(wchar_t*, size_t, const char*);
+size_t StkPlConvWideCharToUtf8(char*, size_t, const wchar_t*);
+
+char32_t* StkPlCreateUtf32FromUtf16(const char16_t*);
+char16_t* StkPlCreateUtf16FromUtf32(const char32_t*);
+char32_t* StkPlCreateUtf32FromUtf8(const char*);
+char* StkPlCreateUtf8FromUtf32(const char32_t*);
+char16_t* StkPlCreateUtf16FromUtf8(const char*);
+char* StkPlCreateUtf8FromUtf16(const char16_t*);
+
+wchar_t* StkPlCreateWideCharFromUtf16(const char16_t*);
+char16_t* StkPlCreateUtf16FromWideChar(const wchar_t*);
+char32_t* StkPlCreateUtf32FromWideChar(const wchar_t*);
+wchar_t* StkPlCreateWideCharFromUtf32(const char32_t*);
+wchar_t* StkPlCreateWideCharFromUtf8(const char*);
+char* StkPlCreateUtf8FromWideChar(const wchar_t*);
+
+//////////////////////////////////////////////////////////////////////////////
+
 int StkPlPrintf(const char*, ...);
 int StkPlWPrintf(const wchar_t*, ...);
 int StkPlSPrintf(char*, size_t, const char*, ...);

@@ -55,38 +55,6 @@ MessageProcクラスが提供するAPI一覧を以下に示します。<p>
 <tr><td>static void DelEng(int)</td><td>指定した英語メッセージまたは英語ラベルを削除します。</td></tr>
 <tr><td>static void DelJpn(int)</td><td>指定した日本語メッセージまたは日本語ラベルを削除します。</td></tr>
 <tr><td>static void ClearAllMsg()</td><td>すべてのメッセージを削除します。</td></tr>
-<tr><td>
-static size_t ConvUtf16ToUtf32(char32_t*, size_t, const char16_t*)</br>
-static size_t ConvUtf32ToUtf16(char16_t*, size_t, const char32_t*)</br>
-static size_t ConvUtf8ToUtf32(char32_t*, size_t, const char*)</br>
-static size_t ConvUtf32ToUtf8(char*, size_t, const char32_t*)</br>
-static size_t ConvUtf8ToUtf16(char16_t*, size_t, const char*)</br>
-static size_t ConvUtf16ToUtf8(char*, size_t, const char16_t*)</br>
-<td>異なるUTFコードに変換します。</td></td></tr>
-<tr><td>
-static size_t ConvUtf16ToWideChar(wchar_t*, size_t, const char16_t*)</br>
-static size_t ConvWideCharToUtf16(char16_t*, size_t, const wchar_t*)</br>
-static size_t ConvWideCharToUtf32(char32_t*, size_t, const wchar_t*)</br>
-static size_t ConvUtf32ToWideChar(wchar_t*, size_t, const char32_t*)</br>
-static size_t ConvUtf8ToWideChar(wchar_t*, size_t, const char*)</br>
-static size_t ConvWideCharToUtf8(char*, size_t, const wchar_t*)</br>
-<td>UTFとワイドキャラクタ文字列を相互に変換します。</td></td></tr>
-<tr><td>
-static char32_t* CreateUtf32FromUtf16(const char16_t*)</br>
-static char16_t* CreateUtf16FromUtf32(const char32_t*)</br>
-static char32_t* CreateUtf32FromUtf8(const char*)</br>
-static char* CreateUtf8FromUtf32(const char32_t*)</br>
-static char16_t* CreateUtf16FromUtf8(const char*)</br>
-static char* CreateUtf8FromUtf16(const char16_t*)</br>
-<td>異なるUTFコードに変換します。同時に必要な領域を確保します。</td></td></tr>
-<tr><td>
-static wchar_t* CreateWideCharFromUtf16(const char16_t*)</br>
-static char16_t* CreateUtf16FromWideChar(const wchar_t*)</br>
-static char32_t* CreateUtf32FromWideChar(const wchar_t*)</br>
-static wchar_t* CreateWideCharFromUtf32(const char32_t*)</br>
-static wchar_t* CreateWideCharFromUtf8(const char*)</br>
-static char* CreateUtf8FromWideChar(const wchar_t*)</br>
-<td>UTFとワイドキャラクタ文字列を相互に変換します。同時に必要な領域を確保します。</td></td></tr>
 </table><p>
 </div><p>
 
@@ -258,84 +226,6 @@ UTF-8エンコーディングした日本語メッセージまたは日本語ラ
 <H2 ID="2.18">2.18 void ClearAllMsg()</H2>
 <div class="topic">
 すべてのメッセージを削除します。<br>
-</div><p>
-
-
-
-<H2 ID="2.19">2.19</br>
-static size_t ConvUtf16ToUtf32(char32_t* UtfRes, size_t Size, const char16_t* Utf)</br>
-static size_t ConvUtf32ToUtf16(char16_t* UtfRes, size_t Size, const char32_t* Utf)</br>
-static size_t ConvUtf8ToUtf32(char32_t* UtfRes, size_t Size, const char* Utf)</br>
-static size_t ConvUtf32ToUtf8(char* UtfRes, size_t Size, const char32_t* Utf)</br>
-static size_t ConvUtf8ToUtf16(char16_t* UtfRes, size_t Size, const char* Utf)</br>
-static size_t ConvUtf16ToUtf8(char* UtfRes, size_t Size, const char16_t* Utf)</br>
-</H2>
-<div class="topic">
-異なるUTFコードに変換します。</br>
-Sizeに0を指定した場合，変換を行わず，変換後の領域のサイズを返します。このときUtfResは使用されません。</br>
-<table class="tblstyle">
-<tr><td>UtfRes[出力]</td><td>変換後のUTFコードが格納される領域</td></tr>
-<tr><td>Size[入力]</td><td>変換後のUTFコードが格納される領域のサイズ(終端文字'\0'を含めたサイズ)</td></tr>
-<tr><td>Utf[入力]</td><td>変換前のUTFコードが格納される領域)</td></tr>
-<tr><td>[戻り値]</td><td>変換後のUTFコードのサイズ</td></tr>
-</table>
-</div><p>
-
-
-
-<H2 ID="2.20">2.20</br>
-static size_t ConvUtf16ToWideChar(wchar_t* Res, size_t Size, const char16_t* Str)</br>
-static size_t ConvWideCharToUtf16(char16_t* Res, size_t Size, const wchar_t* Str)</br>
-static size_t ConvWideCharToUtf32(char32_t* Res, size_t Size, const wchar_t* Str)</br>
-static size_t ConvUtf32ToWideChar(wchar_t* Res, size_t Size, const char32_t* Str)</br>
-static size_t ConvUtf8ToWideChar(wchar_t* Res, size_t Size, const char* Str)</br>
-static size_t ConvWideCharToUtf8(char* Res, size_t Size, const wchar_t* Str)</br>
-</H2>
-<div class="topic">
-UTFとワイドキャラクタ文字列を相互に変換します。</br>
-Sizeに0を指定した場合，変換を行わず，変換後の領域のサイズを返します。このときUtfResは使用されません。</br>
-<table class="tblstyle">
-<tr><td>Res[出力]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
-<tr><td>Size[入力]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列が格納される領域のサイズ(終端文字'\0'を含めたサイズ)</td></tr>
-<tr><td>Utf[入力]</td><td>変換前のUTFコードまたはワイドキャラクタ文字列が格納される領域)</td></tr>
-<tr><td>[戻り値]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列のサイズ</td></tr>
-</table>
-</div><p>
-
-
-
-<H2 ID="2.21">2.21</br>
-static char32_t* CreateUtf32FromUtf16(const char16_t* Utf)</br>
-static char16_t* CreateUtf16FromUtf32(const char32_t* Utf)</br>
-static char32_t* CreateUtf32FromUtf8(const char* Utf)</br>
-static char* CreateUtf8FromUtf32(const char32_t* Utf)</br>
-static char16_t* CreateUtf16FromUtf8(const char* Utf)</br>
-static char* CreateUtf8FromUtf16(const char16_t* Utf)</br>
-</H2>
-<div class="topic">
-異なるUTFコードに変換します。同時に必要な領域を確保します。</br>
-<table class="tblstyle">
-<tr><td>Utf[入力]</td><td>変換前のUTFコードが格納される領域</td></tr>
-<tr><td>[戻り値]</td><td>変換後のUTFコードが格納される領域</td></tr>
-</table>
-</div><p>
-
-
-
-<H2 ID="2.22">2.22</br>
-static wchar_t* CreateWideCharFromUtf16(const char16_t* Str)</br>
-static char16_t* CreateUtf16FromWideChar(const wchar_t* Str)</br>
-static char32_t* CreateUtf32FromWideChar(const wchar_t* Str)</br>
-static wchar_t* CreateWideCharFromUtf32(const char32_t* Str)</br>
-static wchar_t* CreateWideCharFromUtf8(const char* Str)</br>
-static char* CreateUtf8FromWideChar(const wchar_t* Str)</br>
-</H2>
-<div class="topic">
-UTFとワイドキャラクタ文字列を相互に変換します。同時に必要な領域を確保します。</br>
-<table class="tblstyle">
-<tr><td>Str[入力]</td><td>変換前のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
-<tr><td>[戻り値]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
-</table>
 </div><p>
 
 
