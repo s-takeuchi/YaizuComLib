@@ -67,14 +67,6 @@ private:
 	int AllocDataArea(size_t, int);
 	// Release data area of the specified table ID
 	int FreeDataArea(int);
-	// Commit the reserved area
-	int CommitDataArea(int);
-	// Decommit the reserved area
-	int DecommitDataArea(int);
-	// Commit the reserved area
-	int CommitDataArea(wchar_t*);
-	// Decommit the reserved area
-	int DecommitDataArea(wchar_t*);
 
 	// Common record operation
 	RecordData* CommonRecordOperation(int, RecordData*, RecordData*, int*);

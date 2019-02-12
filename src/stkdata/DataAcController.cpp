@@ -143,7 +143,7 @@ int DataAcController::AllocDataArea(size_t Size, int TableId)
 	if (TableId < 0 || TableId >= MAX_TABLE_NUMBER) {
 		return -1;
 	}
-	LPVOID Result = VirtualAlloc(NULL, Size, MEM_RESERVE, PAGE_READWRITE);
+	void* Result = new (std::nothrow) char[Size];
 	if (Result == NULL) {
 		return -1;
 	}
@@ -155,99 +155,16 @@ int DataAcController::AllocDataArea(size_t Size, int TableId)
 
 // Release data area of the specified table ID
 // [in] int : Table ID
-// [out] int : Result code (0: Success, -1: Error)
+// [out] int : Result code (Always zero returns)
 int DataAcController::FreeDataArea(int TableId)
 {
 	if (TableId < 0 || TableId >= MAX_TABLE_NUMBER) {
 		return -1;
 	}
-	bool Result = VirtualFree(m_TableAddr[TableId], 0, MEM_RELEASE);
-	if (Result == 0) {
-		return -1;
-	}
+	delete [] m_TableAddr[TableId];
 	m_TableAddr[TableId] = NULL;
 	m_TableSize[TableId] = 0;
 	m_TableVer[TableId] = 0;
-	return 0;
-}
-
-// Commit the reserved area
-// [in] int : Table ID
-// [out] int : Result code (0: Success, -1: Error)
-int DataAcController::CommitDataArea(int TableId)
-{
-	if (TableId < 0 || TableId >= MAX_TABLE_NUMBER) {
-		return -1;
-	}
-	if (m_TableAddr[TableId] == NULL ||
-		m_TableSize[TableId] == 0 ||
-		StkPlWcsCmp(m_TableName[TableId], L"") == 0) {
-		return -1;
-	}
-	size_t Size = m_TableSize[TableId];
-	void* Addr = m_TableAddr[TableId];
-	void* Result = VirtualAlloc(Addr, Size, MEM_COMMIT, PAGE_READWRITE);
-	if (Result == NULL) {
-		return -1;
-	}
-	return 0;
-}
-
-// Decommit the reserved area
-// [in] int : Table ID
-// [out] int : Result code (0: Success, -1: Error)
-int DataAcController::DecommitDataArea(int TableId)
-{
-	if (TableId < 0 || TableId >= MAX_TABLE_NUMBER) {
-		return -1;
-	}
-	if (m_TableAddr[TableId] == NULL ||
-		m_TableSize[TableId] == 0 ||
-		StkPlWcsCmp(m_TableName[TableId], L"") == 0) {
-		return -1;
-	}
-	bool Result = VirtualFree(m_TableAddr[TableId], 0, MEM_DECOMMIT);
-	if (Result == 0) {
-		return -1;
-	}
-	return 0;
-}
-
-// Commit data area
-// [in] wchar_t* : Table name
-// [out] int : Result Code (0: Sucess, -1: Error)
-int DataAcController::CommitDataArea(wchar_t* TableName)
-{
-	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
-		return -1;
-	}
-	int TableId = SearchTable(TableName);
-	if (TableId == -1) {
-		return -1;
-	}
-
-	if (CommitDataArea(TableId) == -1) {
-		return -1;
-	}
-	return 0;
-}
-
-// Decommit data area
-// [in] wchar_t* : Table name
-// [out] int : Result Code (0: Sucess, -1: Error)
-int DataAcController::DecommitDataArea(wchar_t* TableName)
-{
-	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
-		return -1;
-	}
-	int TableId = SearchTable(TableName);
-	if (TableId == -1) {
-		return -1;
-	}
-
-	if (DecommitDataArea(TableId) == -1) {
-		return -1;
-	}
 	return 0;
 }
 
@@ -255,7 +172,7 @@ int DataAcController::DecommitDataArea(wchar_t* TableName)
 
 // Create table
 // [in] TableDef* : Table information for the creation
-// [out] int : Result Code (0: Sucess, -1: Memory allocation error, -2: Parameter error, -3: Commit error, -4: Maximum number of tables is exceeded)
+// [out] int : Result Code (0: Sucess, -1: Memory allocation error, -2: Parameter error, -4: Maximum number of tables is exceeded)
 int DataAcController::CreateTable(TableDef* TabDef)
 {
 	// Check whether specified TableDef has already been existed.
@@ -353,11 +270,7 @@ int DataAcController::CreateTable(TableDef* TabDef)
 	StkPlWcsNCpy(m_TableName[TableId], TABLE_NAME_SIZE, TableName, TABLE_NAME_SIZE - 1);
 	m_TableName[TableId][TABLE_NAME_SIZE - 1] = L'\0';
 
-	if (CommitDataArea(TableId) == -1) {
-		ClearParameter(TableId);
-		return -3;
-	}
-	FillMemory(m_TableAddr[TableId], m_TableSize[TableId], 0);
+	StkPlMemSet(m_TableAddr[TableId], 0, m_TableSize[TableId]);
 
 	return 0;
 }
@@ -375,9 +288,6 @@ int DataAcController::DeleteTable(wchar_t* TableName)
 		return -2;
 	}
 
-	if (DecommitDataArea(TableId) != 0) {
-		return -3;
-	}
 	if (FreeDataArea(TableId) != 0) {
 		return -1;
 	}
@@ -542,7 +452,7 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 		Addr = Addr + (m_RecordCount[TableId] * m_RecordSize[TableId]);
 		int Loop = 0;
 		for (Loop = 0; Loop < m_ColumnCount[TableId]; Loop++) {
-			if ((size_t)Addr >= m_TableSize[TableId] + (SIZE_T)m_TableAddr[TableId]) {
+			if ((size_t)Addr >= m_TableSize[TableId] + (size_t)m_TableAddr[TableId]) {
 				return -1;
 			}
 			ColumnData* ColDat = RecDat->GetColumn(Loop);
@@ -555,16 +465,16 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 						return -1;
 					}
 					ColumnDataInt* ColDatInt = (ColumnDataInt*)ColDat;
-					INT32 Value = (INT32)ColDatInt->GetValue();
-					INT32* ValueStore = (INT32*)Addr;
+					int32_t Value = (int32_t)ColDatInt->GetValue();
+					int32_t* ValueStore = (int32_t*)Addr;
 					*ValueStore = Value;
 				} else if (ColDat->GetColumnType() == COLUMN_TYPE_FLOAT) {
 					if (m_ColumnType[TableId][Loop] != COLUMN_TYPE_FLOAT) {
 						return -1;
 					}
 					ColumnDataFloat* ColDatFloat = (ColumnDataFloat*)ColDat;
-					FLOAT Value = (FLOAT)ColDatFloat->GetValue();
-					FLOAT* ValueStore = (FLOAT*)Addr;
+					float Value = (float)ColDatFloat->GetValue();
+					float* ValueStore = (float*)Addr;
 					*ValueStore = Value;
 				} else if (ColDat->GetColumnType() == COLUMN_TYPE_STR) {
 					if (m_ColumnType[TableId][Loop] != COLUMN_TYPE_STR) {
@@ -594,7 +504,7 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 					ColumnDataBin* ColDatBin = (ColumnDataBin*)ColDat;
 					wchar_t* Value = (wchar_t*)ColDatBin->GetValue();
 					wchar_t* ValueStore = (wchar_t*)Addr;
-					CopyMemory(ValueStore, Value, m_ColumnSize[TableId][Loop]);
+					StkPlMemCpy(ValueStore, Value, m_ColumnSize[TableId][Loop]);
 				}
 				Addr += m_ColumnSize[TableId][Loop];
 			} else {
@@ -647,10 +557,10 @@ RecordData* DataAcController::GetRecord(wchar_t* TableName)
 		for (LoopCol = 0; LoopCol < m_ColumnCount[TableId]; LoopCol++) {
 			wchar_t* ColNam = m_ColumnName[TableId][LoopCol];
 			if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_INT) {
-				INT32* Value = (INT32*)Addr;
+				int32_t* Value = (int32_t*)Addr;
 				ColDat = new ColumnDataInt(ColNam, *Value);
 			} else if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_FLOAT) {
-				FLOAT* Value = (FLOAT*)Addr;
+				float* Value = (float*)Addr;
 				ColDat = new ColumnDataFloat(ColNam, *Value);
 			} else if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_STR) {
 				char* Value = (char*)Addr;
@@ -802,7 +712,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 				}
 				// Compare value
 				if (CurColReq->GetColumnType() == COLUMN_TYPE_INT) {
-					INT32* Value = (INT32*)(Addr + m_ColumnOffset[TableId][ColIndx]);
+					int32_t* Value = (int32_t*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataInt* CurColIntReq = (ColumnDataInt*)CurColReq;
 					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && (int)*Value == CurColIntReq->GetValue()) ||
 						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && (int)*Value != CurColIntReq->GetValue()) ||
@@ -813,7 +723,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 						FoundColCnt++;
 					}
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_FLOAT) {
-					FLOAT* Value = (FLOAT*)(Addr + m_ColumnOffset[TableId][ColIndx]);
+					float* Value = (float*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataFloat* CurColFloatReq = (ColumnDataFloat*)CurColReq;
 					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && (float)*Value == CurColFloatReq->GetValue()) ||
 						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && (float)*Value != CurColFloatReq->GetValue()) ||
@@ -869,10 +779,10 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 					for (LoopCol = 0; LoopCol < m_ColumnCount[TableId]; LoopCol++) {
 						wchar_t* ColNam = m_ColumnName[TableId][LoopCol];
 						if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_INT) {
-							INT32* Value = (INT32*)Addr;
+							int32_t* Value = (int32_t*)Addr;
 							NewColDat = new ColumnDataInt(ColNam, *Value);
 						} else if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_FLOAT) {
-							FLOAT* Value = (FLOAT*)Addr;
+							float* Value = (float*)Addr;
 							NewColDat = new ColumnDataFloat(ColNam, *Value);
 						} else if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_STR) {
 							char* Value = (char*)Addr;
@@ -891,7 +801,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 				} else if (OpType == OPE_DELETE) {
 					// 性能問題となるコードの修正 #10055
 					size_t Source = (size_t)m_TableAddr[TableId] + (m_RecordCount[TableId] - 1) * m_RecordSize[TableId];
-					CopyMemory((void*)Addr, (void*)Source, m_RecordSize[TableId]);
+					StkPlMemCpy((void*)Addr, (const void*)Source, m_RecordSize[TableId]);
 
 					/* 性能問題となるコードの修正 #10055
 					SIZE_T Length = (SIZE_T)(m_TableSize[TableId] + (SIZE_T)m_TableAddr[TableId] - (SIZE_T)Addr - m_RecordSize[TableId]);
@@ -923,8 +833,8 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 								continue;
 							}
 							ColumnDataInt* ColDatInt = (ColumnDataInt*)ColDatUdt;
-							INT32 Value = (INT32)ColDatInt->GetValue();
-							INT32* ValueStore = (INT32*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
+							int32_t Value = (int32_t)ColDatInt->GetValue();
+							int32_t* ValueStore = (int32_t*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
 							*ValueStore = Value;
 							UdtFlag = true;
 						} else if (ColDatUdt->GetColumnType() == COLUMN_TYPE_FLOAT) { 
@@ -932,8 +842,8 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 								continue;
 							}
 							ColumnDataFloat* ColDatFloat = (ColumnDataFloat*)ColDatUdt;
-							FLOAT Value = (FLOAT)ColDatFloat->GetValue();
-							FLOAT* ValueStore = (FLOAT*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
+							float Value = (float)ColDatFloat->GetValue();
+							float* ValueStore = (float*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
 							*ValueStore = Value;
 							UdtFlag = true;
 						} else if (ColDatUdt->GetColumnType() == COLUMN_TYPE_STR) {
@@ -955,7 +865,9 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 							ColumnDataWStr* ColDatWStr = (ColumnDataWStr*)ColDatUdt;
 							wchar_t* Value = (wchar_t*)ColDatWStr->GetValue();
 							wchar_t* ValueStore = (wchar_t*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
-							lstrcpyn(ValueStore, Value, m_ColumnSize[TableId][CurColIdx] / sizeof(wchar_t));
+							size_t TmpSize = m_ColumnSize[TableId][CurColIdx] / sizeof(wchar_t);
+							StkPlWcsNCpy(ValueStore, TmpSize, Value, TmpSize - 1);
+							ValueStore[TmpSize - 1] = L'\0';
 							UdtFlag = true;
 						} else if (ColDatUdt->GetColumnType() == COLUMN_TYPE_BIN) {
 							if (m_ColumnType[TableId][CurColIdx] != COLUMN_TYPE_BIN) {
@@ -1042,8 +954,8 @@ int DataAcController::ZaSortRecord(wchar_t* TableName, wchar_t* ColumnName)
 int DataAcController::AzSortCompare(const void *Arg1, const void *Arg2)
 {
 	if (m_CompareColType == COLUMN_TYPE_INT) {
-		INT32* Addr1 = (INT32*)((unsigned char*)Arg1 + m_CompareColOffset);
-		INT32* Addr2 = (INT32*)((unsigned char*)Arg2 + m_CompareColOffset);
+		int32_t* Addr1 = (int32_t*)((unsigned char*)Arg1 + m_CompareColOffset);
+		int32_t* Addr2 = (int32_t*)((unsigned char*)Arg2 + m_CompareColOffset);
 		if (*Addr1 < *Addr2) {
 			return -1;
 		}
@@ -1052,8 +964,8 @@ int DataAcController::AzSortCompare(const void *Arg1, const void *Arg2)
 		}
 		return 0;
 	} else if (m_CompareColType == COLUMN_TYPE_FLOAT) {
-		FLOAT* Addr1 = (FLOAT*)((unsigned char*)Arg1 + m_CompareColOffset);
-		FLOAT* Addr2 = (FLOAT*)((unsigned char*)Arg2 + m_CompareColOffset);
+		float* Addr1 = (float*)((unsigned char*)Arg1 + m_CompareColOffset);
+		float* Addr2 = (float*)((unsigned char*)Arg2 + m_CompareColOffset);
 		if (*Addr1 < *Addr2) {
 			return -1;
 		}
@@ -1086,8 +998,8 @@ int DataAcController::AzSortCompare(const void *Arg1, const void *Arg2)
 int DataAcController::ZaSortCompare(const void *Arg1, const void *Arg2)
 {
 	if (m_CompareColType == COLUMN_TYPE_INT) {
-		INT32* Addr1 = (INT32*)((unsigned char*)Arg1 + m_CompareColOffset);
-		INT32* Addr2 = (INT32*)((unsigned char*)Arg2 + m_CompareColOffset);
+		int32_t* Addr1 = (int32_t*)((unsigned char*)Arg1 + m_CompareColOffset);
+		int32_t* Addr2 = (int32_t*)((unsigned char*)Arg2 + m_CompareColOffset);
 		if (*Addr1 < *Addr2) {
 			return 1;
 		}
@@ -1096,8 +1008,8 @@ int DataAcController::ZaSortCompare(const void *Arg1, const void *Arg2)
 		}
 		return 0;
 	} else if (m_CompareColType == COLUMN_TYPE_FLOAT) {
-		FLOAT* Addr1 = (FLOAT*)((unsigned char*)Arg1 + m_CompareColOffset);
-		FLOAT* Addr2 = (FLOAT*)((unsigned char*)Arg2 + m_CompareColOffset);
+		float* Addr1 = (float*)((unsigned char*)Arg1 + m_CompareColOffset);
+		float* Addr2 = (float*)((unsigned char*)Arg2 + m_CompareColOffset);
 		if (*Addr1 < *Addr2) {
 			return 1;
 		}
@@ -1330,13 +1242,13 @@ int DataAcController::SaveData(wchar_t* FilePath)
 	DWORD NumOfByteWrite;
 	// Write key code
 	wchar_t KeyCode[16];
-	lstrcpyn(KeyCode, L"StkData_0100", 16);
+	StkPlWcsCpy(KeyCode, 16, L"StkData_0100");
 	if (WriteFile(FileHndl, (LPCVOID)KeyCode, sizeof(KeyCode), &NumOfByteWrite, NULL) == 0) {
 		CloseHandle(FileHndl);
 		return -1;
 	}
 	// Write table count
-	INT32 TableCount = GetTableCount();
+	int32_t TableCount = GetTableCount();
 	if (WriteFile(FileHndl, (LPCVOID)&TableCount, sizeof(TableCount), &NumOfByteWrite, NULL) == 0) {
 		CloseHandle(FileHndl);
 		return -1;
@@ -1348,19 +1260,20 @@ int DataAcController::SaveData(wchar_t* FilePath)
 
 		// Write table name
 		wchar_t TableName[TABLE_NAME_SIZE];
-		lstrcpyn(TableName, m_TableName[LoopTbl], TABLE_NAME_SIZE);
+		StkPlWcsNCpy(TableName, TABLE_NAME_SIZE, m_TableName[LoopTbl], TABLE_NAME_SIZE - 1);
+		TableName[TABLE_NAME_SIZE - 1] = L'\0';
 		if (WriteFile(FileHndl, (LPCVOID)TableName, sizeof(TableName), &NumOfByteWrite, NULL) == 0) {
 			CloseHandle(FileHndl);
 			return -1;
 		}
 		// Write max record size
-		INT32 MaxRecordCount = (INT32)(m_TableSize[LoopTbl] / m_RecordSize[LoopTbl]);
+		int32_t MaxRecordCount = (int32_t)(m_TableSize[LoopTbl] / m_RecordSize[LoopTbl]);
 		if (WriteFile(FileHndl, (LPCVOID)&MaxRecordCount, sizeof(MaxRecordCount), &NumOfByteWrite, NULL) == 0) {
 			CloseHandle(FileHndl);
 			return -1;
 		}
 		// Write column count
-		INT32 ColumnCount = (INT32)m_ColumnCount[LoopTbl];
+		int32_t ColumnCount = (int32_t)m_ColumnCount[LoopTbl];
 		if (WriteFile(FileHndl, (LPCVOID)&ColumnCount, sizeof(ColumnCount), &NumOfByteWrite, NULL) == 0) {
 			CloseHandle(FileHndl);
 			return -1;
@@ -1368,20 +1281,21 @@ int DataAcController::SaveData(wchar_t* FilePath)
 		for (LoopClm = 0; LoopClm < ColumnCount; LoopClm++) {
 			// Write column name
 			wchar_t ColumnName[COLUMN_NAME_SIZE];
-			lstrcpyn(ColumnName, m_ColumnName[LoopTbl][LoopClm], COLUMN_NAME_SIZE);
+			StkPlWcsNCpy(ColumnName, COLUMN_NAME_SIZE, m_ColumnName[LoopTbl][LoopClm], COLUMN_NAME_SIZE - 1);
+			ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';
 			if (WriteFile(FileHndl, (LPCVOID)ColumnName, sizeof(ColumnName), &NumOfByteWrite, NULL) == 0) {
 				CloseHandle(FileHndl);
 				return -1;
 			}
 			// Write column type
-			INT32 ColumnType = (INT32)m_ColumnType[LoopTbl][LoopClm];
+			int32_t ColumnType = (int32_t)m_ColumnType[LoopTbl][LoopClm];
 			if (WriteFile(FileHndl, (LPCVOID)&ColumnType, sizeof(ColumnType), &NumOfByteWrite, NULL) == 0) {
 				CloseHandle(FileHndl);
 				return -1;
 			}
 			if (ColumnType == COLUMN_TYPE_STR || ColumnType == COLUMN_TYPE_WSTR || ColumnType == COLUMN_TYPE_BIN) {
 				// Write column size
-				INT32 ColumnSize = (INT32)m_ColumnSize[LoopTbl][LoopClm];
+				int32_t ColumnSize = (int32_t)m_ColumnSize[LoopTbl][LoopClm];
 				if (WriteFile(FileHndl, (LPCVOID)&ColumnSize, sizeof(ColumnSize), &NumOfByteWrite, NULL) == 0) {
 					CloseHandle(FileHndl);
 					return -1;
@@ -1390,10 +1304,10 @@ int DataAcController::SaveData(wchar_t* FilePath)
 		}
 
 		// Write table information
-		INT32 Header[3];
-		Header[0] = (INT32)m_TableSize[LoopTbl];
-		Header[1] = (INT32)m_RecordSize[LoopTbl];
-		Header[2] = (INT32)m_RecordCount[LoopTbl];
+		int32_t Header[3];
+		Header[0] = (int32_t)m_TableSize[LoopTbl];
+		Header[1] = (int32_t)m_RecordSize[LoopTbl];
+		Header[2] = (int32_t)m_RecordCount[LoopTbl];
 		if (WriteFile(FileHndl, (LPCVOID)Header, sizeof(Header), &NumOfByteWrite, NULL) == 0) {
 			CloseHandle(FileHndl);
 			return -1;
@@ -1445,7 +1359,7 @@ int DataAcController::LoadData(wchar_t* FilePath)
 	HANDLE FileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (FileHndl == INVALID_HANDLE_VALUE) {
 		return -1;
-	};
+	}
 	SetFilePointer(FileHndl, NULL, NULL, FILE_BEGIN);
 
 
@@ -1461,7 +1375,7 @@ int DataAcController::LoadData(wchar_t* FilePath)
 		return -1;
 	}
 	// Read table count
-	INT32 TableCount;
+	int32_t TableCount;
 	if (ReadFile(FileHndl, (LPVOID)&TableCount, sizeof(TableCount), &NumOfByteRead, NULL) == 0) {
 		CloseHandle(FileHndl);
 		return -1;
@@ -1474,13 +1388,13 @@ int DataAcController::LoadData(wchar_t* FilePath)
 			return -1;
 		}
 		// Read max record size
-		INT32 MaxRecordCount;
+		int32_t MaxRecordCount;
 		if (ReadFile(FileHndl, (LPVOID)&MaxRecordCount, sizeof(MaxRecordCount), &NumOfByteRead, NULL) == 0) {
 			CloseHandle(FileHndl);
 			return -1;
 		}
 		// Read column count
-		INT32 ColumnCount;
+		int32_t ColumnCount;
 		if (ReadFile(FileHndl, (LPVOID)&ColumnCount, sizeof(ColumnCount), &NumOfByteRead, NULL) == 0) {
 			CloseHandle(FileHndl);
 			return -1;
@@ -1496,14 +1410,14 @@ int DataAcController::LoadData(wchar_t* FilePath)
 				return -1;
 			}
 			// Read column type
-			INT32 ColumnType;
+			int32_t ColumnType;
 			if (ReadFile(FileHndl, (LPVOID)&ColumnType, sizeof(ColumnType), &NumOfByteRead, NULL) == 0) {
 				CloseHandle(FileHndl);
 				return -1;
 			}
 			if (ColumnType == COLUMN_TYPE_STR || ColumnType == COLUMN_TYPE_WSTR || ColumnType == COLUMN_TYPE_BIN) {
 				// Read column size
-				INT32 ColumnSize;
+				int32_t ColumnSize;
 				if (ReadFile(FileHndl, (LPVOID)&ColumnSize, sizeof(ColumnSize), &NumOfByteRead, NULL) == 0) {
 					CloseHandle(FileHndl);
 					return -1;
@@ -1541,7 +1455,7 @@ int DataAcController::LoadData(wchar_t* FilePath)
 		}
 
 		// Read table information
-		INT32 Header[3];
+		int32_t Header[3];
 		if (ReadFile(FileHndl, (LPVOID)Header, sizeof(Header), &NumOfByteRead, NULL) == 0) {
 			CloseHandle(FileHndl);
 			return -1;
