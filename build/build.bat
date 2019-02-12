@@ -3,11 +3,13 @@
 if defined APPVEYOR (
   echo For AppVeyor
   set MSBUILD="msbuild.exe"
+  set WKHTMLTOPDF=""
+  set PDFTK=""
   set SEVENZIP="7z.exe"
+  set LCOUNTER=""
 )
 
 if not defined APPVEYOR (
-  set CURRENTPATH=%cd%
   set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
   set WKHTMLTOPDF="C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
   set PDFTK="C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
