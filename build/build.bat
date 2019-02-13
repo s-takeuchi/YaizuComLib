@@ -49,18 +49,18 @@ echo Building process for YaizuComLib has started.
 echo;
 
 
+echo;
+echo ==========================================
+echo Deleting previous build folders...
+echo;
+
+if exist deployment rmdir /S /Q deployment
+if exist deployment del deployment
+mkdir deployment
+
+
 rem ########## Deleting previous output ##########
 if not defined APPVEYOR (
-  echo;
-  echo ==========================================
-  echo Deleting previous build folders...
-  echo;
-
-  if exist deployment rmdir /S /Q deployment
-  if exist deployment del deployment
-  mkdir deployment
-
-
   rem ########## Create PDF files ##########
   echo;
   echo ==========================================
@@ -178,10 +178,6 @@ copy "..\src\stksocket\Release\stksocket.lib" deployment
 %SEVENZIP% a ..\build\deployment\stksocket.zip buildver.txt
 del ..\build\deployment\stksocket.lib
 del ..\build\deployment\stksocket.h
-if not defined APPVEYOR (
-  %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.pdf
-  del ..\build\deployment\stksocket.pdf
-)
 
 echo Building commonfunc.sln...
 %MSBUILD% "..\src\commonfunc\commonfunc.sln" /t:clean;build /p:Configuration=Release
@@ -204,10 +200,6 @@ del ..\build\deployment\StkGeneric.h
 del ..\build\deployment\StkProperties.h
 del ..\build\deployment\StkObject.h
 del ..\build\deployment\StkStringParser.h
-if not defined APPVEYOR (
-  %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\commonfunc.pdf
-  del ..\build\deployment\commonfunc.pdf
-)
 
 echo Building stkthread.sln...
 %MSBUILD% "..\src\stkthread\stkthread.sln" /t:clean;build /p:Configuration=Release
@@ -218,10 +210,6 @@ copy "..\src\stkthread\Release\stkthread.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthread.zip buildver.txt
 del ..\build\deployment\stkthread.lib
 del ..\build\deployment\stkthread.h
-if not defined APPVEYOR (
-  %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.pdf
-  del ..\build\deployment\stkthread.pdf
-)
 
 echo Building stkthreadgui.sln...
 %MSBUILD% "..\src\stkthreadgui\stkthreadgui.sln" /t:clean;build /p:Configuration=Release
@@ -232,10 +220,6 @@ copy "..\src\stkthreadgui\Release\stkthreadgui.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip buildver.txt
 del ..\build\deployment\stkthreadgui.lib
 del ..\build\deployment\stkthreadgui.h
-if not defined APPVEYOR (
-  %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.pdf
-  del ..\build\deployment\stkthreadgui.pdf
-)
 
 echo Building stkdata.sln...
 %MSBUILD% "..\src\stkdata\stkdata.sln" /t:clean;build /p:Configuration=Release
@@ -249,10 +233,6 @@ copy "..\src\stkdata\stkdataapi.h" deployment
 del ..\build\deployment\stkdata.lib
 del ..\build\deployment\stkdata.h
 del ..\build\deployment\stkdataapi.h
-if not defined APPVEYOR (
-  %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.pdf
-  del ..\build\deployment\stkdata.pdf
-)
 
 echo Building stkdatagui.sln...
 %MSBUILD% "..\src\stkdatagui\stkdatagui.sln" /t:clean;build /p:Configuration=Release
@@ -260,10 +240,6 @@ copy "..\src\stkdatagui\Release\stkdatagui.exe" deployment
 %SEVENZIP% a ..\build\deployment\stkdatagui.zip ..\build\deployment\stkdatagui.exe
 %SEVENZIP% a ..\build\deployment\stkdatagui.zip buildver.txt
 del ..\build\deployment\stkdatagui.exe
-if not defined APPVEYOR (
-  %SEVENZIP% a ..\build\deployment\stkdatagui.zip ..\build\deployment\stkdatagui.pdf
-  del ..\build\deployment\stkdatagui.pdf
-)
 
 echo Building stkwebapp.sln and stkwebappcmd.sln...
 %MSBUILD% "..\src\stkwebapp\stkwebapp.sln" /t:clean;build /p:Configuration=Release
@@ -281,10 +257,6 @@ del ..\build\deployment\stkwebapp.lib
 del ..\build\deployment\stkwebappcmd.exe
 del ..\build\deployment\StkWebApp.h
 del ..\build\deployment\StkWebAppExec.h
-if not defined APPVEYOR (
-  %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebapp.pdf
-  del ..\build\deployment\stkwebapp.pdf
-)
 
 
 if not defined APPVEYOR (

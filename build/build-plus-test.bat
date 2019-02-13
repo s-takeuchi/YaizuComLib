@@ -1,8 +1,12 @@
 @echo off
 
+if defined APPVEYOR (
+  set MSBUILD="msbuild.exe"
+)
 
-set CURRENTPATH=%cd%
-set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+if not defined APPVEYOR (
+  set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+)
 
 rem ########## Testing libraries ##########
 echo;
@@ -22,23 +26,26 @@ echo Building stkwebapptest.sln...
 %MSBUILD% "..\test\stkwebapptest\stkwebapptest.sln" /t:clean;build /p:Configuration=Release
 
 echo ---------------------------------------
-echo stksockettest.exe --- stksockettest.txt
-..\test\stksockettest\release\\stksockettest.exe > stksockettest.txt
+echo stksockettest.exe
+..\test\stksockettest\release\\stksockettest.exe
 echo ---------------------------------------
-echo stkdatatest.exe --- stkdatatest.txt
-..\test\stkdatatest\release\stkdatatest.exe > stkdatatest.txt
+echo stkdatatest.exe
+..\test\stkdatatest\release\stkdatatest.exe
 echo ---------------------------------------
-echo stkthreadtest.exe --- stkthreadtest.txt
-..\test\stkthreadtest\release\stkthreadtest.exe > stkthreadtest.txt
+echo stkthreadtest.exe
+..\test\stkthreadtest\release\stkthreadtest.exe
 echo ---------------------------------------
-echo commonfunctest.exe --- commonfunctest.txt
-..\test\commonfunctest\release\commonfunctest.exe > commonfunctest.txt
+echo commonfunctest.exe
+..\test\commonfunctest\release\commonfunctest.exe
 echo ---------------------------------------
-echo stkwebapptest.exe --- stkwebapptest.txt
-..\test\stkwebapptest\release\stkwebapptest.exe > stkwebapptest.txt
+echo stkwebapptest.exe
+..\test\stkwebapptest\release\stkwebapptest.exe
 
 
 echo;
 echo Testing libraries has done.
 echo;
-pause
+
+if not defined APPVEYOR (
+  pause
+)
