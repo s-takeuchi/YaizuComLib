@@ -165,22 +165,19 @@ echo ==========================================
 echo Making libraries
 echo;
 
-echo Build version: > buildver.txt
-date /T >> buildver.txt
-time /T >> buildver.txt
-
 echo Building stksocket.sln...
 %MSBUILD% "..\src\stksocket\stksocket.sln" /t:clean;build /p:Configuration=Release
+IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stksocket\stksocket.h" deployment
 copy "..\src\stksocket\Release\stksocket.lib" deployment
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.lib
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.h
-%SEVENZIP% a ..\build\deployment\stksocket.zip buildver.txt
 del ..\build\deployment\stksocket.lib
 del ..\build\deployment\stksocket.h
 
 echo Building commonfunc.sln...
 %MSBUILD% "..\src\commonfunc\commonfunc.sln" /t:clean;build /p:Configuration=Release
+IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\commonfunc\msgproc.h" deployment
 copy "..\src\commonfunc\StkGeneric.h" deployment
 copy "..\src\commonfunc\StkProperties.h" deployment
@@ -193,7 +190,6 @@ copy "..\src\commonfunc\Release\commonfunc.lib" deployment
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkProperties.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkObject.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkStringParser.h
-%SEVENZIP% a ..\build\deployment\commonfunc.zip buildver.txt
 del ..\build\deployment\commonfunc.lib
 del ..\build\deployment\msgproc.h
 del ..\build\deployment\StkGeneric.h
@@ -203,48 +199,50 @@ del ..\build\deployment\StkStringParser.h
 
 echo Building stkthread.sln...
 %MSBUILD% "..\src\stkthread\stkthread.sln" /t:clean;build /p:Configuration=Release
+IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stkthread\stkthread.h" deployment
 copy "..\src\stkthread\Release\stkthread.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.lib
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.h
-%SEVENZIP% a ..\build\deployment\stkthread.zip buildver.txt
 del ..\build\deployment\stkthread.lib
 del ..\build\deployment\stkthread.h
 
 echo Building stkthreadgui.sln...
 %MSBUILD% "..\src\stkthreadgui\stkthreadgui.sln" /t:clean;build /p:Configuration=Release
+IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stkthreadgui\stkthreadgui.h" deployment
 copy "..\src\stkthreadgui\Release\stkthreadgui.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.lib
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.h
-%SEVENZIP% a ..\build\deployment\stkthreadgui.zip buildver.txt
 del ..\build\deployment\stkthreadgui.lib
 del ..\build\deployment\stkthreadgui.h
 
 echo Building stkdata.sln...
 %MSBUILD% "..\src\stkdata\stkdata.sln" /t:clean;build /p:Configuration=Release
+IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stkdata\Release\stkdata.lib" deployment
 copy "..\src\stkdata\stkdata.h" deployment
 copy "..\src\stkdata\stkdataapi.h" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.lib
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.h
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdataapi.h
-%SEVENZIP% a ..\build\deployment\stkdata.zip buildver.txt
 del ..\build\deployment\stkdata.lib
 del ..\build\deployment\stkdata.h
 del ..\build\deployment\stkdataapi.h
 
 echo Building stkdatagui.sln...
 %MSBUILD% "..\src\stkdatagui\stkdatagui.sln" /t:clean;build /p:Configuration=Release
+IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stkdatagui\Release\stkdatagui.exe" deployment
 %SEVENZIP% a ..\build\deployment\stkdatagui.zip ..\build\deployment\stkdatagui.exe
-%SEVENZIP% a ..\build\deployment\stkdatagui.zip buildver.txt
 del ..\build\deployment\stkdatagui.exe
 
 echo Building stkwebapp.sln and stkwebappcmd.sln...
 %MSBUILD% "..\src\stkwebapp\stkwebapp.sln" /t:clean;build /p:Configuration=Release
+IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stkwebapp\Release\stkwebapp.lib" deployment
 %MSBUILD% "..\src\stkwebapp\stkwebappcmd.sln" /t:clean;build /p:Configuration=Release
+IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stkwebapp\Release\stkwebappcmd.exe" deployment
 copy "..\src\stkwebapp\StkWebApp.h" deployment
 copy "..\src\stkwebapp\StkWebAppExec.h" deployment
@@ -252,7 +250,6 @@ copy "..\src\stkwebapp\StkWebAppExec.h" deployment
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebappcmd.exe
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\StkWebApp.h
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\StkWebAppExec.h
-%SEVENZIP% a ..\build\deployment\stkwebapp.zip buildver.txt
 del ..\build\deployment\stkwebapp.lib
 del ..\build\deployment\stkwebappcmd.exe
 del ..\build\deployment\StkWebApp.h
@@ -264,6 +261,7 @@ if not defined APPVEYOR (
   %LCOUNTER% ..\src /subdir
 )
 
+:buildexit
 echo;
 echo Building process for YaizuComLib has ended.
 echo;
@@ -271,3 +269,4 @@ echo;
 if not defined APPVEYOR (
   pause
 )
+exit /b %ERRORLEVEL%
