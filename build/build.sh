@@ -1,43 +1,37 @@
-#!/bin/sh
+#! /bin/bash
 
 ########## Testing libraries ##########
-echo ==========================================
-echo Testing libraries
+echo
+echo =========================================
+echo Build YaizuComLib
+echo =========================================
 
-cd ../test
+echo
+echo Building process for YaizuComLib has started.
+echo
+if [ -e "deployment" ]; then
+  rm -r deployment
+fi
 
-echo Building commonfunctest
-cd commonfunctest
+cd ../src
+
+echo Building commonfunc...
+cd commonfunc
 make all
 cd ..
 
-echo Building stksockettest...
-cd stksockettest
+echo Building stksocket...
+cd stksocket
 make all
 cd ..
 
-echo Building stkthreadtest...
-cd stkthreadtest
+echo Building stkthread...
+cd stkthread
 make all
 cd ..
 
-echo Building stkwebapptest
-cd stkwebapptest
+echo Building stkwebapp
+cd stkwebapp
 make all
 cd ..
-
-echo ---------------------------------------
-echo commonfunctest
-./commonfunctest/commonfunctest
-echo ---------------------------------------
-echo stksockettest
-./stksockettest/stksockettest
-echo ---------------------------------------
-echo stkthreadtest
-./stkthreadtest/stkthreadtest
-echo ---------------------------------------
-echo stkwebapptest
-./stkwebapptest/stkwebapptest
-
-echo Testing libraries has done.
 

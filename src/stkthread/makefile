@@ -1,4 +1,4 @@
-stksocket.a : StkPl.o StkThreadElement.o StkThreadManager.o stkthread.o
+stkthread.a : StkPl.o StkThreadElement.o StkThreadManager.o stkthread.o
 	ar r stkthread.a StkPl.o StkThreadElement.o StkThreadManager.o stkthread.o
 
 StkPl.o : ../StkPl.cpp
