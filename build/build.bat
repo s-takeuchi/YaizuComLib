@@ -49,6 +49,7 @@ echo Building process for YaizuComLib has started.
 echo;
 
 
+rem ########## Deleting previous output ##########
 echo;
 echo ==========================================
 echo Deleting previous build folders...
@@ -59,7 +60,6 @@ if exist deployment del deployment
 mkdir deployment
 
 
-rem ########## Deleting previous output ##########
 if not defined APPVEYOR (
   rem ########## Create PDF files ##########
   echo;
