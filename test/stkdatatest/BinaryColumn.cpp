@@ -7,7 +7,7 @@
 int BasicBinaryTest01()
 {
 	// 10バイトのバイナリ型カラムを含むテーブル"Bin-Test"をCreateTableで生成できる
-	printf("10バイトのバイナリ型カラムを含むテーブル\"Bin-Test\"をCreateTableで生成できる");
+	printf("A table 'Bin-Test' including 10 bytes binary column can be created by 'CreateTable'.");
 	ColumnDefInt ColDefId(L"ID");
 	ColumnDefBin ColDefImg1(L"Img1", 10);
 	ColumnDefBin ColDefImg2(L"Img2", 10);
@@ -21,7 +21,7 @@ int BasicBinaryTest01()
 
 	// テーブル"Bin-Test"にInsertRecordで1レコードを追加
 	{
-		printf("テーブル\"Bin-Test\"にInsertRecordで1レコードを追加");
+		printf("Insert one record to 'Bin-Test' table.");
 		ColumnData* ColDat[10];
 		RecordData* RecDat;
 		unsigned char one_img1[10] = {0x00, 0xFF, 0x01, 0x02, 0x03, 0x04, 0x05, 0x00, 0xFF, 0xFF};
@@ -39,7 +39,7 @@ int BasicBinaryTest01()
 
 	// テーブル"Bin-Test"にInsertRecordで連結されたレコード３個を追加
 	{
-		printf("テーブル\"Bin-Test\"にInsertRecordで連結されたレコード３個を追加");
+		printf("Insert 3 records connected each other to table 'Bin-Test'.");
 		ColumnData* ColDat1[10];
 		ColumnData* ColDat2[10];
 		ColumnData* ColDat3[10];
@@ -79,7 +79,7 @@ int BasicBinaryTest01()
 
 	// テーブル"Bin-Test"にInsertRecordで1レコードを追加
 	{
-		printf("テーブル\"Bin-Test\"にInsertRecordで1レコードを追加");
+		printf("Insert one record to 'Bin-Test' table using 'InsertRecord'.");
 		ColumnData* ColDat[10];
 		RecordData* RecDat;
 		unsigned char one_img1[10] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x00, 0x00, 0xFF};
@@ -101,7 +101,7 @@ int BasicBinaryTest01()
 // テーブル"Bin-Test"内の全てのレコードをGetRecrd(L"Bin-Test")で取得し，取得した連結レコードが適切であることを確認する
 int BasicBinaryTest02()
 {
-	printf("テーブル\"Bin-Test\"内の全てのレコードをGetRecrd(L\"Bin-Test\")で取得し，取得した連結レコードが適切であることを確認する");
+	printf("Acquire all records in 'Bin-Test' table using GetRecrd(L\"Bin-Test\") and then, confirm that acquired records are appropriate.");
 	RecordData* RecDat;
 	LockTable(L"Bin-Test", 1);
 	RecDat = GetRecord(L"Bin-Test");
@@ -156,7 +156,7 @@ int BasicBinaryTest02()
 // テーブル"Bin-Test"内のレコードをGetRecrd(Img1:バイナリデータ条件指定)で取得し，取得した連結レコードが適切であることを確認する
 int BasicBinaryTest04()
 {
-	printf("テーブル\"Bin-Test\"内のレコードをGetRecrd(Img1:バイナリデータ条件指定)で取得し，取得した連結レコードが適切であることを確認する");
+	printf("Acquire records in 'Bin-Test' using GetRecrd(Img1:Binary data criteria) and then, confirm that acquired records are appropriate.");
 	ColumnData* ColDat[10];
 	RecordData* RecDat;
 	RecordData* GetRecDat;
@@ -194,7 +194,7 @@ int BasicBinaryTest04()
 // テーブル"Bin-Test"内のレコードをGetRecrd(整数データ条件指定)で取得し，取得した連結レコードが適切であることを確認する
 int BasicBinaryTest05()
 {
-	printf("テーブル\"Bin-Test\"内のレコードをGetRecrd(整数データ条件指定)で取得し，取得した連結レコードが適切であることを確認する");
+	printf("Acquire records in 'Bin-Test' using GetRecrd(integer data criteria) and then, confirm that acquired records are appropriate.");
 	ColumnData* ColDat[10];
 	RecordData* RecDat;
 	RecordData* GetRecDat;
@@ -231,7 +231,7 @@ int BasicBinaryTest05()
 // テーブル"Bin-Test"内のレコードをGetRecrd(Img2:バイナリデータ条件指定)で取得し，取得した連結レコードが適切であることを確認する
 int BasicBinaryTest06()
 {
-	printf("テーブル\"Bin-Test\"内のレコードをGetRecrd(Img2:バイナリデータ条件指定)で取得し，取得した連結レコードが適切であることを確認する");
+	printf("Acquire records in 'Bin-Test' using GetRecrd(Img2:Binary data criteria) and then, confirm that acquired records are appropriate.");
 	ColumnData* ColDat[10];
 	RecordData* RecDat;
 	RecordData* GetRecDat;
@@ -270,7 +270,7 @@ int BasicBinaryTest06()
 // テーブル"Bin-Test"内のレコードをGetRecrd(Img1, Img2:バイナリデータ条件指定)で取得し，取得した連結レコードが適切であることを確認する
 int BasicBinaryTest07()
 {
-	printf("テーブル\"Bin-Test\"内のレコードをGetRecrd(Img1, Img2:バイナリデータ条件指定)で取得し，取得した連結レコードが適切であることを確認する");
+	printf("Acquire records in 'Bin-Test' using GetRecrd(Img1, Img2:Binary data criteria) and then, confirm that acquired records are appropriate.");
 	ColumnData* ColDat[10];
 	RecordData* RecDat;
 	RecordData* GetRecDat;
@@ -303,7 +303,7 @@ int BasicBinaryTest07()
 // テーブル"Bin-Test"内のレコードをGetRecrd(Img1, Img2:複数の連結されたレコードによるバイナリデータ条件指定)で取得し，取得した連結レコードが適切であることを確認する
 int BasicBinaryTest08()
 {
-	printf("テーブル\"Bin-Test\"内のレコードをGetRecrd(Img1, Img2:複数の連結されたレコードによるバイナリデータ条件指定)で取得し，取得した連結レコードが適切であることを確認する");
+	printf("Acquire records in 'Bin-Test' using GetRecrd(Img1, Img2:Binary data criteria by multi connected records) and then, confirm that acquired records are appropriate.");
 	ColumnData* ColDat[10];
 	RecordData* RecDat1;
 	RecordData* RecDat2;
@@ -340,7 +340,7 @@ int BasicBinaryTest08()
 // 2つの連結したレコード(バイナリデータカラム有り)を指定してバイナリデータをUpdateRecordで更新する
 int BasicBinaryTest09()
 {
-	printf("2つの連結したレコード(バイナリデータカラム有り)を指定してバイナリデータをUpdateRecordで更新する");
+	printf("Update binary data using UpdateRecord by two linked records (including binary column) specification.");
 	ColumnData* ColDat[10];
 	RecordData* RecDat1;
 	RecordData* RecDat2;
@@ -398,7 +398,7 @@ int BasicBinaryTest09()
 
 	// バイナリ型カラム"Img2"を指定してレコードを降順ソート→適正にソートされている
 	{
-		printf("バイナリ型カラム\"Img2\"を指定してレコードを降順ソート→適正にソートされている");
+		printf("Sort records with binary column 'Img2' specification and then, check the records are appropriately sorted.");
 		LockTable(L"Bin-Test", LOCK_EXCLUSIVE);
 		if (ZaSortRecord(L"Bin-Test", L"Img2") != 0) {
 			printf("...[NG]\r\n");
@@ -419,7 +419,7 @@ int BasicBinaryTest09()
 
 	// Img1がソートで最小と評価されるレコードを追加後，バイナリ型カラム"Img1"を指定してレコードを昇順ソートする→適正にソートされている
 	{
-		printf("Img1がソートで最小と評価されるレコードを追加後，バイナリ型カラム\"Img1\"を指定してレコードを昇順ソートする→適正にソートされている");
+		printf("Sort records with binary column 'Img1' specification after addition of record that Img1 is evaluated as minimum and then, check the records are appropriately sorted.");
 		ColumnData* ColDat[10];
 		RecordData* RecDat;
 		unsigned char one_img1[10] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF};
@@ -452,7 +452,7 @@ int BasicBinaryTest09()
 	}
 
 	// バイナリデータを検索条件にしてレコードを削除する
-	printf("バイナリデータを検索条件にしてレコードを削除する");
+	printf("Delete records by the specification of binary data criteria.");
 	LockTable(L"Bin-Test", 2);
 	DeleteRecord(RecDat3);
 	UnlockTable(L"Bin-Test");
@@ -477,9 +477,9 @@ int LargeBinaryTableTest01()
 	ColumnDefBin* ColDef[32];
 	for (int i = 1000000; i < 2000001; i += 1000000) {
 		if (i == 1000000) {
-			printf("1MB(バイナリ型カラム) * 32 * 10 = 320MBのテーブル\"LargeBinTable\"をCreateTableで作成し，その後DeleteTableで削除する");
+			printf("CreateTable 1MB(binary column) * 32 * 10 = 320MB table \"LargeBinTable\" and then, delete it with DeleteTable.");
 		} else {
-			printf("2MB(バイナリ型カラム) * 32 * 10 = 640MBのテーブル\"LargeBinTable\"をCreateTableで作成し，その後DeleteTableで削除する");
+			printf("CreateTable 2MB(binary column) * 32 * 10 = 640MB table \"LargeBinTable\" and then, delete it with DeleteTable.");
 		}
 
 		LargeBinTable = new TableDef(L"LargeBinTable", 10);
@@ -492,7 +492,7 @@ int LargeBinaryTableTest01()
 		int Ret = CreateTable(LargeBinTable);
 		if (Ret != 0) {
 			wchar_t MsgBuf[256];
-			wsprintf(MsgBuf, L"テーブル作成に失敗しました  %d", i);
+			wsprintf(MsgBuf, L"Failed to create table.  %d", i);
 			return -1;
 		}
 		for (int j = 0; j < 32; j++) {
@@ -501,7 +501,7 @@ int LargeBinaryTableTest01()
 		delete LargeBinTable;
 		if (DeleteTable(L"LargeBinTable") != 0) {
 			wchar_t MsgBuf[256];
-			wsprintf(MsgBuf, L"テーブル削除に失敗しました  %d", i);
+			wsprintf(MsgBuf, L"Failed to delete table.  %d", i);
 			return -1;
 		}
 		printf("...[OK]\r\n");
@@ -514,7 +514,7 @@ int LargeBinaryTableTest01()
 // 6MBのバイナリデータを含むレコードを64回InsertRecordで追加する。
 int LargeBinaryTableTest02()
 {
-	printf("6MB * 64 = 384MBのテーブル\"LargeBinTable2\"をCreateTableで作成できる");
+	printf("CreateTable : 6MB * 64 = 384MB table \"LargeBinTable2\" can be created.");
 	TableDef* LargeBinTable;
 	ColumnDef* ColDef[32];
 	LargeBinTable = new TableDef(L"LargeBinTable2", 64);
@@ -529,7 +529,7 @@ int LargeBinaryTableTest02()
 	}
 	printf("...[OK]\r\n");
 
-	printf("6MBのバイナリデータを含むレコードを64回InsertRecordで追加する");
+	printf("InsertRecord : insert in 64 times for records include 6MB binary data.");
 	unsigned char *Dat = new unsigned char[6000000];
 	for (int i = 0; i < 6000000; i++) {
 		Dat[i] = 127;
