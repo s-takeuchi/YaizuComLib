@@ -5,7 +5,7 @@
 
 int BasicFloatTest01()
 {
-	printf("32個のFloat型カラムを保持し最大16383個のレコードを格納することができるテーブル\"Float-Test\"を作成する");
+	printf("Create table \"Float-Test\" which contains 32 float columns and 16383 records.");
 	ColumnDefFloat ColDef00(L"Fcol00");
 	ColumnDefFloat ColDef01(L"Fcol01");
 	ColumnDefFloat ColDef02(L"Fcol02");
@@ -78,7 +78,7 @@ int BasicFloatTest01()
 	printf("...[OK]\r\n");
 
 
-	printf("テーブル\"Float-Test\"に32個のカラムが存在することを確認する");
+	printf("Check the table \"Float-Test\" has 32 columns.");
 	if (GetColumnCount(L"Float-Test") != 32) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -86,7 +86,7 @@ int BasicFloatTest01()
 	printf("...[OK]\r\n");
 
 
-	printf("テーブル\"Float-Test\"の0番目, 1番目, 30番目, 31番目のカラムのサイズが何れも4バイトであることを確認する");
+	printf("Check the size of any 0th, 1st, 30th and 31st column of \"Float-Test\" table shows 4 bytes.");
 	if (GetColumnSize(L"Float-Test", L"Fcol00") != 4 ||
 		GetColumnSize(L"Float-Test", L"Fcol01") != 4 ||
 		GetColumnSize(L"Float-Test", L"Fcol30") != 4 ||
@@ -97,7 +97,7 @@ int BasicFloatTest01()
 	printf("...[OK]\r\n");
 
 
-	printf("テーブル\"Float-Test\"のFcol10, Fcol20, Fcol30のカラムタイプがFloatであることを確認する");
+	printf("Check the type of Fcol10, Fcol20 and Fcol30 column of \"Float-Test\" table is float.");
 	if (GetColumnType(L"Float-Test", L"Fcol10") != COLUMN_TYPE_FLOAT ||
 		GetColumnSize(L"Float-Test", L"Fcol20") != COLUMN_TYPE_FLOAT ||
 		GetColumnSize(L"Float-Test", L"Fcol30") != COLUMN_TYPE_FLOAT) {
@@ -111,7 +111,7 @@ int BasicFloatTest01()
 
 int BasicFloatTest02()
 {
-	printf("\"Float-Test\"テーブルに10個のレコード(with Fcol00～Fcol31カラム)を繰り返し追加する");
+	printf("Add 10 records (with Fcol00 - Fcol31 columns to \"Float-Test\" table repeatedly.");
 	ColumnData *ColDat[32];
 	RecordData *RecDat;
 	LockTable(L"Float-Test", LOCK_EXCLUSIVE);
@@ -134,7 +134,7 @@ int BasicFloatTest02()
 	printf("...[OK]\r\n");
 
 
-	printf("\"Float-Test\"テーブルに存在するレコードの数が10個であることを確認する");
+	printf("Check the number of records which are existed in \"Float-Test\" table is 10.");
 	if (GetNumOfRecords(L"Float-Test") != 10) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -142,7 +142,7 @@ int BasicFloatTest02()
 	printf("...[OK]\r\n");
 
 
-	printf("\"Float-Test\"テーブルに追加した10個のレコード(with Fcol00～Fcol31カラム)の情報が正しく取得できることを確認する");
+	printf("Check that 10 records (with Fcol00-Fcol31 column) in \"Float-Test\" table added can be acquired appropriately.");
 	RecordData *AcquiredRecDat;
 	LockTable(L"Float-Test", LOCK_SHARE);
 	AcquiredRecDat = GetRecord(L"Float-Test");
@@ -165,7 +165,7 @@ int BasicFloatTest02()
 
 int BasicFloatTest03()
 {
-	printf("\"Float-Test\"テーブルの10個のレコード(Fcol00およびFcol01)を繰り返し更新する");
+	printf("Update 10 records (Fcol00 and Fcol01) in \"Float-Test\" table repeatedly.");
 	ColumnData *ColDat[1];
 	ColumnData *UpdColDat[2];
 	RecordData *RecDat;
@@ -194,7 +194,7 @@ int BasicFloatTest03()
 	LockTable(L"Float-Test", LOCK_SHARE);
 	AcquiredRecDat = GetRecord(L"Float-Test");
 	UnlockTable(L"Float-Test");
-	printf("更新した10個のレコード(with Fcol00～Fcol31カラム)の情報が正しく取得できることを確認する");
+	printf("Check that 10 records (with Fcol00 - Fcol31 column) which are updated can be acquired appropriately.");
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			if (i == 0) {
@@ -220,7 +220,7 @@ int BasicFloatTest03()
 
 int BasicFloatTest04()
 {
-	printf("\"Float-Test\"テーブルにさらに10個のレコード(with Fcol00～Fcol31カラム)を一度に追加する");
+	printf("Add 10 records (with Fcol00 - Fcol31 columns) to  \"Float-Test\" table simaltainiously.");
 	ColumnData *ColDat[32];
 	RecordData *RecDat;
 	RecordData *HeadRecDat;
@@ -251,7 +251,7 @@ int BasicFloatTest04()
 	printf("...[OK]\r\n");
 
 	{
-		printf("\"Float-table\"テーブルの検索を行う (Less than指定)");
+		printf("Search \"Float-table\" table (with Less than specification)");
 		ColDat[0] = new ColumnDataFloat(L"Fcol05", 200.5);
 		ColDat[0]->SetComparisonOperator(COMP_LT);
 		RecDat = new RecordData(L"Float-Test", ColDat, 1);
@@ -277,7 +277,7 @@ int BasicFloatTest04()
 	}
 
 	{
-		printf("\"Float-table\"テーブルの検索を行う (Greater than or Equal to指定)");
+		printf("Search \"Float-table\" table (with Greater than or Equal to specification)");
 		ColDat[0] = new ColumnDataFloat(L"Fcol05", 200.5, COMP_GE);
 		RecDat = new RecordData(L"Float-Test", ColDat, 1);
 		LockTable(L"Float-Test", LOCK_SHARE);
@@ -301,7 +301,7 @@ int BasicFloatTest04()
 		printf("...[OK]\r\n");
 	}
 
-	printf("\"Float-Test\"テーブルに存在するレコードの数が20個であることを確認する");
+	printf("Check the number of existed records which are in \"Float-Test\" table.");
 	if (GetNumOfRecords(L"Float-Test") != 20) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -309,7 +309,7 @@ int BasicFloatTest04()
 	printf("...[OK]\r\n");
 
 
-	printf("\"Float-Test\"テーブルに存在する20個のレコードのうち条件指定で10個のレコードの情報が適切に取得できることを確認する");
+	printf("Check that 10 records information can be acquired appropriately from 20 records in \"Float-Test\" table with criteria specification.");
 	RecordData *AcquiredRecDat;
 	for (int i = 0; i < 10; i++) {
 		ColDat[0] = new ColumnDataFloat(L"Fcol00", (float)(200.0 + 0.1 * i));
@@ -347,7 +347,7 @@ int BasicFloatTest04()
 
 int BasicFloatTest05()
 {
-	printf("\"Float-Test\"テーブルの10個のレコード(Fcol00およびFcol01)を一度に更新する");
+	printf("Update 10 records (Fcol00 and Fcol01) in \"Float-Test\" table simultaneously.");
 	ColumnData *ColDat[1];
 	RecordData *RecDat;
 	RecordData *LastRecDat;
@@ -384,7 +384,7 @@ int BasicFloatTest05()
 	LockTable(L"Float-Test", LOCK_SHARE);
 	AcquiredRecDat = GetRecord(L"Float-Test");
 	UnlockTable(L"Float-Test");
-	printf("更新した10個のレコードを含むすべてのレコード(20個)の情報(Fcol00)が正しく取得できることを確認する");
+	printf("Check that all of records (Fcol00) including updated 10 records can be acquired appropriately.");
 	for (int j = 0; j < 20; j++) {
 		if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(0)))->GetValue() != 0) {
 			printf("...[NG]\r\n");
@@ -402,7 +402,7 @@ int BasicFloatTest05()
 
 int BasicFloatTest06()
 {
-	printf("テーブル情報を\"FloatColumn.std\"に保存する。");
+	printf("Preserve table information into \"FloatColumn.std\".");
 	LockAllTable(LOCK_SHARE);
 	if (SaveData(L"FloatColumn.std") != 0) {
 		printf("...[NG]\r\n");
@@ -413,7 +413,7 @@ int BasicFloatTest06()
 	printf("...[OK]\r\n");
 
 
-	printf("すべてのレコード（Fcol00の値が0となるレコードを検索）をテーブルから削除する。");
+	printf("Delete all records (search the records whose value of Fcol00 is zero) from table.");
 	ColumnData *ColDat[1];
 	ColDat[0] = new ColumnDataFloat(L"Fcol00", 0);
 	RecordData *RecDat = new RecordData(L"Float-Test", ColDat, 1);
@@ -429,7 +429,7 @@ int BasicFloatTest06()
 	printf("...[OK]\r\n");
 
 
-	printf("すべてのレコードが\"Float-Test\"テーブルから削除されていることを確認する");
+	printf("Check that all of records can be deleted from \"Float-Test\" table.");
 	if (GetNumOfRecords(L"Float-Test") != 0) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -437,7 +437,7 @@ int BasicFloatTest06()
 	printf("...[OK]\r\n");
 
 
-	printf("テーブル情報を\"FloatColumn.std\"から読み込む。");
+	printf("Load table information from \"FloatColumn.std\".");
 	LockAllTable(LOCK_EXCLUSIVE);
 	if (LoadData(L"FloatColumn.std") != 0) {
 		printf("...[NG]\r\n");
@@ -448,7 +448,7 @@ int BasicFloatTest06()
 	printf("...[OK]\r\n");
 
 
-	printf("\"Float-Test\"テーブルに存在するレコードの数が20個であることを確認する");
+	printf("Check the number of records which are in \"Float-Test\" table is 20.");
 	if (GetNumOfRecords(L"Float-Test") != 20) {
 		printf("...[NG]\r\n");
 		return -1;
