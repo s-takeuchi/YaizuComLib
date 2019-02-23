@@ -156,7 +156,7 @@ int SmallTable()
 	}
 
 	// CreateTableでSmallTableテーブル2(ID:Int) Max=100 を生成することができる
-	printf("SmallTableテーブル2(ID:Int) Max=100 can be created by CreateTable.");
+	printf("SmallTable table2(ID:Int) Max=100 can be created by CreateTable.");
 	ColumnDefInt ColDefId2(L"ID");
 	TableDef TabDefPerson2(L"SmallTable2", 100);
 	TabDefPerson2.AddColumnDef(&ColDefId2);
