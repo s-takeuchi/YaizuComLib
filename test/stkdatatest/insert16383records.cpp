@@ -147,7 +147,7 @@ int Insert16383Records()
 
 
 	{
-		printf("追加した16383個のレコード中に存在するName=\"木村\"または\"田中\"を含み，1000 < ID < 2000  のレコードを検索することができる");
+		printf("Target records can be acquired if particular name and 1000 < ID < 2000 criteria is presented from 16383 records.");
 		bool Err = false;
 		int FndCnt = 0;
 		RecordData *RecDatGet;
@@ -195,7 +195,7 @@ int Insert16383Records()
 
 
 	{
-		printf("追加した16383個のレコード中に存在するName=\"竹内 伸也\"を含む4つのレコードをGetRecordで検索&取得することができる");
+		printf("4 records can be acquired by GetRecord search criteria from 16383 records that are added.");
 		bool Err = false;
 		int FndCnt = 0;
 		RecordData *RecDatGet;
@@ -224,7 +224,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("16383個のレコード中に存在しないレコード(Name = \"ジョージ ブッシュ\")を検索条件に指定してGetRecord実行後レコードが取得できない");
+		printf("No record is returned as a result of GetRecord if non existing record in 16383 records is specified as criterion.");
 		RecordData *RecDatGet;
 		ColumnData *ColDat[1];
 		ColDat[0] = new ColumnDataWStr(L"Name", L"ジョージ ブッシュ");
@@ -241,7 +241,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("GetNumOfRecords(\"Person\")で取得したレコード件数は16383件となる");
+		printf("Number of records which is acquired by GetNumOfRecords(\"Person\") shows 16383.");
 		if (GetNumOfRecords(L"Person") != 16383) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -250,7 +250,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("GetMaxNumOfRecords(\"Person\")で取得したレコード件数は16383件となる");
+		printf("Number of records which is acquired by GetMaxNumOfRecords(\"Person\") shows 16383.");
 		if (GetMaxNumOfRecords(L"Person") != 16383) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -259,7 +259,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("テーブル情報を\"Insert16383records.std\"に保存する。");
+		printf("Preserve table information to\"Insert16383records.std\".");
 		LockAllTable(LOCK_SHARE);
 		if (SaveData(L"Insert16383records.std") != 0) {
 			printf("...[NG]\r\n");
@@ -271,7 +271,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("DeleteRecord(Person-Name=\"竹内 伸也\")をロック無しで実行した場合，-1が返却され，GetNumOfRecords(L\"Person\")の値は16383のままとなる");
+		printf("In case DeleteRecord(Person-Name=existing name) is executed without lock, -1 is returned and GetNumOfRecords(L\"Person\") returns 16383.");
 		ColumnData* Col[1];
 		Col[0] = new ColumnDataWStr(L"Name", L"竹内 伸也");
 		RecordData* Rec = new RecordData(L"Person", Col, 1);
@@ -286,7 +286,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("DeleteRecord(Person-Name=\"竹内 伸也\")を共有ロックで実行した場合，-1が返却され，GetNumOfRecords(L\"Person\")の値は16383のままとなる");
+		printf("In case DeleteRecord(Person-Name=existing name) is executed with shared lock, -1 is returned and GetNumOfRecords(L\"Person\") returns 16383.");
 		LockTable(L"Person", LOCK_SHARE);
 		if (DeleteRecord(Rec) != -1) {
 			printf("...[NG]\r\n");
@@ -300,7 +300,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("DeleteRecord(Person-Name=\"竹内 伸也\")を排他ロックで実行した場合，0が返却され，GetNumOfRecords(L\"Person\")の値は16379となる");
+		printf("In case DeleteRecord(Person-Name=same name of previous execution) is executed with exclusive lock, 0 is returned and GetNumOfRecords(L\"Person\") returns 16379.");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (DeleteRecord(Rec) != 0) {
 			printf("...[NG]\r\n");
@@ -316,7 +316,7 @@ int Insert16383Records()
 	}
 
 	{
-		printf("DeleteRecord(L\"Person\"をロック無しで実行した場合，-1が返却され，GetNumOfRecords(L\"Person\")の値は16379のままとなる");
+		printf("In case DeleteRecord(L\"Person\") is executed without lock, -1 is returned and GetNumOfRecords(L\"Person\") returns 16379.");
 		if (DeleteRecord(L"Person") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -328,7 +328,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("DeleteRecord(L\"Person\"を共有ロックで実行した場合，-1が返却され，GetNumOfRecords(L\"Person\")の値は16379のままとなる");
+		printf("In case DeleteRecord(L\"Person\") is executed with shared lock, -1 is returned and GetNumOfRecords(L\"Person\") returns 16379.");
 		LockTable(L"Person", LOCK_SHARE);
 		if (DeleteRecord(L"Person") != -1) {
 			printf("...[NG]\r\n");
@@ -344,7 +344,7 @@ int Insert16383Records()
 
 
 	{
-		printf("16383個のレコード中に存在するName=\"由紀\"または\"由美\"を含み，100 < ID < 500  のレコードのKeyカラムを\"Key exist\"に変更する。");
+		printf("Change the value of 'Key' column into 'Key exist' in the condition that 16383 records contains particular name in multibyte  and ID is in the scope of 100 < ID < 500.");
 		RecordData *RecDatGet;
 		ColumnData *ColDat[7];
 		RecordData* RecDatSch1;
@@ -404,7 +404,7 @@ int Insert16383Records()
 		printf("(Key=%d, NoKey=%d)...[OK]\r\n", NumOfKey, NumOfNoKey);
 
 
-		printf("16383個のレコード中に存在するName=\"由紀\"または\"由美\"を含み，100 < ID < 500  のレコードを削除する。");
+		printf("The records are deleted in the condition that 16383 records contains particular name in multibyte  and ID is in the scope of 100 < ID < 500.");
 		if (GetNumOfRecords(L"Person") != 16379) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -426,7 +426,7 @@ int Insert16383Records()
 
 
 	{
-		printf("DeleteRecord(L\"Person\"を排他ロックで実行した場合，0が返却され，GetNumOfRecords(L\"Person\"))の値は0となる");
+		printf("The value of GetNumOfRecords(L\"Person\") becomes zero because zero is returned if DeleteRecord(L\"Person\") is executed with exclusive lock.");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (DeleteRecord(L"Person") != 0) {
 			printf("...[NG]\r\n");
@@ -440,7 +440,7 @@ int Insert16383Records()
 		printf("...[OK]\r\n");
 
 
-		printf("再度DeleteRecord(L\"Person\"を排他ロックで実行した場合，もはや対象テーブルが存在しないため-1が返却される");
+		printf("-1 is returned due to target table not exist in case DeleteRecord(L\"Person\") is executed with exclusive lock again.");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (DeleteRecord(L"Person") != 0) {
 			printf("...[NG]\r\n");

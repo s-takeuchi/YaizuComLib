@@ -6,7 +6,7 @@
 
 int Insert16383RecordsAtOneTime()
 {
-	printf("CreateTableで自動車テーブル(通し番号:Int, 車名:WStr(50), 型番:Str(100), 製造会社:WStr(20)) Max=16383 を生成することができる");
+	printf("Automobile table (index:Int, name:WStr(50), type:Str(100), manufactular:WStr(20) is generated.");
 	ColumnDefInt ColDefId(L"通し番号");
 	ColumnDefWStr ColDefName(L"車名", 50);
 	ColumnDefStr ColDefType(L"型番", 100);
@@ -23,7 +23,7 @@ int Insert16383RecordsAtOneTime()
 	printf("...[OK]\r\n");
 
 
-	printf("16383個の結合されたレコードを自動車テーブルに対してInsertRecord(呼び出し1回)を実行し，16383個のレコードを追加することができる");
+	printf("16383 records can be added by one time invocation of InsertRecord for automobile table using 16383 connected records.");
 	ColumnData *ColDat[4];
 	RecordData *TopRecDat;
 	RecordData *PrvRecDat;
@@ -53,7 +53,7 @@ int Insert16383RecordsAtOneTime()
 	printf("...[OK]\r\n");
 
 
-	printf("GetTableVersion(L\"自動車\")が16383を返すことを確認する");
+	printf("GetTableVersion(particular table name) returns 16383.");
 	if (GetTableVersion(L"自動車") != 16383) {
 		printf("...[NG]\r\n");
 		return -1;
@@ -61,7 +61,7 @@ int Insert16383RecordsAtOneTime()
 	printf("...[OK]\r\n");
 
 
-	printf("追加した16383個のレコードに対しGetRecord(レコード指定)で連結した16383個のレコードを取得することができる");
+	printf("Connected 16383 records can be acquired from 16383 records which are added using GetRecord(record specification).");
 	int Count = 0;
 	ColumnData *ColDatTake[1];
 	ColDatTake[0] = new ColumnDataStr(L"型番", "ABCDEFGHIJABCDEFGHIJABCDEFGHIJ01234567890123456789012345678901234567890123456789");
@@ -87,7 +87,7 @@ int Insert16383RecordsAtOneTime()
 
 
 	{
-		printf("GetColumnCount(L\"自動車\")およびGetColumnName(L\"自動車\")の結果は4となる。GetColumnNameで取得した1番目のカラム名は\"通し番号\",4番目のカラム名は\"製造会社\"となる");
+		printf("Same value '4' is returned from both GetColumnCount(table name) and GetColumnName(table name). 1st acquired column by GetColumnName shows index. 4th acquired column shows manufactular.");
 		wchar_t ColNames[MAX_COLUMN_NUMBER][16];
 		if (GetColumnCount(L"自動車") != 4) {
 			printf("...[NG]\r\n");
@@ -110,7 +110,7 @@ int Insert16383RecordsAtOneTime()
 
 
 	{
-		printf("GetColumnCount(L\"自転車\")およびGetColumnName(L\"自転車\")の結果は-1となる");
+		printf("Both GetColumnCount(L\"Automobile\") and GetColumnName(L\"Automobile\") return -1.");
 		wchar_t ColNames[MAX_COLUMN_NUMBER][16];
 		if (GetColumnCount(L"自転車") != -1) {
 			printf("...[NG]\r\n");
@@ -124,7 +124,7 @@ int Insert16383RecordsAtOneTime()
 	}
 
 	{
-		printf("既存の自動車テーブルの[通し番号=奇数]となるレコード(8191個)について車名=\"日本国内閣総理大臣専用クーペ\"に変更する(8191個の連結されたRecordDataをUpdateRecordに渡す)");
+		printf("Change values of records whose ids are odd number. Connected records are passed to UpdateRecord.");
 		ColumnData *ColDat[4];
 		RecordData *TopRecDat;
 		RecordData *PrvRecDat;
@@ -160,7 +160,7 @@ int Insert16383RecordsAtOneTime()
 		printf("...[OK]\r\n");
 
 
-		printf("GetRecord(L\"自動車\")で取得したレコードは，”通し番号奇数が”日本国・・・”，偶数が”スーパーチャージャー付・・・”となっている");
+		printf("Records which are acquired by GetRecord(L\"Automobile\") contain two record types which records have even index number and odd index number.");
 		int Count = 0;
 		RecordData *RecDatGet;
 		LockTable(L"自動車", 1);
@@ -185,7 +185,7 @@ int Insert16383RecordsAtOneTime()
 		printf("...[OK]\r\n");
 
 
-		printf("GetRecord(L\"自動車\")で16383個のレコードを取得でき且つGetNumOfRecords()結果が16383となる");
+		printf("GetRecord(L\"Automibile\") returns 16383 records and GetNumOfRecords() also returns 16383.");
 		if (Count != 16383 || GetNumOfRecords(L"自動車") != 16383) {
 			printf("...[NG]\r\n");
 			delete RecDatGet;
@@ -196,7 +196,7 @@ int Insert16383RecordsAtOneTime()
 	}
 
 	{
-		printf("\"自動車\"テーブルから\"製造会社\" = \"内閣府X\"となるレコードの削除を行う。検索前件不一致のためDeleteRecord後のGetNumOfRecordsは16383を返す");
+		printf("Delete records that manufacturer is government. The search criteria is invalid hence GetNumOfRecords returns 16383 after DeleteRecordexecution.");
 		ColumnData *ColDat[1];
 		ColDat[0] = new ColumnDataWStr(L"製造会社", L"内閣府X");
 		RecordData *RecDat = new RecordData(L"自動車", ColDat, 1);
@@ -216,7 +216,7 @@ int Insert16383RecordsAtOneTime()
 
 
 	{
-		printf("\"自動車\"テーブルから\"製造会社\" = \"内閣府\"となるレコードの削除を行う。DeleteRecord後のGetNumOfRecordsは8192を返す");
+		printf("Delete records which contain \"Automobile\" records and \"manufacturer\". GetNumOfRecords shows 8192 after DeleteRecord execution.");
 		ColumnData *ColDat[1];
 		ColDat[0] = new ColumnDataWStr(L"製造会社", L"内閣府");
 		RecordData *RecDat = new RecordData(L"自動車", ColDat, 1);
@@ -235,7 +235,7 @@ int Insert16383RecordsAtOneTime()
 	}
 
 	{
-		printf("GetMaxNumOfRecords(L\"自動車\")の結果は16383となる");
+		printf("GetMaxNumOfRecords(L\"Automobile\") returns 16383.");
 		if (GetMaxNumOfRecords(L"自動車") != 16383) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -245,7 +245,7 @@ int Insert16383RecordsAtOneTime()
 
 
 	{
-		printf("レコードが8192件存在する状態でDeleteTable(L\"自動車\")を実行後，GetNumOfRecords(L\"自動車\")およびGetMaxNumOfRecords(L\"自動車\")の返り値は-1となる。");
+		printf("Both GetNumOfRecords(\"Automobile\") and GetMaxNumOfRecords(\"Automobile\") returns -1 after execution of DeleteTable(\"Automobile\") that the table contains 8192 records.");
 		if (DeleteTable(L"自動車") != 0) {
 			printf("...[NG]\r\n");
 			return -1;
