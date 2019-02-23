@@ -27,7 +27,7 @@ int TableVersion()
 {
 	// "商品"テーブル, "顧客"テーブルを生成する前のGetTableVersion(L"商品")またはGetTableVersion(L"顧客")呼び出しで-1が返る
 	{
-		printf("\"商品\"テーブル, \"顧客\"テーブルを生成する前のGetTableVersion(L\"商品\")またはGetTableVersion(L\"顧客\")呼び出しで-1が返る");
+		printf("GetTableVersion(L\"customer\") and GetTableVersion(L\"merchandise\") return -1 before merchandise and customer tables are created.   \"商品\"テーブル, \"顧客\"テーブルを生成する前のGetTableVersion(L\"商品\")またはGetTableVersion(L\"顧客\")呼び出しで-1が返る");
 		if (GetTableVersion(L"商品") != -1 || GetTableVersion(L"顧客") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -37,7 +37,7 @@ int TableVersion()
 
 	// CreateTableで"商品"テーブルを最大レコード=500として生成することができる
 	{
-		printf("CreateTableで\"商品\"テーブルを最大レコード=500として生成することができる");
+		printf("merchandise table (max records = 500) can be created by CreateTable.");
 		ColumnDefInt ColDefId(L"商品番号");
 		ColumnDefWStr ColDefName(L"商品名", 10);
 		ColumnDefInt ColDefPrice(L"値段");
@@ -56,7 +56,7 @@ int TableVersion()
 
 	// CreateTableで"顧客"テーブルを最大レコード=5000として生成することができる
 	{
-		printf("CreateTableで\"顧客\"テーブルを最大レコード=5000として生成することができる");
+		printf("customer table (max records = 5000) can be created by CreateTable.");
 		ColumnDefWStr ColDefName(L"氏名", 10);
 		ColumnDefWStr ColDefAddr(L"住所", 20);
 		ColumnDefStr ColDefTel(L"電話番号", 20);
@@ -73,7 +73,7 @@ int TableVersion()
 
 	// "商品"テーブル, "顧客"テーブルを生成後のGetTableVersion(L"商品")またはGetTableVersion(L"顧客")呼び出しで0が返る
 	{
-		printf("\"商品\"テーブル, \"顧客\"テーブルを生成後のGetTableVersion(L\"商品\")またはGetTableVersion(L\"顧客\")呼び出しで0が返る");
+		printf("GetTableVersion(L\"merchandise\") and GetTableVersion(L\"customer\") return 0 after merchandise table and customer table are created.");
 		if (GetTableVersion(L"商品") != 0 || GetTableVersion(L"顧客") != 0) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -83,7 +83,7 @@ int TableVersion()
 
 	// InsertRecordでテーブル"顧客"に1レコード追加後，GetTableVersion("顧客")で1が返却される。GetTableVersion("商品")は0のまま
 	{
-		printf("InsertRecordでテーブル\"顧客\"に1レコード追加後，GetTableVersion(\"顧客\")で1が返却される。GetTableVersion(\"商品\")は0のまま");
+		printf("GetTableVersion(\"customer\") returns 1 after one record is added to table 'customer' by InsertRecord. GetTableVersion(\"merchandise\") returns 0.");
 		ColumnData *ColDat[10];
 		ColDat[0] = new ColumnDataWStr(L"氏名", L"竹内伸也");
 		ColDat[1] = new ColumnDataWStr(L"住所", L"静岡県焼津市");
@@ -102,7 +102,7 @@ int TableVersion()
 
 	// InsertRecordでテーブル"顧客"に存在しないカラムを指定してもレコードは追加されず，GetTableVersion("顧客")で1が返却される。GetTableVersion("商品")は0のまま
 	{
-		printf("InsertRecordでテーブル\"顧客\"に存在しないカラムを指定してもレコードは追加されず，GetTableVersion(\"顧客\")で1が返却される。GetTableVersion(\"商品\")は0のまま");
+		printf("GetTableVersion(\"customer\") returns 1 if non existing column is specified by InsertRecord('customer'). GetTableVersion(\"merchandise\") returns 0.");
 		ColumnData *ColDat[10];
 		ColDat[0] = new ColumnDataWStr(L"氏", L"竹内伸也2");
 		ColDat[1] = new ColumnDataWStr(L"住", L"静岡県焼津市2");

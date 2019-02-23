@@ -19,7 +19,7 @@ SmallTable
 int SmallTable()
 {
 	// CreateTableでSmallTableテーブル(ID:Int) Max=1 を生成することができる
-	printf("CreateTableでSmallTableテーブル(ID:Int) Max=1 を生成することができる");
+	printf("SmallTable table(ID:Int) Max=1 can be created by CreateTable.");
 	ColumnDefInt ColDefId(L"ID");
 	TableDef TabDefPerson(L"SmallTable", 1);
 	TabDefPerson.AddColumnDef(&ColDefId);
@@ -35,7 +35,7 @@ int SmallTable()
 
 	// 最大レコード登録可能数=1のSmallTableに対して16383個の連結されたレコードをInsertRecordすると1レコードのみ追加される
 	{
-		printf("最大レコード登録可能数=1のSmallTableに対して16383個の連結されたレコードをInsertRecordすると1レコードのみ追加される");
+		printf("Only one record is added if 16383 connected records are passed to the table (max records = 1) by InsertRecord.");
 		ColumnData *ColDat[4];
 		RecordData *TopRecDat;
 		RecordData *PrvRecDat;
@@ -64,7 +64,7 @@ int SmallTable()
 
 	// BigTable("ID"カラム = 1)を検索条件に指定しGetRecord（レコード指定）を実行するとNULLが返る
 	{
-		printf("BigTable(\"ID\"カラム = 1)を検索条件に指定しGetRecord（レコード指定）を実行するとNULLが返る");
+		printf("NULL is returned if GetRecord(record specification) is executed with BigTable(\"ID\" column = 1) as search criteria.");
 		ColumnData *ColDatTake[1];
 		ColDatTake[0] = new ColumnDataInt(L"ID", 1);
 		RecordData RecDatTake(L"BigTable", ColDatTake, 1);
@@ -81,7 +81,7 @@ int SmallTable()
 
 	// SmallTable("ID"カラム = 0)を検索条件に指定しロック後にGetRecord（レコード指定）を実行するとRecordDataが返る。ただしロック無しで実行した場合NULLが返る
 	{
-		printf("SmallTable(\"ID\"カラム = 0)を検索条件に指定しロック後にGetRecord（レコード指定）を実行するとRecordDataが返る。ただしロック無しで実行した場合NULLが返る");
+		printf("RecordData is returned if SmallTable(\"ID\" column = 0) is passed as search criteria and GetRecord(record specification) is executed. If executed without lock, NULL is returned.");
 		ColumnData *ColDatTake[1];
 		ColDatTake[0] = new ColumnDataInt(L"ID", 0);
 		RecordData RecDatTake(L"SmallTable", ColDatTake, 1);
@@ -104,7 +104,7 @@ int SmallTable()
 
 	// GetNumOfRecords("SmallTable")で取得したレコード件数は1件となる
 	{
-		printf("GetNumOfRecords(\"SmallTable\")で取得したレコード件数は1件となる");
+		printf("Number of records acquired by GetNumOfRecords(\"SmallTable\") shows 1.");
 		if (GetNumOfRecords(L"SmallTable") != 1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -114,7 +114,7 @@ int SmallTable()
 
 	// GetMaxNumOfRecords("SmallTable")で取得したレコード件数は1件となる
 	{
-		printf("GetMaxNumOfRecords(\"SmallTable\")で取得したレコード件数は1件となる");
+		printf("Number of records acquired by GetMaxNumOfRecords(\"SmallTable\") shows 1.");
 		if (GetMaxNumOfRecords(L"SmallTable") != 1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -124,7 +124,7 @@ int SmallTable()
 
 	// GetNumOfRecords("BigTable")で取得したレコード件数は-1件となる
 	{
-		printf("GetNumOfRecords(\"BigTable\")で取得したレコード件数は-1件となる");
+		printf("Number of records acquired by GetNumOfRecords(\"BigTable\") shows -1.");
 		if (GetNumOfRecords(L"BigTable") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -134,7 +134,7 @@ int SmallTable()
 
 	// GetMaxNumOfRecords("BigTable")で取得したレコード件数は-1件となる
 	{
-		printf("GetMaxNumOfRecords(\"BigTable\")で取得したレコード件数は-1件となる");
+		printf("Number of records acquired by GetMaxNumOfRecords(\"BigTable\") shows -1.");
 		if (GetMaxNumOfRecords(L"BigTable") != -1) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -144,7 +144,7 @@ int SmallTable()
 
 	// DeleteRecord(L"SmallTable")後，GetNumOfRecords(L"SmallTable")が0を返却する
 	{
-		printf("DeleteRecord(L\"SmallTable\")後，GetNumOfRecords(L\"SmallTable\")が0を返却する");
+		printf("0 is returned from GetNumOfRecords(L\"SmallTable\") after DeleteRecord(L\"SmallTable\") execution.");
 		LockTable(L"SmallTable", LOCK_EXCLUSIVE);
 		DeleteRecord(L"SmallTable");
 		UnlockTable(L"SmallTable");
@@ -156,7 +156,7 @@ int SmallTable()
 	}
 
 	// CreateTableでSmallTableテーブル2(ID:Int) Max=100 を生成することができる
-	printf("CreateTableでSmallTableテーブル2(ID:Int) Max=100 を生成することができる");
+	printf("SmallTableテーブル2(ID:Int) Max=100 can be created by CreateTable.");
 	ColumnDefInt ColDefId2(L"ID");
 	TableDef TabDefPerson2(L"SmallTable2", 100);
 	TabDefPerson2.AddColumnDef(&ColDefId2);
@@ -231,7 +231,7 @@ int SmallTable()
 
 	// DeleteTable(L"SmallTable4")が0を返却する
 	{
-		printf("DeleteTable(L\"SmallTable4\")が0を返却する");
+		printf("DeleteTable(L\"SmallTable4\") returns 0.");
 		if (DeleteTable(L"SmallTable4") != 0) {
 			printf("...[NG]\r\n");
 			return -1;
@@ -241,7 +241,7 @@ int SmallTable()
 
 	// DeleteTable(L"SmallTable5")が0を返却する
 	{
-		printf("DeleteTable(L\"SmallTable5\")が0を返却する");
+		printf("DeleteTable(L\"SmallTable5\") returns 0.");
 		if (DeleteTable(L"SmallTable5") != 0) {
 			printf("...[NG]\r\n");
 			return -1;

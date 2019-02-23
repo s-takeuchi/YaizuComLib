@@ -13,7 +13,7 @@ ManyRecords
 int ManyRecords()
 {
 	{
-		printf("WStr(256)×32カラム×16383レコードのテーブルを作成することができる。InsertRecordを16383回繰り返しレコードを追加できる");
+		printf("Table can be created defined as WStr(256) x 32 columns×16383 records. Records can be inserted 16383 times using InsertRecord.");
 		ColumnDefWStr* ColDef[32];
 		TableDef LargeTable(L"焼津沼津辰口町和泉町中田北白楽", 16383);
 		for (int i = 0; i < 32; i++) {
@@ -56,12 +56,12 @@ int ManyRecords()
 	}
 
 	{
-		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを取得する。");
+		printf("Records can be acquired from exising table.");
 		LockTable(L"焼津沼津辰口町和泉町中田北白楽", LOCK_SHARE);
 		RecordData* RecDat = GetRecord(L"焼津沼津辰口町和泉町中田北白楽");
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 		RecordData* CurRecDat = RecDat;
-		printf("カラム名指定で[東西南北老若男女焼肉定食愛0]or[東西南北老若男女焼肉定食愛31]のカラム情報を取得できるか");
+		printf("Column information can be acquired with column name specification.");
 		do {
 			ColumnDataWStr* ColDat0 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛0");
 			if (ColDat0 == NULL) {
@@ -89,7 +89,7 @@ int ManyRecords()
 	}
 
 	{
-		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを検索(WStr複数条件:CONTAIN指定)する。");
+		printf("Search records from existing table.  Search criteria=WStr:multi+CONTAIN");
 		ColumnData* ColDat[2];
 		ColDat[0] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛2", L"100 2 :");
 		ColDat[0]->SetComparisonOperator(COMP_CONTAIN);
@@ -124,7 +124,7 @@ int ManyRecords()
 	}
 
 	{
-		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを検索(WStr複数条件(不正EQUAL)指定)する。");
+		printf("Search records from existing table.  Search criteria=WStr:multi+EQUAL(invalid)");
 		ColumnData* ColDat[1];
 		ColDat[0] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛2", L"100 2 :");
 		ColDat[0]->SetComparisonOperator(COMP_EQUAL);
@@ -141,7 +141,7 @@ int ManyRecords()
 	}
 
 	{
-		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを検索(WStr複数条件:NOT CONTAIN指定)する。");
+		printf("Search records from existing table.  Search criteria=WStr:multi+NOT CONTAIN");
 		ColumnData* ColDat[2];
 		ColDat[0] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛2", L"100 2 :", COMP_NOT_CONTAIN);
 		ColDat[1] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛3", L"100 3 :", COMP_NOT_CONTAIN);
@@ -176,7 +176,7 @@ int ManyRecords()
 	}
 
 	{
-		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルからレコードを検索(WStr複数条件(不正)指定)する。");
+		printf("Search records from existing table.  Search criteria=WStr:multi(invalid)");
 		ColumnData* ColDat[2];
 		ColDat[0] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛2", L"100 2 :", COMP_CONTAIN);
 		ColDat[1] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛3", L"100 3 :", COMP_NOT_CONTAIN);
@@ -193,7 +193,7 @@ int ManyRecords()
 	}
 
 	{
-		printf("既存の[焼津沼津辰口町和泉町中田北白楽]テーブルから10レコードを削除できる。条件として連結されたレコードを指定する");
+		printf("10 records can be acquired from specified table. Connected records are specified.");
 		RecordData* RecDat;
 		RecordData* TopRecDat;
 		RecordData* PrvRecDat;
@@ -229,7 +229,7 @@ int ManyRecords()
 	}
 
 	{
-		printf("存在しないカラム名を指定してZaSortRecordを実行したとき，-1が返却される。");
+		printf("-1 is returned if non existing column name is specified to ZaSortRecord.");
 		LockTable(L"焼津沼津辰口町和泉町中田北白楽", LOCK_EXCLUSIVE);
 		if (ZaSortRecord(L"焼津沼津辰口町和泉町中田北白楽", L"aaa") != -1) {
 			printf("...[NG]\r\n");
@@ -239,7 +239,7 @@ int ManyRecords()
 		printf("...[OK]\r\n");
 	}
 
-	printf("大量レコードが含まれるテーブルの削除");
+	printf("Delete a table which contains large number of records.");
 	if (DeleteTable(L"焼津沼津辰口町和泉町中田北白楽") != 0) {
 		printf("...[NG]\r\n");
 		return -1;
