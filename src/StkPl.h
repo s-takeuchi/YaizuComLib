@@ -107,3 +107,8 @@ void StkPlGetTimeInRfc822(char[64]);
 int StkPlGetFullPathFromFileName(const wchar_t*, wchar_t[FILENAME_MAX]);
 size_t StkPlGetFileSize(const wchar_t[FILENAME_MAX]);
 int StkPlReadFile(const wchar_t[FILENAME_MAX], char*, size_t);
+void* StkPlOpenFileForRead(const wchar_t[FILENAME_MAX]);
+void* StkPlOpenFileForWrite(const wchar_t[FILENAME_MAX]);
+void StkPlCloseFile(void*);
+int StkPlRead(void*, char*, size_t);
+int StkPlWrite(void*, char*, size_t);

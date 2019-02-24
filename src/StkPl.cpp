@@ -1009,3 +1009,74 @@ int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fil
 	return actual_filesize;
 #endif
 }
+
+void* StkPlOpenFileForRead(const wchar_t FilePath[FILENAME_MAX])
+{
+#ifdef WIN32
+	HANDLE FileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (FileHndl == INVALID_HANDLE_VALUE) {
+		return NULL;
+	};
+#else
+	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
+	FILE *fp = fopen(FileNameUtf8, "r");
+	if (fp == NULL) {
+		return NULL;
+	}
+	delete FileNameUtf8;
+#endif
+}
+
+void* StkPlOpenFileForWrite(const wchar_t FilePath[FILENAME_MAX])
+{
+#ifdef WIN32
+	HANDLE FileHndl = CreateFile(FilePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (FileHndl == INVALID_HANDLE_VALUE) {
+		return NULL;
+	};
+	return (void*)FileHndl;
+#else
+	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
+	FILE *fp = fopen(FileNameUtf8, "w");
+	if (fp == NULL) {
+		return NULL;
+	}
+	delete FileNameUtf8;
+	return fp;
+#endif
+}
+
+void StkPlCloseFile(void* FileHndl)
+{
+#ifdef WIN32
+	CloseHandle((HANDLE)FileHndl);
+#else
+	fclose((FILE*)FileHndl);
+#endif
+}
+
+int StkPlRead(void* FileHndl, char* Ptr, size_t Size)
+{
+#ifdef WIN32
+	DWORD TmpSize = 0;
+	if (ReadFile(FileHndl, (LPVOID)Ptr, Size, &TmpSize, NULL) == 0) {
+		return 0;
+	}
+	return TmpSize;
+#else
+	return fread(Ptr, sizeof(char), (int)Size, (FILE*)FileHndl);
+#endif
+}
+
+int StkPlWrite(void* FileHndl, char* Ptr, size_t Size)
+{
+#ifdef WIN32
+	DWORD TmpSize = 0;
+	if (WriteFile(FileHndl, (LPVOID)Ptr, Size, &TmpSize, NULL) == 0) {
+		return 0;
+	}
+	return TmpSize;
+#else
+	return fwrite(Ptr, sizeof(char), (int)Size, (FILE*)FileHndl);
+#endif
+}
