@@ -9,6 +9,9 @@
 #endif
 #endif
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for char
 size_t StkPlStrLen(const char*);
 int StkPlStrCmp(const char*, const char*);
 int StkPlStrNCmp(const char*, const char*, size_t);
@@ -17,6 +20,10 @@ char* StkPlStrCpy(char*, size_t, const char*);
 char* StkPlStrNCpy(char*, size_t, const char*, size_t);
 char * StkPlStrCat(char*, size_t, const char*);
 
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for wchar
 size_t StkPlWcsLen(const wchar_t*);
 int StkPlWcsCmp(const wchar_t*, const wchar_t*);
 const wchar_t* StkPlWcsStr(const wchar_t*, const wchar_t*);
@@ -25,17 +32,24 @@ wchar_t* StkPlWcsNCpy(wchar_t*, size_t, const wchar_t*, size_t);
 wchar_t* StkPlLStrCpy(wchar_t*, const wchar_t*);
 wchar_t* StkPlWcsCat(wchar_t*, size_t, const wchar_t*);
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for memory
 int StkPlMemCmp(const void*, const void*, size_t);
 void* StkPlMemCpy(void*, const void*, size_t);
 void* StkPlMemSet(void*, int, size_t);
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for locale
 bool StkPlIsJapaneseLocale();
 bool StkPlIsJapaneseLocaleFromEnv();
 char* StkPlWideCharToSjis(const wchar_t*);
 wchar_t* StkPlSjisToWideChar(const char*);
 
 //////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////////////////////
+// API for UTF conversion
 size_t StkPlConvUtf16ToUtf32(char32_t*, size_t, const char16_t*);
 size_t StkPlConvUtf32ToUtf16(char16_t*, size_t, const char32_t*);
 size_t StkPlConvUtf8ToUtf32(char32_t*, size_t, const char*);
@@ -65,7 +79,8 @@ wchar_t* StkPlCreateWideCharFromUtf8(const char*);
 char* StkPlCreateUtf8FromWideChar(const wchar_t*);
 
 //////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////////////////////
+// API for etc
 int StkPlPrintf(const char*, ...);
 int StkPlWPrintf(const wchar_t*, ...);
 int StkPlSPrintf(char*, size_t, const char*, ...);
@@ -82,10 +97,13 @@ int StkPlAtoi(const char*);
 long int StkPlWcsToL(const wchar_t*);
 float StkPlWcsToF(const wchar_t*);
 
-int StkPlGetFullPathFromFileName(const wchar_t*, wchar_t[FILENAME_MAX]);
-size_t StkPlGetFileSize(const wchar_t[FILENAME_MAX]);
-int StkPlReadFile(const wchar_t[FILENAME_MAX], char*, size_t);
-
 int StkPlGetUsedMemorySizeOfCurrentProcess();
 long long StkPlGetTickCount();
 void StkPlGetTimeInRfc822(char[64]);
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for file access
+int StkPlGetFullPathFromFileName(const wchar_t*, wchar_t[FILENAME_MAX]);
+size_t StkPlGetFileSize(const wchar_t[FILENAME_MAX]);
+int StkPlReadFile(const wchar_t[FILENAME_MAX], char*, size_t);

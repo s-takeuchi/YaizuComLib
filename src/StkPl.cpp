@@ -7,11 +7,24 @@
 #include <thread>
 #include <chrono>
 
+#ifdef WIN32
+#include <windows.h>
+#include <Psapi.h>
+#include <filesystem>
+#include <time.h>
+#else
+#include <unistd.h>
+#include <time.h>
+#include <ctime>
+#include <experimental/filesystem>
+#endif
+
 #include "StkPl.h"
 
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for char
 
 size_t StkPlStrLen(const char* Str)
 {
@@ -33,6 +46,40 @@ const char* StkPlStrStr(const char* Str1, const char* Str2)
 	return strstr(Str1, Str2);
 }
 
+char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
+{
+#ifdef WIN32
+	strcpy_s(Destination, NumberOfElements, Source);
+	return Destination;
+#else
+	return strcpy(Destination, Source);
+#endif
+}
+
+char* StkPlStrNCpy(char* Destination, size_t NumberOfElements, const char* Source, size_t Num)
+{
+#ifdef WIN32
+	strncpy_s(Destination, NumberOfElements, Source, Num);
+	return Destination;
+#else
+	return strncpy(Destination, Source, Num);
+#endif
+}
+
+char * StkPlStrCat(char* Destination, size_t NumberOfElements, const char* Source)
+{
+#ifdef WIN32
+	strcat_s(Destination, NumberOfElements, Source);
+	return Destination;
+#else
+	return strcat(Destination, Source);
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for wchar
+
 size_t StkPlWcsLen(const wchar_t* Wcs)
 {
 	return wcslen(Wcs);
@@ -47,6 +94,49 @@ const wchar_t* StkPlWcsStr(const wchar_t* Wcs1, const wchar_t* Wcs2)
 {
 	return wcsstr(Wcs1, Wcs2);
 }
+
+wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+{
+#ifdef WIN32
+	wcsncpy_s(Destination, NumberOfElements, Source, _TRUNCATE);
+	return Destination;
+#else
+	return wcscpy(Destination, Source);
+#endif
+}
+
+wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
+{
+#ifdef WIN32
+	wcsncpy_s(Destination, NumberOfElements, Source, Num);
+	return Destination;
+#else
+	return wcsncpy(Destination, Source, Num);
+#endif
+}
+
+wchar_t* StkPlLStrCpy(wchar_t* Destination, const wchar_t* Source)
+{
+#ifdef WIN32
+	return lstrcpy(Destination, Source);
+#else
+	return wcscpy(Destination, Source);
+#endif
+}
+
+wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+{
+#ifdef WIN32
+	wcscat_s(Destination, NumberOfElements, Source);
+	return Destination;
+#else
+	return wcscat(Destination, Source);
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for memory
 
 int StkPlMemCmp(const void* Ptr1, const void* Ptr2, size_t Num)
 {
@@ -63,6 +153,10 @@ void* StkPlMemSet(void* Ptr, int Value, size_t Size)
 	return memset(Ptr, Value, Size);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for locale
+
 bool StkPlIsJapaneseLocale()
 {
 	setlocale(LC_ALL, "");
@@ -72,6 +166,92 @@ bool StkPlIsJapaneseLocale()
 	}
 	return false;
 }
+
+bool StkPlIsJapaneseLocaleFromEnv()
+{
+#ifdef WIN32
+	char* Locale;
+	unsigned int LocaleSize;
+	if (_dupenv_s(&Locale, &LocaleSize, "HTTP_ACCEPT_LANGUAGE") == 0) {
+		if (Locale == 0 || LocaleSize == 0) {
+			return false;
+		}
+		if (strstr(Locale, (char*)"ja") == Locale) {
+			free(Locale);
+			return true;
+		}
+	}
+	return false;
+#else
+	char* Locale = getenv("HTTP_ACCEPT_LANGUAGE");
+	if (Locale == 0) {
+		return false;
+	}
+	if (strstr(Locale, (char*)"ja") == Locale) {
+		return true;
+	}
+	return false;
+#endif
+}
+
+char* StkPlWideCharToSjis(const wchar_t* Txt)
+{
+#ifdef WIN32
+	int MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Txt, -1, (LPSTR)NULL, 0, NULL, NULL);
+	if (MltBufLen > 0) {
+		char* MltBuf = (char*)new char[MltBufLen + 1];
+		if (WideCharToMultiByte(CP_THREAD_ACP, 0, Txt, -1, MltBuf, MltBufLen, NULL, NULL) != 0) {
+			MltBuf[MltBufLen] = '\0';
+		}
+		return MltBuf;
+	}
+	return NULL;
+#else
+	setlocale(LC_CTYPE, "");
+	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
+	mbstate_t MbState;
+	memset((void*)&MbState, 0, sizeof(MbState));
+	int ActualSize = wcsrtombs(NULL, &Txt, 1, &MbState);
+	if (ActualSize == -1 || ConfLc == NULL) {
+		return NULL;
+	}
+	char* NewMbs = new char[ActualSize + 1];
+	wcsrtombs(NewMbs, &Txt, ActualSize, &MbState);
+	NewMbs[ActualSize] = '\0';
+	return NewMbs;
+#endif
+}
+
+wchar_t* StkPlSjisToWideChar(const char* Txt)
+{
+#ifdef WIN32
+	int WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, NULL, NULL);
+	if (WcBufLen > 0) {
+		wchar_t* WcTxt = new wchar_t[WcBufLen + 1];
+		WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, WcTxt, WcBufLen);
+		WcTxt[WcBufLen] = L'\0';
+		return WcTxt;
+	}
+	return NULL;
+#else
+	setlocale(LC_CTYPE, "");
+	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
+	mbstate_t MbState;
+	memset((void*)&MbState, 0, sizeof(MbState));
+	int ActualSize = mbsrtowcs(NULL, &Txt, 1, &MbState);
+	if (ActualSize == -1 || ConfLc == NULL) {
+		return NULL;
+	}
+	wchar_t* NewWcs = new wchar_t[ActualSize + 1];
+	mbsrtowcs(NewWcs, &Txt, ActualSize, &MbState);
+	NewWcs[ActualSize] = L'\0';
+	return NewWcs;
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for UTF conversion
 
 size_t StkPlConvUtf16ToUtf32(char32_t* Utf32, size_t SizeInWord, const char16_t* Utf16)
 {
@@ -571,10 +751,9 @@ char* StkPlCreateUtf8FromWideChar(const wchar_t* Wc)
 #endif
 }
 
-void StkPlExit(int Status)
-{
-	exit(Status);
-}
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for etc
 
 int StkPlPrintf(const char* Format, ...)
 {
@@ -630,6 +809,11 @@ int StkPlSwScanf(const wchar_t* Str, const wchar_t* Format, ...)
 	return Ret;
 }
 
+void StkPlExit(int Status)
+{
+	exit(Status);
+}
+
 int StkPlRand()
 {
 	return rand();
@@ -655,148 +839,9 @@ float StkPlWcsToF(const wchar_t* Str)
 	return wcstof(Str, NULL);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-
-#ifdef WIN32
-
-#include <windows.h>
-#include <Psapi.h>
-#include <filesystem>
-#include <time.h>
-
-char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
-{
-	strcpy_s(Destination, NumberOfElements, Source);
-	return Destination;
-}
-
-char* StkPlStrNCpy(char* Destination, size_t NumberOfElements, const char* Source, size_t Num)
-{
-	strncpy_s(Destination, NumberOfElements, Source, Num);
-	return Destination;
-}
-
-char * StkPlStrCat(char* Destination, size_t NumberOfElements, const char* Source)
-{
-	strcat_s(Destination, NumberOfElements, Source);
-	return Destination;
-}
-
-wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
-{
-	wcsncpy_s(Destination, NumberOfElements, Source, _TRUNCATE);
-	return Destination;
-}
-
-wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
-{
-	wcsncpy_s(Destination, NumberOfElements, Source, Num);
-	return Destination;
-}
-
-wchar_t* StkPlLStrCpy(wchar_t* Destination, const wchar_t* Source)
-{
-	return lstrcpy(Destination, Source);
-}
-
-wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
-{
-	wcscat_s(Destination, NumberOfElements, Source);
-	return Destination;
-}
-
-bool StkPlIsJapaneseLocaleFromEnv()
-{
-	char* Locale;
-	unsigned int LocaleSize;
-	if (_dupenv_s(&Locale, &LocaleSize, "HTTP_ACCEPT_LANGUAGE") == 0) {
-		if (Locale == 0 || LocaleSize == 0) {
-			return false;
-		}
-		if (strstr(Locale, (char*)"ja") == Locale) {
-			free(Locale);
-			return true;
-		}
-	}
-	return false;
-}
-
-char* StkPlWideCharToSjis(const wchar_t* Txt)
-{
-	int MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Txt, -1, (LPSTR)NULL, 0, NULL, NULL);
-	if (MltBufLen > 0) {
-		char* MltBuf = (char*)new char[MltBufLen + 1];
-		if (WideCharToMultiByte(CP_THREAD_ACP, 0, Txt, -1, MltBuf, MltBufLen, NULL, NULL) != 0) {
-			MltBuf[MltBufLen] = '\0';
-		}
-		return MltBuf;
-	}
-	return NULL;
-}
-
-wchar_t* StkPlSjisToWideChar(const char* Txt)
-{
-	int WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, NULL, NULL);
-	if (WcBufLen > 0) {
-		wchar_t* WcTxt = new wchar_t[WcBufLen + 1];
-		WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, WcTxt, WcBufLen);
-		WcTxt[WcBufLen] = L'\0';
-		return WcTxt;
-	}
-	return NULL;
-}
-
-// Get full path from the specified file name.
-// FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
-// FullPath [out] : Acquired full path for the specified file.
-// Return : Always zero
-int StkPlGetFullPathFromFileName(const wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
-{
-	GetModuleFileName(NULL, FullPath, FILENAME_MAX - 1);
-	std::experimental::filesystem::path CurPath = FullPath;
-	std::filesystem::path NewPath = CurPath.parent_path() / FileName;
-	wcscpy_s(FullPath, FILENAME_MAX, NewPath.c_str());
-	return 0;
-}
-
-size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
-{
-	uintmax_t FileSize = 0;
-	try {
-		FileSize = std::filesystem::file_size(FilePath);
-	} catch (std::filesystem::filesystem_error ex) {
-		return -1;
-	}
-	if (FileSize >= 1000000) {
-		return -1;
-	}
-	if (FileSize == 0) {
-		return 0;
-	}
-	return (size_t)FileSize;
-}
-
-int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
-{
-	HANDLE ReadFileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
-		return -1;
-	}
-
-	DWORD TmpSize = 0;
-	if (ReadFile(ReadFileHndl, (LPVOID)Buffer, FileSize, &TmpSize, NULL) == 0) {
-		CloseHandle(ReadFileHndl);
-		return -1;
-	}
-
-	CloseHandle(ReadFileHndl);
-	return TmpSize;
-}
-
 int StkPlGetUsedMemorySizeOfCurrentProcess()
 {
+#ifdef WIN32
 	DWORD dwProcessID = GetCurrentProcessId();
 	HANDLE hProcess;
 	PROCESS_MEMORY_COUNTERS pmc = { 0 };
@@ -809,168 +854,7 @@ int StkPlGetUsedMemorySizeOfCurrentProcess()
 	}
 	CloseHandle(hProcess);
 	return Size;
-}
-
-long long StkPlGetTickCount()
-{
-	return GetTickCount();
-}
-
-void StkPlGetTimeInRfc822(char Date[64])
-{
-	struct tm GmtTime;
-	__int64 Ltime;
-	_time64(&Ltime);
-	_gmtime64_s(&GmtTime, &Ltime);
-	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-	sprintf_s(Date, 64, "Date: %s, %02d %s %d %02d:%02d:%02d GMT\r\n",
-		WdayStr[GmtTime.tm_wday],
-		GmtTime.tm_mday,
-		MonStr[GmtTime.tm_mon],
-		GmtTime.tm_year + 1900,
-		GmtTime.tm_hour,
-		GmtTime.tm_min,
-		GmtTime.tm_sec);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-
 #else
-
-#include <unistd.h>
-#include <time.h>
-#include <ctime>
-#include <experimental/filesystem>
-
-char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
-{
-	return strcpy(Destination, Source);
-}
-
-char* StkPlStrNCpy(char* Destination, size_t NumberOfElements, const char* Source, size_t Num)
-{
-	return strncpy(Destination, Source, Num);
-}
-
-char * StkPlStrCat(char* Destination, size_t NumberOfElements, const char* Source)
-{
-	return strcat(Destination, Source);
-}
-
-wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
-{
-	return wcscpy(Destination, Source);
-}
-
-wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
-{
-	return wcsncpy(Destination, Source, Num);
-}
-
-wchar_t* StkPlLStrCpy(wchar_t* Destination, const wchar_t* Source)
-{
-	return wcscpy(Destination, Source);
-}
-
-wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
-{
-	return wcscat(Destination, Source);
-}
-
-bool StkPlIsJapaneseLocaleFromEnv()
-{
-	char* Locale = getenv("HTTP_ACCEPT_LANGUAGE");
-	if (Locale == 0) {
-		return false;
-	}
-	if (strstr(Locale, (char*)"ja") == Locale) {
-		return true;
-	}
-	return false;
-}
-
-char* StkPlWideCharToSjis(const wchar_t* Txt)
-{
-	setlocale(LC_CTYPE, "");
-	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
-	mbstate_t MbState;
-	memset((void*)&MbState, 0, sizeof(MbState));
-	int ActualSize = wcsrtombs(NULL, &Txt, 1, &MbState);
-	if (ActualSize == -1 || ConfLc == NULL) {
-		return NULL;
-	}
-	char* NewMbs = new char[ActualSize + 1];
-	wcsrtombs(NewMbs, &Txt, ActualSize, &MbState);
-	NewMbs[ActualSize] = '\0';
-	return NewMbs;
-}
-
-wchar_t* StkPlSjisToWideChar(const char* Txt)
-{
-	setlocale(LC_CTYPE, "");
-	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
-	mbstate_t MbState;
-	memset((void*)&MbState, 0, sizeof(MbState));
-	int ActualSize = mbsrtowcs(NULL, &Txt, 1, &MbState);
-	if (ActualSize == -1 || ConfLc == NULL) {
-		return NULL;
-	}
-	wchar_t* NewWcs = new wchar_t[ActualSize + 1];
-	mbsrtowcs(NewWcs, &Txt, ActualSize, &MbState);
-	NewWcs[ActualSize] = L'\0';
-	return NewWcs;
-}
-
-// Get full path from the specified file name.
-// FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
-// FullPath [out] : Acquired full path for the specified file.
-// Return : Always zero
-int StkPlGetFullPathFromFileName(const wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
-{
-	char c_full_path[FILENAME_MAX];
-	readlink("/proc/self/exe", c_full_path, sizeof(c_full_path) - 1);
-	std::experimental::filesystem::path CurPath = c_full_path;
-	std::experimental::filesystem::path NewPath = CurPath.parent_path() / FileName;
-	wcscpy(FullPath, NewPath.wstring().c_str());
-	return 0;
-}
-
-size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
-{
-	uintmax_t FileSize = 0;
-	try {
-		FileSize = std::experimental::filesystem::file_size(FilePath);
-	} catch (std::experimental::filesystem::filesystem_error ex) {
-		return -1;
-	}
-	if (FileSize >= 1000000) {
-		return -1;
-	}
-	if (FileSize == 0) {
-		return 0;
-	}
-	return (size_t)FileSize;
-}
-
-int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
-{
-	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
-	FILE *fp = fopen(FileNameUtf8, "r");
-	if (fp == NULL) {
-		return -1;
-	}
-	char* work_dat = new char[(int)FileSize + 1];
-	int actual_filesize = fread(Buffer, sizeof(char), (int)FileSize, fp);
-	fclose(fp);
-	delete FileNameUtf8;
-	return actual_filesize;
-}
-
-int StkPlGetUsedMemorySizeOfCurrentProcess()
-{
 	FILE *fp;
 	char ProcInfo[64];
 	char Buffer[4096];
@@ -988,17 +872,38 @@ int StkPlGetUsedMemorySizeOfCurrentProcess()
 	int VmSize = 0;
 	sscanf(Ptr, "%s %d", DummyStr, &VmSize);
 	return VmSize;
+#endif
 }
 
 long long StkPlGetTickCount()
 {
+#ifdef WIN32
+	return GetTickCount();
+#else
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	return (long long)(ts.tv_nsec / 1000000) + ((long long)ts.tv_sec * 1000ull);
+#endif
 }
 
 void StkPlGetTimeInRfc822(char Date[64])
 {
+#ifdef WIN32
+	struct tm GmtTime;
+	__int64 Ltime;
+	_time64(&Ltime);
+	_gmtime64_s(&GmtTime, &Ltime);
+	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	sprintf_s(Date, 64, "Date: %s, %02d %s %d %02d:%02d:%02d GMT\r\n",
+		WdayStr[GmtTime.tm_wday],
+		GmtTime.tm_mday,
+		MonStr[GmtTime.tm_mon],
+		GmtTime.tm_year + 1900,
+		GmtTime.tm_hour,
+		GmtTime.tm_min,
+		GmtTime.tm_sec);
+#else
 	struct tm* GmtTime;
 	time_t Ltime;
 	time(&Ltime);
@@ -1013,6 +918,94 @@ void StkPlGetTimeInRfc822(char Date[64])
 		GmtTime->tm_hour,
 		GmtTime->tm_min,
 		GmtTime->tm_sec);
+#endif
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for file access
+
+// Get full path from the specified file name.
+// FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
+// FullPath [out] : Acquired full path for the specified file.
+// Return : Always zero
+int StkPlGetFullPathFromFileName(const wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
+{
+#ifdef WIN32
+	GetModuleFileName(NULL, FullPath, FILENAME_MAX - 1);
+	std::experimental::filesystem::path CurPath = FullPath;
+	std::filesystem::path NewPath = CurPath.parent_path() / FileName;
+	wcscpy_s(FullPath, FILENAME_MAX, NewPath.c_str());
+	return 0;
+#else
+	char c_full_path[FILENAME_MAX];
+	readlink("/proc/self/exe", c_full_path, sizeof(c_full_path) - 1);
+	std::experimental::filesystem::path CurPath = c_full_path;
+	std::experimental::filesystem::path NewPath = CurPath.parent_path() / FileName;
+	wcscpy(FullPath, NewPath.wstring().c_str());
+	return 0;
 #endif
+}
+
+size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
+{
+#ifdef WIN32
+	uintmax_t FileSize = 0;
+	try {
+		FileSize = std::filesystem::file_size(FilePath);
+	} catch (std::filesystem::filesystem_error ex) {
+		return -1;
+	}
+	if (FileSize >= 1000000) {
+		return -1;
+	}
+	if (FileSize == 0) {
+		return 0;
+	}
+	return (size_t)FileSize;
+#else
+	uintmax_t FileSize = 0;
+	try {
+		FileSize = std::experimental::filesystem::file_size(FilePath);
+	} catch (std::experimental::filesystem::filesystem_error ex) {
+		return -1;
+	}
+	if (FileSize >= 1000000) {
+		return -1;
+	}
+	if (FileSize == 0) {
+		return 0;
+	}
+	return (size_t)FileSize;
+#endif
+}
+
+int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
+{
+#ifdef WIN32
+	HANDLE ReadFileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
+		return -1;
+	}
+
+	DWORD TmpSize = 0;
+	if (ReadFile(ReadFileHndl, (LPVOID)Buffer, FileSize, &TmpSize, NULL) == 0) {
+		CloseHandle(ReadFileHndl);
+		return -1;
+	}
+
+	CloseHandle(ReadFileHndl);
+	return TmpSize;
+#else
+	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
+	FILE *fp = fopen(FileNameUtf8, "r");
+	if (fp == NULL) {
+		return -1;
+	}
+	char* work_dat = new char[(int)FileSize + 1];
+	int actual_filesize = fread(Buffer, sizeof(char), (int)FileSize, fp);
+	fclose(fp);
+	delete FileNameUtf8;
+	return actual_filesize;
+#endif
+}
