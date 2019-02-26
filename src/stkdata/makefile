@@ -1,5 +1,5 @@
-stkdata.a : StkPl.o ColumnDef.o ColumnDefBin.o ColumnDefFloat.o ColumnDefInt.o ColumnDefStr.o ColumnDefWStr.o ColumnData.o ColumnDataBin.o ColumnDataFloat.o ColumnDataInt.o ColumnDataStr.o ColumnDataWStr.o
-	ar r stkdata.a StkPl.o ColumnDef.o ColumnDefBin.o ColumnDefFloat.o ColumnDefInt.o ColumnDefStr.o ColumnDefWStr.o ColumnData.o ColumnDataBin.o ColumnDataFloat.o ColumnDataInt.o ColumnDataStr.o ColumnDataWStr.o
+stkdata.a : StkPl.o ColumnDef.o ColumnDefBin.o ColumnDefFloat.o ColumnDefInt.o ColumnDefStr.o ColumnDefWStr.o TableDef.o ColumnData.o ColumnDataBin.o ColumnDataFloat.o ColumnDataInt.o ColumnDataStr.o ColumnDataWStr.o RecordData.o DataAcController.o stkdata.o
+	ar r stkdata.a StkPl.o ColumnDef.o ColumnDefBin.o ColumnDefFloat.o ColumnDefInt.o ColumnDefStr.o ColumnDefWStr.o TableDef.o ColumnData.o ColumnDataBin.o ColumnDataFloat.o ColumnDataInt.o ColumnDataStr.o ColumnDataWStr.o RecordData.o DataAcController.o stkdata.o
 
 StkPl.o : ../StkPl.cpp
 	g++ -c ../StkPl.cpp -std=c++1z
@@ -22,6 +22,9 @@ ColumnDefStr.o : ColumnDefStr.cpp
 ColumnDefWStr.o : ColumnDefWStr.cpp
 	g++ -c ColumnDefWStr.cpp -std=c++1z
 
+TableDef.o : TableDef.cpp
+	g++ -c TableDef.cpp -std=c++1z
+
 ColumnData.o : ColumnData.cpp
 	g++ -c ColumnData.cpp -std=c++1z
 
@@ -39,6 +42,15 @@ ColumnDataStr.o : ColumnDataStr.cpp
 
 ColumnDataWStr.o : ColumnDataWStr.cpp
 	g++ -c ColumnDataWStr.cpp -std=c++1z
+
+RecordData.o : RecordData.cpp
+	g++ -c RecordData.cpp -std=c++1z
+
+DataAcController.o : DataAcController.cpp
+	g++ -c DataAcController.cpp -std=c++1z
+
+stkdata.o : stkdata.cpp
+	g++ -c stkdata.cpp -std=c++1z
 
 clean :
 	rm -f *.o *.a

@@ -142,7 +142,7 @@ int DataAcController::AllocDataArea(size_t Size, int TableId)
 	if (TableId < 0 || TableId >= MAX_TABLE_NUMBER) {
 		return -1;
 	}
-	void* Result = new (std::nothrow) char[Size];
+	char* Result = new (std::nothrow) char[Size];
 	if (Result == NULL) {
 		return -1;
 	}
@@ -160,7 +160,7 @@ int DataAcController::FreeDataArea(int TableId)
 	if (TableId < 0 || TableId >= MAX_TABLE_NUMBER) {
 		return -1;
 	}
-	delete [] m_TableAddr[TableId];
+	delete m_TableAddr[TableId];
 	m_TableAddr[TableId] = NULL;
 	m_TableSize[TableId] = 0;
 	m_TableVer[TableId] = 0;
@@ -482,7 +482,8 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 					ColumnDataStr* ColDatStr = (ColumnDataStr*)ColDat;
 					char* Value = (char*)ColDatStr->GetValue();
 					char* ValueStore = (char*)Addr;
-					strncpy_s(ValueStore, m_ColumnSize[TableId][Loop], Value, _TRUNCATE);
+					StkPlStrNCpy(ValueStore, m_ColumnSize[TableId][Loop], Value, m_ColumnSize[TableId][Loop] - 1);
+					ValueStore[m_ColumnSize[TableId][Loop] - 1] = '\0';
 					//strncpy_sの代わりにCopyMemoryを使用することはできない。CopyMemoryの場合
 					//制限長いっぱいの文字列をコピーしたときに終端に\0が付加されない。
 					CheckAndChangeChar(ValueStore, ValueStore + m_ColumnSize[TableId][Loop] - 1);
@@ -735,10 +736,10 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_STR) {
 					char* Value = (char*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataStr* CurColStrReq = (ColumnDataStr*)CurColReq;
-					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && strcmp(Value, CurColStrReq->GetValue()) == 0) ||
-						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && strcmp(Value, CurColStrReq->GetValue()) != 0) ||
-						(CurColReq->GetComparisonOperator() == COMP_CONTAIN && strstr(Value, CurColStrReq->GetValue()) != 0) ||
-						(CurColReq->GetComparisonOperator() == COMP_NOT_CONTAIN && strstr(Value, CurColStrReq->GetValue()) == 0)) {
+					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && StkPlStrCmp(Value, CurColStrReq->GetValue()) == 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && StkPlStrCmp(Value, CurColStrReq->GetValue()) != 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_CONTAIN && StkPlStrStr(Value, CurColStrReq->GetValue()) != 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_CONTAIN && StkPlStrStr(Value, CurColStrReq->GetValue()) == 0)) {
 						FoundColCnt++;
 					}
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_WSTR) {
@@ -753,8 +754,8 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 				} else if (CurColReq->GetColumnType() == COLUMN_TYPE_BIN) {
 					unsigned char* Value = (unsigned char*)(Addr + m_ColumnOffset[TableId][ColIndx]);
 					ColumnDataBin* CurColBinReq = (ColumnDataBin*)CurColReq;
-					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && memcmp(Value, CurColBinReq->GetValue(), m_ColumnSize[TableId][ColIndx]) == 0) ||
-						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && memcmp(Value, CurColBinReq->GetValue(), m_ColumnSize[TableId][ColIndx]) != 0)) {
+					if ((CurColReq->GetComparisonOperator() == COMP_EQUAL && StkPlMemCmp(Value, CurColBinReq->GetValue(), m_ColumnSize[TableId][ColIndx]) == 0) ||
+						(CurColReq->GetComparisonOperator() == COMP_NOT_EQUAL && StkPlMemCmp(Value, CurColBinReq->GetValue(), m_ColumnSize[TableId][ColIndx]) != 0)) {
 						FoundColCnt++;
 					}
 				}
@@ -852,7 +853,8 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 							ColumnDataStr* ColDatStr = (ColumnDataStr*)ColDatUdt;
 							char* Value = (char*)ColDatStr->GetValue();
 							char* ValueStore = (char*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
-							strncpy_s(ValueStore, m_ColumnSize[TableId][CurColIdx], Value, _TRUNCATE);
+							StkPlStrNCpy(ValueStore, m_ColumnSize[TableId][CurColIdx], Value, m_ColumnSize[TableId][CurColIdx] - 1);
+							ValueStore[m_ColumnSize[TableId][CurColIdx] - 1] = '\0';
 							//strncpy_sの代わりにCopyMemoryを使用することはできない。CopyMemoryの場合
 							//制限長いっぱいの文字列をコピーしたときに終端に\0が付加されない。
 							CheckAndChangeChar(ValueStore, ValueStore + m_ColumnSize[TableId][CurColIdx] - 1);
@@ -875,7 +877,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 							ColumnDataBin* ColDatBin = (ColumnDataBin*)ColDatUdt;
 							unsigned char* Value = (unsigned char*)ColDatBin->GetValue();
 							unsigned char* ValueStore = (unsigned char*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
-							memcpy(ValueStore, Value, m_ColumnSize[TableId][CurColIdx]);
+							StkPlMemCpy(ValueStore, Value, m_ColumnSize[TableId][CurColIdx]);
 							UdtFlag = true;
 						}
 					}
@@ -975,7 +977,7 @@ int DataAcController::AzSortCompare(const void *Arg1, const void *Arg2)
 	} else if (m_CompareColType == COLUMN_TYPE_STR) {
 		char* Addr1 = (char*)((unsigned char*)Arg1 + m_CompareColOffset);
 		char* Addr2 = (char*)((unsigned char*)Arg2 + m_CompareColOffset);
-		int Ret = strcmp(Addr1, Addr2);
+		int Ret = StkPlStrCmp(Addr1, Addr2);
 		return Ret;
 	} else if (m_CompareColType == COLUMN_TYPE_WSTR) {
 		wchar_t* Addr1 = (wchar_t*)((unsigned char*)Arg1 + m_CompareColOffset);
@@ -985,7 +987,7 @@ int DataAcController::AzSortCompare(const void *Arg1, const void *Arg2)
 	} else if (m_CompareColType == COLUMN_TYPE_BIN) {
 		void* Addr1 = (void*)((unsigned char*)Arg1 + m_CompareColOffset);
 		void* Addr2 = (void*)((unsigned char*)Arg2 + m_CompareColOffset);
-		int Ret = memcmp(Addr1, Addr2, m_CompareColSize);
+		int Ret = StkPlMemCmp(Addr1, Addr2, m_CompareColSize);
 		return Ret;
 	}
 	return 0;
@@ -1019,7 +1021,7 @@ int DataAcController::ZaSortCompare(const void *Arg1, const void *Arg2)
 	} else if (m_CompareColType == COLUMN_TYPE_STR) {
 		char* Addr1 = (char*)((unsigned char*)Arg1 + m_CompareColOffset);
 		char* Addr2 = (char*)((unsigned char*)Arg2 + m_CompareColOffset);
-		int Ret = strcmp(Addr2, Addr1);
+		int Ret = StkPlStrCmp(Addr2, Addr1);
 		return Ret;
 	} else if (m_CompareColType == COLUMN_TYPE_WSTR) {
 		wchar_t* Addr1 = (wchar_t*)((unsigned char*)Arg1 + m_CompareColOffset);
@@ -1029,7 +1031,7 @@ int DataAcController::ZaSortCompare(const void *Arg1, const void *Arg2)
 	} else if (m_CompareColType == COLUMN_TYPE_BIN) {
 		void* Addr1 = (void*)((unsigned char*)Arg1 + m_CompareColOffset);
 		void* Addr2 = (void*)((unsigned char*)Arg2 + m_CompareColOffset);
-		int Ret = memcmp(Addr2, Addr1, m_CompareColSize);
+		int Ret = StkPlMemCmp(Addr2, Addr1, m_CompareColSize);
 		return Ret;
 	}
 	return 0;

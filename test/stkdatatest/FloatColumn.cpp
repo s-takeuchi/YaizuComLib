@@ -1,11 +1,10 @@
-﻿#include <windows.h>
-#include <stdio.h>
+﻿#include "../../src/StkPl.h"
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
 
 int BasicFloatTest01()
 {
-	printf("Create table \"Float-Test\" which contains 32 float columns and 16383 records.");
+	StkPlPrintf("Create table \"Float-Test\" which contains 32 float columns and 16383 records.");
 	ColumnDefFloat ColDef00(L"Fcol00");
 	ColumnDefFloat ColDef01(L"Fcol01");
 	ColumnDefFloat ColDef02(L"Fcol02");
@@ -72,58 +71,58 @@ int BasicFloatTest01()
 	TabDefTest.AddColumnDef(&ColDef30);
 	TabDefTest.AddColumnDef(&ColDef31);
 	if (CreateTable(&TabDefTest) != 0) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Check the table \"Float-Test\" has 32 columns.");
+	StkPlPrintf("Check the table \"Float-Test\" has 32 columns.");
 	if (GetColumnCount(L"Float-Test") != 32) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Check the size of any 0th, 1st, 30th and 31st column of \"Float-Test\" table shows 4 bytes.");
+	StkPlPrintf("Check the size of any 0th, 1st, 30th and 31st column of \"Float-Test\" table shows 4 bytes.");
 	if (GetColumnSize(L"Float-Test", L"Fcol00") != 4 ||
 		GetColumnSize(L"Float-Test", L"Fcol01") != 4 ||
 		GetColumnSize(L"Float-Test", L"Fcol30") != 4 ||
 		GetColumnSize(L"Float-Test", L"Fcol31") != 4) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Check the type of Fcol10, Fcol20 and Fcol30 column of \"Float-Test\" table is float.");
+	StkPlPrintf("Check the type of Fcol10, Fcol20 and Fcol30 column of \"Float-Test\" table is float.");
 	if (GetColumnType(L"Float-Test", L"Fcol10") != COLUMN_TYPE_FLOAT ||
 		GetColumnSize(L"Float-Test", L"Fcol20") != COLUMN_TYPE_FLOAT ||
 		GetColumnSize(L"Float-Test", L"Fcol30") != COLUMN_TYPE_FLOAT) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 	return 0;
 }
 
 int BasicFloatTest02()
 {
-	printf("Add 10 records (with Fcol00 - Fcol31 columns to \"Float-Test\" table repeatedly.");
+	StkPlPrintf("Add 10 records (with Fcol00 - Fcol31 columns to \"Float-Test\" table repeatedly.");
 	ColumnData *ColDat[32];
 	RecordData *RecDat;
 	LockTable(L"Float-Test", LOCK_EXCLUSIVE);
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			wchar_t Buf[32];
-			wsprintf(Buf, L"Fcol%02d", i);
+			StkPlSwPrintf(Buf, 32, L"Fcol%02d", i);
 			ColDat[i] = new ColumnDataFloat(Buf, (float)(100.0 + 0.1 * j + i * 0.001));
 		}
 		RecDat = new RecordData(L"Float-Test", ColDat, 32);
 		if (InsertRecord(RecDat) != 0) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			delete RecDat;
 			UnlockTable(L"Float-Test");
 			return -1;
@@ -131,18 +130,18 @@ int BasicFloatTest02()
 		delete RecDat;
 	}
 	UnlockTable(L"Float-Test");
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Check the number of records which are existed in \"Float-Test\" table is 10.");
+	StkPlPrintf("Check the number of records which are existed in \"Float-Test\" table is 10.");
 	if (GetNumOfRecords(L"Float-Test") != 10) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Check that 10 records (with Fcol00-Fcol31 column) in \"Float-Test\" table added can be acquired appropriately.");
+	StkPlPrintf("Check that 10 records (with Fcol00-Fcol31 column) in \"Float-Test\" table added can be acquired appropriately.");
 	RecordData *AcquiredRecDat;
 	LockTable(L"Float-Test", LOCK_SHARE);
 	AcquiredRecDat = GetRecord(L"Float-Test");
@@ -150,7 +149,7 @@ int BasicFloatTest02()
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != (float)(100.0 + 0.1 * j + i * 0.001)) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				delete AcquiredRecDat;
 				return -1;
 			}
@@ -158,14 +157,14 @@ int BasicFloatTest02()
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
 	delete AcquiredRecDat;
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 	return 0;
 }
 
 int BasicFloatTest03()
 {
-	printf("Update 10 records (Fcol00 and Fcol01) in \"Float-Test\" table repeatedly.");
+	StkPlPrintf("Update 10 records (Fcol00 and Fcol01) in \"Float-Test\" table repeatedly.");
 	ColumnData *ColDat[1];
 	ColumnData *UpdColDat[2];
 	RecordData *RecDat;
@@ -178,7 +177,7 @@ int BasicFloatTest03()
 		UpdColDat[1] = new ColumnDataFloat(L"Fcol01", 999999000000.0f);
 		UpdRecDat = new RecordData(L"Float-Test", UpdColDat, 2);
 		if (UpdateRecord(RecDat, UpdRecDat) != 0) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			delete RecDat;
 			delete UpdRecDat;
 			UnlockTable(L"Float-Test");
@@ -187,25 +186,25 @@ int BasicFloatTest03()
 		delete UpdRecDat;
 	}
 	UnlockTable(L"Float-Test");
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
 	RecordData *AcquiredRecDat;
 	LockTable(L"Float-Test", LOCK_SHARE);
 	AcquiredRecDat = GetRecord(L"Float-Test");
 	UnlockTable(L"Float-Test");
-	printf("Check that 10 records (with Fcol00 - Fcol31 column) which are updated can be acquired appropriately.");
+	StkPlPrintf("Check that 10 records (with Fcol00 - Fcol31 column) which are updated can be acquired appropriately.");
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			if (i == 0) {
 				if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != 0) {
-					printf("...[NG]\r\n");
+					StkPlPrintf("...[NG]\r\n");
 					delete AcquiredRecDat;
 					return -1;
 				}
 			} else if (i == 1) {
 			} else if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != (float)(100.0 + 0.1 * j + i * 0.001)) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				delete AcquiredRecDat;
 				return -1;
 			}
@@ -213,14 +212,14 @@ int BasicFloatTest03()
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
 	delete AcquiredRecDat;
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 	return 0;
 }
 
 int BasicFloatTest04()
 {
-	printf("Add 10 records (with Fcol00 - Fcol31 columns) to  \"Float-Test\" table simaltainiously.");
+	StkPlPrintf("Add 10 records (with Fcol00 - Fcol31 columns) to  \"Float-Test\" table simaltainiously.");
 	ColumnData *ColDat[32];
 	RecordData *RecDat;
 	RecordData *HeadRecDat;
@@ -228,7 +227,7 @@ int BasicFloatTest04()
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			wchar_t Buf[32];
-			wsprintf(Buf, L"Fcol%02d", i);
+			StkPlSwPrintf(Buf, 32, L"Fcol%02d", i);
 			ColDat[i] = new ColumnDataFloat(Buf, (float)(200.0 + 0.1 * j + i * 0.001));
 		}
 		RecDat = new RecordData(L"Float-Test", ColDat, 32);
@@ -241,17 +240,17 @@ int BasicFloatTest04()
 	}
 	LockTable(L"Float-Test", LOCK_EXCLUSIVE);
 	if (InsertRecord(HeadRecDat) != 0) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		delete HeadRecDat;
 		UnlockTable(L"Float-Test");
 		return -1;
 	}
 	UnlockTable(L"Float-Test");
 	delete HeadRecDat;
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 	{
-		printf("Search \"Float-table\" table (with Less than specification)");
+		StkPlPrintf("Search \"Float-table\" table (with Less than specification)");
 		ColDat[0] = new ColumnDataFloat(L"Fcol05", 200.5);
 		ColDat[0]->SetComparisonOperator(COMP_LT);
 		RecDat = new RecordData(L"Float-Test", ColDat, 1);
@@ -260,24 +259,24 @@ int BasicFloatTest04()
 		UnlockTable(L"Float-Test");
 		RecordData* CurRecDat;
 		if (HeadRecDat == NULL) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			return -1;
 		}
 		for (CurRecDat = HeadRecDat; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
 			ColumnDataFloat* TmpCol = (ColumnDataFloat*)CurRecDat->GetColumn(L"Fcol05");
 			float TmpFl = TmpCol->GetValue();
 			if (TmpFl >= 200.5) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 		}
 		delete HeadRecDat;
 		delete RecDat;
-		printf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\r\n");
 	}
 
 	{
-		printf("Search \"Float-table\" table (with Greater than or Equal to specification)");
+		StkPlPrintf("Search \"Float-table\" table (with Greater than or Equal to specification)");
 		ColDat[0] = new ColumnDataFloat(L"Fcol05", 200.5, COMP_GE);
 		RecDat = new RecordData(L"Float-Test", ColDat, 1);
 		LockTable(L"Float-Test", LOCK_SHARE);
@@ -285,31 +284,31 @@ int BasicFloatTest04()
 		UnlockTable(L"Float-Test");
 		RecordData* CurRecDat;
 		if (HeadRecDat == NULL) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			return -1;
 		}
 		for (CurRecDat = HeadRecDat; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
 			ColumnDataFloat* TmpCol = (ColumnDataFloat*)CurRecDat->GetColumn(L"Fcol05");
 			float TmpFl = TmpCol->GetValue();
 			if (TmpFl < 200.5) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 		}
 		delete HeadRecDat;
 		delete RecDat;
-		printf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\r\n");
 	}
 
-	printf("Check the number of existed records which are in \"Float-Test\" table.");
+	StkPlPrintf("Check the number of existed records which are in \"Float-Test\" table.");
 	if (GetNumOfRecords(L"Float-Test") != 20) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Check that 10 records information can be acquired appropriately from 20 records in \"Float-Test\" table with criteria specification.");
+	StkPlPrintf("Check that 10 records information can be acquired appropriately from 20 records in \"Float-Test\" table with criteria specification.");
 	RecordData *AcquiredRecDat;
 	for (int i = 0; i < 10; i++) {
 		ColDat[0] = new ColumnDataFloat(L"Fcol00", (float)(200.0 + 0.1 * i));
@@ -326,13 +325,13 @@ int BasicFloatTest04()
 	UnlockTable(L"Float-Test");
 	delete HeadRecDat;
 	if (AcquiredRecDat == NULL) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != (float)(200.0 + 0.1 * j + i * 0.001)) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				delete AcquiredRecDat;
 				return -1;
 			}
@@ -340,14 +339,14 @@ int BasicFloatTest04()
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
 	delete AcquiredRecDat;
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 	return 0;
 }
 
 int BasicFloatTest05()
 {
-	printf("Update 10 records (Fcol00 and Fcol01) in \"Float-Test\" table simultaneously.");
+	StkPlPrintf("Update 10 records (Fcol00 and Fcol01) in \"Float-Test\" table simultaneously.");
 	ColumnData *ColDat[1];
 	RecordData *RecDat;
 	RecordData *LastRecDat;
@@ -369,7 +368,7 @@ int BasicFloatTest05()
 	UpdColDat[1] = new ColumnDataFloat(L"Fcol01", 999999000000.0f);
 	UpdRecDat = new RecordData(L"Float-Test", UpdColDat, 2);
 	if (UpdateRecord(HeadRecDat, UpdRecDat) != 0) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		delete HeadRecDat;
 		delete UpdRecDat;
 		UnlockTable(L"Float-Test");
@@ -377,24 +376,24 @@ int BasicFloatTest05()
 	delete HeadRecDat;
 	delete UpdRecDat;
 	UnlockTable(L"Float-Test");
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
 	RecordData *AcquiredRecDat;
 	LockTable(L"Float-Test", LOCK_SHARE);
 	AcquiredRecDat = GetRecord(L"Float-Test");
 	UnlockTable(L"Float-Test");
-	printf("Check that all of records (Fcol00) including updated 10 records can be acquired appropriately.");
+	StkPlPrintf("Check that all of records (Fcol00) including updated 10 records can be acquired appropriately.");
 	for (int j = 0; j < 20; j++) {
 		if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(0)))->GetValue() != 0) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			delete AcquiredRecDat;
 			return -1;
 		}
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
 	delete AcquiredRecDat;
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
 	return 0;
@@ -402,58 +401,58 @@ int BasicFloatTest05()
 
 int BasicFloatTest06()
 {
-	printf("Preserve table information into \"FloatColumn.std\".");
+	StkPlPrintf("Preserve table information into \"FloatColumn.std\".");
 	LockAllTable(LOCK_SHARE);
 	if (SaveData(L"FloatColumn.std") != 0) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		UnlockAllTable();
 		return -1;
 	}
 	UnlockAllTable();
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Delete all records (search the records whose value of Fcol00 is zero) from table.");
+	StkPlPrintf("Delete all records (search the records whose value of Fcol00 is zero) from table.");
 	ColumnData *ColDat[1];
 	ColDat[0] = new ColumnDataFloat(L"Fcol00", 0);
 	RecordData *RecDat = new RecordData(L"Float-Test", ColDat, 1);
 	LockTable(L"Float-Test", LOCK_EXCLUSIVE);
 	if (DeleteRecord(RecDat) != 0) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		UnlockTable(L"Float-Test");
 		delete RecDat;
 		return -1;
 	}
 	UnlockTable(L"Float-Test");
 	delete RecDat;
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Check that all of records can be deleted from \"Float-Test\" table.");
+	StkPlPrintf("Check that all of records can be deleted from \"Float-Test\" table.");
 	if (GetNumOfRecords(L"Float-Test") != 0) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Load table information from \"FloatColumn.std\".");
+	StkPlPrintf("Load table information from \"FloatColumn.std\".");
 	LockAllTable(LOCK_EXCLUSIVE);
 	if (LoadData(L"FloatColumn.std") != 0) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		UnlockAllTable();
 		return -1;
 	}
 	UnlockAllTable();
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
-	printf("Check the number of records which are in \"Float-Test\" table is 20.");
+	StkPlPrintf("Check the number of records which are in \"Float-Test\" table is 20.");
 	if (GetNumOfRecords(L"Float-Test") != 20) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 
 	return 0;

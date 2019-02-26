@@ -1,6 +1,4 @@
-﻿#include <windows.h>
-#include <stdio.h>
-#include <shlwapi.h>
+﻿#include "../../src/StkPl.h"
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
 
@@ -13,17 +11,17 @@ ManyRecords
 int ManyRecords()
 {
 	{
-		printf("Table can be created defined as WStr(256) x 32 columns×16383 records. Records can be inserted 16383 times using InsertRecord.");
+		StkPlPrintf("Table can be created defined as WStr(256) x 32 columns×16383 records. Records can be inserted 16383 times using InsertRecord.");
 		ColumnDefWStr* ColDef[32];
 		TableDef LargeTable(L"焼津沼津辰口町和泉町中田北白楽", 16383);
 		for (int i = 0; i < 32; i++) {
 			wchar_t ColName[16];
-			wsprintf(ColName, L"東西南北老若男女焼肉定食愛%d", i);
+			StkPlSwPrintf(ColName, 16, L"東西南北老若男女焼肉定食愛%d", i);
 			ColDef[i] = new ColumnDefWStr(ColName, 256);
 			LargeTable.AddColumnDef(ColDef[i]);
 		}
 		if (CreateTable(&LargeTable) != 0) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			return -1;
 		}
 		for (int i = 0; i < 32; i++) {
@@ -36,60 +34,60 @@ int ManyRecords()
 			for (int i = 0; i < 32; i++) {
 				wchar_t ColName[16];
 				wchar_t Val[256] = L"";
-				wsprintf(ColName, L"東西南北老若男女焼肉定食愛%d", i);
-				wsprintf(Val, L"%d %d :12345", k, i);
+				StkPlSwPrintf(ColName, 16, L"東西南北老若男女焼肉定食愛%d", i);
+				StkPlSwPrintf(Val, 256, L"%d %d :12345", k, i);
 				for (int j = 0; j < 24; j++) {
-					lstrcat(Val, L"一二三四五六七八九十");
+					StkPlWcsCat(Val, 256, L"一二三四五六七八九十");
 				}
 				ColDat[i] = new ColumnDataWStr(ColName, Val);
 			}
 			RecDat = new RecordData(L"焼津沼津辰口町和泉町中田北白楽", ColDat, 32);
 			LockTable(L"焼津沼津辰口町和泉町中田北白楽", 2);
 			if (InsertRecord(RecDat) != 0) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 			UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 			delete RecDat;
 		}
-		printf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\r\n");
 	}
 
 	{
-		printf("Records can be acquired from exising table.");
+		StkPlPrintf("Records can be acquired from exising table.");
 		LockTable(L"焼津沼津辰口町和泉町中田北白楽", LOCK_SHARE);
 		RecordData* RecDat = GetRecord(L"焼津沼津辰口町和泉町中田北白楽");
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 		RecordData* CurRecDat = RecDat;
-		printf("Column information can be acquired with column name specification.");
+		StkPlPrintf("Column information can be acquired with column name specification.");
 		do {
 			ColumnDataWStr* ColDat0 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛0");
 			if (ColDat0 == NULL) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 			wchar_t* ColDat0Value = ColDat0->GetValue();
-			if (ColDat0Value == NULL || lstrlen(ColDat0Value) == 0) {
-				printf("...[NG]\r\n");
+			if (ColDat0Value == NULL || StkPlWcsLen(ColDat0Value) == 0) {
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 			ColumnDataWStr* ColDat31 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛31");
 			if (ColDat31 == NULL) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 			wchar_t* ColDat31Value = ColDat0->GetValue();
-			if (ColDat31Value == NULL || lstrlen(ColDat31Value) == 0) {
-				printf("...[NG]\r\n");
+			if (ColDat31Value == NULL || StkPlWcsLen(ColDat31Value) == 0) {
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 		} while (CurRecDat = CurRecDat->GetNextRecord());
-		printf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\r\n");
 		delete RecDat;
 	}
 
 	{
-		printf("Search records from existing table.  Search criteria=WStr:multi+CONTAIN");
+		StkPlPrintf("Search records from existing table.  Search criteria=WStr:multi+CONTAIN");
 		ColumnData* ColDat[2];
 		ColDat[0] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛2", L"100 2 :");
 		ColDat[0]->SetComparisonOperator(COMP_CONTAIN);
@@ -104,27 +102,27 @@ int ManyRecords()
 			ColumnDataWStr* ColDat2 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛2");
 			ColumnDataWStr* ColDat3 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛3");
 			if (ColDat2 == NULL || ColDat3 == NULL) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 			wchar_t* ColDat0Value2 = ColDat2->GetValue();
 			wchar_t* ColDat0Value3 = ColDat3->GetValue();
-			if (StrStr(ColDat0Value2, L"100 2 :") == NULL) {
-				printf("...[NG]\r\n");
+			if (StkPlWcsStr(ColDat0Value2, L"100 2 :") == NULL) {
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
-			if (StrStr(ColDat0Value3, L"100 3 :") == NULL) {
-				printf("...[NG]\r\n");
+			if (StkPlWcsStr(ColDat0Value3, L"100 3 :") == NULL) {
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 		} while (CurRecDat = CurRecDat->GetNextRecord());
 		delete RecDatSch;
 		delete RecDatRet;
-		printf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\r\n");
 	}
 
 	{
-		printf("Search records from existing table.  Search criteria=WStr:multi+EQUAL(invalid)");
+		StkPlPrintf("Search records from existing table.  Search criteria=WStr:multi+EQUAL(invalid)");
 		ColumnData* ColDat[1];
 		ColDat[0] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛2", L"100 2 :");
 		ColDat[0]->SetComparisonOperator(COMP_EQUAL);
@@ -133,15 +131,15 @@ int ManyRecords()
 		RecordData* RecDatRet = GetRecord(RecDatSch);
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 		if (RecDatRet != NULL) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			return -1;
 		}
 		delete RecDatSch;
-		printf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\r\n");
 	}
 
 	{
-		printf("Search records from existing table.  Search criteria=WStr:multi+NOT CONTAIN");
+		StkPlPrintf("Search records from existing table.  Search criteria=WStr:multi+NOT CONTAIN");
 		ColumnData* ColDat[2];
 		ColDat[0] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛2", L"100 2 :", COMP_NOT_CONTAIN);
 		ColDat[1] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛3", L"100 3 :", COMP_NOT_CONTAIN);
@@ -155,28 +153,28 @@ int ManyRecords()
 			ColumnDataWStr* ColDat2 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛2");
 			ColumnDataWStr* ColDat3 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛3");
 			if (ColDat2 == NULL || ColDat3 == NULL) {
-				printf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 			wchar_t* ColDat0Value2 = ColDat2->GetValue();
 			wchar_t* ColDat0Value3 = ColDat3->GetValue();
-			if (StrStr(ColDat0Value2, L"100 2 :") != NULL) {
-				printf("...[NG]\r\n");
+			if (StkPlWcsStr(ColDat0Value2, L"100 2 :") != NULL) {
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
-			if (StrStr(ColDat0Value3, L"100 3 :") != NULL) {
-				printf("...[NG]\r\n");
+			if (StkPlWcsStr(ColDat0Value3, L"100 3 :") != NULL) {
+				StkPlPrintf("...[NG]\r\n");
 				return -1;
 			}
 			NumOfDat++;
 		} while (CurRecDat = CurRecDat->GetNextRecord());
 		delete RecDatSch;
 		delete RecDatRet;
-		printf("...%d[OK]\r\n", NumOfDat);
+		StkPlPrintf("...%d[OK]\r\n", NumOfDat);
 	}
 
 	{
-		printf("Search records from existing table.  Search criteria=WStr:multi(invalid)");
+		StkPlPrintf("Search records from existing table.  Search criteria=WStr:multi(invalid)");
 		ColumnData* ColDat[2];
 		ColDat[0] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛2", L"100 2 :", COMP_CONTAIN);
 		ColDat[1] = new ColumnDataWStr(L"東西南北老若男女焼肉定食愛3", L"100 3 :", COMP_NOT_CONTAIN);
@@ -185,15 +183,15 @@ int ManyRecords()
 		RecordData* RecDatRet = GetRecord(RecDatSch);
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 		if (RecDatRet != NULL) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			return -1;
 		}
 		delete RecDatSch;
-		printf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\r\n");
 	}
 
 	{
-		printf("10 records can be acquired from specified table. Connected records are specified.");
+		StkPlPrintf("10 records can be acquired from specified table. Connected records are specified.");
 		RecordData* RecDat;
 		RecordData* TopRecDat;
 		RecordData* PrvRecDat;
@@ -201,10 +199,10 @@ int ManyRecords()
 		for (int i = 0; i < 10; i ++) {
 			wchar_t ColName[16];
 			wchar_t Val[256] = L"";
-			wsprintf(ColName, L"東西南北老若男女焼肉定食愛%d", 0);
-			wsprintf(Val, L"%d %d :12345", i, 0);
+			StkPlSwPrintf(ColName, 16, L"東西南北老若男女焼肉定食愛%d", 0);
+			StkPlSwPrintf(Val, 256, L"%d %d :12345", i, 0);
 			for (int j = 0; j < 24; j++) {
-				lstrcat(Val, L"一二三四五六七八九十");
+				StkPlWcsCat(Val, 256, L"一二三四五六七八九十");
 			}
 			ColDat = new ColumnDataWStr(ColName, Val);
 			RecDat = new RecordData(L"焼津沼津辰口町和泉町中田北白楽", &ColDat, 1);
@@ -222,29 +220,29 @@ int ManyRecords()
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 		delete TopRecDat;
 		if (GetNumOfRecords(L"焼津沼津辰口町和泉町中田北白楽") != 16373) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			return -1;
 		}
-		printf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\r\n");
 	}
 
 	{
-		printf("-1 is returned if non existing column name is specified to ZaSortRecord.");
+		StkPlPrintf("-1 is returned if non existing column name is specified to ZaSortRecord.");
 		LockTable(L"焼津沼津辰口町和泉町中田北白楽", LOCK_EXCLUSIVE);
 		if (ZaSortRecord(L"焼津沼津辰口町和泉町中田北白楽", L"aaa") != -1) {
-			printf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\r\n");
 			return -1;
 		}
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
-		printf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\r\n");
 	}
 
-	printf("Delete a table which contains large number of records.");
+	StkPlPrintf("Delete a table which contains large number of records.");
 	if (DeleteTable(L"焼津沼津辰口町和泉町中田北白楽") != 0) {
-		printf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\r\n");
 		return -1;
 	}
-	printf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\r\n");
 
 	return 0;
 }

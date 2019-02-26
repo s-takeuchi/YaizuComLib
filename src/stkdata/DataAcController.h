@@ -15,7 +15,7 @@ public:
 
 private:
 	wchar_t  m_TableName[MAX_TABLE_NUMBER][TABLE_NAME_SIZE];
-	void* m_TableAddr[MAX_TABLE_NUMBER];
+	char* m_TableAddr[MAX_TABLE_NUMBER];
 	size_t m_TableSize[MAX_TABLE_NUMBER];
 	int    m_TableLock[MAX_TABLE_NUMBER];
 	int    m_TableVer[MAX_TABLE_NUMBER];

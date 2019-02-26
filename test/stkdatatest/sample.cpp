@@ -1,5 +1,4 @@
-﻿#include <windows.h>
-#include <stdio.h>
+﻿#include "../../src/StkPl.h"
 #include "..\..\src\stkdata\stkdata.h"
 #include "..\..\src\stkdata\stkdataapi.h"
 
@@ -15,7 +14,7 @@ int FloatTest();
 //int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 int main(int argc, char *argv[])
 {
-	printf("Test started.\r\n");
+	StkPlPrintf("Test started.\r\n");
 	if (ManyRecords() == -1) {
 		return -1;
 	}
@@ -40,6 +39,6 @@ int main(int argc, char *argv[])
 	if (AutoSaveTest() == -1) {
 		return -1;
 	}
-	printf("Test completed.\r\n");
+	StkPlPrintf("Test completed.\r\n");
 	return 0;
 }
