@@ -1,6 +1,6 @@
 ﻿#include "../../src/StkPl.h"
-#include "..\..\src\stkdata\stkdata.h"
-#include "..\..\src\stkdata\stkdataapi.h"
+#include "../../src/stkdata/stkdata.h"
+#include "../../src/stkdata/stkdataapi.h"
 
 
 int Insert16383RecordsAtOneTime()
