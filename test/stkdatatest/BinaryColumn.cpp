@@ -344,20 +344,29 @@ int BasicBinaryTest09()
 	RecordData* RecDat1;
 	RecordData* RecDat2;
 	RecordData* RecDat3;
+	RecordData* RecDat4;
+	RecordData* RecDat5;
 	RecordData* GetRecDat;
 
 	unsigned char one_img1[10] = {0x00, 0xFF, 0x01, 0x02, 0x03, 0x04, 0x05, 0x00, 0xFF, 0xFF};
-	ColDat[0] = new ColumnDataBin(L"Img1", one_img1, 10);
-	RecDat1 = new RecordData(L"Bin-Test", ColDat, 1);
+	ColDat[1] = new ColumnDataBin(L"Img1", one_img1, 10);
+	RecDat1 = new RecordData(L"Bin-Test", &ColDat[1], 1);
 
 	unsigned char one_img2[10] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x00, 0x00, 0xFF};
-	ColDat[0] = new ColumnDataBin(L"Img1", one_img2, 10);
-	RecDat2 = new RecordData(L"Bin-Test", ColDat, 1);
+	ColDat[2] = new ColumnDataBin(L"Img1", one_img2, 10);
+	RecDat2 = new RecordData(L"Bin-Test", &ColDat[2], 1);
 	RecDat1->SetNextRecord(RecDat2);
 
 	unsigned char one_img3[10] = {0x39, 0x39, 0x39, 0x39, 0x39, 0x19, 0x19, 0x19, 0x19, 0x19};
-	ColDat[0] = new ColumnDataBin(L"Img2", one_img3, 10);
-	RecDat3 = new RecordData(L"Bin-Test", ColDat, 1);
+	ColDat[3] = new ColumnDataBin(L"Img2", one_img3, 10);
+	RecDat3 = new RecordData(L"Bin-Test", &ColDat[3], 1);
+
+	ColDat[4] = new ColumnDataInt(L"ID", 12345);
+	RecDat4 = new RecordData(L"Bin-Test", &ColDat[4], 1);
+
+	unsigned char one_img5[10] = { 0x44, 0x11, 0x22, 0x11, 0x00, 0x55, 0x66, 0x77, 0x88, 0x99 };
+	ColDat[5] = new ColumnDataBin(L"Img2", one_img5, 10);
+	RecDat5 = new RecordData(L"Bin-Test", &ColDat[5], 1);
 
 	LockTable(L"Bin-Test", 2);
 	UpdateRecord(RecDat1, RecDat3);
@@ -398,6 +407,10 @@ int BasicBinaryTest09()
 	// バイナリ型カラム"Img2"を指定してレコードを降順ソート→適正にソートされている
 	{
 		StkPlPrintf("Sort records with binary column 'Img2' specification and then, check the records are appropriately sorted.");
+		LockTable(L"Bin-Test", LOCK_EXCLUSIVE);
+		UpdateRecord(RecDat4, RecDat5);
+		UnlockTable(L"Bin-Test");
+
 		LockTable(L"Bin-Test", LOCK_EXCLUSIVE);
 		if (ZaSortRecord(L"Bin-Test", L"Img2") != 0) {
 			StkPlPrintf("...[NG]\r\n");
@@ -458,6 +471,8 @@ int BasicBinaryTest09()
 
 	delete RecDat1;
 	delete RecDat3;
+	delete RecDat4;
+	delete RecDat5;
 	delete Top;
 
 	if (DeleteTable(L"Bin-Test") != 0) {

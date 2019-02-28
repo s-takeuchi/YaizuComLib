@@ -36,7 +36,7 @@ int Insert16383Records()
 	RecordData *CurRecDat;
 	for (int i = 0; i < 16383; i++) {
 		wchar_t Name[10];
-		StkPlSwPrintf(Name, 10, L"%s %s", Lname[StkPlRand() % 10], Fname[StkPlRand() % 10]);
+		StkPlSwPrintf(Name, 10, L"%ls %ls", Lname[StkPlRand() % 10], Fname[StkPlRand() % 10]);
 		if (i % 5000 == 0) {
 			ColDat1[0] = new ColumnDataWStr(L"Name", L"竹内 伸也");
 		} else {
@@ -44,7 +44,7 @@ int Insert16383Records()
 		}
 		ColDat1[1] = new ColumnDataInt(L"ID", i);
 		wchar_t Address[15];
-		StkPlSwPrintf(Address, 15, L"%s%d", Pref[StkPlRand() % 7], StkPlRand() % 10000);
+		StkPlSwPrintf(Address, 15, L"%ls%d", Pref[StkPlRand() % 7], StkPlRand() % 10000);
 		ColDat1[2] = new ColumnDataWStr(L"Address", Address);
 		ColDat1[3] = new ColumnDataStr(L"Key", "No Key");
 		ColDat1[4] = new ColumnDataFloat(L"Height", (float)(150.0f + (StkPlRand() % 500) / 10.0f));

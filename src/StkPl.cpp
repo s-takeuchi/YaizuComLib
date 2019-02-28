@@ -1017,6 +1017,7 @@ void* StkPlOpenFileForRead(const wchar_t FilePath[FILENAME_MAX])
 	if (FileHndl == INVALID_HANDLE_VALUE) {
 		return NULL;
 	};
+	return (void*)FileHndl;
 #else
 	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
 	FILE *fp = fopen(FileNameUtf8, "r");
@@ -1024,6 +1025,7 @@ void* StkPlOpenFileForRead(const wchar_t FilePath[FILENAME_MAX])
 		return NULL;
 	}
 	delete FileNameUtf8;
+	return fp;
 #endif
 }
 
