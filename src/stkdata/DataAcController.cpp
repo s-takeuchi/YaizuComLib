@@ -84,7 +84,7 @@ int DataAcController::GetFreeTableId()
 // Search the table which has the specified table name.
 // [in] wchar_t* : Table name
 // [out] int : Table Id (-1: Table does not found.)
-int DataAcController::SearchTable(wchar_t* TableName)
+int DataAcController::SearchTable(const wchar_t* TableName)
 {
 	int Loop;
 	for (Loop = 0; Loop < MAX_TABLE_NUMBER; Loop++) {
@@ -99,7 +99,7 @@ int DataAcController::SearchTable(wchar_t* TableName)
 // [in] wchar_t* : Table name
 // [in] wchar_t* : Column name
 // [out] int : Column index (-1:Not found)
-int DataAcController::GetColumnIndex(wchar_t* TableName, wchar_t* ColumnName)
+int DataAcController::GetColumnIndex(const wchar_t* TableName, const wchar_t* ColumnName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -277,7 +277,7 @@ int DataAcController::CreateTable(TableDef* TabDef)
 // Delete table
 // [in] wchar_t* : Table name
 // [out] int : Result Code (0: Sucess, -1: Memory unallocation error, -2: Parameter error, -3: Decommit error)
-int DataAcController::DeleteTable(wchar_t* TableName)
+int DataAcController::DeleteTable(const wchar_t* TableName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -2;
@@ -300,7 +300,7 @@ int DataAcController::DeleteTable(wchar_t* TableName)
 // [in] OldName : Old name
 // [in] NewName : New name
 // [out] int : Result Code (0: Sucess, -1: Error)
-int DataAcController::RenameTable(wchar_t* OldName, wchar_t* NewName)
+int DataAcController::RenameTable(const wchar_t* OldName, const wchar_t* NewName)
 {
 	if (StkPlWcsCmp(NewName, L"") == 0) {
 		return -1;
@@ -324,7 +324,7 @@ int DataAcController::RenameTable(wchar_t* OldName, wchar_t* NewName)
 // [in] wchar_t* : Table name
 // [in] int    : Lock type (LOCK_SHARE or LOCK_EXCLUSIVE)
 // [out] int : Result Code (0: Sucess, -1: Locking error)
-int DataAcController::LockTable(wchar_t* TableName, int LockType)
+int DataAcController::LockTable(const wchar_t* TableName, int LockType)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -368,7 +368,7 @@ int DataAcController::LockTable(wchar_t* TableName, int LockType)
 // Unlock table
 // [in] wchar_t* : Table name
 // [out] int : Result Code (0: Sucess, -1: Locking error)
-int DataAcController::UnlockTable(wchar_t* TableName)
+int DataAcController::UnlockTable(const wchar_t* TableName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -525,7 +525,7 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 // Get record
 // [in] wchar_t* : Table name
 // [out] RecordData* : Pointer to the records (NULL:Error)
-RecordData* DataAcController::GetRecord(wchar_t* TableName)
+RecordData* DataAcController::GetRecord(const wchar_t* TableName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return NULL;
@@ -592,7 +592,7 @@ RecordData* DataAcController::GetRecord(RecordData* RecDatReq)
 // Delete all records of the specified table
 // [in] wchar_t* : Table name
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::DeleteRecord(wchar_t* TableName)
+int DataAcController::DeleteRecord(const wchar_t* TableName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -906,7 +906,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 // [in] wchar_t* : Table name
 // [in] bool : true="A to Z", false="Z to A"
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::SortRecord(wchar_t* TableName, wchar_t* ColumnName, bool Flag)
+int DataAcController::SortRecord(const wchar_t* TableName, const wchar_t* ColumnName, bool Flag)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0 ||
 		ColumnName == NULL || StkPlWcsCmp(ColumnName, L"") == 0) {
@@ -935,7 +935,7 @@ int DataAcController::SortRecord(wchar_t* TableName, wchar_t* ColumnName, bool F
 // [in] wchar_t* : Target column name for sorting
 // [in] wchar_t* : Table name
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::AzSortRecord(wchar_t* TableName, wchar_t* ColumnName)
+int DataAcController::AzSortRecord(const wchar_t* TableName, const wchar_t* ColumnName)
 {
 	return SortRecord(TableName, ColumnName, true);
 }
@@ -944,7 +944,7 @@ int DataAcController::AzSortRecord(wchar_t* TableName, wchar_t* ColumnName)
 // [in] wchar_t* : Target column name for sorting
 // [in] wchar_t* : Table name
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::ZaSortRecord(wchar_t* TableName, wchar_t* ColumnName)
+int DataAcController::ZaSortRecord(const wchar_t* TableName, const wchar_t* ColumnName)
 {
 	return SortRecord(TableName, ColumnName, false);
 }
@@ -1042,7 +1042,7 @@ int DataAcController::ZaSortCompare(const void *Arg1, const void *Arg2)
 // Get column count
 // [in] wchar_t* : Table name
 // [out] int : Column count (-1:Not found)
-int DataAcController::GetColumnCount(wchar_t* TableName)
+int DataAcController::GetColumnCount(const wchar_t* TableName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -1058,7 +1058,7 @@ int DataAcController::GetColumnCount(wchar_t* TableName)
 // [in] wchar_t* : Table name
 // [in] wchar_t[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE] : Column names which are acquired.
 // [out] int : Found column name count
-int DataAcController::GetColumnName(wchar_t* TableName, wchar_t ColumnNames[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE])
+int DataAcController::GetColumnName(const wchar_t* TableName, wchar_t ColumnNames[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE])
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -1084,7 +1084,7 @@ int DataAcController::GetColumnName(wchar_t* TableName, wchar_t ColumnNames[MAX_
 // [in] wchar_t* : Table name
 // [in] wchar_t* : Column name
 // [out] int : Column size (-1:Not found)
-int DataAcController::GetColumnSize(wchar_t* TableName, wchar_t* ColumnName)
+int DataAcController::GetColumnSize(const wchar_t* TableName, const wchar_t* ColumnName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -1104,7 +1104,7 @@ int DataAcController::GetColumnSize(wchar_t* TableName, wchar_t* ColumnName)
 // [in] wchar_t* : Table name
 // [in] wchar_t* : Column name
 // [out] int : Column type
-int DataAcController::GetColumnType(wchar_t* TableName, wchar_t* ColumnName)
+int DataAcController::GetColumnType(const wchar_t* TableName, const wchar_t* ColumnName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -1156,7 +1156,7 @@ int DataAcController::GetTableName(wchar_t TableNames[MAX_TABLE_NUMBER][TABLE_NA
 //Get table size
 // [in] wchar_t* : Table name for acquiring the size
 // [out] int : Size of the table
-int DataAcController::GetTableSize(wchar_t* TableName)
+int DataAcController::GetTableSize(const wchar_t* TableName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -1171,7 +1171,7 @@ int DataAcController::GetTableSize(wchar_t* TableName)
 // Get table version
 // [in] : wchar_t* : TableName
 // [out] : int : The version of the specified table
-int DataAcController::GetTableVersion(wchar_t* TableName)
+int DataAcController::GetTableVersion(const wchar_t* TableName)
 {
 	if (TableName == NULL || StkPlWcsCmp(TableName, L"") == 0) {
 		return -1;
@@ -1186,7 +1186,7 @@ int DataAcController::GetTableVersion(wchar_t* TableName)
 //Get max number of records
 // [in] wchar_t* : Table name
 // [out] int : Max number of records
-int DataAcController::GetMaxNumOfRecords(wchar_t* TableName)
+int DataAcController::GetMaxNumOfRecords(const wchar_t* TableName)
 {
 	int Idx = SearchTable(TableName);
 	if (Idx == -1) {
@@ -1198,7 +1198,7 @@ int DataAcController::GetMaxNumOfRecords(wchar_t* TableName)
 //Get number of records
 // [in] wchar_t* : Table name
 // [out] int : number of records
-int DataAcController::GetNumOfRecords(wchar_t* TableName)
+int DataAcController::GetNumOfRecords(const wchar_t* TableName)
 {
 	int Idx = SearchTable(TableName);
 	if (Idx == -1) {
@@ -1211,7 +1211,7 @@ int DataAcController::GetNumOfRecords(wchar_t* TableName)
 
 // Save data
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::SaveData(wchar_t* FilePath)
+int DataAcController::SaveData(const wchar_t* FilePath)
 {
 	int LoopTbl;
 	int LoopClm;
@@ -1341,7 +1341,7 @@ int DataAcController::SaveData(wchar_t* FilePath)
 
 // Load data
 // [out] int : Result code (0: Sucess, -1: Error)
-int DataAcController::LoadData(wchar_t* FilePath)
+int DataAcController::LoadData(const wchar_t* FilePath)
 {
 	int LoopTbl;
 	int LoopClm;
@@ -1554,7 +1554,7 @@ void DataAcController::AutoSaveThreadProc()
 	}
 }
 
-int DataAcController::AutoSave(wchar_t* FilePath, int Sec, bool Flag)
+int DataAcController::AutoSave(const wchar_t* FilePath, int Sec, bool Flag)
 {
 	static bool Switch = false;
 

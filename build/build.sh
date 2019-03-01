@@ -60,6 +60,17 @@ gzip stkthread.tar
 mv stkthread.tar.gz ../../build/deployment
 cd ..
 
+echo Building stkdata...
+cd stkdata
+make all
+if [ $? -ne 0 ]; then
+  exit $?
+fi
+tar cf stkdatatar stkdata.h stkdata.a
+gzip stkdata.tar
+mv stkdata.tar.gz ../../build/deployment
+cd ..
+
 echo Building stkwebapp
 cd stkwebapp
 make all

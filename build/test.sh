@@ -32,6 +32,14 @@ if [ $? -ne 0 ]; then
 fi
 cd ..
 
+echo Building stkdatatest...
+cd stkdatatest
+make all
+if [ $? -ne 0 ]; then
+  exit $?
+fi
+cd ..
+
 echo Building stkwebapptest
 cd stkwebapptest
 make all
@@ -55,6 +63,12 @@ fi
 echo ---------------------------------------
 echo stkthreadtest
 ./stkthreadtest/stkthreadtest
+if [ $? -ne 0 ]; then
+  exit $?
+fi
+echo ---------------------------------------
+echo stkdatatest
+./stkdatatest/stkdatatest
 if [ $? -ne 0 ]; then
   exit $?
 fi

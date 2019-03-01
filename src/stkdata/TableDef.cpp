@@ -13,7 +13,7 @@ TableDef::TableDef()
 }
 
 // Constructor
-TableDef::TableDef(wchar_t* TableName, int MaxRecord)
+TableDef::TableDef(const wchar_t* TableName, int MaxRecord)
 {
 	for (int Loop = 0; Loop < MAX_COLUMN_NUMBER; Loop++) {
 		m_Column[Loop] = NULL;
@@ -31,7 +31,7 @@ TableDef::~TableDef()
 
 // Set table name
 // [in] wchar_t* : Table Name
-void TableDef::SetTableName(wchar_t* TableName)
+void TableDef::SetTableName(const wchar_t* TableName)
 {
 	StkPlWcsNCpy(m_TableName, TABLE_NAME_SIZE, TableName, TABLE_NAME_SIZE - 1);
 	m_TableName[TABLE_NAME_SIZE - 1] = L'\0';

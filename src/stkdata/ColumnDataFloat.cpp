@@ -2,7 +2,7 @@
 #include "../StkPl.h"
 
 // Constructor
-ColumnDataFloat::ColumnDataFloat(wchar_t* ColumnName, float Value)
+ColumnDataFloat::ColumnDataFloat(const wchar_t* ColumnName, float Value)
 {
 	StkPlWcsNCpy(m_ColumnName, COLUMN_NAME_SIZE, ColumnName, COLUMN_NAME_SIZE - 1);
 	m_ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';
@@ -11,7 +11,7 @@ ColumnDataFloat::ColumnDataFloat(wchar_t* ColumnName, float Value)
 	m_Value = Value;
 }
 
-ColumnDataFloat::ColumnDataFloat(wchar_t* ColumnName, float Value, int CompOpe)
+ColumnDataFloat::ColumnDataFloat(const wchar_t* ColumnName, float Value, int CompOpe)
 {
 	*this = ColumnDataFloat(ColumnName, Value);
 	m_ComparisonOperator = CompOpe;

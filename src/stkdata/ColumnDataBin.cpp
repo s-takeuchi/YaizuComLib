@@ -2,7 +2,7 @@
 #include "../StkPl.h"
 
 // Constructor
-ColumnDataBin::ColumnDataBin(wchar_t* ColumnName, unsigned char* Value, int Length)
+ColumnDataBin::ColumnDataBin(const wchar_t* ColumnName, const unsigned char* Value, int Length)
 {
 	StkPlWcsNCpy(m_ColumnName, COLUMN_NAME_SIZE, ColumnName, COLUMN_NAME_SIZE - 1);
 	m_ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';
@@ -17,7 +17,7 @@ ColumnDataBin::ColumnDataBin(wchar_t* ColumnName, unsigned char* Value, int Leng
 	}
 }
 
-ColumnDataBin::ColumnDataBin(wchar_t* ColumnName, unsigned char* Value, int Length, int CompOpe)
+ColumnDataBin::ColumnDataBin(const wchar_t* ColumnName, const unsigned char* Value, int Length, int CompOpe)
 {
 	*this = ColumnDataBin(ColumnName, Value, Length);
 	m_ComparisonOperator = CompOpe;

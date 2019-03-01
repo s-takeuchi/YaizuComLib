@@ -37,7 +37,7 @@ protected:
 public:
 	ColumnDef();
 	virtual ~ColumnDef();
-	void SetColumnName(wchar_t*);
+	void SetColumnName(const wchar_t*);
 	wchar_t* GetColumnName();
 	void SetColumnType(int);
 	int GetColumnType();
@@ -47,7 +47,7 @@ class ColumnDefInt : public ColumnDef
 {
 public:
 	ColumnDefInt();
-	ColumnDefInt(wchar_t*);
+	ColumnDefInt(const wchar_t*);
 	~ColumnDefInt();
 };
 
@@ -55,7 +55,7 @@ class ColumnDefFloat : public ColumnDef
 {
 public:
 	ColumnDefFloat();
-	ColumnDefFloat(wchar_t*);
+	ColumnDefFloat(const wchar_t*);
 	~ColumnDefFloat();
 };
 
@@ -65,7 +65,7 @@ private:
 	int m_MaxLength;
 public:
 	ColumnDefStr();
-	ColumnDefStr(wchar_t*, int);
+	ColumnDefStr(const wchar_t*, int);
 	~ColumnDefStr();
 	void SetMaxLength(int MaxLength);
 	int GetMaxLength();
@@ -78,7 +78,7 @@ private:
 
 public:
 	ColumnDefWStr();
-	ColumnDefWStr(wchar_t*, int);
+	ColumnDefWStr(const wchar_t*, int);
 	~ColumnDefWStr();
 	void SetMaxLength(int MaxLength);
 	int GetMaxLength();
@@ -91,7 +91,7 @@ private:
 
 public:
 	ColumnDefBin();
-	ColumnDefBin(wchar_t*, int);
+	ColumnDefBin(const wchar_t*, int);
 	~ColumnDefBin();
 
 	void SetMaxLength(int MaxLength);
@@ -107,9 +107,9 @@ private:
 	int m_MaxRecord;
 public:
 	TableDef();
-	TableDef(wchar_t*, int);
+	TableDef(const wchar_t*, int);
 	virtual ~TableDef();
-	void SetTableName(wchar_t*);
+	void SetTableName(const wchar_t*);
 	wchar_t* GetTableName();
 	void SetMaxRecord(int);
 	int GetMaxRecord();
@@ -131,7 +131,7 @@ protected:
 public:
 	ColumnData();
 	virtual ~ColumnData();
-	void SetColumnName(wchar_t*);
+	void SetColumnName(const wchar_t*);
 	wchar_t* GetColumnName();
 	int GetColumnType();
 	void SetComparisonOperator(int);
@@ -143,8 +143,8 @@ class ColumnDataInt : public ColumnData
 private:
 	int m_Value;
 public:
-	ColumnDataInt(wchar_t*, int);
-	ColumnDataInt(wchar_t*, int, int);
+	ColumnDataInt(const wchar_t*, int);
+	ColumnDataInt(const wchar_t*, int, int);
 	virtual ~ColumnDataInt();
 
 	int GetValue();
@@ -155,8 +155,8 @@ class ColumnDataFloat : public ColumnData
 private:
 	float m_Value;
 public:
-	ColumnDataFloat(wchar_t*, float);
-	ColumnDataFloat(wchar_t*, float, int);
+	ColumnDataFloat(const wchar_t*, float);
+	ColumnDataFloat(const wchar_t*, float, int);
 	virtual ~ColumnDataFloat();
 
 	float GetValue();
@@ -168,8 +168,8 @@ private:
 	char m_Value[256];
 
 public:
-	ColumnDataStr(wchar_t*, char*);
-	ColumnDataStr(wchar_t*, char*, int);
+	ColumnDataStr(const wchar_t*, const char*);
+	ColumnDataStr(const wchar_t*, const char*, int);
 	virtual ~ColumnDataStr();
 
 	char* GetValue();
@@ -181,8 +181,8 @@ private:
 	wchar_t m_Value[256];
 
 public:
-	ColumnDataWStr(wchar_t*, wchar_t*);
-	ColumnDataWStr(wchar_t*, wchar_t*, int);
+	ColumnDataWStr(const wchar_t*, const wchar_t*);
+	ColumnDataWStr(const wchar_t*, const wchar_t*, int);
 	virtual ~ColumnDataWStr();
 
 	wchar_t* GetValue();
@@ -194,8 +194,8 @@ private:
 	unsigned char *m_Value;
 
 public:
-	ColumnDataBin(wchar_t*, unsigned char*, int);
-	ColumnDataBin(wchar_t*, unsigned char*, int, int);
+	ColumnDataBin(const wchar_t*, const unsigned char*, int);
+	ColumnDataBin(const wchar_t*, const unsigned char*, int, int);
 	virtual ~ColumnDataBin();
 
 	unsigned char* GetValue();
@@ -210,14 +210,14 @@ private:
 	RecordData* m_NextRecord;
 public:
 	RecordData();
-	RecordData(wchar_t TableName[TABLE_NAME_SIZE], ColumnData**, int);
+	RecordData(const wchar_t TableName[TABLE_NAME_SIZE], ColumnData**, int);
 	virtual ~RecordData();
 	void AddColumn(ColumnData*);
 	void DeleteColumn();
 	ColumnData* GetColumn(int ColIndex);
-	ColumnData* GetColumn(wchar_t*);
+	ColumnData* GetColumn(const wchar_t*);
 	int GetColumnCount();
-	void SetTableName(wchar_t TableName[TABLE_NAME_SIZE]);
+	void SetTableName(const wchar_t TableName[TABLE_NAME_SIZE]);
 	wchar_t* GetTableName();
 	void SetNextRecord(RecordData*);
 	RecordData* GetNextRecord();

@@ -8,7 +8,7 @@ ColumnDefBin::ColumnDefBin()
 }
 
 // Constructor
-ColumnDefBin::ColumnDefBin(wchar_t* ColumnName, int MaxLength)
+ColumnDefBin::ColumnDefBin(const wchar_t* ColumnName, int MaxLength)
 {
 	StkPlWcsNCpy(m_ColumnName, COLUMN_NAME_SIZE, ColumnName, COLUMN_NAME_SIZE - 1);
 	m_ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';

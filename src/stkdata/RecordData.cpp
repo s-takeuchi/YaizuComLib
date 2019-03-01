@@ -13,7 +13,7 @@ RecordData::RecordData()
 	m_NextRecord = NULL;
 }
 
-RecordData::RecordData(wchar_t TableName[TABLE_NAME_SIZE], ColumnData** ColDat, int Cnt)
+RecordData::RecordData(const wchar_t TableName[TABLE_NAME_SIZE], ColumnData** ColDat, int Cnt)
 {
 	int Loop;
 	m_CurrentColumnNum = 0;
@@ -76,7 +76,7 @@ ColumnData* RecordData::GetColumn(int ColIndex)
 	return m_ColumnData[ColIndex];
 }
 
-ColumnData* RecordData::GetColumn(wchar_t* ColumnName)
+ColumnData* RecordData::GetColumn(const wchar_t* ColumnName)
 {
 	for (int Loop = 0; Loop < m_CurrentColumnNum; Loop++) {
 		ColumnData* ColDat = m_ColumnData[Loop];
@@ -92,7 +92,7 @@ ColumnData* RecordData::GetColumn(wchar_t* ColumnName)
 	return NULL;
 }
 
-void RecordData::SetTableName(wchar_t TableName[TABLE_NAME_SIZE])
+void RecordData::SetTableName(const wchar_t TableName[TABLE_NAME_SIZE])
 {
 	StkPlWcsNCpy(m_TableName, TABLE_NAME_SIZE, TableName, TABLE_NAME_SIZE - 1);
 	m_TableName[TABLE_NAME_SIZE - 1] = L'\0';

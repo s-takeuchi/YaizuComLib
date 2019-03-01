@@ -15,7 +15,7 @@ ColumnDef::~ColumnDef()
 
 // Set column name
 // [in] wchar_t* : Column name
-void ColumnDef::SetColumnName(wchar_t* ColumnName)
+void ColumnDef::SetColumnName(const wchar_t* ColumnName)
 {
 	StkPlWcsNCpy(m_ColumnName, COLUMN_NAME_SIZE, ColumnName, COLUMN_NAME_SIZE - 1);
 	m_ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';
