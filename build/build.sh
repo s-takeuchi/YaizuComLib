@@ -66,7 +66,7 @@ make all
 if [ $? -ne 0 ]; then
   exit $?
 fi
-tar cf stkdatatar stkdata.h stkdata.a
+tar cf stkdata.tar stkdata.h stkdataapi.h stkdata.a
 gzip stkdata.tar
 mv stkdata.tar.gz ../../build/deployment
 cd ..
