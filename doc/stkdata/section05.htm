@@ -83,7 +83,7 @@
 </table>
 </div><P>
 
-(3) int GetTableSize(wchar_t* TableName)<BR>
+(3) int GetTableSize(const wchar_t* TableName)<BR>
 <div class=spc>
 この関数は指定したテーブルのサイズ（バイト数）を返却します。
 <table border="1">
@@ -92,7 +92,7 @@
 </table>
 </div><P>
 
-(4) int GetTableVersion(wchar_t* TableName)<BR>
+(4) int GetTableVersion(const wchar_t* TableName)<BR>
 <div class=spc>
 この関数は指定したテーブルのバージョンを返却します。<br>
 テーブルのバージョンとは，対象のテーブルが何回更新されたかを示す数値で，InsertRecord, UpdateRecord, DeleteRecord
@@ -108,7 +108,7 @@
 </table>
 </div><P>
 
-(5) int GetColumnCount(wchar_t* TableName)<BR>
+(5) int GetColumnCount(const wchar_t* TableName)<BR>
 <div class=spc>
 この関数は指定したテーブルに存在するカラムの数を返却します。
 <table border="1">
@@ -117,7 +117,7 @@
 </table>
 </div><P>
 
-(6) int GetColumnName(wchar_t* TableName, wchar_t ColumnNames[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE])<br>
+(6) int GetColumnName(const wchar_t* TableName, wchar_t ColumnNames[MAX_COLUMN_NUMBER][COLUMN_NAME_SIZE])<br>
 <div class=spc>
 この関数は指定したカラムの名称を返却します。
 <table border="1">
@@ -127,7 +127,7 @@
 </table>
 </div><P>
 
-(7) int GetColumnSize(wchar_t* TableName, wchar_t* ColumnName)<BR>
+(7) int GetColumnSize(const wchar_t* TableName, const wchar_t* ColumnName)<BR>
 <div class=spc>
 この関数は指定したカラムのサイズ（バイト数）を返却します。
 <table border="1">
@@ -137,7 +137,7 @@
 </table>
 </div><P>
 
-(8) int GetColumnType(wchar_t* TableName, wchar_t* ColumnName)<BR>
+(8) int GetColumnType(const wchar_t* TableName, const wchar_t* ColumnName)<BR>
 この関数は指定したカラムの種別を返却します。
 <div class=spc>
 <table border="1">
@@ -153,7 +153,7 @@ COLUMN_TYPE_BIN:バイナリ型<br>
 </table>
 </div><P>
 
-(9) int GetNumOfRecords(wchar_t* TableName)<BR>
+(9) int GetNumOfRecords(const wchar_t* TableName)<BR>
 <div class=spc>
 この関数は，指定されたテーブルに登録されているレコードの件数を返却します。
 <TABLE BORDER="1">
@@ -164,7 +164,7 @@ COLUMN_TYPE_BIN:バイナリ型<br>
 </TABLE>
 </div><P>
 
-(10) int GetMaxNumOfRecords(wchar_t* TableName)<BR>
+(10) int GetMaxNumOfRecords(const wchar_t* TableName)<BR>
 <div class=spc>
 この関数は，指定されたテーブルに登録できる最大のレコード件数を返却します。
 <TABLE BORDER="1">
@@ -185,7 +185,7 @@ COLUMN_TYPE_BIN:バイナリ型<br>
 </TABLE>
 </div><P>
 
-(12) int DeleteTable(wchar_t* TableName)<BR>
+(12) int DeleteTable(const wchar_t* TableName)<BR>
 <div class=spc>
 この関数は既存のテーブルを削除します。内部処理として，仮想メモリの開放を行います。
 <TABLE BORDER="1">
@@ -194,7 +194,7 @@ COLUMN_TYPE_BIN:バイナリ型<br>
 </TABLE>
 </div><P>
 
-(13) int RenameTable(wchar_t* OldName, wchar_t* NewName)<BR>
+(13) int RenameTable(const wchar_t* OldName, const wchar_t* NewName)<BR>
 <div class=spc>
 この関数は既存のテーブルの名称を変更します。
 <TABLE BORDER="1">
@@ -204,7 +204,7 @@ COLUMN_TYPE_BIN:バイナリ型<br>
 </TABLE>
 </div><P>
 
-(14) int LockTable(wchar_t* TableName, int LockType)<BR>
+(14) int LockTable(const wchar_t* TableName, int LockType)<BR>
 <div class=spc>
 データアクセス用関数(InsertRecord, DeleteRecord, UpdateRecord, AzSortRecord, ZaSortRecord または GetRecord)は
 マルチスレッド呼び出しをサポートしています。
@@ -254,7 +254,7 @@ Thread (B) : [Table-2 排他ロック] ---> [Table-1 排他ロック]<BR>
 </TABLE>
 </div><P>
 
-(16) int UnlockTable(wchar_t* TableName)<BR>
+(16) int UnlockTable(const wchar_t* TableName)<BR>
 <div class=spc>
 この関数は指定されたテーブルをアンロックします。
 <TABLE BORDER="1">
@@ -393,7 +393,7 @@ ColumnDataBinインスタンスとしてNULLを指定することはできない
 </TABLE>
 </div><P>
 
-(20) int DeleteRecord(wchar_t* TableName)<BR>
+(20) int DeleteRecord(const wchar_t* TableName)<BR>
 <div class=spc>
 この関数は，指定されたテーブルに登録されている全てのレコードを削除します。
 <TABLE BORDER="1">
@@ -421,7 +421,7 @@ DeleteRecord関数は，SchRecに連結された複数のRecordDataインスタ�
 </TABLE>
 </div><P>
 
-(22) RecordData* GetRecord(wchar_t* TableName)<BR>
+(22) RecordData* GetRecord(const wchar_t* TableName)<BR>
 <div class=spc>
 この関数は，指定されたテーブルに登録されている全てのレコードを返却します。
 <TABLE BORDER="1">
@@ -453,7 +453,7 @@ SchRecが連結した複数のRecordDataの場合，GetRecord関数は，各々�
 </TABLE>
 </div><P>
 
-(24) int AzSortRecord(wchar_t* TableName, wchar_t* ColumnName)
+(24) int AzSortRecord(const wchar_t* TableName, const wchar_t* ColumnName)
 <div class=spc>
 指定したテーブル内の全レコードを，指定したカラムで昇順となるように並び替えます。<br>
 カラム種別がCOLUMN_TYPE_INT : 数値の小さい順に並び替えます。<br>
@@ -469,7 +469,7 @@ AzSortRecord関数を呼び出す前に対象のテーブルに排他ロック�
 </table>
 </div><P>
 
-(25) int ZaSortRecord(wchar_t* TableName, wchar_t* ColumnName)
+(25) int ZaSortRecord(const wchar_t* TableName, const wchar_t* ColumnName)
 <div class=spc>
 指定したテーブル内の全レコードを，指定したカラムで降順となるように並び替えます。<br>
 カラム種別がCOLUMN_TYPE_INT : 数値の大きい順に並び替えます。<br>
@@ -485,7 +485,7 @@ ZaSortRecord関数を呼び出す前に対象のテーブルに排他ロック�
 </table>
 </div><P>
 
-(26) int SaveData(wchar_t* FileName)<BR>
+(26) int SaveData(const wchar_t* FileName)<BR>
 <div class=spc>
 StkDataにより操作された情報は全て仮想メモリ中に格納されます。したがって，
 仮想メモリ中のデータをファイルにセーブすることなくStkData利用プログラムを
@@ -499,7 +499,7 @@ SaveData関数を呼び出す前に全てのテーブルに共有ロックを掛
 </TABLE>
 </div><P>
 
-(27) int LoadData(wchar_t* FileName)<BR>
+(27) int LoadData(const wchar_t* FileName)<BR>
 <div class=spc>
 LoadData関数は指定したファイルからテーブルおよびレコードをロードし，仮想メモリに格納します。
 LoadData関数は既存の全テーブルを削除後，読込んだファイル内に定義されている
@@ -514,7 +514,7 @@ LoadData関数は既存の全テーブルを削除後，読込んだファイル
 </TABLE>
 </div><P>
 
-(28) int AutoSave(wchar_t* FileName, int Sec, bool Flag)<br>
+(28) int AutoSave(const wchar_t* FileName, int Sec, bool Flag)<br>
 <div class=spc>
 この関数は仮想メモリ中に存在する全てのテーブル，レコードを指定したファイルに自動的に書き出すかどうか
 を制御します。AutoSaveは指定された間隔で無条件にファイルに書き出すのではなく，内部的にGetTableVersionを呼び

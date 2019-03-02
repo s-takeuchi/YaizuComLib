@@ -30,7 +30,7 @@ private<BR>
 デフォルトコンストラクタ。
 </div><P>
 
-(2) TableDef(wchar_t* TableName, int MaxRecord)<BR>
+(2) TableDef(const wchar_t* TableName, int MaxRecord)<BR>
 <div class=spc>
 コンストラクタ。<BR>
 <TABLE BORDER="1">
@@ -44,7 +44,7 @@ private<BR>
 デストラクタ。
 </div><P>
 
-(4) void SetTableName(wchar_t* TableName)<BR>
+(4) void SetTableName(const wchar_t* TableName)<BR>
 <div class=spc>
 テーブル名を指定します。TableNameが16文字(NULL含む)を超えた場合，17文字目以降の文字は切り取られます。
 <TABLE BORDER="1">
