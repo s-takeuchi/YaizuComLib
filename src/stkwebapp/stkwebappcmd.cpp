@@ -68,11 +68,19 @@ void StartProcesses()
 
 	SetCurrentDirectory(Buf);
 
+	char TmpSrvProgram[FILENAME_MAX] = "stkwebapp";
+	wchar_t SrvProgram[FILENAME_MAX] = L"stkwebapp";
+	StkProperties *Prop = new StkProperties();
+	if (Prop->GetProperties(L"stkwebapp.conf") == 0) {
+		Prop->GetPropertyStr("serviceprogram", TmpSrvProgram);
+		wsprintf(SrvProgram, L"%S", TmpSrvProgram);
+	}
+
 	STARTUPINFO si_wapp;
 	PROCESS_INFORMATION pi_wapp;
 	ZeroMemory(&si_wapp, sizeof(si_wapp));
 	si_wapp.cb = sizeof(si_wapp);
-	wsprintf(CmdLine, L"%s\\stkwebapp.exe", Buf);
+	wsprintf(CmdLine, L"%s\\%s.exe", Buf, SrvProgram);
 	CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_wapp, &pi_wapp);
 
 	STARTUPINFO si_nginx;
@@ -332,6 +340,7 @@ int main(int argc, char* argv[])
 			if (StkStringParser::ParseInto1Param(TargetParam, L"ProductName=$", L'$', TmpFetchedParam) != 1 &&
 				StkStringParser::ParseInto1Param(TargetParam, L"SrvHost=$", L'$', TmpFetchedParam) != 1 &&
 				StkStringParser::ParseInto1Param(TargetParam, L"SrvPort=$", L'$', TmpFetchedParam) != 1 &&
+				StkStringParser::ParseInto1Param(TargetParam, L"SrvProgram=$", L'$', TmpFetchedParam) != 1 &&
 				StkStringParser::ParseInto1Param(TargetParam, L"WebHost=$", L'$', TmpFetchedParam) != 1 &&
 				StkStringParser::ParseInto1Param(TargetParam, L"WebPort=$", L'$', TmpFetchedParam) != 1) {
 				printf("Invalid option is specified. [%S]\r\n", TargetParam);
@@ -348,11 +357,9 @@ int main(int argc, char* argv[])
 		wsprintf(TargetFile[3], L"%s\\net.exe", SystemDir);
 		wsprintf(TargetFile[4], L"%s\\conf\\nginx.conf", WorkPath);
 		wsprintf(TargetFile[5], L"%s\\stkwebapp.conf", WorkPath);
-		wsprintf(TargetFile[6], L"%s\\stkwebapp.dat", WorkPath);
-		wsprintf(TargetFile[7], L"%s\\nginx.exe", WorkPath);
-		wsprintf(TargetFile[8], L"%s\\stkwebapp.exe", WorkPath);
+		wsprintf(TargetFile[6], L"%s\\nginx.exe", WorkPath);
 
-		for (int Loop = 0; Loop < 9; Loop++) {
+		for (int Loop = 0; Loop < 7; Loop++) {
 			if (GetFileSize(TargetFile[Loop]) == -1) {
 				printf("File/Folder structure is invalid. [%S]\r\n", TargetFile[Loop]);
 				return 0;
@@ -369,8 +376,8 @@ int main(int argc, char* argv[])
 		printf("Command usage : %s <command> <option 1> <option 2> ...\r\n", argv[0]);
 		printf("\r\nCommands\r\n");
 		printf("  help      : Display help.\r\n");
-		printf("  modperm   : Modify permission of configuration and data files.\r\n");
-		printf("  modconfig : Modify configuration files. ProductName, SrvHost, SrvPort, WebHost and WebPort options are required.\r\n");
+		printf("  modperm   : Modify permission of configuration and data files. SrvProgram option is required.\r\n");
+		printf("  modconfig : Modify configuration files. ProductName, SrvHost, SrvPort, SrvProgram, WebHost and WebPort options are required.\r\n");
 		printf("  fwadd     : Add exception to the firewall. ProductName option is required.\r\n");
 		printf("  fwdel     : Delete exception from the firewall. ProductName option is required.\r\n");
 		printf("  srvadd    : Add service to the system. ProductName option is required.\r\n");
@@ -383,6 +390,7 @@ int main(int argc, char* argv[])
 		printf("  ProductName : Product name\r\n");
 		printf("  SrvHost : Host name or IP address of REST API service\r\n");
 		printf("  SrvPort : Port number of REST API service\r\n");
+		printf("  SrvProgram : Program name (without extension) which stkwebappcmd launches\r\n");
 		printf("  WebHost : Host name or IP address of WEB service\r\n");
 		printf("  WebPort : Port number of WEB service\r\n");
 		return 0;
@@ -395,6 +403,7 @@ int main(int argc, char* argv[])
 	wchar_t ProductName[16] = L"DummyName";
 	wchar_t SrvHost[64] = L"127.0.0.1";
 	wchar_t SrvPort[8] = L"8081";
+	wchar_t SrvProgram[FILENAME_MAX] = L"stkwebapp";
 	wchar_t WebHost[64] = L"localhost";
 	wchar_t WebPort[8] = L"80";
 
@@ -411,6 +420,9 @@ int main(int argc, char* argv[])
 			}
 			if (StkStringParser::ParseInto1Param(TargetParam, L"SrvPort=$", L'$', TmpFetchedParam) == 1) {
 				lstrcpy(SrvPort, TmpFetchedParam);
+			}
+			if (StkStringParser::ParseInto1Param(TargetParam, L"SrvProgram=$", L'$', TmpFetchedParam) == 1) {
+				lstrcpy(SrvProgram, TmpFetchedParam);
 			}
 			if (StkStringParser::ParseInto1Param(TargetParam, L"WebHost=$", L'$', TmpFetchedParam) == 1) {
 				lstrcpy(WebHost, TmpFetchedParam);
@@ -462,7 +474,7 @@ int main(int argc, char* argv[])
 		// Grant modify permission to stkwebapp.dat
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		wsprintf(CmdLineForIcacls, L"\"%s\\icacls.exe\" \"%s\\stkwebapp.dat\" /grant Users:M", SystemDir, WorkPath);
+		wsprintf(CmdLineForIcacls, L"\"%s\\icacls.exe\" \"%s\\%s.dat\" /grant Users:M", SystemDir, WorkPath, SrvProgram);
 		printf("%S\r\n", CmdLineForIcacls);
 		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
@@ -496,7 +508,7 @@ int main(int argc, char* argv[])
 		FileHndl = CreateFile(StkWebAppConfPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (FileHndl != INVALID_HANDLE_VALUE) {
 			char ConfStr1[4096];
-			sprintf_s(ConfStr1, 4096, "servicehost=%S\r\nserviceport=%S\r\n", SrvHost, SrvPort);
+			sprintf_s(ConfStr1, 4096, "serviceprogram=%S\r\nservicehost=%S\r\nserviceport=%S\r\n", SrvProgram, SrvHost, SrvPort);
 			DWORD NumOfByteWrite;
 			WriteFile(FileHndl, ConfStr1, strlen(ConfStr1), &NumOfByteWrite, NULL);
 			CloseHandle(FileHndl);
