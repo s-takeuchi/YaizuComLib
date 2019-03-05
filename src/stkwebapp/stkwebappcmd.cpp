@@ -68,13 +68,14 @@ void StartProcesses()
 
 	SetCurrentDirectory(Buf);
 
-	char TmpSrvProgram[FILENAME_MAX] = "stkwebapp";
-	wchar_t SrvProgram[FILENAME_MAX] = L"stkwebapp";
+	char TmpSrvProgram[FILENAME_MAX] = "";
+	wchar_t SrvProgram[FILENAME_MAX] = L"";
 	StkProperties *Prop = new StkProperties();
 	if (Prop->GetProperties(L"stkwebapp.conf") == 0) {
 		Prop->GetPropertyStr("serviceprogram", TmpSrvProgram);
 		wsprintf(SrvProgram, L"%S", TmpSrvProgram);
 	}
+	delete Prop;
 
 	STARTUPINFO si_wapp;
 	PROCESS_INFORMATION pi_wapp;
@@ -102,15 +103,26 @@ void StopProcesses()
 	SetCurrentDirectory(Buf);
 
 	/***** Stop StkWebApp *****/
+	char TmpSrvProgramConf[FILENAME_MAX] = "";
+	wchar_t SrvProgramConf[FILENAME_MAX] = L"";
+	StkProperties *PropSrv = new StkProperties();
+	if (PropSrv->GetProperties(L"stkwebapp.conf") == 0) {
+		PropSrv->GetPropertyStr("serviceprogram", TmpSrvProgramConf);
+		wsprintf(SrvProgramConf, L"%S.conf", TmpSrvProgramConf);
+	}
+	delete PropSrv;
+
 	char IpAddrTmp[256] = "127.0.0.1";
 	wchar_t IpAddr[256] = L"127.0.0.1";
 	int Port = 8081;
 	StkProperties *Prop = new StkProperties();
-	if (Prop->GetProperties(L"stkwebapp.conf") == 0) {
+	if (Prop->GetProperties(SrvProgramConf) == 0) {
 		Prop->GetPropertyStr("servicehost", IpAddrTmp);
 		wsprintf(IpAddr, L"%S", IpAddrTmp);
 		Prop->GetPropertyInt("serviceport", &Port);
 	}
+	delete Prop;
+
 	StkSocket_AddInfo(1, SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, IpAddr, Port);
 	if (StkSocket_Connect(1) == 0) {
 		char SendDat[1024];
@@ -471,10 +483,19 @@ int main(int argc, char* argv[])
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 
-		// Grant modify permission to stkwebapp.dat
+		// Grant modify permission to SrvProgram.dat
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
 		wsprintf(CmdLineForIcacls, L"\"%s\\icacls.exe\" \"%s\\%s.dat\" /grant Users:M", SystemDir, WorkPath, SrvProgram);
+		printf("%S\r\n", CmdLineForIcacls);
+		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
+
+		// Grant modify permission to SrvProgram.conf
+		ZeroMemory(&si, sizeof(si));
+		si.cb = sizeof(si);
+		wsprintf(CmdLineForIcacls, L"\"%s\\icacls.exe\" \"%s\\%s.conf\" /grant Users:M", SystemDir, WorkPath, SrvProgram);
 		printf("%S\r\n", CmdLineForIcacls);
 		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
@@ -508,7 +529,18 @@ int main(int argc, char* argv[])
 		FileHndl = CreateFile(StkWebAppConfPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (FileHndl != INVALID_HANDLE_VALUE) {
 			char ConfStr1[4096];
-			sprintf_s(ConfStr1, 4096, "serviceprogram=%S\r\nservicehost=%S\r\nserviceport=%S\r\n", SrvProgram, SrvHost, SrvPort);
+			sprintf_s(ConfStr1, 4096, "serviceprogram=%S\r\n", SrvProgram);
+			DWORD NumOfByteWrite;
+			WriteFile(FileHndl, ConfStr1, strlen(ConfStr1), &NumOfByteWrite, NULL);
+			CloseHandle(FileHndl);
+		};
+
+		wchar_t SrvProgramConfPath[MAX_PATH];
+		swprintf(SrvProgramConfPath, MAX_PATH, L"%s\\%s.conf", WorkPath, SrvProgram);
+		FileHndl = CreateFile(SrvProgramConfPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (FileHndl != INVALID_HANDLE_VALUE) {
+			char ConfStr1[4096];
+			sprintf_s(ConfStr1, 4096, "servicehost=%S\r\nserviceport=%S\r\n", SrvHost, SrvPort);
 			DWORD NumOfByteWrite;
 			WriteFile(FileHndl, ConfStr1, strlen(ConfStr1), &NumOfByteWrite, NULL);
 			CloseHandle(FileHndl);
