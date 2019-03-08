@@ -41,14 +41,21 @@ StkWebAppCmdは，下記のフォルダおよびファイル構成を前提と�
 /appnameフォルダ直下には，nginxの実行ファイル(nginx.exe)，nginxの関連フォルダ，および以下のファイルが存在する必要があります。<br/>
 <ul>
 <li>stkwebappcmd.exe</li>
-<li>stkwebapp.exe</li>
 <li>stkwebapp.conf</li>
-<li>stkwebapp.dat</li>
+<li>xxxx.exe</li>
+<li>xxxx.dat</li>
+<li>xxxx.conf</li>
 </ul>
+(上記のxxxxは任意の名称であり，stkwebapp.confのserviceprogramで指定する)<br/>
+<p>
 また，/appname/confには，nginxのConfigファイル(nginx.conf)が存在する必要があります。<br/>
-StkWebAppCmdがnginxのConfigファイルを書き換えることにより，nginxは以下のURLに届いたリクエストを，ユーザープログラム(REST API)に転送します。<br/>
+StkWebAppCmdがnginxのConfigファイルを書き換えることにより，nginxは以下のURLに届いたリクエストを，ユーザープログラム(REST API)に転送します。
+</p>
 <p>
 http://＜nginxのホスト名＞:＜nginxのポート番号＞/api/
+</p>
+<p>
+ユーザープログラム(REST API)は，xxxx.confに設定されたIPアドレス/ホスト名およびポート番号で，nginxからのリクエストを処理します。
 </p>
 </div><p>
 
@@ -59,36 +66,35 @@ http://＜nginxのホスト名＞:＜nginxのポート番号＞/api/
 <pre><code>
 StkWebAppCmdの使用方法を以下に示します。<br/>
 StkWebAppCmd (Service command for StkWebApp)
-Command usage : stkwebappcmd &lt;command&gt; &lt;option 1&gt; &lt;option 2&gt; ...
+Command usage : stkwebappcmd.exe &lt;command&gt; &lt;option 1&gt; &lt;option 2&gt; ...
 
 Commands
   help      : Display help.
-  modperm   : Modify permission of configuration and data
-              files.
-  modconfig : Modify configuration files.
-              ProductName, SrvHost, SrvPort, WebHost and
-              WebPort options are required.
-  fwadd     : Add exception to the firewall. ProductName
+  modperm   : Modify permission of configuration and data files. 
+              SrvProgram option is required.
+  modconfig : Modify configuration files. ProductName, SrvHost,
+              SrvPort, SrvProgram,
+              WebHost and WebPort options are required.
+  fwadd     : Add exception to the firewall. ProductName option
+              is required.
+  fwdel     : Delete exception from the firewall. ProductName 
               option is required.
-  fwdel     : Delete exception from the firewall.
-              ProductName option is required.
-  srvadd    : Add service to the system. ProductName
-              option is required.
-  srvdel    : Delete service from the system. ProductName
-              option is required.
-  start     : Start the service. ProductName option is
+  srvadd    : Add service to the system. ProductName option is 
               required.
-  stop      : Stop the service. ProductName option is
-              required.
-  inst      : Execute modperm, modconfig, fwadd, srvadd
-              and start sequencially.
-
+  srvdel    : Delete service from the system. ProductName option 
+              is required.
+  start     : Start the service. ProductName option is required.
+  stop      : Stop the service. ProductName option is required.
+  inst      : Execute modperm, modconfig, fwadd, srvadd and start 
+              sequencially.
   uninst    : Execute fwdel, srvdel and stop sequencially.
 
 Options
   ProductName : Product name
   SrvHost : Host name or IP address of REST API service
   SrvPort : Port number of REST API service
+  SrvProgram : Program name (without extension) which 
+               stkwebappcmd launches
   WebHost : Host name or IP address of WEB service
   WebPort : Port number of WEB service
 </code></pre>
