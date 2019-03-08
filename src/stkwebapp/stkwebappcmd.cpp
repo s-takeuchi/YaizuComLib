@@ -68,8 +68,8 @@ void StartProcesses()
 
 	SetCurrentDirectory(Buf);
 
-	char TmpSrvProgram[FILENAME_MAX] = "";
-	wchar_t SrvProgram[FILENAME_MAX] = L"";
+	char TmpSrvProgram[FILENAME_MAX] = "xxxx";
+	wchar_t SrvProgram[FILENAME_MAX] = L"xxxx";
 	StkProperties *Prop = new StkProperties();
 	if (Prop->GetProperties(L"stkwebapp.conf") == 0) {
 		Prop->GetPropertyStr("serviceprogram", TmpSrvProgram);
@@ -415,7 +415,7 @@ int main(int argc, char* argv[])
 	wchar_t ProductName[16] = L"DummyName";
 	wchar_t SrvHost[64] = L"127.0.0.1";
 	wchar_t SrvPort[8] = L"8081";
-	wchar_t SrvProgram[FILENAME_MAX] = L"stkwebapp";
+	wchar_t SrvProgram[FILENAME_MAX] = L"xxxx";
 	wchar_t WebHost[64] = L"localhost";
 	wchar_t WebPort[8] = L"80";
 
