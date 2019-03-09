@@ -33,7 +33,15 @@ int StkProperties::GetProperties(const wchar_t* FileName)
 		return 0;
 	}
 	if (WorkDatLength == (size_t)-1) {
+#ifndef WIN32
+		StkPlSwPrintf(Buf, FILENAME_MAX, L"/etc/%S", FileName);
+		WorkDatLength = StkPlGetFileSize(Buf);
+		if (WorkDatLength == (size_t)-1) {
+			return-1;
+		}
+#else
 		return -1;
+#endif
 	}
 
 	char* WorkDat = new char[WorkDatLength + 1];
