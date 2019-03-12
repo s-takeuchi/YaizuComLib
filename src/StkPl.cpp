@@ -939,7 +939,7 @@ void StkPlGetTimeInUnixTime(char LocalTimeStr[64], bool IsLocalTime)
 	} else {
 		_gmtime64_s(&TmTime, &Ltime);
 	}
-	sprintf_s(LocalTimeStr, 32, "%d-%d-%d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
+	sprintf_s(LocalTimeStr, 64, "%d-%d-%d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
 #else
 	struct tm* TmTime;
 	time_t Ltime;
@@ -949,7 +949,7 @@ void StkPlGetTimeInUnixTime(char LocalTimeStr[64], bool IsLocalTime)
 	} else {
 		TmTime = gmtime(&Ltime);
 	}
-	sprintf_s(LocalTimeStr, 32, "%d-%d-%d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
+	sprintf(LocalTimeStr, "%d-%d-%d %02d:%02d:%02d", TmTime->tm_year + 1900, TmTime->tm_mon + 1, TmTime->tm_mday, TmTime->tm_hour, TmTime->tm_min, TmTime->tm_sec);
 #endif
 }
 
