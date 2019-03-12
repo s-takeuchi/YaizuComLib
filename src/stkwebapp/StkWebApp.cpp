@@ -82,6 +82,7 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	char Connection[64] = "";
 	char CacheCont[64] = "";
 	char Date[64] = "";
+	char DateTmp[64] = "";
 
 	/***** Make response status begin *****/
 	switch (ResultCode) {
@@ -159,7 +160,8 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	StkPlSPrintf(Connection, 64, "Connection: close\r\n");
 	StkPlSPrintf(CacheCont, 64, "Cache-Control: no-cache\r\n");
 
-	StkPlGetTimeInRfc822(Date);
+	StkPlGetTimeInRfc822(DateTmp);
+	StkPlSPrintf(Date, 64, "Date: %s\r\n", DateTmp);
 
 	StkPlStrCat(HeaderData, 1024, RespLine);
 	StkPlStrCat(HeaderData, 1024, ContType);

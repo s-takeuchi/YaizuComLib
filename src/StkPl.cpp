@@ -895,7 +895,7 @@ void StkPlGetTimeInRfc822(char Date[64])
 	_gmtime64_s(&GmtTime, &Ltime);
 	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-	sprintf_s(Date, 64, "Date: %s, %02d %s %d %02d:%02d:%02d GMT\r\n",
+	sprintf_s(Date, 64, "%s, %02d %s %d %02d:%02d:%02d GMT",
 		WdayStr[GmtTime.tm_wday],
 		GmtTime.tm_mday,
 		MonStr[GmtTime.tm_mon],
@@ -910,7 +910,7 @@ void StkPlGetTimeInRfc822(char Date[64])
 	GmtTime = gmtime(&Ltime);
 	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-	sprintf(Date, "Date: %s, %02d %s %d %02d:%02d:%02d GMT\r\n",
+	sprintf(Date, "%s, %02d %s %d %02d:%02d:%02d GMT",
 		WdayStr[GmtTime->tm_wday],
 		GmtTime->tm_mday,
 		MonStr[GmtTime->tm_mon],
@@ -919,6 +919,45 @@ void StkPlGetTimeInRfc822(char Date[64])
 		GmtTime->tm_min,
 		GmtTime->tm_sec);
 #endif
+}
+
+void StkPlGetWTimeInRfc822(wchar_t Date[64])
+{
+	char DateTmp[64];
+	StkPlGetTimeInRfc822(DateTmp);
+	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
+}
+
+void StkPlGetTimeInUnixTime(char LocalTimeStr[64], bool IsLocalTime)
+{
+#ifdef WIN32
+	struct tm TmTime;
+	__int64 Ltime;
+	_time64(&Ltime);
+	if (IsLocalTime) {
+		_localtime64_s(&TmTime, &Ltime);
+	} else {
+		_gmtime64_s(&TmTime, &Ltime);
+	}
+	sprintf_s(LocalTimeStr, 32, "%d-%d-%d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
+#else
+	struct tm* TmTime;
+	time_t Ltime;
+	time(&Ltime);
+	if (IsLocalTime) {
+		TmTime = localtime(&Ltime);
+	} else {
+		TmTime = gmtime(&Ltime);
+	}
+	sprintf_s(LocalTimeStr, 32, "%d-%d-%d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
+#endif
+}
+
+void StkPlGetWTimeInUnixTime(wchar_t LocalTimeStr[64], bool IsLocalTime)
+{
+	char DateTmp[64];
+	StkPlGetTimeInUnixTime(DateTmp, IsLocalTime);
+	StkPlConvUtf8ToWideChar(LocalTimeStr, 64, DateTmp);
 }
 
 //////////////////////////////////////////////////////////////////////////////

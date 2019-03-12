@@ -98,8 +98,12 @@ long int StkPlWcsToL(const wchar_t*);
 float StkPlWcsToF(const wchar_t*);
 
 int StkPlGetUsedMemorySizeOfCurrentProcess();
+
 long long StkPlGetTickCount();
 void StkPlGetTimeInRfc822(char[64]);
+void StkPlGetWTimeInRfc822(wchar_t[64]);
+void StkPlGetTimeInUnixTime(char[64], bool);
+void StkPlGetWTimeInUnixTime(wchar_t[64], bool);
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

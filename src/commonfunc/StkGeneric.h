@@ -16,9 +16,6 @@ public:
 	int GetFullPathWithoutFileName(wchar_t*, wchar_t[MAX_PATH]);
 	int GetFileSize(wchar_t*);
 
-	void GetLocalTimeStr(char[32]);
-	void GetLocalTimeWStr(wchar_t[32]);
-
 	int JsonEncodeSize(wchar_t*);
 	void JsonEncode(wchar_t*, wchar_t*, int);
 

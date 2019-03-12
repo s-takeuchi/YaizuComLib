@@ -381,12 +381,17 @@ int ElemStkThreadMainSend3(int Id)
 		StkPlExit(0);
 	}
 	StkPlPrintf("... OK\r\n");
+
+	StkPlPrintf("StkWebAppTest3: Check whether proper date is set in HTTP header or not.");
 	const wchar_t* TmpHeader = StkPlWcsStr(Header, L"Date:");
+	if (TmpHeader == 0) {
+		StkPlPrintf("... NG\r\n");
+		StkPlExit(0);
+	}
 	wchar_t TmpDate[32];
 	wchar_t TmpWDay[32];
 	int TmpDay;
 	StkPlSwScanf(TmpHeader, L"%s %s %d", TmpDate, TmpWDay, &TmpDay);
-	StkPlPrintf("StkWebAppTest3: Check whether proper date is set in HTTP header or not.");
 	if (TmpDay < 1 || TmpDay > 31) {
 		StkPlPrintf("... NG\r\n");
 		StkPlExit(0);

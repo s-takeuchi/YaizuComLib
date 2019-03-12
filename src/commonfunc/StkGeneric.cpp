@@ -112,26 +112,6 @@ int StkGeneric::GetFileSize(wchar_t* FileName)
 	return (int)ExistingFileSize.QuadPart;
 }
 
-// Acquire local time as a string.
-// LocalTimeStr [out] : Acquired time of local sysytem
-void StkGeneric::GetLocalTimeStr(char LocalTimeStr[32])
-{
-	SYSTEMTIME Systime;
-	GetLocalTime(&Systime);
-	char *Mon[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-	sprintf_s(LocalTimeStr, 32, "%s %d %d %02d:%02d:%02d", Mon[Systime.wMonth - 1], Systime.wDay, Systime.wYear, Systime.wHour, Systime.wMinute, Systime.wSecond);
-}
-
-// Acquire local time as a string.
-// LocalTimeStr [out] : Acquired time of local sysytem
-void StkGeneric::GetLocalTimeWStr(wchar_t LocalTimeStr[32])
-{
-	SYSTEMTIME Systime;
-	GetLocalTime(&Systime);
-	wchar_t *Mon[] = {L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec"};
-	wsprintf(LocalTimeStr, L"%s %d %d %02d:%02d:%02d", Mon[Systime.wMonth - 1], Systime.wDay, Systime.wYear, Systime.wHour, Systime.wMinute, Systime.wSecond);
-}
-
 // Returns word size of escaped JSON data.
 // InMsg [in] : Original string
 // Return : Word size of escaped JSON data.
