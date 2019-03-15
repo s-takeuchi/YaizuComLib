@@ -986,6 +986,36 @@ int StkPlGetFullPathFromFileName(const wchar_t* FileName, wchar_t FullPath[FILEN
 #endif
 }
 
+// Get full path without file name for the specified full path file name.
+// PathWithFileName [in] : Full path which contains file name.
+// Output [out] : Acquired full path without file name.
+// Return : 0:Success, -1:Failure
+int StkPlGetFullPathWithoutFileName(wchar_t* PathWithFileName, wchar_t Output[FILENAME_MAX])
+{
+	if (PathWithFileName == NULL || Output == NULL) {
+		return -1;
+	}
+	if (wcscmp(PathWithFileName, L"") == 0) {
+		return -1;
+	}
+#ifdef WIN32
+	wcsncpy_s(Output, FILENAME_MAX, PathWithFileName, _TRUNCATE);
+#else
+	wcscpy(Output, PathWithFileName);
+#endif
+	wchar_t* Addr = NULL;
+	for (Addr = Output + wcslen(Output); Addr > Output; Addr--) {
+		if (*Addr == '\\') {
+			break;
+		}
+	}
+	if (Addr == Output) {
+		return -1;
+	}
+	*Addr = '\0\0';
+	return 0;
+}
+
 size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
 {
 #ifdef WIN32
@@ -993,9 +1023,6 @@ size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
 	try {
 		FileSize = std::filesystem::file_size(FilePath);
 	} catch (std::filesystem::filesystem_error ex) {
-		return -1;
-	}
-	if (FileSize >= 1000000) {
 		return -1;
 	}
 	if (FileSize == 0) {
@@ -1007,9 +1034,6 @@ size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
 	try {
 		FileSize = std::experimental::filesystem::file_size(FilePath);
 	} catch (std::experimental::filesystem::filesystem_error ex) {
-		return -1;
-	}
-	if (FileSize >= 1000000) {
 		return -1;
 	}
 	if (FileSize == 0) {

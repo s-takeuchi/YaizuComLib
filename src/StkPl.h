@@ -109,6 +109,7 @@ void StkPlGetWTimeInUnixTime(wchar_t[64], bool);
 //////////////////////////////////////////////////////////////////////////////
 // API for file access
 int StkPlGetFullPathFromFileName(const wchar_t*, wchar_t[FILENAME_MAX]);
+int StkPlGetFullPathWithoutFileName(wchar_t*, wchar_t[FILENAME_MAX]);
 size_t StkPlGetFileSize(const wchar_t[FILENAME_MAX]);
 int StkPlReadFile(const wchar_t[FILENAME_MAX], char*, size_t);
 void* StkPlOpenFileForRead(const wchar_t[FILENAME_MAX]);

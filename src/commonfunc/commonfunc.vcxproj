@@ -79,7 +79,6 @@
   <ItemGroup>
     <ClCompile Include="..\StkPl.cpp" />
     <ClCompile Include="msgproc.cpp" />
-    <ClCompile Include="StkGeneric.cpp" />
     <ClCompile Include="StkObject.cpp" />
     <ClCompile Include="StkProperties.cpp" />
     <ClCompile Include="StkStringParser.cpp" />
@@ -87,7 +86,6 @@
   <ItemGroup>
     <ClInclude Include="..\StkPl.h" />
     <ClInclude Include="msgproc.h" />
-    <ClInclude Include="StkGeneric.h" />
     <ClInclude Include="StkObject.h" />
     <ClInclude Include="StkProperties.h" />
     <ClInclude Include="StkStringParser.h" />
