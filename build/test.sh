@@ -50,6 +50,7 @@ cd ..
 
 echo ---------------------------------------
 echo commonfunctest
+cp ./commonfunctest/Release/*.prop ./commonfunctest
 ./commonfunctest/commonfunctest
 if [ $? -ne 0 ]; then
   exit $?
