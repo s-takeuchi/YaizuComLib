@@ -1005,14 +1005,14 @@ int StkPlGetFullPathWithoutFileName(wchar_t* PathWithFileName, wchar_t Output[FI
 #endif
 	wchar_t* Addr = NULL;
 	for (Addr = Output + wcslen(Output); Addr > Output; Addr--) {
-		if (*Addr == '\\') {
+		if (*Addr == L'\\') {
 			break;
 		}
 	}
 	if (Addr == Output) {
 		return -1;
 	}
-	*Addr = '\0\0';
+	*Addr = L'\0';
 	return 0;
 }
 

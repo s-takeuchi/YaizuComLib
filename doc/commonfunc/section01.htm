@@ -6,104 +6,10 @@
 
 <BODY>
 <div id="container">
-<H1>1. StkGeneric</H1>
-
-This class provides generic functions of stklib.<BR>
-<P>
-
-<TABLE BORDER="1">
-<TR>
-<TD>Function</TD>
-<TD>static StkGeneric* GetInstance()</TD>
-</TR>
-<TR>
-<TD>Description</TD>
-<TD>
-This function returns the pointer to StkGeneric instance.<BR>
-StkGeneric is developed based on the singleton model.<BR>
-Hence, You need to call this function before you call other functions of StkGeneric.<BR>
-</TD>
-</TR>
-<TR>
-<TD>In</TD>
-<TD></TD>
-</TR>
-<TR>
-<TD>Out</TD>
-<TD>StkFont*: Pointer to StkFont instance</TD>
-</TR>
-</TABLE>
-<P>
+<H1>1. StkPl</H1>
 
 
-<TABLE BORDER="1">
-<TR>
-<TD>Function</TD>
-<TD>bool IsDuplicateAppExisting(HWND)</TD>
-</TR>
-<TR>
-<TD>Description</TD>
-<TD>
-This function checks the duplicated program (which has same window handler) has already been running or not.
-</TD>
-</TR>
-<TR>
-<TD>In</TD>
-<TD>
-HWND: Window handler of the program which calls this function.
-</TD>
-</TR>
-<TR>
-<TD>Out</TD>
-<TD>bool: <BR>
-true - Duplicated program has already been running.<BR>
-false - No duplicated program is running.
-</TD>
-</TR>
-</TABLE>
-<P>
-
-
-
-<H2 ID="1.1">1.1 int GetFileSize(wchar_t* FileName)</H2>
-<div class="topic">
-指定したファイルのファイルサイズ(バイト)を返します。<br>
-FileNameにはファイルパスではなく，ファイル名を指定する必要があります。GetFileSizeは，現在のモジュールが存在するフォルダ内で
-指定されたファイルを探索し，対象のファイルのサイズを返します。<br>
-ファイルのサイズがint(signed int)の範囲を超えた場合，GetFileSizeが返す値は不定となります。<br>
-<table class="tblstyle">
-<tr><td>FileName[入力]</td><td>サイズをもとめるファイルの名称</td></tr>
-<tr><td>[戻り値]</td><td>0以上:ファイルサイズ, -1:エラーが発生した</td></tr>
-</table>
-</div><p>
-
-
-
-<H2 ID="1.5">1.5 int GetFullPathFromFileName(wchar_t* FileName, wchar_t FullPath[MAX_PATH])</H2>
-<div class="topic">
-このAPIを呼び出すモジュールと同一のディレクトリに存在するファイルのフルパスを返却します。<br>
-<table class="tblstyle">
-<tr><td>FileName[入力]</td><td>ファイル名(このAPIを呼び出すモジュールと同一のディレクトリに存在することを前提としています)。パスを含まないこと。</td></tr>
-<tr><td>FullPath[出力]</td><td>指定したファイルへのフルパス</td></tr>
-<tr><td>[戻り値]</td><td>0:成功, -1:エラーが発生した</td></tr>
-</table>
-</div><p>
-
-
-
-<H2 ID="1.6">1.6 int GetFullPathWithoutFileName(wchar_t* FileName, wchar_t FullPath[MAX_PATH])</H2>
-<div class="topic">
-指定したファイル名を含むフルパスから，ファイル名を除外したフルパスを取得します。<br>
-<table class="tblstyle">
-<tr><td>FileName[入力]</td><td>フルパスを含むファイル名</td></tr>
-<tr><td>FullPath[出力]</td><td>ファイル名を除外したフルパス</td></tr>
-<tr><td>[戻り値]</td><td>0:成功, -1:エラーが発生した</td></tr>
-</table>
-</div><p>
-
-
-
-<H2 ID="1.7">1.7 StkPl API一覧</H2>
+<H2 ID="1.1">1.1 StkPl API一覧</H2>
 <div class="topic">
 StkPlが提供するAPI一覧を以下に示します。<p>
 <table class="tblstyle">
@@ -144,7 +50,7 @@ char* StkPlCreateUtf8FromWideChar(const wchar_t*)</br>
 
 
 
-<H2 ID="1.8">1.8</br>
+<H2 ID="1.2">1.2</br>
 size_t StkPlConvUtf16ToUtf32(char32_t* UtfRes, size_t Size, const char16_t* Utf)</br>
 size_t StkPlConvUtf32ToUtf16(char16_t* UtfRes, size_t Size, const char32_t* Utf)</br>
 size_t StkPlConvUtf8ToUtf32(char32_t* UtfRes, size_t Size, const char* Utf)</br>
@@ -165,7 +71,7 @@ Sizeに0を指定した場合，変換を行わず，変換後の領域のサイ
 
 
 
-<H2 ID="1.9">1.9</br>
+<H2 ID="1.3">1.3</br>
 size_t StkPlConvUtf16ToWideChar(wchar_t* Res, size_t Size, const char16_t* Str)</br>
 size_t StkPlConvWideCharToUtf16(char16_t* Res, size_t Size, const wchar_t* Str)</br>
 size_t StkPlConvWideCharToUtf32(char32_t* Res, size_t Size, const wchar_t* Str)</br>
@@ -186,7 +92,7 @@ Sizeに0を指定した場合，変換を行わず，変換後の領域のサイ
 
 
 
-<H2 ID="1.10">1.10</br>
+<H2 ID="1.4">1.4</br>
 char32_t* StkPlCreateUtf32FromUtf16(const char16_t* Utf)</br>
 char16_t* StkPlCreateUtf16FromUtf32(const char32_t* Utf)</br>
 char32_t* StkPlCreateUtf32FromUtf8(const char* Utf)</br>
@@ -204,7 +110,7 @@ char* StkPlCreateUtf8FromUtf16(const char16_t* Utf)</br>
 
 
 
-<H2 ID="1.11">1.11</br>
+<H2 ID="1.5">1.5</br>
 wchar_t* StkPlCreateWideCharFromUtf16(const char16_t* Str)</br>
 char16_t* StkPlCreateUtf16FromWideChar(const wchar_t* Str)</br>
 char32_t* StkPlCreateUtf32FromWideChar(const wchar_t* Str)</br>
