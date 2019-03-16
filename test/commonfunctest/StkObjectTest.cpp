@@ -5,7 +5,7 @@ void Abort(bool Cond)
 {
 	if (!Cond) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -24,7 +24,7 @@ void AbnormalCaseForJson(const wchar_t* JsonTxt, int ErrorCode)
 	RetObj = StkObject::CreateObjectFromJson(JsonTxt, &Offset);
 	if (RetObj != NULL || Offset != ErrorCode) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
@@ -43,7 +43,7 @@ void AbnormalCaseForXml(const wchar_t* XmlTxt, int ErrorCode)
 	RetObj = StkObject::CreateObjectFromXml(XmlTxt, &Offset);
 	if (RetObj != NULL || Offset != ErrorCode) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
@@ -227,7 +227,7 @@ void GeneralTestCase1(StkObject* Elem1, const wchar_t* Name)
 		StkPlPrintf("OK\r\n");
 	} else {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("%ls#Acquired element is validated...", Name);
 	StkObject* Elem3 = Elem1->GetFirstChildElement();
@@ -235,7 +235,7 @@ void GeneralTestCase1(StkObject* Elem1, const wchar_t* Name)
 		if (Loop < 20) {
 			if (StkPlWcsCmp(Elem3->GetName(), L"Product") != 0 || StkPlWcsCmp(Elem3->GetFirstAttribute()->GetStringValue(), L"qwer") != 0) {
 				StkPlPrintf("NG\r\n");
-				StkPlExit(0);
+				StkPlExit(-1);
 			}
 		}
 		Elem3 = Elem3->GetNext();
@@ -247,7 +247,7 @@ void GeneralTestCase1(StkObject* Elem1, const wchar_t* Name)
 		StkPlPrintf("OK\r\n");
 	} else {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	int Len2 = Elem1->GetArrayLength();
 	StkPlPrintf("%ls#Len of top level element = %d...", Name, Len2);
@@ -255,7 +255,7 @@ void GeneralTestCase1(StkObject* Elem1, const wchar_t* Name)
 		StkPlPrintf("OK\r\n");
 	} else {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	int ElemCount = Elem1->GetChildElementCount();
 	StkPlPrintf("%ls#ElemCount = %d...", Name, ElemCount);
@@ -263,7 +263,7 @@ void GeneralTestCase1(StkObject* Elem1, const wchar_t* Name)
 		StkPlPrintf("OK\r\n");
 	} else {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	int AttrCount = Elem1->GetAttributeCount();
 	StkPlPrintf("%ls#AttrCount = %d...", Name, AttrCount);
@@ -271,7 +271,7 @@ void GeneralTestCase1(StkObject* Elem1, const wchar_t* Name)
 		StkPlPrintf("OK\r\n");
 	} else {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkObject* Elem4 = Elem3->GetNext();
 	int Elem4ElemCnt = Elem4->GetChildElementCount();
@@ -281,7 +281,7 @@ void GeneralTestCase1(StkObject* Elem1, const wchar_t* Name)
 		StkPlPrintf("OK\r\n");
 	} else {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 }
 
@@ -290,7 +290,7 @@ void GeneralTestCase2(StkObject* Elem1, const wchar_t* Name)
 	StkPlPrintf("%ls#Proper count can be acquired.", Name);
 	if (Elem1->GetChildElementCount() != Elem1->GetFirstChildElement()->GetArrayLength()) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 
@@ -301,7 +301,7 @@ void GeneralTestCase2(StkObject* Elem1, const wchar_t* Name)
 		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"現金") != 0 ||
 		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"証券") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 
@@ -311,7 +311,7 @@ void GeneralTestCase2(StkObject* Elem1, const wchar_t* Name)
 		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"白") != 0 ||
 		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetNext()->GetStringValue(), L"日産") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 
@@ -320,7 +320,7 @@ void GeneralTestCase2(StkObject* Elem1, const wchar_t* Name)
 		Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 10000000 ||
 		Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetIntValue() != 7000000) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 
@@ -328,7 +328,7 @@ void GeneralTestCase2(StkObject* Elem1, const wchar_t* Name)
 	if (Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetIntValue() != 200000 ||
 		StkPlWcsCmp(Elem1->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), L"VISA") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 }
@@ -345,7 +345,7 @@ void GeneralTestCase3()
 	bool Ch3 = Origin1->Equals(Diff1);
 	if (!Ch1 || !Ch2 || Ch3) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete Origin1;
@@ -363,7 +363,7 @@ void GeneralTestCase3()
 	bool Ci3 = Origin2->Equals(Diff2);
 	if (!Ci1 || !Ci2 || Ci3) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete Origin2;
@@ -376,7 +376,7 @@ void GeneralTestCase3()
 	StkObject* Obj1b = new StkObject(L"Shinya Takeuchi", 123);
 	if (Obj1a->Equals(Obj1b) == false) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete Obj1a;
@@ -387,7 +387,7 @@ void GeneralTestCase3()
 	StkObject* Obj2b = new StkObject(L"Shinya Takeuchi", 321);
 	if (Obj2a->Equals(Obj2b) == true) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete Obj2a;
@@ -398,7 +398,7 @@ void GeneralTestCase3()
 	StkObject* Obj3b = new StkObject(L"Shinya Takeuchi", 123.45f);
 	if (Obj3a->Equals(Obj3b) == false) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete Obj3a;
@@ -409,7 +409,7 @@ void GeneralTestCase3()
 	StkObject* Obj4b = new StkObject(L"Shinya Takeuchi", 123.46f);
 	if (Obj4a->Equals(Obj4b) == true) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete Obj4a;
@@ -420,7 +420,7 @@ void GeneralTestCase3()
 	StkObject* Obj5b = new StkObject(L"Shinya Takeuchi", L"Hello, World!");
 	if (Obj5a->Equals(Obj5b) == false) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete Obj5a;
@@ -431,7 +431,7 @@ void GeneralTestCase3()
 	StkObject* Obj6b = new StkObject(L"Shinya Takeuchi", L"Hello; World!");
 	if (Obj6a->Equals(Obj6b) == true) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete Obj6a;
@@ -451,7 +451,7 @@ void GeneralTestCase3()
 		delete NewObjXml;
 		delete NewObjJson;
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete NewObjXml;
 	delete NewObjJson;
@@ -765,7 +765,7 @@ void GeneralTestCase6()
 
 		if (!(RetXml1 == 1 && RetJson1 == 2 && RetXml2 == 1 && RetJson2 == 2 && RetXml3 == 1 && RetJson3 == 2)) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -781,7 +781,7 @@ void GeneralTestCase6()
 		int RetJson3 = StkObject::Analyze(L"  \t\r\n  \"aaa\" : {\"bbb\":1}  \t\r\n");
 		if (!(RetXml1 == 1 && RetJson1 == 2 && RetXml2 == 1 && RetJson2 == 2 && RetXml3 == 1 && RetJson3 == 2)) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -802,7 +802,7 @@ void GeneralTestCase6()
 		int RetEmpty3 = StkObject::Analyze(L" \t \r\n \t \r\n ");
 		if (RetXml1 != -1 || RetJson1 != -1 || RetXml2 != -1 || RetJson2 != -1 || RetXml3 != -1 || RetJson3 != -1 || RetXml4 != -1 || RetJson4 != -1 || RetEmpty1 != 0 || RetEmpty2 != 0 || RetEmpty3 != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -831,7 +831,7 @@ void JsonEncodingTest1()
 		StkPlWcsStr(JsonTxt, L"\"Element7\" : \"Hello-\\n\\n\\n\\n\\n-World!!\"") == 0 ||
 		StkPlWcsStr(JsonTxt, L"\"Element8\" : \"Hello-\\t\\t\\t\\t\\t-World!!\"") == 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -850,19 +850,19 @@ void JsonEncodingTest2()
 	Ret = MkDat1->ToJson(JsonTxt1, 32);
 	if (StkPlWcsCmp(JsonTxt1, L"\"SoftwareCompany\" : {\r\n  \"@attr") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlLStrCpy(JsonTxt1, L"");
 	Ret = MkDat1->ToJson(JsonTxt1, 33);
 	if (StkPlWcsCmp(JsonTxt1, L"\"SoftwareCompany\" : {\r\n  \"@attri") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlLStrCpy(JsonTxt1, L"");
 	Ret = MkDat1->ToJson(JsonTxt1, 34);
 	if (StkPlWcsCmp(JsonTxt1, L"\"SoftwareCompany\" : {\r\n  \"@attrib") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkObject* MkDat2 = MakeTestData2();
@@ -871,19 +871,19 @@ void JsonEncodingTest2()
 	Ret = MkDat2->ToJson(JsonTxt2, 32);
 	if (StkPlWcsCmp(JsonTxt2, L"\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlLStrCpy(JsonTxt2, L"");
 	Ret = MkDat2->ToJson(JsonTxt2, 33);
 	if (StkPlWcsCmp(JsonTxt2, L"\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"カ") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlLStrCpy(JsonTxt2, L"");
 	Ret = MkDat2->ToJson(JsonTxt2, 34);
 	if (StkPlWcsCmp(JsonTxt2, L"\"個人の財産\" : {\r\n  \"乗用車\" : {\r\n    \"カロ") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 
@@ -913,7 +913,7 @@ void XmlEncodingTest2()
 		StkPlWcsStr(Attr1Val, L"Quot=\"&quot;\"") == 0 ||
 		StkPlWcsStr(Attr1Val, L"Apos=\"&apos;\"") == 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -928,7 +928,7 @@ void XmlEncodingTest2()
 		StkPlWcsStr(Elem1Val, L">&quot;<") == 0 ||
 		StkPlWcsStr(Elem1Val, L">&apos;<") == 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -959,7 +959,7 @@ void XmlEncodingTest3()
 		StkPlWcsStr(Attr1Val, L"Quot=\"&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;\"") == 0 ||
 		StkPlWcsStr(Attr1Val, L"Apos=\"&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;\"") == 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -974,7 +974,7 @@ void XmlEncodingTest3()
 		StkPlWcsStr(Elem1Val, L">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;<") == 0 ||
 		StkPlWcsStr(Elem1Val, L">&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;<") == 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -992,7 +992,7 @@ void XmlJsonDecodingTest1()
 		StkPlPrintf("OK\r\n");
 	} else {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObjJson;
 	delete RetObjXml;
@@ -1081,7 +1081,7 @@ void XmlJsonEncodingTest1()
 	ObjFromJson->ToJson(Temp2, 8192);
 	if (StkPlWcsCmp(Temp1, Temp2) != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 
@@ -1092,7 +1092,7 @@ void XmlJsonEncodingTest1()
 	ObjFromJson->ToXml(Temp2, 8192);
 	if (StkPlWcsCmp(Temp1, Temp2) != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 
@@ -1117,13 +1117,13 @@ void XmlJsonEncodingTest2()
 	StkPlPrintf("XML encoding with no name and no value...");
 	if (StkPlWcsStr(Temp1, L"<Japan =\"\" A=\"B\">\r\n  <>\r\n    </>\r\n    <></>\r\n    <A>B</A>\r\n  </>\r\n</Japan>") == 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	StkPlPrintf("JSON encoding with no name and no value...");
 	if (StkPlWcsStr(Temp2, L"\"Japan\" : {\r\n  \"@attributes\" : {\r\n    \"\" : \"\", \"A\" : \"B\"\r\n  },\r\n  {\r\n    \"\" : [\r\n      {\r\n      },\r\n      \"\"\r\n    ],\r\n    \"A\" : \"B\"\r\n  }\r\n}") == 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete TopElem;
@@ -1144,7 +1144,7 @@ void XmlJsonEncodingTest3()
 		Dat->ToXml(Buf, Len);
 		if (StkPlWcsStr(Tmp, Buf) == 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 	}
 	StkPlPrintf("OK\r\n");
@@ -1157,7 +1157,7 @@ void XmlJsonEncodingTest3()
 		Dat->ToJson(Buf, Len);
 		if (StkPlWcsStr(Tmp, Buf) == 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 	}
 	StkPlPrintf("OK\r\n");
@@ -1198,7 +1198,7 @@ void XmlDecodingTest1()
 		StkPlWcsCmp(RetObj4->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0 ||
 		StkPlWcsCmp(RetObj5->GetFirstChildElement()->GetNext()->GetFirstAttribute()->GetStringValue(), L"c1") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -1206,7 +1206,7 @@ void XmlDecodingTest1()
 	StkPlPrintf("Decoding variation test (ToXml check)...");
 	if (StkPlWcsCmp(Msg1, Msg2) != 0 || StkPlWcsCmp(Msg1, Msg3) != 0 || StkPlWcsCmp(Msg1, Msg4) != 0 || StkPlWcsCmp(Msg1, Msg5) != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -1235,19 +1235,19 @@ void XmlDecodingTest2()
 
 	if (StkPlWcsCmp(RetObj1->GetStringValue(), L"=") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	if (StkPlWcsCmp(RetObj2->GetStringValue(), L"/") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	if (StkPlWcsCmp(RetObj3->GetStringValue(), L"?") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	if (StkPlWcsCmp(RetObj4->GetStringValue(), L"!") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	delete RetObj1;
@@ -1282,7 +1282,7 @@ void XmlDecodingTest3(const wchar_t* Name)
 		StkPlWcsCmp(Attr4->GetStringValue(), L"\"") != 0 ||
 		StkPlWcsCmp(Attr5->GetStringValue(), L"\'") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -1294,7 +1294,7 @@ void XmlDecodingTest3(const wchar_t* Name)
 		StkPlWcsCmp(Elem4->GetStringValue(), L"\"") != 0 ||
 		StkPlWcsCmp(Elem5->GetStringValue(), L"\'") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -1319,7 +1319,7 @@ void XmlDecodingTest4(const wchar_t* Name)
 	if (StkPlWcsCmp(Attr1->GetStringValue(), L"<<<<<<<<<<") != 0 ||
 		StkPlWcsCmp(Attr2->GetStringValue(), L"\'\'\'\'\'\'\'\'\'\'") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -1328,7 +1328,7 @@ void XmlDecodingTest4(const wchar_t* Name)
 	if (StkPlWcsCmp(Elem1->GetStringValue(), L"&&&&&&&&&&") != 0 ||
 		StkPlWcsCmp(Elem2->GetStringValue(), L"\"\"\"\"\"\"\"\"\"\"") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("OK\r\n");
 	}
@@ -1374,7 +1374,7 @@ void JsonDecodingTest1()
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetStringValue(), L"This is a test.") != 0 ||
 		RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
@@ -1387,7 +1387,7 @@ void JsonDecodingTest1()
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetStringValue(), L"test") != 0 ||
 		RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
@@ -1399,7 +1399,7 @@ void JsonDecodingTest1()
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetName(), L"Xxx") != 0 || StkPlWcsCmp(RetObj->GetFirstChildElement()->GetStringValue(), L"Aaa") != 0 ||
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 || StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"Ccc") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
@@ -1417,7 +1417,7 @@ void JsonDecodingTest1()
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 ||
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
@@ -1435,7 +1435,7 @@ void JsonDecodingTest1()
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Ddd") != 0 ||
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"444") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
@@ -1453,7 +1453,7 @@ void JsonDecodingTest1()
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Ddd") != 0 ||
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"") != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
@@ -1465,7 +1465,7 @@ void JsonDecodingTest1()
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetIntValue() != 456 ||
 		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 222) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
@@ -1479,14 +1479,14 @@ void JsonDecodingTest1()
 			StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetStringValue(), L"test") != 0 ||
 			RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFloatValue() != 999.9f) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		wchar_t TmpBuf[4096] = L"";
 		RetObj->ToJson(TmpBuf, 4096);
 		StkObject* TmpObj = StkObject::CreateObjectFromJson(TmpBuf, &Offset);
 		if (TmpObj->Equals(RetObj) == false) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		delete TmpObj;
 		delete RetObj;
@@ -1501,14 +1501,14 @@ void JsonDecodingTest1()
 			StkPlWcsCmp(RetObj->GetFirstChildElement()->GetFirstChildElement()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetFirstChildElement()->GetNext()->GetIntValue() != 456 ||
 			StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetName(), L"Aaa") != 0 || RetObj->GetFirstChildElement()->GetNext()->GetFirstChildElement()->GetNext()->GetIntValue() != 222) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		wchar_t TmpBuf[4096] = L"";
 		RetObj->ToJson(TmpBuf, 4096);
 		StkObject* TmpObj = StkObject::CreateObjectFromJson(TmpBuf, &Offset);
 		if (TmpObj->Equals(RetObj) == false) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		delete TmpObj;
 		delete RetObj;
@@ -1548,7 +1548,7 @@ void JsonDecodingTest2()
 	StkPlPrintf("JSON Decoding (empty charactor)...");
 	if (StkPlWcsCmp(Str1, Str2) != 0 || StkPlWcsCmp(Str2, Str3) != 0 || StkPlWcsCmp(Str3, Str4) != 0) {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK\r\n");
 	delete RetObj1;
@@ -1592,7 +1592,7 @@ void CloneTest(StkObject* Obj)
 		StkPlPrintf("OK\r\n");
 	} else {
 		StkPlPrintf("NG\r\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	delete NewObj1;
@@ -1626,7 +1626,7 @@ int MemoryLeakChecking1(StkObject* PassedObj)
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
 		StkPlPrintf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
@@ -1697,7 +1697,7 @@ int MemoryLeakChecking2()
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
 		StkPlPrintf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
@@ -1758,7 +1758,7 @@ int MemoryLeakChecking3()
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
 		StkPlPrintf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
@@ -1787,7 +1787,7 @@ int MemoryLeakChecking4()
 		MaxMem[21] < MaxMem[24] &&
 		MaxMem[24] < MaxMem[27]) {
 		StkPlPrintf("NG : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[0], MaxMem[3], MaxMem[6], MaxMem[9], MaxMem[12], MaxMem[15], MaxMem[18], MaxMem[21], MaxMem[24]);
 	return 0;
@@ -1812,7 +1812,7 @@ void PerformanceTest()
 	}
 
 	StkPlPrintf("\r\n");
-	StkPlExit(0);
+	StkPlExit(-1);
 }
 
 void StkObjectTest()

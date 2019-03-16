@@ -16,7 +16,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'#', OutStr1, OutStr2, OutStr3, OutStr4);
 		if (Ret != 1 || StkPlWcsCmp(OutStr1, L"012345") != 0 || StkPlWcsCmp(OutStr2, L"xyz") != 0 || StkPlWcsCmp(OutStr3, L"") != 0 || StkPlWcsCmp(OutStr4, L"") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -29,7 +29,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto2Params(Target, Format, L'#', OutStr1, 4, OutStr2, 4);
 		if (Ret != 1 || StkPlWcsCmp(OutStr1, L"012") != 0 || StkPlWcsCmp(OutStr2, L"xyz") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -48,7 +48,7 @@ int StkStringParserTest()
 			StkPlWcsCmp(OutStr4, L"****") != 0 ||
 			Ret != 1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -65,7 +65,7 @@ int StkStringParserTest()
 			StkPlWcsCmp(OutStr3, L"アイ") != 0 ||
 			Ret != 1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -84,7 +84,7 @@ int StkStringParserTest()
 			StkPlWcsCmp(OutStr4, L"**") != 0 ||
 			Ret != 1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -99,7 +99,7 @@ int StkStringParserTest()
 		StkStringParser::ParseInto4Params(Target, Format, L'%', OutStr1, OutStr2, OutStr3, OutStr4);
 		if (StkPlWcsCmp(OutStr1, L"abcdefg") != 0 || StkPlWcsCmp(OutStr2, L"xyz") != 0 || StkPlWcsCmp(OutStr3, L"!!!!") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -111,7 +111,7 @@ int StkStringParserTest()
 		StkStringParser::ParseInto1Param(Target, Format, L'#', OutStr1);
 		if (StkPlWcsCmp(OutStr1, L"abcdefg") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -123,7 +123,7 @@ int StkStringParserTest()
 		StkStringParser::ParseInto1Param(Target, Format, L'#', OutStr1);
 		if (StkPlWcsCmp(OutStr1, L"!!!!") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -135,7 +135,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto3Params(Target, Format, L'a', NULL, 0, OutStr, 16, NULL, 0);
 		if (Ret != 0 || StkPlWcsCmp(OutStr, L"老若男女") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -148,7 +148,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto3Params(Target, Format, L'a', OutStr1, 16, NULL, -1, OutStr2, 16);
 		if (Ret != 0 || StkPlWcsCmp(OutStr1, L"魑魅魍魎古今東西") != 0 || StkPlWcsCmp(OutStr2, L"鬼畜米英") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -163,7 +163,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'&', OutStr1, OutStr2, OutStr3, OutStr4);
 		if (StkPlWcsCmp(OutStr1, L"") != 0 || StkPlWcsCmp(OutStr2, L"") != 0 || StkPlWcsCmp(OutStr3, L"") != 0 || StkPlWcsCmp(OutStr4, L"") != 0 || Ret != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -179,7 +179,7 @@ int StkStringParserTest()
 		if (StkPlWcsCmp(OutStr1, L"a") != 0 || StkPlWcsCmp(OutStr2, L"0") != 0 ||
 			StkPlWcsCmp(OutStr3, L"*") != 0 || StkPlWcsCmp(OutStr4, L"!") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -191,7 +191,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'#', OutStr1, NULL, NULL, NULL);
 		if (Ret != 1 || StkPlWcsCmp(OutStr1, L"a") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -203,7 +203,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'#', OutStr1, NULL, NULL, NULL);
 		if (Ret != 1 || StkPlWcsCmp(OutStr1, L"b") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -215,7 +215,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'#', OutStr1, NULL, NULL, NULL);
 		if (StkPlWcsCmp(OutStr1, L"a") != 0 || Ret != 1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -230,7 +230,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'#', OutStr1, OutStr2, OutStr3, OutStr4);
 		if (StkPlWcsCmp(OutStr1, L"a") != 0 || StkPlWcsCmp(OutStr2, L"c") != 0 || StkPlWcsCmp(OutStr3, L"e") != 0 || StkPlWcsCmp(OutStr4, L"g") != 0 || Ret != 1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -243,7 +243,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto2Params(Target, Format, L'#', OutStr1, OutStr2);
 		if (StkPlWcsCmp(OutStr1, L"abcd") != 0 || StkPlWcsCmp(OutStr2, L"34") != 0 || Ret != 1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -255,7 +255,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'#', OutStr1, NULL, NULL, NULL);
 		if (StkPlWcsCmp(OutStr1, L"abcdefg012345+-*/xyz6789QWERTYUIO@@@****!!!!") != 0 || Ret != 1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -271,7 +271,7 @@ int StkStringParserTest()
 		if (StkPlWcsCmp(OutStr1, L"東西南北") != 0 || StkPlWcsCmp(OutStr2, L"古今東西") != 0 ||
 			StkPlWcsCmp(OutStr3, L"赤青白黒") != 0 || StkPlWcsCmp(OutStr4, L"春夏秋冬") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -282,7 +282,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', NULL, NULL, NULL, NULL);
 		if (Ret != 1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -293,7 +293,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', NULL, NULL, NULL, NULL);
 		if (Ret != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -343,7 +343,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto3Params(Target, Format, L'!', OutStr1, OutStr2, OutStr3);
 		if (Ret != 1 || StkPlWcsCmp(OutStr1, TargetPart1) != 0 || StkPlWcsCmp(OutStr2, TargetPart3) != 0 || StkPlWcsCmp(OutStr3, TargetPart5) != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -356,7 +356,7 @@ int StkStringParserTest()
 		StkStringParser::ParseInto2Params(Target, Format, L'%', OutStr1, OutStr2);
 		if (StkPlWcsCmp(OutStr1, L"") != 0 || StkPlWcsCmp(OutStr2, L"") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -370,7 +370,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto3Params(Target, Format, L'%', OutStr1, OutStr2, OutStr3);
 		if (StkPlWcsCmp(OutStr1, L"魑魅魍魎") != 0 || StkPlWcsCmp(OutStr2, L"老若男女") != 0 || OutStr3[0] != '\0' || Ret != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -382,7 +382,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto1Param(Target, Format, L'$', OutStr1);
 		if (OutStr1[0] != '\0' || Ret != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -397,7 +397,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'$', OutStr1, OutStr2, OutStr3, OutStr4);
 		if (OutStr1[0] != '\0' || OutStr2[0] != '\0' || OutStr3[0] != '\0' || OutStr4[0] != '\0' || Ret != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -408,7 +408,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', NULL, NULL, NULL, NULL);
 		if (Ret != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -421,7 +421,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', OutStr1, OutStr2, NULL, NULL);
 		if (Ret != 0 || StkPlWcsCmp(OutStr1, L"") != 0 || StkPlWcsCmp(OutStr2, L"") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -435,7 +435,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', OutStr1, OutStr2, OutStr3, NULL);
 		if (Ret != 0 || StkPlWcsCmp(OutStr1, L"") != 0 || StkPlWcsCmp(OutStr2, L"") != 0 || StkPlWcsCmp(OutStr3, L"") != 0) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -446,7 +446,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(Target, Format, L'%', NULL, NULL, NULL, NULL);
 		if (Ret != -1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}
@@ -455,7 +455,7 @@ int StkStringParserTest()
 		int Ret = StkStringParser::ParseInto4Params(NULL, NULL, L'%', NULL, NULL, NULL, NULL);
 		if (Ret != -1) {
 			StkPlPrintf("NG\r\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkPlPrintf("OK\r\n");
 	}

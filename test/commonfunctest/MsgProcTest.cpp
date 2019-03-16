@@ -9,7 +9,7 @@ void Test_Conv_Utf16_Utf32(const char16_t* MsgPtr, int NumOfByte)
 	size_t LenUtf16 = StkPlConvUtf32ToUtf16(Utf16, 256, Utf32);
 	if (LenUtf16 != LenUtf32 * NumOfByte || StkPlMemCmp(MsgPtr, Utf16, LenUtf16 * sizeof(char16_t)) != 0) {
 		StkPlPrintf("UTF16(%d word) -> UTF32 -> UTF16(%d word) ... NG case\n", NumOfByte, NumOfByte);
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("UTF16(%d word) -> UTF32 -> UTF16(%d word) ... OK case\n", NumOfByte, NumOfByte);
 }
@@ -22,7 +22,7 @@ void Test_Conv_Utf8_Utf32(const char32_t* MsgPtr, int NumOfByte)
 	size_t LenUtf32 = StkPlConvUtf8ToUtf32(Utf32, 256, Utf8);
 	if (LenUtf8 != LenUtf32 * NumOfByte || StkPlMemCmp(MsgPtr, Utf32, LenUtf32 * sizeof(char32_t)) != 0) {
 		StkPlPrintf("UTF32 -> UTF8(%d byte) -> UTF32 ... NG case\n", NumOfByte);
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("UTF32 -> UTF8(%d byte) -> UTF32 ... OK case\n", NumOfByte);
 }
@@ -35,7 +35,7 @@ void Test_Conv_Utf8_Utf16(const char16_t* MsgPtr, int NumOfByte)
 	size_t LenUtf16 = StkPlConvUtf8ToUtf16(Utf16, 256, Utf8);
 	if (LenUtf8 != LenUtf16 * NumOfByte || StkPlMemCmp(MsgPtr, Utf16, LenUtf16 * sizeof(char16_t)) != 0) {
 		StkPlPrintf("UTF16 -> UTF8(%d byte) -> UTF16 ... NG case\n", NumOfByte);
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("UTF16 -> UTF8(%d byte) -> UTF16 ... OK case\n", NumOfByte);
 }
@@ -49,7 +49,7 @@ size_t Test_Insufficient_Buffer_Utf16_Utf32(const char16_t* MsgPtr, size_t Size)
 	size_t LenUtf32f = StkPlConvUtf16ToUtf32(Utf32f, 256, MsgPtr);
 	if (LenUtf32 > Size - 1 || LenUtf32 >= LenUtf32f || StkPlMemCmp(Utf32, Utf32f, LenUtf32 * sizeof(char32_t)) != 0) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 	return LenUtf32;
@@ -64,7 +64,7 @@ size_t Test_Insufficient_Buffer_Utf32_Utf16(const char32_t* MsgPtr, size_t Size)
 	size_t LenUtf16f = StkPlConvUtf32ToUtf16(Utf16f, 256, MsgPtr);
 	if (LenUtf16 > Size - 1 || LenUtf16 >= LenUtf16f || StkPlMemCmp(Utf16, Utf16f, LenUtf16 * sizeof(char16_t)) != 0) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 	return LenUtf16;
@@ -79,7 +79,7 @@ size_t Test_Insufficient_Buffer_Utf8_Utf32(const char* MsgPtr, size_t Size)
 	size_t LenUtf32f = StkPlConvUtf8ToUtf32(Utf32f, 256, MsgPtr);
 	if (LenUtf32 > Size - 1 || LenUtf32 >= LenUtf32f || StkPlMemCmp(Utf32, Utf32f, LenUtf32 * sizeof(char32_t)) != 0) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 	return LenUtf32;
@@ -94,7 +94,7 @@ size_t Test_Insufficient_Buffer_Utf32_Utf8(const char32_t* MsgPtr, size_t Size)
 	size_t LenUtf8f = StkPlConvUtf32ToUtf8(Utf8f, 256, MsgPtr);
 	if (LenUtf8 > Size - 1 || LenUtf8 >= LenUtf8f || StkPlMemCmp(Utf8, Utf8f, LenUtf8) != 0) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 	return LenUtf8;
@@ -109,7 +109,7 @@ size_t Test_Insufficient_Buffer_Utf8_Utf16(const char* MsgPtr, size_t Size)
 	size_t LenUtf16f = StkPlConvUtf8ToUtf16(Utf16f, 256, MsgPtr);
 	if (LenUtf16 > Size - 1 || LenUtf16 >= LenUtf16f || StkPlMemCmp(Utf16, Utf16f, LenUtf16 * sizeof(char16_t)) != 0) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 	return LenUtf16;
@@ -124,7 +124,7 @@ size_t Test_Insufficient_Buffer_Utf16_Utf8(const char16_t* MsgPtr, size_t Size)
 	size_t LenUtf8f = StkPlConvUtf16ToUtf8(Utf8f, 256, MsgPtr);
 	if (LenUtf8 > Size - 1 || LenUtf8 >= LenUtf8f || StkPlMemCmp(Utf8, Utf8f, LenUtf8) != 0) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 	return LenUtf8;
@@ -137,7 +137,7 @@ void Test_Invalid_String_Utf16_Utf32(const char16_t* MsgPtr, int Count)
 	size_t LenUtf32 = StkPlConvUtf16ToUtf32(Buf, 256, MsgPtr);
 	if (LenUtf32 != Count) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 }
@@ -149,7 +149,7 @@ void Test_Invalid_String_Utf8_Utf32(const char* MsgPtr, int Count)
 	size_t LenUtf32 = StkPlConvUtf8ToUtf32(Buf, 256, MsgPtr);
 	if (LenUtf32 != Count) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 }
@@ -161,7 +161,7 @@ void Test_Invalid_String_Utf8_Utf16(const char* MsgPtr, int Count)
 	size_t LenUtf16 = StkPlConvUtf8ToUtf16(Buf, 256, MsgPtr);
 	if (LenUtf16 != Count) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 }
@@ -176,13 +176,13 @@ void MsgProcTest()
 	MessageProc::SetLocaleMode(MessageProc::LOCALE_MODE_ENGLISH);
 	if (StkPlWcsCmp(MessageProc::GetMsg(100), L"abcde") != 0) {
 		StkPlPrintf("English message cannot be acquired in the English locale configuration ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("English message can be acquired in the English locale configuration ... OK case\n");
 	}
 	if (StkPlWcsCmp(MessageProc::GetMsgJpn(100), L"あいうえお") != 0) {
 		StkPlPrintf("Japanese message cannot not be acquired using GetMsgJpn in the English locale configuration ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("Japanese message can be acquired using GetMsgJpn() in the English locale configuration ... OK case\n");
 	}
@@ -190,13 +190,13 @@ void MsgProcTest()
 	MessageProc::SetLocaleMode(MessageProc::LOCALE_MODE_JAPANESE);
 	if (StkPlWcsCmp(MessageProc::GetMsg(100), L"あいうえお") != 0) {
 		StkPlPrintf("Japanese message cannot not be acquired in the Japanese locale configuration ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("Japanese message can be acquired in the Japanese locale configuration ... OK case\n");
 	}
 	if (StkPlWcsCmp(MessageProc::GetMsgEng(100), L"abcde") != 0) {
 		StkPlPrintf("English message cannot not be acquired using GetMsgEng in the Japanese locale configuration ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("English message can be acquired using GetMsgEng() in the Japanese locale configuration ... OK case\n");
 	}
@@ -205,14 +205,14 @@ void MsgProcTest()
 	if (MessageProc::GetMsgSjisEng(100) == NULL || MessageProc::GetMsgSjisJpn(100) == NULL ||
 		MessageProc::GetMsgUtf8Eng(100) == NULL || MessageProc::GetMsgUtf8Jpn(100) == NULL) {
 		StkPlPrintf("Sjis message and Utf8 message cannot be acquired ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("Sjis message and Utf8 message can be acquired ... OK case\n");
 	}
 
 	if (MessageProc::GetMsg(101) != NULL) {
 		StkPlPrintf("GetMsg does not return NULL if undefined message ID is specified ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("GetMsg returns NULL if undefined message ID is specified ... OK case\n");
 	}
@@ -220,7 +220,7 @@ void MsgProcTest()
 	MessageProc::ClearAllMsg();
 	if (MessageProc::GetMsg(100) != NULL) {
 		StkPlPrintf("Old message can be acquired even if clear API is called ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("After clear API is called no message can be acquired ... OK case\n");
 	}
@@ -233,13 +233,13 @@ void MsgProcTest()
 	MessageProc::DelEng(102);
 	if (MessageProc::GetMsgEng(101) == NULL || MessageProc::GetMsgSjisEng(101) == NULL || MessageProc::GetMsgUtf8Eng(101) == NULL) {
 		StkPlPrintf("Existing English message is not returned ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("Existing English message is returned ... OK case\n");
 	}
 	if (MessageProc::GetMsgJpn(102) == NULL || MessageProc::GetMsgSjisJpn(102) == NULL || MessageProc::GetMsgUtf8Jpn(102) == NULL) {
 		StkPlPrintf("Existing Japanese message is not returned ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	} else {
 		StkPlPrintf("Existing Japanese message is returned ... OK case\n");
 	}
@@ -247,13 +247,13 @@ void MsgProcTest()
 		StkPlPrintf("Deleted Japanese message is not returned ... OK case\n");
 	} else {
 		StkPlPrintf("Deleted Japanese message is returned ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	if (MessageProc::GetMsgEng(102) == NULL || MessageProc::GetMsgSjisEng(102) == NULL || MessageProc::GetMsgUtf8Eng(102) == NULL) {
 		StkPlPrintf("Deleted English message is not returned ... OK case\n");
 	} else {
 		StkPlPrintf("Deleted English message is returned ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	MessageProc::SetLocaleMode(MessageProc::LOCALE_MODE_WIN32);
@@ -263,7 +263,7 @@ void MsgProcTest()
 	MessageProc::AddEng(102, L"fghij");
 	if (StkPlWcsCmp(MessageProc::GetMsg(101), L"東西南北,魑魅魍魎,古今東西,老若男女,焼肉定食") != 0 && StkPlIsJapaneseLocale() == true) {
 		StkPlPrintf("Japanese locale check ... NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	MessageProc::DelJpn(101);
 	MessageProc::DelEng(102);
@@ -333,7 +333,7 @@ void MsgProcTest()
 	size_t Len16n_8 = StkPlConvUtf8ToUtf16(NULL, 0, Utf8);
 	if (Len32f_16 != Len32n_16 || Len16f_32 != Len16n_32 || Len32f_8 != Len32n_8 || Len8f_32 != Len8n_32 || Len8f_16 != Len8n_16 || Len16f_8 != Len16n_8) {
 		StkPlPrintf("NG case\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
 
@@ -343,7 +343,7 @@ void MsgProcTest()
 		char* Utf8b = StkPlCreateUtf8FromUtf32(U"abcdeあいうえお");
 		if (StkPlMemCmp(Utf8a, Utf8b, 15) != 0) {
 			StkPlPrintf("NG case\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		delete Utf8a;
 		delete Utf8b;
@@ -354,7 +354,7 @@ void MsgProcTest()
 		char16_t* Utf16a = StkPlCreateUtf16FromUtf32(U"abcdeあいうえお");
 		if (StkPlMemCmp(Utf32a, U"abcdeあいうえお", 10) != 0 || StkPlMemCmp(Utf16a, u"abcdeあいうえお", 15) != 0) {
 			StkPlPrintf("NG case\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		delete Utf32a;
 		delete Utf16a;
@@ -365,7 +365,7 @@ void MsgProcTest()
 		char16_t* Utf16b = StkPlCreateUtf16FromUtf8("\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090\x0e3\x09b\x090 abcde");
 		if (StkPlMemCmp(Utf32b, U"㛐㛐㛐㛐㛐㛐㛐 abcde", 10) != 0 || StkPlMemCmp(Utf16b, u"㛐㛐㛐㛐㛐㛐㛐 abcde", 15) != 0) {
 			StkPlPrintf("NG case\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		delete Utf32b;
 		delete Utf16b;
@@ -383,7 +383,7 @@ void MsgProcTest()
 		wchar_t* Str7 = StkPlCreateWideCharFromUtf16(Str6);
 		if (StkPlWcsCmp(Str7, Str1) != 0) {
 			StkPlPrintf("NG case\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		wchar_t StrA[128];
 		wchar_t StrB[128];
@@ -400,7 +400,7 @@ void MsgProcTest()
 		if (StkPlWcsCmp(StrA, Str1) != 0 || StkPlWcsCmp(StrB, Str3) != 0 || StkPlWcsCmp(StrC, Str5) != 0 ||
 			StkPlMemCmp(Utf8, Str4, 30) != 0 || StkPlMemCmp(Utf16, Str6, 30) != 0 || StkPlMemCmp(Utf32, Str2, 30) != 0) {
 			StkPlPrintf("NG case\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 
 

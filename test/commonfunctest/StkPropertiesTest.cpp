@@ -14,7 +14,7 @@ void StkPropertiesTest()
 		StkPlPrintf("Success\n");
 	} else {
 		StkPlPrintf("Failure\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkPlPrintf("Program is loading property file \"propertytest2.prop\"...");
@@ -23,7 +23,7 @@ void StkPropertiesTest()
 		StkPlPrintf("Success\n");
 	} else {
 		StkPlPrintf("Failure\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkPlPrintf("Program is loading property file \"propertytest3.prop\"...");
@@ -32,7 +32,7 @@ void StkPropertiesTest()
 		StkPlPrintf("Success\n");
 	} else {
 		StkPlPrintf("Failure\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkPlPrintf("Program trys to load unexisting property file \"propertytest4.prop\"...");
@@ -41,7 +41,7 @@ void StkPropertiesTest()
 		StkPlPrintf("Success\n");
 	} else {
 		StkPlPrintf("Failure\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	char ValueStr[256];
@@ -53,7 +53,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkProp.GetPropertyStr("prop02", ValueStr);
@@ -62,7 +62,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkProp.GetPropertyInt("prop03", &ValueInt);
@@ -71,7 +71,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkProp.GetPropertyStr("prop04", ValueStr);
@@ -80,7 +80,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkProp.GetPropertyInt("prop07", &ValueInt);
@@ -89,7 +89,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkProp.GetPropertyStr("myname", ValueStr);
@@ -98,7 +98,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	Ret = StkProp.GetPropertyStr("equal1", ValueStr);
@@ -107,7 +107,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	Ret = StkProp.GetPropertyStr("equal2", ValueStr);
@@ -116,7 +116,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	Ret = StkProp.GetPropertyStr("equal3", ValueStr);
@@ -125,7 +125,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkPlPrintf("Program is loading property file (multi bytes file name) ...");
@@ -134,7 +134,7 @@ void StkPropertiesTest()
 		StkPlPrintf("Success\n");
 	} else {
 		StkPlPrintf("Failure\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	Ret = StkProp.GetPropertyStr("testprop1", ValueStr);
@@ -143,7 +143,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	Ret = StkProp.GetPropertyStr("testprop2", ValueStr);
@@ -152,7 +152,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	Ret = StkProp.GetPropertyStr("testprop3", ValueStr);
@@ -161,7 +161,7 @@ void StkPropertiesTest()
 		StkPlPrintf("OK\n");
 	} else {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 
 	StkPlPrintf("StkPropertiesTest completed.\n\n\n");
