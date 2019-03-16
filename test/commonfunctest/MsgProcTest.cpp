@@ -202,12 +202,15 @@ void MsgProcTest()
 	}
 
 	MessageProc::SetLocaleMode(MessageProc::LOCALE_MODE_ENGLISH);
-	if (MessageProc::GetMsgSjisEng(100) == NULL || MessageProc::GetMsgSjisJpn(100) == NULL ||
+	if (
+#ifdef WIN32
+		MessageProc::GetMsgSjisEng(100) == NULL || MessageProc::GetMsgSjisJpn(100) == NULL ||
+#endif
 		MessageProc::GetMsgUtf8Eng(100) == NULL || MessageProc::GetMsgUtf8Jpn(100) == NULL) {
-		StkPlPrintf("Sjis message and Utf8 message cannot be acquired ... NG case\n");
+		StkPlPrintf("Sjis message (Windows only) and Utf8 message cannot be acquired ... NG case\n");
 		StkPlExit(-1);
 	} else {
-		StkPlPrintf("Sjis message and Utf8 message can be acquired ... OK case\n");
+		StkPlPrintf("Sjis message (Windows only) and Utf8 message can be acquired ... OK case\n");
 	}
 
 	if (MessageProc::GetMsg(101) != NULL) {
@@ -231,25 +234,41 @@ void MsgProcTest()
 	MessageProc::AddEng(102, L"fghij");
 	MessageProc::DelJpn(101);
 	MessageProc::DelEng(102);
-	if (MessageProc::GetMsgEng(101) == NULL || MessageProc::GetMsgSjisEng(101) == NULL || MessageProc::GetMsgUtf8Eng(101) == NULL) {
+	if (MessageProc::GetMsgEng(101) == NULL ||
+#ifdef WIN32
+		MessageProc::GetMsgSjisEng(101) == NULL ||
+#endif
+		MessageProc::GetMsgUtf8Eng(101) == NULL) {
 		StkPlPrintf("Existing English message is not returned ... NG case\n");
 		StkPlExit(-1);
 	} else {
 		StkPlPrintf("Existing English message is returned ... OK case\n");
 	}
-	if (MessageProc::GetMsgJpn(102) == NULL || MessageProc::GetMsgSjisJpn(102) == NULL || MessageProc::GetMsgUtf8Jpn(102) == NULL) {
+	if (MessageProc::GetMsgJpn(102) == NULL ||
+#ifdef WIN32
+		MessageProc::GetMsgSjisJpn(102) == NULL ||
+#endif
+		MessageProc::GetMsgUtf8Jpn(102) == NULL) {
 		StkPlPrintf("Existing Japanese message is not returned ... NG case\n");
 		StkPlExit(-1);
 	} else {
 		StkPlPrintf("Existing Japanese message is returned ... OK case\n");
 	}
-	if (MessageProc::GetMsgJpn(101) == NULL || MessageProc::GetMsgSjisJpn(101) == NULL || MessageProc::GetMsgUtf8Jpn(101) == NULL) {
+	if (MessageProc::GetMsgJpn(101) == NULL ||
+#ifdef WIN32
+		MessageProc::GetMsgSjisJpn(101) == NULL ||
+#endif
+		MessageProc::GetMsgUtf8Jpn(101) == NULL) {
 		StkPlPrintf("Deleted Japanese message is not returned ... OK case\n");
 	} else {
 		StkPlPrintf("Deleted Japanese message is returned ... NG case\n");
 		StkPlExit(-1);
 	}
-	if (MessageProc::GetMsgEng(102) == NULL || MessageProc::GetMsgSjisEng(102) == NULL || MessageProc::GetMsgUtf8Eng(102) == NULL) {
+	if (MessageProc::GetMsgEng(102) == NULL ||
+#ifdef WIN32
+		MessageProc::GetMsgSjisEng(102) == NULL ||
+#endif
+		MessageProc::GetMsgUtf8Eng(102) == NULL) {
 		StkPlPrintf("Deleted English message is not returned ... OK case\n");
 	} else {
 		StkPlPrintf("Deleted English message is returned ... NG case\n");
