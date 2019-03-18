@@ -1,7 +1,9 @@
-stkdatatest : StkPl.o AutoSave.o BinaryColumn.o FloatColumn.o Insert16383RecordsAtOneTime.o ManyRecords.o SmallTable.o TableVersion.o insert16383records.o sample.cpp
+stkdatatest : AutoSave.o BinaryColumn.o FloatColumn.o Insert16383RecordsAtOneTime.o ManyRecords.o SmallTable.o TableVersion.o insert16383records.o sample.cpp
 	cd ../../src/stkdata; make
 	cp ../../src/stkdata/stkdata.a .
-	g++ -o stkdatatest StkPl.o AutoSave.o BinaryColumn.o FloatColumn.o Insert16383RecordsAtOneTime.o ManyRecords.o SmallTable.o TableVersion.o insert16383records.o sample.cpp stkdata.a -std=c++1z -lstdc++fs -pthread
+	cd ../../src/stkpl; make
+	cp ../../src/stkpl/stkpl.a .
+	g++ -o stkdatatest AutoSave.o BinaryColumn.o FloatColumn.o Insert16383RecordsAtOneTime.o ManyRecords.o SmallTable.o TableVersion.o insert16383records.o sample.cpp stkpl.a stkdata.a -std=c++1z -lstdc++fs -pthread
 
 StkPl.o : ../../src/StkPl.cpp
 	g++ -c ../../src/StkPl.cpp -std=c++1z

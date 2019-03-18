@@ -65,7 +65,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;Debug\commonfunc.lib;Debug\stkdata.lib;Debug\stkthread.lib;Debug\stksocket.lib;Debug\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;Debug\commonfunc.lib;Debug\stkdata.lib;Debug\stkthread.lib;Debug\stksocket.lib;Debug\stkpl.lib;Debug\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>10000000</HeapReserveSize>
@@ -87,7 +87,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;Release\commonfunc.lib;Release\stkdata.lib;Release\stkthread.lib;Release\stksocket.lib;Release\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;Release\commonfunc.lib;Release\stkdata.lib;Release\stkthread.lib;Release\stksocket.lib;Release\stkpl.lib;Release\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>10000000</HeapReserveSize>

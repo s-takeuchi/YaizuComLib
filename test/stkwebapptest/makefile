@@ -7,7 +7,9 @@ stkwebapptest : stkwebapptest.o StkWebAppTest1.o StkWebAppTest2.o StkWebAppTest3
 	cp ../../src/stksocket/stksocket.a .
 	cd ../../src/stkthread; make
 	cp ../../src/stkthread/stkthread.a .
-	g++ -o stkwebapptest stkwebapptest.o StkWebAppTest1.o StkWebAppTest2.o StkWebAppTest3.o StkWebAppTest4.o StkWebAppTest5.o stkwebapp.a commonfunc.a stksocket.a stkthread.a -std=c++1z -lstdc++fs -pthread
+	cd ../../src/stkpl; make
+	cp ../../src/stkpl/stkpl.a .
+	g++ -o stkwebapptest stkwebapptest.o StkWebAppTest1.o StkWebAppTest2.o StkWebAppTest3.o StkWebAppTest4.o StkWebAppTest5.o stkwebapp.a commonfunc.a stksocket.a stkthread.a stkpl.a -std=c++1z -lstdc++fs -pthread
 
 stkwebapptest.o : stkwebapptest.cpp
 	g++ -c stkwebapptest.cpp -std=c++1z

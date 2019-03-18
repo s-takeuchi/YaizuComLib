@@ -1,4 +1,4 @@
-﻿#include "../../src/StkPl.h"
+﻿#include "../../src/stkpl/StkPl.h"
 #include "../../src/commonfunc/StkProperties.h"
 
 void StkPropertiesTest()

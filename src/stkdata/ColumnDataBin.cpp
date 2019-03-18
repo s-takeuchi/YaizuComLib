@@ -1,5 +1,5 @@
 ﻿#include "stkdata.h"
-#include "../StkPl.h"
+#include "../stkpl/StkPl.h"
 
 // Constructor
 ColumnDataBin::ColumnDataBin(const wchar_t* ColumnName, const unsigned char* Value, int Length)

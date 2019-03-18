@@ -1,7 +1,7 @@
 ﻿#include <thread>
 #include <chrono>
 
-#include "../../src/StkPl.h"
+#include "../../src/stkpl/StkPl.h"
 #include "../../src/stksocket/stksocket.h"
 #include "StkSocketTestHttp.h"
 

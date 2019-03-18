@@ -1,7 +1,9 @@
 commonfunctest : StkStringParserTest.o StkPropertiesTest.o StkObjectTest.o MsgProcTest.o commonfunctest.o
 	cd ../../src/commonfunc; make
 	cp ../../src/commonfunc/commonfunc.a .
-	g++ -o commonfunctest StkStringParserTest.o StkPropertiesTest.o StkObjectTest.o MsgProcTest.o commonfunctest.o commonfunc.a -std=c++1z -lstdc++fs
+	cd ../../src/stkpl; make
+	cp ../../src/stkpl/stkpl.a .
+	g++ -o commonfunctest StkStringParserTest.o StkPropertiesTest.o StkObjectTest.o MsgProcTest.o commonfunctest.o stkpl.a commonfunc.a -std=c++1z -lstdc++fs
 
 StkStringParserTest.o : StkStringParserTest.cpp
 	g++ -c StkStringParserTest.cpp -std=c++1z

@@ -1,0 +1,1147 @@
+﻿#include <cwchar>
+#include <cstring>
+#include <clocale>
+#include <cstdlib>
+#include <cstdio>
+#include <cstdarg>
+#include <thread>
+#include <chrono>
+
+#ifdef WIN32
+#include <windows.h>
+#include <Psapi.h>
+#include <filesystem>
+#include <time.h>
+#else
+#include <unistd.h>
+#include <time.h>
+#include <ctime>
+#include <experimental/filesystem>
+#endif
+
+#include "StkPl.h"
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for char
+
+size_t StkPlStrLen(const char* Str)
+{
+	return strlen(Str);
+}
+
+int StkPlStrCmp(const char* Str1, const char* Str2)
+{
+	return strcmp(Str1, Str2);
+}
+
+int StkPlStrNCmp(const char* Str1, const char* Str2, size_t Num)
+{
+	return strncmp(Str1, Str2, Num);
+}
+
+const char* StkPlStrStr(const char* Str1, const char* Str2)
+{
+	return strstr(Str1, Str2);
+}
+
+char* StkPlStrCpy(char* Destination, size_t NumberOfElements, const char* Source)
+{
+#ifdef WIN32
+	strcpy_s(Destination, NumberOfElements, Source);
+	return Destination;
+#else
+	return strcpy(Destination, Source);
+#endif
+}
+
+char* StkPlStrNCpy(char* Destination, size_t NumberOfElements, const char* Source, size_t Num)
+{
+#ifdef WIN32
+	strncpy_s(Destination, NumberOfElements, Source, Num);
+	return Destination;
+#else
+	return strncpy(Destination, Source, Num);
+#endif
+}
+
+char * StkPlStrCat(char* Destination, size_t NumberOfElements, const char* Source)
+{
+#ifdef WIN32
+	strcat_s(Destination, NumberOfElements, Source);
+	return Destination;
+#else
+	return strcat(Destination, Source);
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for wchar
+
+size_t StkPlWcsLen(const wchar_t* Wcs)
+{
+	return wcslen(Wcs);
+}
+
+int StkPlWcsCmp(const wchar_t* Wcs1, const wchar_t* Wcs2)
+{
+	return wcscmp(Wcs1, Wcs2);
+}
+
+const wchar_t* StkPlWcsStr(const wchar_t* Wcs1, const wchar_t* Wcs2)
+{
+	return wcsstr(Wcs1, Wcs2);
+}
+
+wchar_t* StkPlWcsCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+{
+#ifdef WIN32
+	wcsncpy_s(Destination, NumberOfElements, Source, _TRUNCATE);
+	return Destination;
+#else
+	return wcscpy(Destination, Source);
+#endif
+}
+
+wchar_t* StkPlWcsNCpy(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source, size_t Num)
+{
+#ifdef WIN32
+	wcsncpy_s(Destination, NumberOfElements, Source, Num);
+	return Destination;
+#else
+	return wcsncpy(Destination, Source, Num);
+#endif
+}
+
+wchar_t* StkPlLStrCpy(wchar_t* Destination, const wchar_t* Source)
+{
+#ifdef WIN32
+	return lstrcpy(Destination, Source);
+#else
+	return wcscpy(Destination, Source);
+#endif
+}
+
+wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_t* Source)
+{
+#ifdef WIN32
+	wcscat_s(Destination, NumberOfElements, Source);
+	return Destination;
+#else
+	return wcscat(Destination, Source);
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for memory
+
+int StkPlMemCmp(const void* Ptr1, const void* Ptr2, size_t Num)
+{
+	return memcmp(Ptr1, Ptr2, Num);
+}
+
+void* StkPlMemCpy(void* Destination, const void* Source, size_t NumberOfElements)
+{
+	return memcpy(Destination, Source, NumberOfElements);
+}
+
+void* StkPlMemSet(void* Ptr, int Value, size_t Size)
+{
+	return memset(Ptr, Value, Size);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for locale
+
+bool StkPlIsJapaneseLocale()
+{
+	setlocale(LC_ALL, "");
+	char* TmpLoc = setlocale(LC_CTYPE, NULL);
+	if (strstr(TmpLoc, "ja_JP") != NULL || strstr(TmpLoc, "Japanese_Japan") != NULL) {
+		return true;
+	}
+	return false;
+}
+
+bool StkPlIsJapaneseLocaleFromEnv()
+{
+#ifdef WIN32
+	char* Locale;
+	unsigned int LocaleSize;
+	if (_dupenv_s(&Locale, &LocaleSize, "HTTP_ACCEPT_LANGUAGE") == 0) {
+		if (Locale == 0 || LocaleSize == 0) {
+			return false;
+		}
+		if (strstr(Locale, (char*)"ja") == Locale) {
+			free(Locale);
+			return true;
+		}
+	}
+	return false;
+#else
+	char* Locale = getenv("HTTP_ACCEPT_LANGUAGE");
+	if (Locale == 0) {
+		return false;
+	}
+	if (strstr(Locale, (char*)"ja") == Locale) {
+		return true;
+	}
+	return false;
+#endif
+}
+
+char* StkPlWideCharToSjis(const wchar_t* Txt)
+{
+#ifdef WIN32
+	int MltBufLen = WideCharToMultiByte(CP_THREAD_ACP, 0, Txt, -1, (LPSTR)NULL, 0, NULL, NULL);
+	if (MltBufLen > 0) {
+		char* MltBuf = (char*)new char[MltBufLen + 1];
+		if (WideCharToMultiByte(CP_THREAD_ACP, 0, Txt, -1, MltBuf, MltBufLen, NULL, NULL) != 0) {
+			MltBuf[MltBufLen] = '\0';
+		}
+		return MltBuf;
+	}
+	return NULL;
+#else
+	setlocale(LC_CTYPE, "");
+	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
+	mbstate_t MbState;
+	memset((void*)&MbState, 0, sizeof(MbState));
+	int ActualSize = wcsrtombs(NULL, &Txt, 1, &MbState);
+	if (ActualSize == -1 || ConfLc == NULL) {
+		return NULL;
+	}
+	char* NewMbs = new char[ActualSize + 1];
+	wcsrtombs(NewMbs, &Txt, ActualSize, &MbState);
+	NewMbs[ActualSize] = '\0';
+	return NewMbs;
+#endif
+}
+
+wchar_t* StkPlSjisToWideChar(const char* Txt)
+{
+#ifdef WIN32
+	int WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, NULL, NULL);
+	if (WcBufLen > 0) {
+		wchar_t* WcTxt = new wchar_t[WcBufLen + 1];
+		WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, WcTxt, WcBufLen);
+		WcTxt[WcBufLen] = L'\0';
+		return WcTxt;
+	}
+	return NULL;
+#else
+	setlocale(LC_CTYPE, "");
+	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
+	mbstate_t MbState;
+	memset((void*)&MbState, 0, sizeof(MbState));
+	int ActualSize = mbsrtowcs(NULL, &Txt, 1, &MbState);
+	if (ActualSize == -1 || ConfLc == NULL) {
+		return NULL;
+	}
+	wchar_t* NewWcs = new wchar_t[ActualSize + 1];
+	mbsrtowcs(NewWcs, &Txt, ActualSize, &MbState);
+	NewWcs[ActualSize] = L'\0';
+	return NewWcs;
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for UTF conversion
+
+size_t StkPlConvUtf16ToUtf32(char32_t* Utf32, size_t SizeInWord, const char16_t* Utf16)
+{
+	const char16_t* Utf16Ptr = Utf16;
+	char32_t* Utf32Ptr = Utf32;
+	size_t ActualSize = 0;
+	bool ConversionFlag = true;
+	if (SizeInWord == 0) {
+		ConversionFlag = false;
+		SizeInWord = (size_t)-1;
+	}
+	while (*Utf16Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if ((*Utf16Ptr & 0b1101100000000000) == 0b1101100000000000) {
+			if ((*(Utf16Ptr + 1) & 0b1101110000000000) != 0b1101110000000000) {
+				break;
+			}
+			if (ConversionFlag) {
+				*Utf32Ptr = 0x10000 + (*Utf16Ptr - 0b1101100000000000) * 0x400 + (*(Utf16Ptr + 1) - 0b1101110000000000);
+			}
+			Utf16Ptr += 2;
+		} else {
+			if (ConversionFlag) {
+				*Utf32Ptr = (char32_t)*Utf16Ptr;
+			}
+			Utf16Ptr++;
+		}
+		Utf32Ptr++;
+		ActualSize++;
+	}
+	if (ConversionFlag) {
+		*Utf32Ptr = U'\0';
+	}
+	return ActualSize;
+}
+
+size_t StkPlConvUtf32ToUtf16(char16_t* Utf16, size_t SizeInWord, const char32_t* Utf32)
+{
+	const char32_t* Utf32Ptr = Utf32;
+	char16_t* Utf16Ptr = Utf16;
+	size_t ActualSize = 0;
+	bool ConversionFlag = true;
+	if (SizeInWord == 0) {
+		ConversionFlag = false;
+		SizeInWord = (size_t)-1;
+	}
+	while (*Utf32Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if (*Utf32Ptr < 0x10000) {
+			if (ConversionFlag) {
+				*Utf16Ptr = (char16_t)*Utf32Ptr;
+			}
+			Utf16Ptr++;
+			ActualSize++;
+		} else {
+			if (ActualSize + 1 < SizeInWord - 1) {
+				if (ConversionFlag) {
+					*Utf16Ptr = (char16_t)((*Utf32Ptr - 0x10000) / 0x400 + 0b1101100000000000);
+					*(Utf16Ptr + 1) = (char16_t)((*Utf32Ptr - 0x10000) % 0x400 + 0b1101110000000000);
+				}
+				Utf16Ptr += 2;
+				ActualSize += 2;
+			} else {
+				break;
+			}
+		}
+		Utf32Ptr++;
+	}
+	if (ConversionFlag) {
+		*Utf16Ptr = u'\0';
+	}
+	return ActualSize;
+}
+
+size_t StkPlConvUtf8ToUtf32(char32_t* Utf32, size_t SizeInWord, const char* Utf8)
+{
+	const unsigned char* Utf8Ptr = (unsigned char*)Utf8;
+	char32_t* Utf32Ptr = Utf32;
+	size_t ActualSize = 0;
+	bool ConversionFlag = true;
+	if (SizeInWord == 0) {
+		ConversionFlag = false;
+		SizeInWord = (size_t)-1;
+	}
+	while (*Utf8Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if (*Utf8Ptr < 0x80) {
+			if (ConversionFlag) {
+				*Utf32Ptr = (char32_t)*Utf8Ptr;
+			}
+			Utf8Ptr++;
+		} else if ((*Utf8Ptr & 0b11100000) == 0b11000000) {
+			// Following value is evaluated from left to right. There is no case the element after zero-terminating character is accessed.
+			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000) {
+				break;
+			}
+			if (ConversionFlag) {
+				*Utf32Ptr = (*Utf8Ptr - 0b11000000) * 0x40 + (*(Utf8Ptr + 1) - 0b10000000);
+			}
+			Utf8Ptr += 2;
+		} else if ((*Utf8Ptr & 0b11110000) == 0b11100000) {
+			// Following value is evaluated from left to right. There is no case the element after zero-terminating character is accessed.
+			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 2) & 0b10000000) != 0b10000000) {
+				break;
+			}
+			if (ConversionFlag) {
+				*Utf32Ptr = (*Utf8Ptr - 0b11100000) * 0x1000 + (*(Utf8Ptr + 1) - 0b10000000) * 0x40 + (*(Utf8Ptr + 2) - 0b10000000);
+			}
+			Utf8Ptr += 3;
+		} else if ((*Utf8Ptr & 0b11111000) == 0b11110000) {
+			// Following value is evaluated from left to right. There is no case the element after zero-terminating character is accessed.
+			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 2) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 3) & 0b10000000) != 0b10000000) {
+				break;
+			}
+			if (ConversionFlag) {
+				*Utf32Ptr = (*Utf8Ptr - 0b11110000) * 0x40000 + (*(Utf8Ptr + 1) - 0b10000000) * 0x1000 + (*(Utf8Ptr + 2) - 0b10000000) * 0x40 + (*(Utf8Ptr + 3) - 0b10000000);
+			}
+			Utf8Ptr += 4;
+		} else {
+			break;
+		}
+		Utf32Ptr++;
+		ActualSize++;
+	}
+	if (ConversionFlag) {
+		*Utf32Ptr = U'\0';
+	}
+	return ActualSize;
+}
+
+size_t StkPlConvUtf32ToUtf8(char* Utf8, size_t SizeInWord, const char32_t* Utf32)
+{
+	const char32_t* Utf32Ptr = (const char32_t*)Utf32;
+	unsigned char* Utf8Ptr = (unsigned char*)Utf8;
+	size_t ActualSize = 0;
+	bool ConversionFlag = true;
+	if (SizeInWord == 0) {
+		ConversionFlag = false;
+		SizeInWord = (size_t)-1;
+	}
+	while (*Utf32Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if (*Utf32Ptr < 0x0080) {
+			if (ConversionFlag) {
+				*Utf8Ptr = (unsigned char)*Utf32Ptr;
+			}
+			Utf8Ptr++;
+			ActualSize++;
+		} else if (*Utf32Ptr < 0x0800) {
+			if (ActualSize + 1 >= SizeInWord - 1) {
+				break;
+			}
+			if (ConversionFlag) {
+				*Utf8Ptr = (unsigned char)(*Utf32Ptr / 0x40) + 0b11000000;
+				*(Utf8Ptr + 1) = (unsigned char)(*Utf32Ptr & 0b00111111) + 0b10000000;
+			}
+			Utf8Ptr += 2;
+			ActualSize += 2;
+		} else if (*Utf32Ptr < 0x10000) {
+			if (ActualSize + 2 >= SizeInWord - 1) {
+				break;
+			}
+			if (ConversionFlag) {
+				*Utf8Ptr = (unsigned char)(*Utf32Ptr / 0x1000) + 0b11100000;
+				*(Utf8Ptr + 1) = (unsigned char)((*Utf32Ptr / 0x40) & 0b00111111) + 0b10000000;
+				*(Utf8Ptr + 2) = (unsigned char)(*Utf32Ptr & 0b00111111) + 0b10000000;
+			}
+			Utf8Ptr += 3;
+			ActualSize += 3;
+		} else if (*Utf32Ptr < 0x200000) {
+			if (ActualSize + 3 >= SizeInWord - 1) {
+				break;
+			}
+			if (ConversionFlag) {
+				*Utf8Ptr = (unsigned char)(*Utf32Ptr / 0x40000) + 0b11110000;
+				*(Utf8Ptr + 1) = (unsigned char)((*Utf32Ptr / 0x1000) & 0b00111111) + 0b10000000;
+				*(Utf8Ptr + 2) = (unsigned char)((*Utf32Ptr / 0x40) & 0b00111111) + 0b10000000;
+				*(Utf8Ptr + 3) = (unsigned char)(*Utf32Ptr & 0b00111111) + 0b10000000;
+			}
+			Utf8Ptr += 4;
+			ActualSize += 4;
+		} else {
+			break;
+		}
+		Utf32Ptr++;
+	}
+	if (ConversionFlag) {
+		*Utf8Ptr = U'\0';
+	}
+	return ActualSize;
+}
+
+size_t StkPlConvUtf8ToUtf16(char16_t* Utf16, size_t SizeInWord, const char* Utf8)
+{
+	const unsigned char* Utf8Ptr = (unsigned char*)Utf8;
+	char16_t* Utf16Ptr = Utf16;
+	size_t ActualSize = 0;
+	bool ConversionFlag = true;
+	if (SizeInWord == 0) {
+		ConversionFlag = false;
+		SizeInWord = (size_t)-1;
+	}
+	while (*Utf8Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if (*Utf8Ptr < 0x80) {
+			if (ConversionFlag) {
+				*Utf16Ptr = (char32_t)*Utf8Ptr;
+			}
+			Utf16Ptr++;
+			Utf8Ptr++;
+			ActualSize++;
+		} else if ((*Utf8Ptr & 0b11100000) == 0b11000000) {
+			// Following value is evaluated from left to right. There is no case the element after zero-terminating character is accessed.
+			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000) {
+				break;
+			}
+			if (ConversionFlag) {
+				*Utf16Ptr = (*Utf8Ptr - 0b11000000) * 0x40 + (*(Utf8Ptr + 1) - 0b10000000);
+			}
+			Utf16Ptr++;
+			ActualSize++;
+			Utf8Ptr += 2;
+		} else if ((*Utf8Ptr & 0b11110000) == 0b11100000) {
+			// Following value is evaluated from left to right. There is no case the element after zero-terminating character is accessed.
+			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 2) & 0b10000000) != 0b10000000) {
+				break;
+			}
+			if (ConversionFlag) {
+				*Utf16Ptr = (*Utf8Ptr - 0b11100000) * 0x1000 + (*(Utf8Ptr + 1) - 0b10000000) * 0x40 + (*(Utf8Ptr + 2) - 0b10000000);
+			}
+			Utf16Ptr++;
+			ActualSize++;
+			Utf8Ptr += 3;
+		} else if ((*Utf8Ptr & 0b11111000) == 0b11110000) {
+			// Following value is evaluated from left to right. There is no case the element after zero-terminating character is accessed.
+			if ((*(Utf8Ptr + 1) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 2) & 0b10000000) != 0b10000000 || (*(Utf8Ptr + 3) & 0b10000000) != 0b10000000) {
+				break;
+			}
+			if (ActualSize + 1 >= SizeInWord - 1) {
+				break;
+			}
+			char32_t Tmp = (*Utf8Ptr - 0b11110000) * 0x40000 + (*(Utf8Ptr + 1) - 0b10000000) * 0x1000 + (*(Utf8Ptr + 2) - 0b10000000) * 0x40 + (*(Utf8Ptr + 3) - 0b10000000);
+			if (ConversionFlag) {
+				*Utf16Ptr = (char16_t)((Tmp - 0x10000) / 0x400 + 0b1101100000000000);
+				*(Utf16Ptr + 1) = (char16_t)((Tmp - 0x10000) % 0x400 + 0b1101110000000000);
+			}
+			Utf16Ptr += 2;
+			ActualSize += 2;
+			Utf8Ptr += 4;
+		} else {
+			break;
+		}
+	}
+	if (ConversionFlag) {
+		*Utf16Ptr = U'\0';
+	}
+	return ActualSize;
+}
+
+size_t StkPlConvUtf16ToUtf8(char* Utf8, size_t SizeInWord, const char16_t* Utf16)
+{
+	const char16_t* Utf16Ptr = Utf16;
+	char* Utf8Ptr = Utf8;
+	size_t ActualSize = 0;
+	bool ConversionFlag = true;
+	if (SizeInWord == 0) {
+		ConversionFlag = false;
+		SizeInWord = (size_t)-1;
+	}
+	while (*Utf16Ptr != u'\0' && ActualSize < SizeInWord - 1) {
+		if ((*Utf16Ptr & 0b1101100000000000) == 0b1101100000000000) {
+			if ((*(Utf16Ptr + 1) & 0b1101110000000000) != 0b1101110000000000) {
+				break;
+			}
+			char32_t Utf32 = 0x10000 + (*Utf16Ptr - 0b1101100000000000) * 0x400 + (*(Utf16Ptr + 1) - 0b1101110000000000);
+			if (Utf32 < 0x200000) {
+				if (ActualSize + 3 >= SizeInWord - 1) {
+					break;
+				}
+				if (ConversionFlag) {
+					*Utf8Ptr = (unsigned char)(Utf32 / 0x40000) + 0b11110000;
+					*(Utf8Ptr + 1) = (unsigned char)((Utf32 / 0x1000) & 0b00111111) + 0b10000000;
+					*(Utf8Ptr + 2) = (unsigned char)((Utf32 / 0x40) & 0b00111111) + 0b10000000;
+					*(Utf8Ptr + 3) = (unsigned char)(Utf32 & 0b00111111) + 0b10000000;
+				}
+				Utf8Ptr += 4;
+				ActualSize += 4;
+			} else {
+				break;
+			}
+			Utf16Ptr += 2;
+		} else {
+			char32_t Utf32 = (char32_t)*Utf16Ptr;
+			if (Utf32 < 0x0080) {
+				if (ConversionFlag) {
+					*Utf8Ptr = (unsigned char)Utf32;
+				}
+				Utf8Ptr++;
+				ActualSize++;
+			} else if (Utf32 < 0x0800) {
+				if (ActualSize + 1 >= SizeInWord - 1) {
+					break;
+				}
+				if (ConversionFlag) {
+					*Utf8Ptr = (unsigned char)(Utf32 / 0x40) + 0b11000000;
+					*(Utf8Ptr + 1) = (unsigned char)(Utf32 & 0b00111111) + 0b10000000;
+				}
+				Utf8Ptr += 2;
+				ActualSize += 2;
+			} else if (Utf32 < 0x10000) {
+				if (ActualSize + 2 >= SizeInWord - 1) {
+					break;
+				}
+				if (ConversionFlag) {
+					*Utf8Ptr = (unsigned char)(Utf32 / 0x1000) + 0b11100000;
+					*(Utf8Ptr + 1) = (unsigned char)((Utf32 / 0x40) & 0b00111111) + 0b10000000;
+					*(Utf8Ptr + 2) = (unsigned char)(Utf32 & 0b00111111) + 0b10000000;
+				}
+				Utf8Ptr += 3;
+				ActualSize += 3;
+			} else {
+				break;
+			}
+			Utf16Ptr++;
+		}
+	}
+	if (ConversionFlag) {
+		*Utf8Ptr = U'\0';
+	}
+	return ActualSize;
+}
+
+size_t StkPlConvUtf16ToWideChar(wchar_t* Wc, size_t SizeInWord, const char16_t* Utf16)
+{
+#ifdef WIN32
+	StkPlWcsCpy(Wc, SizeInWord, (wchar_t*)Utf16);
+	return StkPlWcsLen(Wc);
+#else
+	return StkPlConvUtf16ToUtf32((char32_t*)Wc, SizeInWord, Utf16);
+#endif
+}
+
+size_t StkPlConvWideCharToUtf16(char16_t* Utf16, size_t SizeInWord, const wchar_t* Wc)
+{
+#ifdef WIN32
+	StkPlWcsCpy((wchar_t*)Utf16, SizeInWord, Wc);
+	return StkPlWcsLen(Wc);
+#else
+	return StkPlConvUtf32ToUtf16(Utf16, SizeInWord, (char32_t*)Wc);
+#endif
+}
+
+size_t StkPlConvWideCharToUtf32(char32_t* Utf32, size_t SizeInWord, const wchar_t* Wc)
+{
+#ifdef WIN32
+	return StkPlConvUtf16ToUtf32(Utf32, SizeInWord, (char16_t*)Wc);
+#else
+	StkPlWcsCpy((wchar_t*)Utf32, SizeInWord, Wc);
+	return StkPlWcsLen(Wc);
+#endif
+}
+
+size_t StkPlConvUtf32ToWideChar(wchar_t* Wc, size_t SizeInWord, const char32_t* Utf32)
+{
+#ifdef WIN32
+	return StkPlConvUtf32ToUtf16((char16_t*)Wc, SizeInWord, Utf32);
+#else
+	StkPlWcsCpy(Wc, SizeInWord, (wchar_t*)Utf32);
+	return StkPlWcsLen(Wc);
+#endif
+}
+
+size_t StkPlConvUtf8ToWideChar(wchar_t* Wc, size_t SizeInWord, const char* Utf8)
+{
+#ifdef WIN32
+	return StkPlConvUtf8ToUtf16((char16_t*)Wc, SizeInWord, Utf8);
+#else
+	return StkPlConvUtf8ToUtf32((char32_t*)Wc, SizeInWord, Utf8);
+#endif
+}
+
+size_t StkPlConvWideCharToUtf8(char* Utf8, size_t SizeInWord, const wchar_t* Wc)
+{
+#ifdef WIN32
+	return StkPlConvUtf16ToUtf8(Utf8, SizeInWord, (char16_t*)Wc);
+#else
+	return StkPlConvUtf32ToUtf8(Utf8, SizeInWord, (char32_t*)Wc);
+#endif
+}
+
+char32_t* StkPlCreateUtf32FromUtf16(const char16_t* Utf16)
+{
+	int Len = StkPlConvUtf16ToUtf32(NULL, 0, Utf16) + 1;
+	char32_t* Utf32 = new char32_t[Len];
+	StkPlConvUtf16ToUtf32(Utf32, Len, Utf16);
+	return Utf32;
+}
+
+char16_t* StkPlCreateUtf16FromUtf32(const char32_t* Utf32)
+{
+	int Len = StkPlConvUtf32ToUtf16(NULL, 0, Utf32) + 1;
+	char16_t* Utf16 = new char16_t[Len];
+	StkPlConvUtf32ToUtf16(Utf16, Len, Utf32);
+	return Utf16;
+}
+
+char32_t* StkPlCreateUtf32FromUtf8(const char* Utf8)
+{
+	int Len = StkPlConvUtf8ToUtf32(NULL, 0, Utf8) + 1;
+	char32_t* Utf32 = new char32_t[Len];
+	StkPlConvUtf8ToUtf32(Utf32, Len, Utf8);
+	return Utf32;
+}
+
+char* StkPlCreateUtf8FromUtf32(const char32_t* Utf32)
+{
+	int Len = StkPlConvUtf32ToUtf8(NULL, 0, Utf32) + 1;
+	char* Utf8 = new char[Len];
+	StkPlConvUtf32ToUtf8(Utf8, Len, Utf32);
+	return Utf8;
+}
+
+char16_t* StkPlCreateUtf16FromUtf8(const char* Utf8)
+{
+	int Len = StkPlConvUtf8ToUtf16(NULL, 0, Utf8) + 1;
+	char16_t* Utf16 = new char16_t[Len];
+	StkPlConvUtf8ToUtf16(Utf16, Len, Utf8);
+	return Utf16;
+}
+
+char* StkPlCreateUtf8FromUtf16(const char16_t* Utf16)
+{
+	int Len = StkPlConvUtf16ToUtf8(NULL, 0, Utf16) + 1;
+	char* Utf8 = new char[Len];
+	StkPlConvUtf16ToUtf8(Utf8, Len, Utf16);
+	return Utf8;
+}
+
+wchar_t* StkPlCreateWideCharFromUtf16(const char16_t* Utf16)
+{
+#ifdef WIN32
+	int Len = StkPlWcsLen((wchar_t*)Utf16) + 1;
+	wchar_t* Wc = new wchar_t[Len];
+	StkPlWcsCpy(Wc, Len, (wchar_t*)Utf16);
+	return Wc;
+#else
+	return (wchar_t*)StkPlCreateUtf32FromUtf16(Utf16);
+#endif
+}
+
+char16_t* StkPlCreateUtf16FromWideChar(const wchar_t* Wc)
+{
+#ifdef WIN32
+	int Len = StkPlWcsLen((wchar_t*)Wc) + 1;
+	char16_t* Utf16 = new char16_t[Len];
+	StkPlWcsCpy((wchar_t*)Utf16, Len, Wc);
+	return Utf16;
+#else
+	return StkPlCreateUtf16FromUtf32((char32_t*)Wc);
+#endif
+}
+
+char32_t* StkPlCreateUtf32FromWideChar(const wchar_t* Wc)
+{
+#ifdef WIN32
+	return StkPlCreateUtf32FromUtf16((char16_t*)Wc);
+#else
+	int Len = StkPlWcsLen((wchar_t*)Wc) + 1;
+	char32_t* Utf32 = new char32_t[Len];
+	StkPlWcsCpy((wchar_t*)Utf32, Len, Wc);
+	return Utf32;
+#endif
+}
+
+wchar_t* StkPlCreateWideCharFromUtf32(const char32_t* Utf32)
+{
+#ifdef WIN32
+	return (wchar_t*)StkPlCreateUtf16FromUtf32(Utf32);
+#else
+	int Len = StkPlWcsLen((wchar_t*)Utf32) + 1;
+	wchar_t* Wc = new wchar_t[Len];
+	StkPlWcsCpy(Wc, Len, (wchar_t*)Utf32);
+	return Wc;
+#endif
+}
+
+wchar_t* StkPlCreateWideCharFromUtf8(const char* Utf8)
+{
+#ifdef WIN32
+	return (wchar_t*)StkPlCreateUtf16FromUtf8(Utf8);
+#else
+	return (wchar_t*)StkPlCreateUtf32FromUtf8(Utf8);
+#endif
+}
+
+char* StkPlCreateUtf8FromWideChar(const wchar_t* Wc)
+{
+#ifdef WIN32
+	return StkPlCreateUtf8FromUtf16((char16_t*)Wc);
+#else
+	return StkPlCreateUtf8FromUtf32((char32_t*)Wc);
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for etc
+
+int StkPlPrintf(const char* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vprintf(Format, va);
+	va_end(va);
+	return Ret;
+}
+
+int StkPlWPrintf(const wchar_t* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vwprintf(Format, va);
+	va_end(va);
+	return Ret;
+}
+
+int StkPlSPrintf(char* Str, size_t Len, const char* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vsnprintf(Str, Len, Format, va);
+	va_end(va);
+	return Ret;
+}
+
+int StkPlSwPrintf(wchar_t* Str, size_t Len, const wchar_t* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vswprintf(Str, Len, Format, va);
+	va_end(va);
+	return Ret;
+}
+
+int StkPlSScanf(const char* Str, const char* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vsscanf(Str, Format, va);
+	va_end(va);
+	return Ret;
+}
+
+int StkPlSwScanf(const wchar_t* Str, const wchar_t* Format, ...)
+{
+	va_list va;
+	va_start(va, Format);
+	int Ret = vswscanf(Str, Format, va);
+	va_end(va);
+	return Ret;
+}
+
+void StkPlExit(int Status)
+{
+	exit(Status);
+}
+
+int StkPlRand()
+{
+	return rand();
+}
+
+void StkPlSleepMs(int MilliSec)
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(MilliSec));
+}
+
+int StkPlAtoi(const char* Str)
+{
+	return atoi(Str);
+}
+
+long int StkPlWcsToL(const wchar_t* Str)
+{
+	return wcstol(Str, NULL, 10);
+}
+
+float StkPlWcsToF(const wchar_t* Str)
+{
+	return wcstof(Str, NULL);
+}
+
+int StkPlGetUsedMemorySizeOfCurrentProcess()
+{
+#ifdef WIN32
+	DWORD dwProcessID = GetCurrentProcessId();
+	HANDLE hProcess;
+	PROCESS_MEMORY_COUNTERS pmc = { 0 };
+
+	long Size;
+	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
+		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
+			Size = pmc.WorkingSetSize;
+		}
+	}
+	CloseHandle(hProcess);
+	return Size;
+#else
+	FILE *fp;
+	char ProcInfo[64];
+	char Buffer[4096];
+	sprintf(ProcInfo, "/proc/%d/status", getpid());
+	if ((fp = fopen(ProcInfo, "r")) == NULL) {
+		return -1;
+	}
+	int ActualFileSize = fread(Buffer, sizeof(char), 4096, fp);
+	fclose(fp);
+	char* Ptr = strstr(Buffer, "VmSize:");
+	if (Ptr == NULL) {
+		return -1;
+	}
+	char DummyStr[32] = "";
+	int VmSize = 0;
+	sscanf(Ptr, "%s %d", DummyStr, &VmSize);
+	return VmSize;
+#endif
+}
+
+long long StkPlGetTickCount()
+{
+#ifdef WIN32
+	return GetTickCount();
+#else
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return (long long)(ts.tv_nsec / 1000000) + ((long long)ts.tv_sec * 1000ull);
+#endif
+}
+
+void StkPlGetTimeInRfc822(char Date[64])
+{
+#ifdef WIN32
+	struct tm GmtTime;
+	__int64 Ltime;
+	_time64(&Ltime);
+	_gmtime64_s(&GmtTime, &Ltime);
+	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	sprintf_s(Date, 64, "%s, %02d %s %d %02d:%02d:%02d GMT",
+		WdayStr[GmtTime.tm_wday],
+		GmtTime.tm_mday,
+		MonStr[GmtTime.tm_mon],
+		GmtTime.tm_year + 1900,
+		GmtTime.tm_hour,
+		GmtTime.tm_min,
+		GmtTime.tm_sec);
+#else
+	struct tm* GmtTime;
+	time_t Ltime;
+	time(&Ltime);
+	GmtTime = gmtime(&Ltime);
+	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	sprintf(Date, "%s, %02d %s %d %02d:%02d:%02d GMT",
+		WdayStr[GmtTime->tm_wday],
+		GmtTime->tm_mday,
+		MonStr[GmtTime->tm_mon],
+		GmtTime->tm_year + 1900,
+		GmtTime->tm_hour,
+		GmtTime->tm_min,
+		GmtTime->tm_sec);
+#endif
+}
+
+void StkPlGetWTimeInRfc822(wchar_t Date[64])
+{
+	char DateTmp[64];
+	StkPlGetTimeInRfc822(DateTmp);
+	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
+}
+
+void StkPlGetTimeInUnixTime(char LocalTimeStr[64], bool IsLocalTime)
+{
+#ifdef WIN32
+	struct tm TmTime;
+	__int64 Ltime;
+	_time64(&Ltime);
+	if (IsLocalTime) {
+		_localtime64_s(&TmTime, &Ltime);
+	} else {
+		_gmtime64_s(&TmTime, &Ltime);
+	}
+	sprintf_s(LocalTimeStr, 64, "%d-%d-%d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
+#else
+	struct tm* TmTime;
+	time_t Ltime;
+	time(&Ltime);
+	if (IsLocalTime) {
+		TmTime = localtime(&Ltime);
+	} else {
+		TmTime = gmtime(&Ltime);
+	}
+	sprintf(LocalTimeStr, "%d-%d-%d %02d:%02d:%02d", TmTime->tm_year + 1900, TmTime->tm_mon + 1, TmTime->tm_mday, TmTime->tm_hour, TmTime->tm_min, TmTime->tm_sec);
+#endif
+}
+
+void StkPlGetWTimeInUnixTime(wchar_t LocalTimeStr[64], bool IsLocalTime)
+{
+	char DateTmp[64];
+	StkPlGetTimeInUnixTime(DateTmp, IsLocalTime);
+	StkPlConvUtf8ToWideChar(LocalTimeStr, 64, DateTmp);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// API for file access
+
+// Get full path from the specified file name.
+// FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
+// FullPath [out] : Acquired full path for the specified file.
+// Return : Always zero
+int StkPlGetFullPathFromFileName(const wchar_t* FileName, wchar_t FullPath[FILENAME_MAX])
+{
+#ifdef WIN32
+	GetModuleFileName(NULL, FullPath, FILENAME_MAX - 1);
+	std::experimental::filesystem::path CurPath = FullPath;
+	std::filesystem::path NewPath = CurPath.parent_path() / FileName;
+	wcscpy_s(FullPath, FILENAME_MAX, NewPath.c_str());
+	return 0;
+#else
+	char c_full_path[FILENAME_MAX];
+	readlink("/proc/self/exe", c_full_path, sizeof(c_full_path) - 1);
+	std::experimental::filesystem::path CurPath = c_full_path;
+	std::experimental::filesystem::path NewPath = CurPath.parent_path() / FileName;
+	wcscpy(FullPath, NewPath.wstring().c_str());
+	return 0;
+#endif
+}
+
+// Get full path without file name for the specified full path file name.
+// PathWithFileName [in] : Full path which contains file name.
+// Output [out] : Acquired full path without file name.
+// Return : 0:Success, -1:Failure
+int StkPlGetFullPathWithoutFileName(wchar_t* PathWithFileName, wchar_t Output[FILENAME_MAX])
+{
+	if (PathWithFileName == NULL || Output == NULL) {
+		return -1;
+	}
+	if (wcscmp(PathWithFileName, L"") == 0) {
+		return -1;
+	}
+#ifdef WIN32
+	wcsncpy_s(Output, FILENAME_MAX, PathWithFileName, _TRUNCATE);
+#else
+	wcscpy(Output, PathWithFileName);
+#endif
+	wchar_t* Addr = NULL;
+	for (Addr = Output + wcslen(Output); Addr > Output; Addr--) {
+		if (*Addr == L'\\') {
+			break;
+		}
+	}
+	if (Addr == Output) {
+		return -1;
+	}
+	*Addr = L'\0';
+	return 0;
+}
+
+size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
+{
+#ifdef WIN32
+	uintmax_t FileSize = 0;
+	try {
+		FileSize = std::filesystem::file_size(FilePath);
+	} catch (std::filesystem::filesystem_error ex) {
+		return -1;
+	}
+	if (FileSize == 0) {
+		return 0;
+	}
+	return (size_t)FileSize;
+#else
+	uintmax_t FileSize = 0;
+	try {
+		FileSize = std::experimental::filesystem::file_size(FilePath);
+	} catch (std::experimental::filesystem::filesystem_error ex) {
+		return -1;
+	}
+	if (FileSize == 0) {
+		return 0;
+	}
+	return (size_t)FileSize;
+#endif
+}
+
+int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
+{
+#ifdef WIN32
+	HANDLE ReadFileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (ReadFileHndl == INVALID_HANDLE_VALUE) {
+		return -1;
+	}
+
+	DWORD TmpSize = 0;
+	if (ReadFile(ReadFileHndl, (LPVOID)Buffer, FileSize, &TmpSize, NULL) == 0) {
+		CloseHandle(ReadFileHndl);
+		return -1;
+	}
+
+	CloseHandle(ReadFileHndl);
+	return TmpSize;
+#else
+	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
+	FILE *fp = fopen(FileNameUtf8, "r");
+	if (fp == NULL) {
+		return -1;
+	}
+	char* work_dat = new char[(int)FileSize + 1];
+	int actual_filesize = fread(Buffer, sizeof(char), (int)FileSize, fp);
+	fclose(fp);
+	delete FileNameUtf8;
+	return actual_filesize;
+#endif
+}
+
+void* StkPlOpenFileForRead(const wchar_t FilePath[FILENAME_MAX])
+{
+#ifdef WIN32
+	HANDLE FileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (FileHndl == INVALID_HANDLE_VALUE) {
+		return NULL;
+	};
+	return (void*)FileHndl;
+#else
+	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
+	FILE *fp = fopen(FileNameUtf8, "r");
+	if (fp == NULL) {
+		return NULL;
+	}
+	delete FileNameUtf8;
+	return fp;
+#endif
+}
+
+void* StkPlOpenFileForWrite(const wchar_t FilePath[FILENAME_MAX])
+{
+#ifdef WIN32
+	HANDLE FileHndl = CreateFile(FilePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (FileHndl == INVALID_HANDLE_VALUE) {
+		return NULL;
+	};
+	return (void*)FileHndl;
+#else
+	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
+	FILE *fp = fopen(FileNameUtf8, "w");
+	if (fp == NULL) {
+		return NULL;
+	}
+	delete FileNameUtf8;
+	return fp;
+#endif
+}
+
+void StkPlCloseFile(void* FileHndl)
+{
+#ifdef WIN32
+	CloseHandle((HANDLE)FileHndl);
+#else
+	fclose((FILE*)FileHndl);
+#endif
+}
+
+int StkPlRead(void* FileHndl, char* Ptr, size_t Size)
+{
+#ifdef WIN32
+	DWORD TmpSize = 0;
+	if (ReadFile(FileHndl, (LPVOID)Ptr, Size, &TmpSize, NULL) == 0) {
+		return 0;
+	}
+	return TmpSize;
+#else
+	return fread(Ptr, sizeof(char), (int)Size, (FILE*)FileHndl);
+#endif
+}
+
+int StkPlWrite(void* FileHndl, char* Ptr, size_t Size)
+{
+#ifdef WIN32
+	DWORD TmpSize = 0;
+	if (WriteFile(FileHndl, (LPVOID)Ptr, Size, &TmpSize, NULL) == 0) {
+		return 0;
+	}
+	return TmpSize;
+#else
+	return fwrite(Ptr, sizeof(char), (int)Size, (FILE*)FileHndl);
+#endif
+}

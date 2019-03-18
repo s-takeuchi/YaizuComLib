@@ -1,8 +1,5 @@
-stksocket.a : StkPl.o StkSocketMgr.o stksocket.o
-	ar r stksocket.a StkPl.o StkSocketMgr.o stksocket.o
-
-StkPl.o : ../StkPl.cpp
-	g++ -c ../StkPl.cpp -std=c++1z
+stksocket.a : StkSocketMgr.o stksocket.o
+	ar r stksocket.a StkSocketMgr.o stksocket.o
 
 StkSocketMgr.o : StkSocketMgr.cpp
 	g++ -c StkSocketMgr.cpp -std=c++1z

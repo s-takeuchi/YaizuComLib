@@ -1,7 +1,9 @@
 stksockettest : StkSocketIPv6.o StkSocketMemoryLeak.o StkSocketTest.o StkSocketTestGetSockInfo.o StkSocketTestHttp.o StkSocketTestMa.o
 	cd ../../src/stksocket; make
 	cp ../../src/stksocket/stksocket.a .
-	g++ -o stksockettest StkSocketIPv6.o StkSocketMemoryLeak.o StkSocketTest.o StkSocketTestGetSockInfo.o StkSocketTestHttp.o StkSocketTestMa.o stksocket.a -std=c++1z -lstdc++fs -pthread
+	cd ../../src/stkpl; make
+	cp ../../src/stkpl/stkpl.a .
+	g++ -o stksockettest StkSocketIPv6.o StkSocketMemoryLeak.o StkSocketTest.o StkSocketTestGetSockInfo.o StkSocketTestHttp.o StkSocketTestMa.o stkpl.a stksocket.a -std=c++1z -lstdc++fs -pthread
 
 StkSocketIPv6.o : StkSocketIPv6.cpp
 	g++ -c StkSocketIPv6.cpp -std=c++1z

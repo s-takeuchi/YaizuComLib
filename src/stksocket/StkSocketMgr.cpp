@@ -20,7 +20,7 @@
 
 #endif
 
-#include "../StkPl.h"
+#include "../stkpl/StkPl.h"
 #include "StkSocketMgr.h"
 #include "StkSocketInfo.h"
 

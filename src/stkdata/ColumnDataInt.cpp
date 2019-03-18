@@ -1,5 +1,5 @@
 ﻿#include "stkdata.h"
-#include "../StkPl.h"
+#include "../stkpl/StkPl.h"
 
 // Constructor
 ColumnDataInt::ColumnDataInt(const wchar_t* ColumnName, int Value)

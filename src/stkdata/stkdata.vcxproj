@@ -77,7 +77,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\StkPl.cpp" />
     <ClCompile Include="ColumnData.cpp" />
     <ClCompile Include="ColumnDataBin.cpp" />
     <ClCompile Include="ColumnDataFloat.cpp" />
@@ -96,7 +95,6 @@
     <ClCompile Include="TableDef.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\StkPl.h" />
     <ClInclude Include="DataAcController.h" />
     <ClInclude Include="stkdata.h" />
     <ClInclude Include="stkdataapi.h" />

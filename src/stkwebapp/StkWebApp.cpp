@@ -1,5 +1,5 @@
 ﻿#include <mutex>
-#include "../StkPl.h"
+#include "../stkpl/StkPl.h"
 #include "../stksocket/stksocket.h"
 #include "../stkthread/stkthread.h"
 #include "../commonfunc/StkObject.h"

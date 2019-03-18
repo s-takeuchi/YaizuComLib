@@ -77,14 +77,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\StkPl.cpp" />
     <ClCompile Include="msgproc.cpp" />
     <ClCompile Include="StkObject.cpp" />
     <ClCompile Include="StkProperties.cpp" />
     <ClCompile Include="StkStringParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\StkPl.h" />
     <ClInclude Include="msgproc.h" />
     <ClInclude Include="StkObject.h" />
     <ClInclude Include="StkProperties.h" />

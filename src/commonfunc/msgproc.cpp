@@ -1,4 +1,4 @@
-﻿#include "../StkPl.h"
+﻿#include "../stkpl/StkPl.h"
 #include "msgproc.h"
 
 class MessageProc::Impl

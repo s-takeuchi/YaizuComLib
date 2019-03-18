@@ -1,8 +1,5 @@
-stkthread.a : StkPl.o StkThreadElement.o StkThreadManager.o stkthread.o
-	ar r stkthread.a StkPl.o StkThreadElement.o StkThreadManager.o stkthread.o
-
-StkPl.o : ../StkPl.cpp
-	g++ -c ../StkPl.cpp -std=c++1z
+stkthread.a : StkThreadElement.o StkThreadManager.o stkthread.o
+	ar r stkthread.a StkThreadElement.o StkThreadManager.o stkthread.o
 
 StkThreadElement.o : StkThreadElement.cpp
 	g++ -c StkThreadElement.cpp -std=c++1z

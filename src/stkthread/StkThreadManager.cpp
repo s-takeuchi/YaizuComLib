@@ -1,6 +1,6 @@
 ﻿#include <thread>
 
-#include "../../src/StkPl.h"
+#include "../stkpl/StkPl.h"
 #include "StkThreadManager.h"
 
 StkThreadManager* StkThreadManager::ThisInstance;

@@ -1,8 +1,5 @@
-stkwebapp.a : StkPl.o StkWebApp.o
+stkwebapp.a : StkWebApp.o
 	ar r stkwebapp.a StkWebApp.o
-
-StkPl.o : ../StkPl.cpp
-	g++ -c ../StkPl.cpp -std=c++1z
 
 StkWebApp.o : StkWebApp.cpp
 	g++ -c StkWebApp.cpp -std=c++1z

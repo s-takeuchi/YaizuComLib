@@ -1,8 +1,5 @@
-commonfunc.a : StkPl.o StkObject.o StkProperties.o StkStringParser.o msgproc.o
-	ar r commonfunc.a StkPl.o StkObject.o StkProperties.o StkStringParser.o msgproc.o
-
-StkPl.o : ../StkPl.cpp
-	g++ -c ../StkPl.cpp -std=c++1z
+commonfunc.a : StkObject.o StkProperties.o StkStringParser.o msgproc.o
+	ar r commonfunc.a StkObject.o StkProperties.o StkStringParser.o msgproc.o
 
 StkObject.o : StkObject.cpp
 	g++ -c StkObject.cpp -std=c++1z

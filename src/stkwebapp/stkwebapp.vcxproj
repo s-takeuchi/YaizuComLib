@@ -76,11 +76,9 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\StkPl.cpp" />
     <ClCompile Include="StkWebApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\StkPl.h" />
     <ClInclude Include="StkWebApp.h" />
     <ClInclude Include="StkWebAppExec.h" />
   </ItemGroup>

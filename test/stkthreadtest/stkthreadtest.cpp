@@ -1,4 +1,4 @@
-﻿#include "../../src/StkPl.h"
+﻿#include "../../src/stkpl/StkPl.h"
 #include "../../src/stkthread/stkthread.h"
 
 int ProcCount = 0;

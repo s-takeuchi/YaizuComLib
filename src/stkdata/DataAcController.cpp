@@ -1,7 +1,7 @@
 ﻿#include <thread>
 #include <mutex>
 
-#include "../StkPl.h"
+#include "../stkpl/StkPl.h"
 #include "DataAcController.h"
 #include "stkdata.h"
 #include "stkdataapi.h"

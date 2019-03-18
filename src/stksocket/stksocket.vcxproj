@@ -77,12 +77,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\StkPl.cpp" />
     <ClCompile Include="stksocket.cpp" />
     <ClCompile Include="StkSocketMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\StkPl.h" />
     <ClInclude Include="stksocket.h" />
     <ClInclude Include="StkSocketInfo.h" />
     <ClInclude Include="StkSocketMgr.h" />

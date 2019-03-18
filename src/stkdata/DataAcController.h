@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <mutex>
 #include "stkdata.h"
-#include "../StkPl.h"
+#include "../stkpl/StkPl.h"
 
 #define OPE_GET    1
 #define OPE_DELETE 2

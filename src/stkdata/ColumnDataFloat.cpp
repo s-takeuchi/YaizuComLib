@@ -1,5 +1,5 @@
 ﻿#include "stkdata.h"
-#include "../StkPl.h"
+#include "../stkpl/StkPl.h"
 
 // Constructor
 ColumnDataFloat::ColumnDataFloat(const wchar_t* ColumnName, float Value)

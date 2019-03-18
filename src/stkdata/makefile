@@ -1,8 +1,5 @@
-stkdata.a : StkPl.o ColumnDef.o ColumnDefBin.o ColumnDefFloat.o ColumnDefInt.o ColumnDefStr.o ColumnDefWStr.o TableDef.o ColumnData.o ColumnDataBin.o ColumnDataFloat.o ColumnDataInt.o ColumnDataStr.o ColumnDataWStr.o RecordData.o DataAcController.o stkdata.o
-	ar r stkdata.a StkPl.o ColumnDef.o ColumnDefBin.o ColumnDefFloat.o ColumnDefInt.o ColumnDefStr.o ColumnDefWStr.o TableDef.o ColumnData.o ColumnDataBin.o ColumnDataFloat.o ColumnDataInt.o ColumnDataStr.o ColumnDataWStr.o RecordData.o DataAcController.o stkdata.o
-
-StkPl.o : ../StkPl.cpp
-	g++ -c ../StkPl.cpp -std=c++1z
+stkdata.a : ColumnDef.o ColumnDefBin.o ColumnDefFloat.o ColumnDefInt.o ColumnDefStr.o ColumnDefWStr.o TableDef.o ColumnData.o ColumnDataBin.o ColumnDataFloat.o ColumnDataInt.o ColumnDataStr.o ColumnDataWStr.o RecordData.o DataAcController.o stkdata.o
+	ar r stkdata.a ColumnDef.o ColumnDefBin.o ColumnDefFloat.o ColumnDefInt.o ColumnDefStr.o ColumnDefWStr.o TableDef.o ColumnData.o ColumnDataBin.o ColumnDataFloat.o ColumnDataInt.o ColumnDataStr.o ColumnDataWStr.o RecordData.o DataAcController.o stkdata.o
 
 ColumnDef.o : ColumnDef.cpp
 	g++ -c ColumnDef.cpp -std=c++1z

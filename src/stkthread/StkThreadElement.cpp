@@ -1,6 +1,6 @@
 ﻿#include <mutex>
 
-#include "../../src/StkPl.h"
+#include "../stkpl/StkPl.h"
 #include "StkThreadElement.h"
 
 int StkThreadElement::NumOfRunThread;

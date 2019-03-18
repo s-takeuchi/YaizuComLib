@@ -1,4 +1,4 @@
-﻿#include "../../src/StkPl.h"
+﻿#include "../../src/stkpl/StkPl.h"
 #include "../../src/commonfunc/StkStringParser.h"
 
 int StkStringParserTest()

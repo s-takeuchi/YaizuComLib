@@ -1,4 +1,4 @@
-﻿#include "../StkPl.h"
+﻿#include "../stkpl/StkPl.h"
 #include "StkStringParser.h"
 
 int StkStringParser::ParseInto1Param(const wchar_t* OriginStr, const wchar_t* Format, wchar_t Target, wchar_t* OutStr1)

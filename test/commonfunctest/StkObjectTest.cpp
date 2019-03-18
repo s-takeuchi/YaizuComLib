@@ -1,4 +1,4 @@
-﻿#include "../../src/StkPl.h"
+﻿#include "../../src/stkpl/StkPl.h"
 #include "../../src/commonfunc/StkObject.h"
 
 void Abort(bool Cond)

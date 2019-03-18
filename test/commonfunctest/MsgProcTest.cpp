@@ -1,4 +1,4 @@
-﻿#include "../../src/StkPl.h"
+﻿#include "../../src/stkpl/StkPl.h"
 #include "../../src/commonfunc/msgproc.h"
 
 void Test_Conv_Utf16_Utf32(const char16_t* MsgPtr, int NumOfByte)

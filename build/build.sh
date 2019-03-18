@@ -27,6 +27,17 @@ echo
 
 cd ../src
 
+echo Building stkpl...
+cd stkpl
+make all
+if [ $? -ne 0 ]; then
+  exit $?
+fi
+tar cvf stkpl.tar StkPl.h stkpl.a
+gzip stkpl.tar
+mv stkpl.tar.gz ../../build/deployment
+cd ..
+
 echo Building stksocket...
 cd stksocket
 make all
@@ -44,7 +55,7 @@ make all
 if [ $? -ne 0 ]; then
   exit $?
 fi
-tar cf commonfunc.tar msgproc.h StkGeneric.h StkProperties.h StkObject.h StkStringParser.h commonfunc.a
+tar cf commonfunc.tar msgproc.h StkProperties.h StkObject.h StkStringParser.h commonfunc.a
 gzip commonfunc.tar
 mv commonfunc.tar.gz ../../build/deployment
 cd ..
