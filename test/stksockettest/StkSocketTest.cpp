@@ -1,4 +1,5 @@
 ﻿#include <thread>
+#include <mutex>
 #include <chrono>
 #include <cstring>
 
@@ -14,6 +15,7 @@ bool StartFlag = false;
 bool PeerCloseOkFlag = false;
 bool FinishFlag = false;
 int FindFlagCounter = 0;
+std::mutex Cs4Log;
 
 
 int ConnectDisconnectTcpPort()
@@ -547,8 +549,10 @@ void TestThreadProc0()
 
 	while (true) {
 		if (StkSocket_Accept(0) == 0) {
+			Cs4Log.lock();
 			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+			Cs4Log.unlock();
 			if (Ret > 0) {
 				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
@@ -568,8 +572,10 @@ void TestThreadProc0()
 
 	while (true) {
 		if (StkSocket_Accept(0) == 0) {
+			Cs4Log.lock();
 			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+			Cs4Log.unlock();
 			if (Ret > 0) {
 				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Dummy data!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
@@ -610,9 +616,11 @@ void TestThreadProc1()
 	while (StkSocket_Connect(1) == -1) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
+	Cs4Log.lock();
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
 		StkPlPrintf("[Recv/Send] : Send data ...");
 		StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
@@ -636,10 +644,14 @@ void TestThreadProc1()
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	StkPlLStrCpy(Buf, L"Dummy data!!");
-	StkSocket_Connect(1);
+	while (StkSocket_Connect(1) == -1) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	}
+	Cs4Log.lock();
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
 		StkPlPrintf("[Recv/Send] : Send data %ls...", Buf);
 		StkPlPrintf("NG\r\n");
