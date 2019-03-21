@@ -8,6 +8,14 @@ echo
 
 cd ../test
 
+echo Building stkpltest
+cd stkpltest
+make all
+if [ $? -ne 0 ]; then
+  exit $?
+fi
+cd ..
+
 echo Building commonfunctest
 cd commonfunctest
 make all
@@ -48,6 +56,12 @@ if [ $? -ne 0 ]; then
 fi
 cd ..
 
+echo ---------------------------------------
+echo stkpltest
+./stkpltest/stkpltest
+if [ $? -ne 0 ]; then
+  exit $?
+fi
 echo ---------------------------------------
 echo commonfunctest
 cp ./commonfunctest/Release/*.prop ./commonfunctest

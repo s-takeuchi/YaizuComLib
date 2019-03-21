@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkpl", "stkpl.vcxproj", "{CC482842-6B46-401A-9911-E6A7D084AB26}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkpltest", "stkpltest.vcxproj", "{6118CCB5-5BAB-4719-9476-C72F663C8FF3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CC482842-6B46-401A-9911-E6A7D084AB26} = {CC482842-6B46-401A-9911-E6A7D084AB26}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stkpl", "..\..\src\stkpl\stkpl.vcxproj", "{CC482842-6B46-401A-9911-E6A7D084AB26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +18,12 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6118CCB5-5BAB-4719-9476-C72F663C8FF3}.Debug|x64.ActiveCfg = Debug|x64
+		{6118CCB5-5BAB-4719-9476-C72F663C8FF3}.Debug|x86.ActiveCfg = Debug|Win32
+		{6118CCB5-5BAB-4719-9476-C72F663C8FF3}.Debug|x86.Build.0 = Debug|Win32
+		{6118CCB5-5BAB-4719-9476-C72F663C8FF3}.Release|x64.ActiveCfg = Release|x64
+		{6118CCB5-5BAB-4719-9476-C72F663C8FF3}.Release|x86.ActiveCfg = Release|Win32
+		{6118CCB5-5BAB-4719-9476-C72F663C8FF3}.Release|x86.Build.0 = Release|Win32
 		{CC482842-6B46-401A-9911-E6A7D084AB26}.Debug|x64.ActiveCfg = Debug|x64
 		{CC482842-6B46-401A-9911-E6A7D084AB26}.Debug|x86.ActiveCfg = Debug|Win32
 		{CC482842-6B46-401A-9911-E6A7D084AB26}.Debug|x86.Build.0 = Debug|Win32
@@ -24,6 +35,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C394CEA2-2EE5-4C20-A85F-4A718BD2DDBB}
+		SolutionGuid = {5C5A3F51-4357-4E45-91E5-81FFA532C169}
 	EndGlobalSection
 EndGlobal
