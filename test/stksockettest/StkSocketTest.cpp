@@ -698,8 +698,10 @@ void TestThreadProc2()
 
 	while (true) {
 		if (StkSocket_Accept(0) == 0) {
+			Cs4Log.lock();
 			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+			Cs4Log.unlock();
 			if (Ret > 0) {
 				StkPlPrintf("[Recv/Send2] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
@@ -743,8 +745,10 @@ void TestThreadProc3()
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		StkPlPrintf("{Re} ");
 	}
+	Cs4Log.lock();
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
 		StkPlPrintf("NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\r\n", Msg, ParamInt1, ParamInt2);
 		exit(-1);
