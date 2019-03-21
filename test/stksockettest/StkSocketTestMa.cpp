@@ -194,7 +194,7 @@ void StkSocketTestMa::TestMultiAccept2()
 	StkPlPrintf("OK\r\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-	for (Loop = 0; Loop < 50; Loop++) {
+	for (Loop = 0; Loop < 150; Loop++) {
 		if (ThreadEndCount == 6) {
 			break;
 		}
@@ -351,7 +351,7 @@ void StkSocketTestMa::TestMultiAccept3()
 	StkPlPrintf("OK\r\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-	for (Loop = 0; Loop < 50; Loop++) {
+	for (Loop = 0; Loop < 150; Loop++) {
 		if (ThreadEndCount == 6) {
 			break;
 		}
