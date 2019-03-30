@@ -82,10 +82,10 @@ int StkSocket_DeleteInfo(int TargetId)
 <u>シグネチャ</u>
 <div class="topic">
 <p>
-int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+int StkSocket_GetInfo(int Index, int* TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, bool* CopiedFlag)
 </p>
 <p>
-int StkSocket_GetInfo(int TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, BOOL* CopiedFlag)
+int StkSocket_GetInfo(int TargetId, int* SockType, int* ActionType, wchar_t TargetAddr[256], int* TargetPort, bool* CopiedFlag)
 </p>
 </div><p>
 <u>引数の説明</u>
@@ -254,15 +254,15 @@ int StkSocket_Open(int TargetId)
 <p>
 <u>シグネチャ</u>
 <div class="topic">
-int StkSocket_Close(int TargetId, BOOL WaitForPeerClose)
+int StkSocket_Close(int TargetId, bool WaitForPeerClose)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
 <table class="tblstyle">
 <tr><th>引数</th><th>入出力</th><th>説明</th></tr>
 <tr><td>TargetId</td><td>入力</td><td>クローズするソケット情報を特定するためのID</td></tr>
-<tr><td>WaitForPeerClose</td><td>入力</td><td>TRUE: 接続先(送信側)のクローズを待ち，グレースフルなクローズを行う。<br>
-FALSE: ただちにソケットをクローズする。</td></tr>
+<tr><td>WaitForPeerClose</td><td>入力</td><td>true: 接続先(送信側)のクローズを待ち，グレースフルなクローズを行う。<br>
+false: ただちにソケットをクローズする。</td></tr>
 </table>
 </div><p>
 <u>戻り値</u>
@@ -311,7 +311,7 @@ int StkSocket_Accept(int Id)
 指定したACCEPTソケットをクローズします。</p>
 <u>シグネチャ</u>
 <div class="topic">
-int StkSocket_CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
+int StkSocket_CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
@@ -319,8 +319,8 @@ int StkSocket_CloseAccept(int Id, int LogId, BOOL WaitForPeerClose)
 <tr><th>引数</th><th>入出力</th><th>説明</th></tr>
 <tr><td>Id</td><td>入力</td><td>クローズするソケット情報を特定するためのID</td></tr>
 <tr><td>LogId</td><td>入力</td><td>ログ出力用。ソケット情報を特定するためのIDを指定する。</td></tr>
-<tr><td>WaitForPeerClose</td><td>入力</td><td>TRUE: 接続先(送信側)のクローズを待ち，グレースフルなクローズを行う。<br>
-FALSE: ただちにソケットをクローズする。</td></tr>
+<tr><td>WaitForPeerClose</td><td>入力</td><td>true: 接続先(送信側)のクローズを待ち，グレースフルなクローズを行う。<br>
+false: ただちにソケットをクローズする。</td></tr>
 </table>
 </div><p>
 <u>戻り値</u>
@@ -366,7 +366,7 @@ int StkSocket_Connect(int Id)
 指定したデータ送信用ソケットでのホストへの接続を切断します。<p>
 <u>シグネチャ</u>
 <div class="topic">
-int StkSocket_Disconnect(int Id, int LogId, BOOL WaitForPeerClose)
+int StkSocket_Disconnect(int Id, int LogId, bool WaitForPeerClose)
 </div><p>
 <u>引数の説明</u>
 <div class="topic">
@@ -374,8 +374,8 @@ int StkSocket_Disconnect(int Id, int LogId, BOOL WaitForPeerClose)
 <tr><th>引数</th><th>入出力</th><th>説明</th></tr>
 <tr><td>Id</td><td>入力</td><td>クローズするソケット情報を特定するためのID</td></tr>
 <tr><td>LogId</td><td>入力</td><td>ログ出力用。ソケット情報を特定するためのIDを指定する。</td></tr>
-<tr><td>WaitForPeerClose</td><td>入力</td><td>TRUE: 接続先(受信側)のクローズを待ち，グレースフルなクローズを行う。<br>
-FALSE: ただちにソケットをクローズする。</td></tr>
+<tr><td>WaitForPeerClose</td><td>入力</td><td>true: 接続先(受信側)のクローズを待ち，グレースフルなクローズを行う。<br>
+false: ただちにソケットをクローズする。</td></tr>
 </table>
 </div><p>
 <u>戻り値</u>

@@ -816,6 +816,11 @@ void StkPlExit(int Status)
 
 int StkPlRand()
 {
+	static bool InitFlag = true;
+	if (InitFlag) {
+		InitFlag = false;
+		srand((unsigned int)time(NULL));
+	}
 	return rand();
 }
 

@@ -77,10 +77,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="StkWebApp.cpp" />
+    <ClCompile Include="StkWebAppSend.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StkWebApp.h" />
     <ClInclude Include="StkWebAppExec.h" />
+    <ClInclude Include="StkWebAppSend.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\commonfunc\commonfunc.vcxproj">
