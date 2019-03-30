@@ -14,7 +14,7 @@ public:
 public:
 	const wchar_t* SkipHttpHeader(const wchar_t*);
 	StkObject* RecvResponse(int, wchar_t[1024], int*);
-	int SendRequest(int, int, char*, StkObject*);
+	int SendRequest(int, int, const char*, StkObject*);
 };
 
 const wchar_t* StkWebAppSend::Impl::SkipHttpHeader(const wchar_t* Txt)
@@ -72,7 +72,7 @@ StkObject* StkWebAppSend::Impl::RecvResponse(int TargetId, wchar_t Header[1024],
 	return ReqObj;
 }
 
-int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, char* Url, StkObject* ReqObj)
+int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, StkObject* ReqObj)
 {
 	// JSON conversion and UTF-8 conversion
 	wchar_t* WDat = new wchar_t[SendBufSize];
@@ -139,7 +139,7 @@ StkWebAppSend::~StkWebAppSend()
 	delete pImpl;
 };
 
-StkObject* StkWebAppSend::SendRequestRecvResponse(wchar_t* HostNameOrIpAddr, int PortNum, int Method, char* Url, StkObject* ReqObj)
+StkObject* StkWebAppSend::SendRequestRecvResponse(const wchar_t* HostNameOrIpAddr, int PortNum, int Method, const char* Url, StkObject* ReqObj)
 {
 	int TargetId = 0;
 
