@@ -12,7 +12,6 @@
 #include "StkWebAppTest4.h"
 #include "StkWebAppTest5.h"
 
-
 #define THREADNUM 10
 
 bool SendTestDataFailed = false;
@@ -910,7 +909,7 @@ int StkWebAppSendTest1_T(int Id)
 		StkPlPrintf("StkWebAppSend: No memory leak is occurred. (Normal case) ... ");
 		int MemChk[6];
 		for (int Loop = 0; Loop < 6; Loop++) {
-			for (int Loop2 = 0; Loop2 < 20; Loop2++) {
+			for (int Loop2 = 0; Loop2 < 300; Loop2++) {
 				StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 				if (ResultCode != 200 || ResObj == NULL) {
 					StkPlPrintf("NG\r\n");
