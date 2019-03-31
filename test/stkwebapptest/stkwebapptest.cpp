@@ -17,7 +17,6 @@
 
 bool SendTestDataFailed = false;
 int SendTestDataCount = 0;
-bool StkWebAppSendFailed = false;
 
 const wchar_t* FindNewLine(wchar_t* Dat)
 {
@@ -830,37 +829,112 @@ void AddDeleteReqHandlerTest()
 
 int StkWebAppSendTest1_T(int Id)
 {
+	int ResultCode = 0;
 	StkWebAppSend* Sender = new StkWebAppSend();
 	{
+		StkPlPrintf("StkWebAppSend: Appropriate object is returned. (Normal case) ... ");
 		StkObject* ReqObj = new StkObject(L"");
 		ReqObj->AppendChildElement(new StkObject(L"Shizuoka", 100));
 		ReqObj->AppendChildElement(new StkObject(L"Ishikawa", 200));
 		ReqObj->AppendChildElement(new StkObject(L"Kanagawa", 200));
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "aaa", ReqObj);
-		if (ReqObj->Equals(ResObj) == false) {
-			StkWebAppSendFailed = true;
+		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "aaa", ReqObj, &ResultCode);
+		if (ResultCode != 200 || ReqObj->Equals(ResObj) == false) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(-1);
 		}
 		delete ReqObj;
 		delete ResObj;
+		StkPlPrintf("OK\r\n");
 	}
 	{
+		StkPlPrintf("StkWebAppSend: Appropriate object is returned. (Normal case) ... ");
 		StkObject* ReqObj = new StkObject(L"data");
 		ReqObj->AppendChildElement(new StkObject(L"xxx", L"XXX"));
 		ReqObj->AppendChildElement(new StkObject(L"yyy", L"YYY"));
 		ReqObj->AppendChildElement(new StkObject(L"zzz", L"ZZZ"));
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "bbb", ReqObj);
-		if (ReqObj->Equals(ResObj) == false) {
-			StkWebAppSendFailed = true;
+		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "bbb", ReqObj, &ResultCode);
+		if (ResultCode != 200 || ReqObj->Equals(ResObj) == false) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(-1);
 		}
 		delete ReqObj;
 		delete ResObj;
+		StkPlPrintf("OK\r\n");
+	}
+	{
+		StkPlPrintf("StkWebAppSend: No object is passed as request. (Normal case) ... ");
+		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
+		if (ResultCode != 200) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(-1);
+		}
+		delete ResObj;
+		StkPlPrintf("OK\r\n");
+	}
+	{
+		StkPlPrintf("StkWebAppSend: Undefined API is called. (Abnormal case) ... ");
+		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "xxx", NULL, &ResultCode);
+		if (ResultCode != 404 || ResObj == NULL) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(-1);
+		}
+		StkObject* CodeObj = ResObj->GetFirstChildElement();
+		if (CodeObj == NULL || CodeObj->GetIntValue() != 1001) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(-1);
+		}
+		delete ResObj;
+		StkPlPrintf("OK\r\n");
+	}
+	{
+		StkPlPrintf("StkWebAppSend: Incorrect host name is specified. (Abnormal case) ... ");
+		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhostx", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
+		if (ResultCode != -1 || ResObj != NULL) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(-1);
+		}
+		delete ResObj;
+		StkPlPrintf("OK\r\n");
+	}
+	{
+		StkPlPrintf("StkWebAppSend: Incorrect port number is specified. (Abnormal case) ... ");
+		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8082, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
+		if (ResultCode != -1 || ResObj != NULL) {
+			StkPlPrintf("NG\r\n");
+			StkPlExit(-1);
+		}
+		delete ResObj;
+		StkPlPrintf("OK\r\n");
+	}
+	{
+		StkPlPrintf("StkWebAppSend: No memory leak is occurred. (Normal case) ... ");
+		int MemChk[6];
+		for (int Loop = 0; Loop < 6; Loop++) {
+			for (int Loop2 = 0; Loop2 < 20; Loop2++) {
+				StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
+				if (ResultCode != 200 || ResObj == NULL) {
+					StkPlPrintf("NG\r\n");
+					StkPlExit(-1);
+				}
+				delete ResObj;
+			}
+			MemChk[Loop] = StkPlGetUsedMemorySizeOfCurrentProcess();
+			StkPlPrintf("%d,", MemChk[Loop]);
+		}
+		if (MemChk[0] < MemChk[1] && MemChk[1] < MemChk[2] && MemChk[2] < MemChk[3] &&
+			MemChk[3] < MemChk[4] && MemChk[4] < MemChk[5]) {
+			StkPlPrintf(" NG\r\n");
+			StkPlExit(-1);
+		}
+		StkPlPrintf(" OK\r\n");
 	}
 	{
 		StkObject* ReqObj = new StkObject(L"");
 		ReqObj->AppendChildElement(new StkObject(L"Operation", L"Stop"));
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_POST, "/service/", ReqObj);
+		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_POST, "/service/", ReqObj, &ResultCode);
 		delete ReqObj;
 		delete ResObj;
+		StkPlSleepMs(500);
 	}
 	delete Sender;
 	return 0;
@@ -868,10 +942,8 @@ int StkWebAppSendTest1_T(int Id)
 
 void StkWebAppSendTest1()
 {
-	StkPlPrintf("StkWebAppSend Test 1 ... ");
 	int TmpIds1[3] = { 11, 12, 13 };
 	int TmpIds_T[1] = { 14 };
-	StkWebAppSendFailed = false;
 
 	StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, L"localhost", 8081);
 
@@ -879,6 +951,8 @@ void StkWebAppSendTest1()
 	int Add1 = TmpApp1->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"aaa", (StkWebAppExec*)Test1Hndl);
 	StkWebAppTest2* Test2Hndl = new StkWebAppTest2();
 	int Add2 = TmpApp1->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"bbb", (StkWebAppExec*)Test2Hndl);
+	StkWebAppTest5* Test5Hndl = new StkWebAppTest5();
+	int Add5 = TmpApp1->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/bigdata/", (StkWebAppExec*)Test5Hndl);
 
 	AddStkThread(TmpIds_T[0], L"StkWebAppSendTest1_T", L"", NULL, NULL, StkWebAppSendTest1_T, NULL, NULL);
 	StartSpecifiedStkThreads(TmpIds_T, 1);
@@ -888,14 +962,9 @@ void StkWebAppSendTest1()
 
 	int Del1 = TmpApp1->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"aaa");
 	int Del2 = TmpApp1->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"bbb");
+	int Del5 = TmpApp1->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/bigdata/");
 
 	delete TmpApp1;
-
-	if (StkWebAppSendFailed) {
-		StkPlPrintf("NG\r\n");
-		StkPlExit(-1);
-	}
-	StkPlPrintf("OK\r\n");
 }
 
 int main(int Argc, char* Argv[])

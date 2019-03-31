@@ -1,5 +1,6 @@
 #include "../stkpl/StkPl.h"
 #include "../commonfunc/StkObject.h"
+#include "../commonfunc/StkStringParser.h"
 #include "../stksocket/stksocket.h"
 #include "StkWebAppSend.h"
 
@@ -13,7 +14,7 @@ public:
 
 public:
 	const wchar_t* SkipHttpHeader(const wchar_t*);
-	StkObject* RecvResponse(int, wchar_t[1024], int*);
+	StkObject* RecvResponse(int, wchar_t[1024]);
 	int SendRequest(int, int, const char*, StkObject*);
 };
 
@@ -38,13 +39,12 @@ const wchar_t* StkWebAppSend::Impl::SkipHttpHeader(const wchar_t* Txt)
 	return Txt;
 }
 
-StkObject* StkWebAppSend::Impl::RecvResponse(int TargetId, wchar_t Header[1024], int* ResultCode)
+StkObject* StkWebAppSend::Impl::RecvResponse(int TargetId, wchar_t Header[1024])
 {
 	unsigned char *Dat = new unsigned char[RecvBufSize];
 	int Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, TimeoutInterval, NULL, -1);
 	if (Ret == 0 || Ret == -1 || Ret == -2) {
 		delete Dat;
-		*ResultCode = -1;
 		return NULL;
 	}
 	if (Ret >= RecvBufSize) {
@@ -61,12 +61,12 @@ StkObject* StkWebAppSend::Impl::RecvResponse(int TargetId, wchar_t Header[1024],
 	// Acquire HTTP header
 	const wchar_t* Req = SkipHttpHeader(DatWc);
 	if (Req == DatWc || Req - DatWc >= 1024 - 1) {
-		*ResultCode = -1;
 		delete DatWc;
 		return NULL;
 	}
 	StkPlWcsNCpy(Header, 1024, DatWc, Req - DatWc);
-	StkObject* ReqObj = StkObject::CreateObjectFromJson(Req, ResultCode);
+	int Tmp;
+	StkObject* ReqObj = StkObject::CreateObjectFromJson(Req, &Tmp);
 
 	delete DatWc;
 	return ReqObj;
@@ -77,7 +77,10 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 	// JSON conversion and UTF-8 conversion
 	wchar_t* WDat = new wchar_t[SendBufSize];
 	StkPlWcsCpy(WDat, SendBufSize, L"");
-	int Length = ReqObj->ToJson(WDat, SendBufSize);
+	int Length = 0;
+	if (ReqObj != NULL) {
+		ReqObj->ToJson(WDat, SendBufSize);
+	}
 	if (Length == SendBufSize - 1) {
 		delete WDat;
 		return -1;
@@ -85,9 +88,6 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 	char* Dat = StkPlCreateUtf8FromWideChar(WDat);
 	size_t DatLength = StkPlStrLen(Dat);
 	delete WDat;
-	if (Dat == NULL) {
-		return -1;
-	}
 
 	// Making HTTP header
 	char HttpHeader[1024] = "";
@@ -103,8 +103,13 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 	}
 	StkPlStrCat(HttpHeader, 1024, Url);
 	StkPlStrCat(HttpHeader, 1024, " HTTP/1.1\r\n");
-	StkPlSPrintf(HttpHeaderContLen, 64, "Content-Length: %d\r\n", DatLength);
-	StkPlStrCat(HttpHeader, 1024, HttpHeaderContLen);
+	if (DatLength != 0) {
+		StkPlSPrintf(HttpHeaderContLen, 64, "Content-Length: %d\r\n", DatLength);
+		StkPlStrCat(HttpHeader, 1024, HttpHeaderContLen);
+	}
+	if (Dat != NULL && *Dat != L'\0') {
+		StkPlStrCat(HttpHeader, 1024, "Content-Type: application/json\r\n");
+	}
 	StkPlStrCat(HttpHeader, 1024, "\r\n");
 	int HeaderLength = StkPlStrLen(HttpHeader);
 
@@ -139,7 +144,7 @@ StkWebAppSend::~StkWebAppSend()
 	delete pImpl;
 };
 
-StkObject* StkWebAppSend::SendRequestRecvResponse(const wchar_t* HostNameOrIpAddr, int PortNum, int Method, const char* Url, StkObject* ReqObj)
+StkObject* StkWebAppSend::SendRequestRecvResponse(const wchar_t* HostNameOrIpAddr, int PortNum, int Method, const char* Url, StkObject* ReqObj, int* ResultCode)
 {
 	int TargetId = 0;
 
@@ -162,10 +167,21 @@ StkObject* StkWebAppSend::SendRequestRecvResponse(const wchar_t* HostNameOrIpAdd
 
 	StkObject* ResDat = NULL;
 	wchar_t Header[1024];
-	int ResultCode;
 	int RetSend = pImpl->SendRequest(TargetId, Method, Url, ReqObj);
 	if (RetSend >= 0) {
-		ResDat = pImpl->RecvResponse(TargetId, Header, &ResultCode);
+		ResDat = pImpl->RecvResponse(TargetId, Header);
+		if (ResDat == NULL) {
+			*ResultCode = -1;
+		} else {
+			wchar_t TmpStr[16] = L"";
+			wchar_t StrResultCode[16] = L"";
+			StkStringParser::ParseInto3Params(Header, L"$ $ $", L'$', NULL, -1, StrResultCode, 16, NULL, -1);
+			if (StrResultCode != NULL) {
+				*ResultCode = StkPlWcsToL(StrResultCode);
+			}
+		}
+	} else {
+		*ResultCode = -1;
 	}
 
 	StkSocket_Disconnect(TargetId, TargetId, true);
