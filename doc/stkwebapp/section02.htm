@@ -44,6 +44,7 @@ StkWebAppは以下のファイルから構成されます。
 <tr><td>stkwebapp.lib</td><td>StkWebAppの静的ライブラリです。</td></tr>
 <tr><td>StkWebApp.h</td><td>StkWebAppの利用プログラムのためのヘッダファイルで，StkWebAppクラスを定義します。<br/>StkWebAppクラスは，REST APIを実現する基本的な機能を提供します。</td></tr>
 <tr><td>StkWebAppExec.h</td><td>StkWebAppの利用プログラムのためのヘッダファイルで，StkWebAppExecクラスを定義します。<br/>StkWebAppExecクラスは，個々のREST APIの処理を実現するクラスの基底クラスです。</td></tr>
+<tr><td>StkWebAppSend.h</td><td>HTTPクライアントのためのヘッダファイルで，StkWebAppSendクラスを定義します。</td></tr>
 </table>
 </div>
 
@@ -160,16 +161,6 @@ URL"/service/"に"{ "Operation" : "Stop" }"がPOSTされるまで，本メソッ
 </table>
 <hr/>
 
-<p>StkObject* SendRequest(wchar_t* ReqHeader, StkObject* ReqObj, int* ResultCode)</p>
-ReqHeaderに指定されたURLにHTTPリクエストを送信し，受信したデータをStkObjectに変換し返却する。<br/>
-<table class="tblstyle">
-<tr><td>ReqHeader[入力]</td><td>送信するHTTPリクエストのHTTPヘッダ部</td></tr>
-<tr><td>ReqObj[入力]</td><td>送信データのもととなるStkObject</td></tr>
-<tr><td>ResultCode[出力]</td><td>受信したステータスコード</td></tr>
-<tr><td>戻り値</td><td>受信したデータをStkObjectに変換したもの</td></tr>
-</table>
-<hr/>
-
 </div><p>
 
 
@@ -191,7 +182,85 @@ StkWebAppExecクラスの派生クラスが実装するメソッドです。純�
 
 
 
-<H2 ID="2.6">2.6 異常時の振る舞い</H2>
+<H2 ID="2.6">2.6 StkWebAppSendクラス</H2>
+<div class="topic">
+
+<p>StkWebAppSend()</p>
+コンストラクタ。<br/>
+<hr/>
+
+<p>~StkWebAppSend()</p>
+デストラクタ。<br/>
+<hr/>
+
+<p>int GetSendBufSize()</p>
+送信用データ一時格納用領域のサイズを返します。<br/>
+<table class="tblstyle">
+<tr><td>戻り値</td><td>送信用データ一時格納用領域のサイズ</td></tr>
+</table>
+<hr/>
+
+<p>void SetSendBufSize(int Size)</p>
+送信用データ一時格納用領域のサイズを変更します。<br/>デフォルトは1,000,000バイトです。<br/>
+<table class="tblstyle">
+<tr><td>Size[入力]</td><td>送信用データ一時格納用領域のサイズ<br/></td></tr>
+</table>
+<hr/>
+
+<p>int GetRecvBufSize()</p>
+受信用データ一時格納用領域のサイズを返します。<br/>
+<table class="tblstyle">
+<tr><td>戻り値</td><td>受信用データ一時格納用領域のサイズ</td></tr>
+</table>
+<hr/>
+
+<p>void SetRecvBufSize(int Size)</p>
+受信用データ一時格納用領域のサイズを変更します。<br/>デフォルトは1,000,000バイトです。<br/>
+<table class="tblstyle">
+<tr><td>Size[入力]</td><td>受信用データ一時格納用領域のサイズ<br/></td></tr>
+</table>
+<hr/>
+
+<p>int GetTimeoutInterval()</p>
+受信処理は何らかのデータを受信した後，そのデータが完結していない場合(データサイズがHTTPヘッダのContent-Lengthに達していない場合)，次のデータの受信を待ちます。
+受信待ち処理のタイムアウト時間をミリ秒で返します。<br/>
+<table class="tblstyle">
+<tr><td>戻り値</td><td>タイムアウト時間(ミリ秒)</td></tr>
+</table>
+<hr/>
+
+<p>void SetTimeoutInterval(int Interval)</p>
+受信処理は何らかのデータを受信した後，そのデータが完結していない場合(データサイズがHTTPヘッダのContent-Lengthに達していない場合)，次のデータの受信を待ちます。
+受信待ち処理のタイムアウト時間をミリ秒で設定します。<br/>デフォルト値は3,000ミリ秒です。<br/>
+<table class="tblstyle">
+<tr><td>Interval[入力]</td><td>タイムアウト時間(ミリ秒)<br/></td></tr>
+</table>
+<hr/>
+
+<p>StkObject* SendRequestRecvResponse(const wchar_t* HostNameOrIpAddr, int PortNum, int Method, const char* Url, StkObject* ReqObj, int* ResultCode)</p>
+HTTP Serverにリクエストを送信し，HTTP Serverからのレスポンスを返却します。<br/>
+<table class="tblstyle">
+<tr><td>HostNameOrIpAddr[入力]</td><td>接続先のIPアドレスまたはホスト名<br/></td></tr>
+<tr><td>PortNum[入力]</td><td>接続先のポート番号<br/></td></tr>
+<tr><td>Method[入力]</td><td>HTTPリクエストのメソッド。以下の何れかを指定する。<br/>
+StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED<br/>
+StkWebAppExec::STKWEBAPP_METHOD_GET<br/>
+StkWebAppExec::STKWEBAPP_METHOD_HEAD<br/>
+StkWebAppExec::STKWEBAPP_METHOD_POST<br/>
+StkWebAppExec::STKWEBAPP_METHOD_PUT<br/>
+StkWebAppExec::STKWEBAPP_METHOD_DELETE<br/>
+<tr><td>Url[入力]</td><td>接続対象のURL。IPアドレスまたはホスト名，およびポート番号は含まない。<br/></td></tr>
+<tr><td>ReqObj[入力]</td><td>リクエストデータ。JSONに変換後送信される。<br/></td></tr>
+<tr><td>ResultCode[出力]</td><td>HTTPレスポンスのステータスコード<br/></td></tr>
+<tr><td>戻り値</td><td>HTTPレスポンスのデータ<br/></td></tr>
+</table>
+<hr/>
+
+</div><p>
+
+
+
+<H2 ID="2.7">2.7 異常時の振る舞い</H2>
 <div class="topic">
 StkWebAppは，リクエストの不正や内部処理の異常を検知した場合，エラーコードおよびエラーメッセージを梱包したレスポンスを返します。<br/>
 レスポンスは以下のように定義されます。<br/>

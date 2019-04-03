@@ -91,7 +91,7 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 
 	// Making HTTP header
 	char HttpHeader[1024] = "";
-	char HttpHeaderContLen[64] = "";
+
 	if (Method == STKWEBAPP_METHOD_GET) {
 		StkPlStrCat(HttpHeader, 1024, "GET ");
 	} else if (Method == STKWEBAPP_METHOD_POST) {
@@ -100,15 +100,39 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 		StkPlStrCat(HttpHeader, 1024, "PUT ");
 	} else if (Method == STKWEBAPP_METHOD_DELETE) {
 		StkPlStrCat(HttpHeader, 1024, "DELETE ");
+	} else if (Method == STKWEBAPP_METHOD_HEAD) {
+		StkPlStrCat(HttpHeader, 1024, "HEAD ");
 	}
 	StkPlStrCat(HttpHeader, 1024, Url);
 	StkPlStrCat(HttpHeader, 1024, " HTTP/1.1\r\n");
 	if (DatLength != 0) {
+		char HttpHeaderContLen[64] = "";
 		StkPlSPrintf(HttpHeaderContLen, 64, "Content-Length: %d\r\n", DatLength);
 		StkPlStrCat(HttpHeader, 1024, HttpHeaderContLen);
 	}
 	if (Dat != NULL && *Dat != L'\0') {
 		StkPlStrCat(HttpHeader, 1024, "Content-Type: application/json\r\n");
+	}
+	{
+		char Date[64] = "";
+		char DateTmp[64] = "";
+		StkPlGetTimeInRfc822(DateTmp);
+		StkPlSPrintf(Date, 64, "Date: %s\r\n", DateTmp);
+		StkPlStrCat(HttpHeader, 1024, Date);
+	}
+	{
+		int SockType = 0;
+		int ActionType = 0;
+		wchar_t TargetAddr[256] = L"";
+		int TargetPort = 0;
+		bool CopiedFlag = true;
+		if (StkSocket_GetInfo(TargetId, &SockType, &ActionType, TargetAddr, &TargetPort, &CopiedFlag) == 0) {
+			char HostHeader[512] = "";
+			char* TargetAddru8 = StkPlCreateUtf8FromWideChar(TargetAddr);
+			StkPlSPrintf(HostHeader, 512, "Host: %s\r\n", TargetAddru8);
+			StkPlStrCat(HttpHeader, 1024, HostHeader);
+			delete TargetAddru8;
+		}
 	}
 	StkPlStrCat(HttpHeader, 1024, "\r\n");
 	int HeaderLength = StkPlStrLen(HttpHeader);
