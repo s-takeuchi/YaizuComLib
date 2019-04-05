@@ -185,8 +185,13 @@ StkWebAppExecクラスの派生クラスが実装するメソッドです。純�
 <H2 ID="2.6">2.6 StkWebAppSendクラス</H2>
 <div class="topic">
 
-<p>StkWebAppSend()</p>
+<p>StkWebAppSend(int TargetId, const wchar_t* HostNameOrIpAddr, int PortNum)</p>
 コンストラクタ。<br/>
+<table class="tblstyle">
+<tr><td>TargetId[入力]</td><td>コネクションを特定するID。StkWebAppのTargetIdsで指定したIDと異なる値を指定する。<br/></td></tr>
+<tr><td>HostNameOrIpAddr[入力]</td><td>接続先のIPアドレスまたはホスト名<br/></td></tr>
+<tr><td>PortNum[入力]</td><td>接続先のポート番号<br/></td></tr>
+</table>
 <hr/>
 
 <p>~StkWebAppSend()</p>
@@ -237,18 +242,16 @@ StkWebAppExecクラスの派生クラスが実装するメソッドです。純�
 </table>
 <hr/>
 
-<p>StkObject* SendRequestRecvResponse(const wchar_t* HostNameOrIpAddr, int PortNum, int Method, const char* Url, StkObject* ReqObj, int* ResultCode)</p>
+<p>StkObject* SendRequestRecvResponse(int Method, const char* Url, StkObject* ReqObj, int* ResultCode)</p>
 HTTP Serverにリクエストを送信し，HTTP Serverからのレスポンスを返却します。<br/>
 <table class="tblstyle">
-<tr><td>HostNameOrIpAddr[入力]</td><td>接続先のIPアドレスまたはホスト名<br/></td></tr>
-<tr><td>PortNum[入力]</td><td>接続先のポート番号<br/></td></tr>
 <tr><td>Method[入力]</td><td>HTTPリクエストのメソッド。以下の何れかを指定する。<br/>
-StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED<br/>
-StkWebAppExec::STKWEBAPP_METHOD_GET<br/>
-StkWebAppExec::STKWEBAPP_METHOD_HEAD<br/>
-StkWebAppExec::STKWEBAPP_METHOD_POST<br/>
-StkWebAppExec::STKWEBAPP_METHOD_PUT<br/>
-StkWebAppExec::STKWEBAPP_METHOD_DELETE<br/>
+StkWebAppSend::STKWEBAPP_METHOD_UNDEFINED<br/>
+StkWebAppSend::STKWEBAPP_METHOD_GET<br/>
+StkWebAppSend::STKWEBAPP_METHOD_HEAD<br/>
+StkWebAppSend::STKWEBAPP_METHOD_POST<br/>
+StkWebAppSend::STKWEBAPP_METHOD_PUT<br/>
+StkWebAppSend::STKWEBAPP_METHOD_DELETE<br/>
 <tr><td>Url[入力]</td><td>接続対象のURL。IPアドレスまたはホスト名，およびポート番号は含まない。<br/></td></tr>
 <tr><td>ReqObj[入力]</td><td>リクエストデータ。JSONに変換後送信される。<br/></td></tr>
 <tr><td>ResultCode[出力]</td><td>HTTPレスポンスのステータスコード<br/></td></tr>

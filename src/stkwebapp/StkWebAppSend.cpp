@@ -12,6 +12,8 @@ public:
 
 	int TimeoutInterval;
 
+	int MyId;
+
 public:
 	const wchar_t* SkipHttpHeader(const wchar_t*);
 	StkObject* RecvResponse(int, wchar_t[1024]);
@@ -155,45 +157,31 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 	return RetD;
 }
 
-StkWebAppSend::StkWebAppSend()
+StkWebAppSend::StkWebAppSend(int TargetId, const wchar_t* HostNameOrIpAddr, int PortNum)
 {
 	pImpl = new Impl;
 	pImpl->SendBufSize = 1000000;
 	pImpl->RecvBufSize = 1000000;
 	pImpl->TimeoutInterval = 3000;
+	pImpl->MyId = TargetId;
+	StkSocket_AddInfo(pImpl->MyId, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, HostNameOrIpAddr, PortNum);
 }
 
 StkWebAppSend::~StkWebAppSend()
 {
+	StkSocket_DeleteInfo(pImpl->MyId);
 	delete pImpl;
 };
 
-StkObject* StkWebAppSend::SendRequestRecvResponse(const wchar_t* HostNameOrIpAddr, int PortNum, int Method, const char* Url, StkObject* ReqObj, int* ResultCode)
+StkObject* StkWebAppSend::SendRequestRecvResponse(int Method, const char* Url, StkObject* ReqObj, int* ResultCode)
 {
-	int TargetId = 0;
-
-	// Calculate TargetId from existing IDs.
-	for (int Loop = 0; Loop < StkSocket_GetNumOfStkInfos(); Loop++) {
-		int CurrentId = -1;
-		int SockType = -1;
-		int ActionType = -1;
-		wchar_t TargetAddr[256] = L"";
-		int TargetPort = -1;
-		bool CopiedFlag = false;
-		StkSocket_GetInfo(Loop, &CurrentId, &SockType, &ActionType, TargetAddr, &TargetPort, &CopiedFlag);
-		if (CurrentId >= TargetId) {
-			TargetId = CurrentId + 1;
-		}
-	}
-
-	StkSocket_AddInfo(TargetId, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, HostNameOrIpAddr, PortNum);
-	StkSocket_Connect(TargetId);
+	StkSocket_Connect(pImpl->MyId);
 
 	StkObject* ResDat = NULL;
 	wchar_t Header[1024];
-	int RetSend = pImpl->SendRequest(TargetId, Method, Url, ReqObj);
+	int RetSend = pImpl->SendRequest(pImpl->MyId, Method, Url, ReqObj);
 	if (RetSend >= 0) {
-		ResDat = pImpl->RecvResponse(TargetId, Header);
+		ResDat = pImpl->RecvResponse(pImpl->MyId, Header);
 		if (ResDat == NULL) {
 			*ResultCode = -1;
 		} else {
@@ -208,8 +196,8 @@ StkObject* StkWebAppSend::SendRequestRecvResponse(const wchar_t* HostNameOrIpAdd
 		*ResultCode = -1;
 	}
 
-	StkSocket_Disconnect(TargetId, TargetId, true);
-	StkSocket_DeleteInfo(TargetId);
+	StkSocket_Disconnect(pImpl->MyId, pImpl->MyId, true);
+
 	return ResDat;
 }
 

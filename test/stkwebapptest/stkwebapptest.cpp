@@ -829,14 +829,16 @@ void AddDeleteReqHandlerTest()
 int StkWebAppSendTest1_T(int Id)
 {
 	int ResultCode = 0;
-	StkWebAppSend* Sender = new StkWebAppSend();
+	StkWebAppSend* Sender = new StkWebAppSend(20, L"localhost", 8081);
+	StkWebAppSend* Sender2 = new StkWebAppSend(22, L"localhostx", 8081);
+	StkWebAppSend* Sender3 = new StkWebAppSend(23, L"localhost", 8082);
 	{
 		StkPlPrintf("StkWebAppSend: Appropriate object is returned. (Normal case) ... ");
 		StkObject* ReqObj = new StkObject(L"");
 		ReqObj->AppendChildElement(new StkObject(L"Shizuoka", 100));
 		ReqObj->AppendChildElement(new StkObject(L"Ishikawa", 200));
 		ReqObj->AppendChildElement(new StkObject(L"Kanagawa", 200));
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "aaa", ReqObj, &ResultCode);
+		StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "aaa", ReqObj, &ResultCode);
 		if (ResultCode != 200 || ReqObj->Equals(ResObj) == false) {
 			StkPlPrintf("NG\r\n");
 			StkPlExit(-1);
@@ -851,7 +853,7 @@ int StkWebAppSendTest1_T(int Id)
 		ReqObj->AppendChildElement(new StkObject(L"xxx", L"XXX"));
 		ReqObj->AppendChildElement(new StkObject(L"yyy", L"YYY"));
 		ReqObj->AppendChildElement(new StkObject(L"zzz", L"ZZZ"));
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "bbb", ReqObj, &ResultCode);
+		StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "bbb", ReqObj, &ResultCode);
 		if (ResultCode != 200 || ReqObj->Equals(ResObj) == false) {
 			StkPlPrintf("NG\r\n");
 			StkPlExit(-1);
@@ -862,7 +864,7 @@ int StkWebAppSendTest1_T(int Id)
 	}
 	{
 		StkPlPrintf("StkWebAppSend: No object is passed as request. (Normal case) ... ");
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
+		StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 		if (ResultCode != 200) {
 			StkPlPrintf("NG\r\n");
 			StkPlExit(-1);
@@ -872,7 +874,7 @@ int StkWebAppSendTest1_T(int Id)
 	}
 	{
 		StkPlPrintf("StkWebAppSend: Undefined API is called. (Abnormal case) ... ");
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "xxx", NULL, &ResultCode);
+		StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "xxx", NULL, &ResultCode);
 		if (ResultCode != 404 || ResObj == NULL) {
 			StkPlPrintf("NG\r\n");
 			StkPlExit(-1);
@@ -887,7 +889,7 @@ int StkWebAppSendTest1_T(int Id)
 	}
 	{
 		StkPlPrintf("StkWebAppSend: Incorrect host name is specified. (Abnormal case) ... ");
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhostx", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
+		StkObject* ResObj = Sender2->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 		if (ResultCode != -1 || ResObj != NULL) {
 			StkPlPrintf("NG\r\n");
 			StkPlExit(-1);
@@ -897,7 +899,7 @@ int StkWebAppSendTest1_T(int Id)
 	}
 	{
 		StkPlPrintf("StkWebAppSend: Incorrect port number is specified. (Abnormal case) ... ");
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8082, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
+		StkObject* ResObj = Sender3->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 		if (ResultCode != -1 || ResObj != NULL) {
 			StkPlPrintf("NG\r\n");
 			StkPlExit(-1);
@@ -910,13 +912,13 @@ int StkWebAppSendTest1_T(int Id)
 		int MemChk[6];
 		for (int Loop = 0; Loop < 16; Loop++) {
 			for (int Loop2 = 0; Loop2 < 200; Loop2++) {
-				StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
+				StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 				delete ResObj;
 			}
 		}
 		for (int Loop = 0; Loop < 6; Loop++) {
 			for (int Loop2 = 0; Loop2 < 200; Loop2++) {
-				StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
+				StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 				if (ResultCode != 200 || ResObj == NULL) {
 					StkPlPrintf("NG\r\n");
 					StkPlExit(-1);
@@ -936,12 +938,14 @@ int StkWebAppSendTest1_T(int Id)
 	{
 		StkObject* ReqObj = new StkObject(L"");
 		ReqObj->AppendChildElement(new StkObject(L"Operation", L"Stop"));
-		StkObject* ResObj = Sender->SendRequestRecvResponse(L"localhost", 8081, StkWebAppSend::STKWEBAPP_METHOD_POST, "/service/", ReqObj, &ResultCode);
+		StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_POST, "/service/", ReqObj, &ResultCode);
 		delete ReqObj;
 		delete ResObj;
 		StkPlSleepMs(500);
 	}
 	delete Sender;
+	delete Sender2;
+	delete Sender3;
 	return 0;
 }
 

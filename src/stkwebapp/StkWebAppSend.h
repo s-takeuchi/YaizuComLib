@@ -16,7 +16,7 @@ public:
 	static const unsigned char STKWEBAPP_METHOD_DELETE = 0x10;
 	static const unsigned char STKWEBAPP_METHOD_INVALID = 0x20;
 
-	StkWebAppSend();
+	StkWebAppSend(int, const wchar_t*, int);
 	virtual ~StkWebAppSend();
 
 	int GetSendBufSize();
@@ -27,5 +27,5 @@ public:
 	int GetTimeoutInterval();
 	void SetTimeoutInterval(int);
 
-	StkObject* SendRequestRecvResponse(const wchar_t*, int, int, const char*, StkObject*, int*);
+	StkObject* SendRequestRecvResponse(int, const char*, StkObject*, int*);
 };
