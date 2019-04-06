@@ -118,7 +118,7 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 	{
 		char Date[64] = "";
 		char DateTmp[64] = "";
-		StkPlGetTimeInRfc822(DateTmp);
+		StkPlGetTimeInRfc2822(DateTmp, false);
 		StkPlSPrintf(Date, 64, "Date: %s\r\n", DateTmp);
 		StkPlStrCat(HttpHeader, 1024, Date);
 	}

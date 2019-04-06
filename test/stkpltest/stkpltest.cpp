@@ -166,9 +166,40 @@ void Test_Invalid_String_Utf8_Utf16(const char* MsgPtr, int Count)
 	StkPlPrintf("OK case\n");
 }
 
+void Test_Time()
+{
+	char Time[64];
+	StkPlPrintf("Test time in RFC 2822 ... ");
+	StkPlGetTimeInRfc2822(Time, true);
+	if (Time == NULL || StkPlStrStr(Time, ",") == NULL || StkPlStrStr(Time, " ") == NULL || StkPlStrStr(Time, ":") == NULL) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	StkPlGetTimeInRfc2822(Time, false);
+	if (Time == NULL || StkPlStrStr(Time, "+0000") == NULL) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	StkPlPrintf("OK case\n");
+
+	StkPlPrintf("Test time in old format ... ");
+	StkPlGetTimeInOldFormat(Time, true);
+	if (Time == NULL || StkPlStrStr(Time, "-") == NULL || StkPlStrStr(Time, " ") == NULL || StkPlStrStr(Time, ":") == NULL) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	StkPlGetTimeInOldFormat(Time, false);
+	if (Time == NULL || StkPlStrStr(Time, "-") == NULL || StkPlStrStr(Time, " ") == NULL || StkPlStrStr(Time, ":") == NULL) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	StkPlPrintf("OK case\n");
+}
+
 int main(int Argc, char* Argv[])
 {
 	StkPlPrintf("stkpltest started.\n");
+	Test_Time();
 	{
 		Test_Conv_Utf16_Utf32(u"abcdexyz-0123456789あいうえおかきくけこさしすせそたちつてと", 1);
 		Test_Conv_Utf16_Utf32(u"𠮷𠮷𠮷𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿", 2);

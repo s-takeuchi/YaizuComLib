@@ -52,6 +52,15 @@ wchar_t* StkPlCreateWideCharFromUtf8(const char*)<br/>
 char* StkPlCreateUtf8FromWideChar(const wchar_t*)<br/>
 </td>
 <td>UTFとワイドキャラクタ文字列を相互に変換します。同時に必要な領域を確保します。</td></tr>
+
+<tr><td>
+void StkPlGetTimeInRfc2822(char[64], bool)<br/>
+void StkPlGetWTimeInRfc2822(wchar_t[64], bool)<br/>
+void StkPlGetTimeInOldFormat(char[64], bool)<br/>
+void StkPlGetWTimeInOldFormat(wchar_t[64], bool)<br/>
+</td>
+<td>ローカルタイムまたはUTCを返却します。</td></tr>
+
 </table><p>
 </div><p>
 
@@ -132,6 +141,23 @@ UTFとワイドキャラクタ文字列を相互に変換します。同時に�
 <tr><td>[戻り値]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
 </table>
 </div><p>
+
+
+
+<H2 ID="1.6">1.6<br/>
+void StkPlGetTimeInRfc2822(char Date[64], bool IsLocalTime)<br/>
+void StkPlGetWTimeInRfc2822(wchar_t Date[64], bool IsLocalTime)<br/>
+void StkPlGetTimeInOldFormat(char Date[64], bool IsLocalTime)<br/>
+void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)<br/>
+</H2>
+<div class="topic">
+RFC 2822またはYYYY-MM-DD hh:mm:ss形式で，ローカルタイムまたはUTCを返却します。<br/>
+<table class="tblstyle">
+<tr><td>Date[入力]</td><td>ローカルタイムまたはUTC</td></tr>
+<tr><td>IsLocalTime[入力]</td><td>true : ローカルタイムを取得する<br/>false : UTCを取得する</td></tr>
+</table>
+</div><p>
+
 
 
 </div>

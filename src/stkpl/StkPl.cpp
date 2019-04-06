@@ -6,17 +6,18 @@
 #include <cstdarg>
 #include <thread>
 #include <chrono>
+#include <ctime>
 
 #ifdef WIN32
 #include <windows.h>
 #include <Psapi.h>
 #include <filesystem>
-#include <time.h>
+#include <sys/types.h>
+#include <sys/timeb.h>
 #else
 #include <unistd.h>
-#include <time.h>
-#include <ctime>
-#include <experimental/filesystem>
+include <experimental/filesystem>
+#include <sys/timeb.h>
 #endif
 
 #include "StkPl.h"
@@ -891,49 +892,7 @@ long long StkPlGetTickCount()
 #endif
 }
 
-void StkPlGetTimeInRfc822(char Date[64])
-{
-#ifdef WIN32
-	struct tm GmtTime;
-	__int64 Ltime;
-	_time64(&Ltime);
-	_gmtime64_s(&GmtTime, &Ltime);
-	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-	sprintf_s(Date, 64, "%s, %02d %s %d %02d:%02d:%02d GMT",
-		WdayStr[GmtTime.tm_wday],
-		GmtTime.tm_mday,
-		MonStr[GmtTime.tm_mon],
-		GmtTime.tm_year + 1900,
-		GmtTime.tm_hour,
-		GmtTime.tm_min,
-		GmtTime.tm_sec);
-#else
-	struct tm* GmtTime;
-	time_t Ltime;
-	time(&Ltime);
-	GmtTime = gmtime(&Ltime);
-	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-	sprintf(Date, "%s, %02d %s %d %02d:%02d:%02d GMT",
-		WdayStr[GmtTime->tm_wday],
-		GmtTime->tm_mday,
-		MonStr[GmtTime->tm_mon],
-		GmtTime->tm_year + 1900,
-		GmtTime->tm_hour,
-		GmtTime->tm_min,
-		GmtTime->tm_sec);
-#endif
-}
-
-void StkPlGetWTimeInRfc822(wchar_t Date[64])
-{
-	char DateTmp[64];
-	StkPlGetTimeInRfc822(DateTmp);
-	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
-}
-
-void StkPlGetTimeInUnixTime(char LocalTimeStr[64], bool IsLocalTime)
+void StkPlGetTimeInRfc2822(char Date[64], bool IsLocalTime)
 {
 #ifdef WIN32
 	struct tm TmTime;
@@ -944,7 +903,34 @@ void StkPlGetTimeInUnixTime(char LocalTimeStr[64], bool IsLocalTime)
 	} else {
 		_gmtime64_s(&TmTime, &Ltime);
 	}
-	sprintf_s(LocalTimeStr, 64, "%d-%d-%d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
+	int DiffHour = 0;
+	int DiffMinute = 0;
+	bool IsPlus = true;
+	if (IsLocalTime) {
+		struct _timeb TimeB;
+		_ftime64_s(&TimeB);
+		IsPlus = TimeB.timezone >= 0 ? true : false;
+		DiffHour = abs(TimeB.timezone) / 60;
+		DiffMinute = abs(TimeB.timezone) % 60;
+	}
+	char Diff[16] = "";
+	if (IsPlus) {
+		sprintf_s(Diff, 16, "+%02d%02d", DiffHour, DiffMinute);
+	} else {
+		sprintf_s(Diff, 16, "+%02d%02d", DiffHour, DiffMinute);
+	}
+	
+	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	sprintf_s(Date, 64, "%s, %02d %s %d %02d:%02d:%02d %s",
+		WdayStr[TmTime.tm_wday],
+		TmTime.tm_mday,
+		MonStr[TmTime.tm_mon],
+		TmTime.tm_year + 1900,
+		TmTime.tm_hour,
+		TmTime.tm_min,
+		TmTime.tm_sec,
+		Diff);
 #else
 	struct tm* TmTime;
 	time_t Ltime;
@@ -954,15 +940,74 @@ void StkPlGetTimeInUnixTime(char LocalTimeStr[64], bool IsLocalTime)
 	} else {
 		TmTime = gmtime(&Ltime);
 	}
-	sprintf(LocalTimeStr, "%d-%d-%d %02d:%02d:%02d", TmTime->tm_year + 1900, TmTime->tm_mon + 1, TmTime->tm_mday, TmTime->tm_hour, TmTime->tm_min, TmTime->tm_sec);
+	int DiffHour = 0;
+	int DiffMinute = 0;
+	bool IsPlus = true;
+	if (IsLocalTime) {
+		struct timeb TimeB;
+		ftime(&TimeB);
+		IsPlus = TimeB.timezone >= 0 ? true : false;
+		DiffHour = abs(TimeB.timezone) / 60;
+		DiffMinute = abs(TimeB.timezone) % 60;
+	}
+	char Diff[16] = "";
+	if (IsPlus) {
+		sprintf_s(Diff, 16, "+%02d%02d", DiffHour, DiffMinute);
+	} else {
+		sprintf_s(Diff, 16, "+%02d%02d", DiffHour, DiffMinute);
+	}
+
+	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	char WdayStr[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	sprintf(Date, "%s, %02d %s %d %02d:%02d:%02d %s",
+		WdayStr[TmTime->tm_wday],
+		TmTime->tm_mday,
+		MonStr[TmTime->tm_mon],
+		TmTime->tm_year + 1900,
+		TmTime->tm_hour,
+		TmTime->tm_min,
+		TmTime->tm_sec,
+		Diff);
 #endif
 }
 
-void StkPlGetWTimeInUnixTime(wchar_t LocalTimeStr[64], bool IsLocalTime)
+void StkPlGetWTimeInRfc2822(wchar_t Date[64], bool IsLocalTime)
 {
 	char DateTmp[64];
-	StkPlGetTimeInUnixTime(DateTmp, IsLocalTime);
-	StkPlConvUtf8ToWideChar(LocalTimeStr, 64, DateTmp);
+	StkPlGetTimeInRfc2822(DateTmp, IsLocalTime);
+	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
+}
+
+void StkPlGetTimeInOldFormat(char Date[64], bool IsLocalTime)
+{
+#ifdef WIN32
+	struct tm TmTime;
+	__int64 Ltime;
+	_time64(&Ltime);
+	if (IsLocalTime) {
+		_localtime64_s(&TmTime, &Ltime);
+	} else {
+		_gmtime64_s(&TmTime, &Ltime);
+	}
+	sprintf_s(Date, 64, "%d-%d-%d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
+#else
+	struct tm* TmTime;
+	time_t Ltime;
+	time(&Ltime);
+	if (IsLocalTime) {
+		TmTime = localtime(&Ltime);
+	} else {
+		TmTime = gmtime(&Ltime);
+	}
+	sprintf(Date, "%d-%d-%d %02d:%02d:%02d", TmTime->tm_year + 1900, TmTime->tm_mon + 1, TmTime->tm_mday, TmTime->tm_hour, TmTime->tm_min, TmTime->tm_sec);
+#endif
+}
+
+void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)
+{
+	char DateTmp[64];
+	StkPlGetTimeInOldFormat(DateTmp, IsLocalTime);
+	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -160,7 +160,7 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	StkPlSPrintf(Connection, 64, "Connection: close\r\n");
 	StkPlSPrintf(CacheCont, 64, "Cache-Control: no-cache\r\n");
 
-	StkPlGetTimeInRfc822(DateTmp);
+	StkPlGetTimeInRfc2822(DateTmp, false);
 	StkPlSPrintf(Date, 64, "Date: %s\r\n", DateTmp);
 
 	StkPlStrCat(HeaderData, 1024, RespLine);
