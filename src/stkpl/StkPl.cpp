@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-// API for char
+// APIs for char
 
 size_t StkPlStrLen(const char* Str)
 {
@@ -79,7 +79,7 @@ char * StkPlStrCat(char* Destination, size_t NumberOfElements, const char* Sourc
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-// API for wchar
+// APIs for wchar
 
 size_t StkPlWcsLen(const wchar_t* Wcs)
 {
@@ -137,7 +137,7 @@ wchar_t* StkPlWcsCat(wchar_t* Destination, size_t NumberOfElements, const wchar_
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-// API for memory
+// APIs for memory
 
 int StkPlMemCmp(const void* Ptr1, const void* Ptr2, size_t Num)
 {
@@ -156,7 +156,7 @@ void* StkPlMemSet(void* Ptr, int Value, size_t Size)
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-// API for locale
+// APIs for locale
 
 bool StkPlIsJapaneseLocale()
 {
@@ -252,7 +252,7 @@ wchar_t* StkPlSjisToWideChar(const char* Txt)
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-// API for UTF conversion
+// APIs for UTF conversion
 
 size_t StkPlConvUtf16ToUtf32(char32_t* Utf32, size_t SizeInWord, const char16_t* Utf16)
 {
@@ -910,19 +910,19 @@ void StkPlGetTimeInRfc2822(char Date[64], bool IsLocalTime)
 	}
 	int DiffHour = 0;
 	int DiffMinute = 0;
-	bool IsPlus = true;
+	bool IsPlus = false;
 	if (IsLocalTime) {
 		struct _timeb TimeB;
 		_ftime64_s(&TimeB);
-		IsPlus = TimeB.timezone >= 0 ? true : false;
+		IsPlus = TimeB.timezone > 0 ? true : false;
 		DiffHour = abs(TimeB.timezone) / 60;
 		DiffMinute = abs(TimeB.timezone) % 60;
 	}
 	char Diff[16] = "";
-	if (IsPlus) {
+	if (!IsPlus) {
 		sprintf_s(Diff, 16, "+%02d%02d", DiffHour, DiffMinute);
 	} else {
-		sprintf_s(Diff, 16, "+%02d%02d", DiffHour, DiffMinute);
+		sprintf_s(Diff, 16, "-%02d%02d", DiffHour, DiffMinute);
 	}
 	
 	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
@@ -947,19 +947,19 @@ void StkPlGetTimeInRfc2822(char Date[64], bool IsLocalTime)
 	}
 	int DiffHour = 0;
 	int DiffMinute = 0;
-	bool IsPlus = true;
+	bool IsPlus = false;
 	if (IsLocalTime) {
 		struct timeb TimeB;
 		ftime(&TimeB);
-		IsPlus = TimeB.timezone >= 0 ? true : false;
+		IsPlus = TimeB.timezone > 0 ? true : false;
 		DiffHour = abs(TimeB.timezone) / 60;
 		DiffMinute = abs(TimeB.timezone) % 60;
 	}
 	char Diff[16] = "";
-	if (IsPlus) {
+	if (!IsPlus) {
 		sprintf(Diff, "+%02d%02d", DiffHour, DiffMinute);
 	} else {
-		sprintf(Diff, "+%02d%02d", DiffHour, DiffMinute);
+		sprintf(Diff, "-%02d%02d", DiffHour, DiffMinute);
 	}
 
 	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
@@ -983,6 +983,72 @@ void StkPlGetWTimeInRfc2822(wchar_t Date[64], bool IsLocalTime)
 	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
 }
 
+void StkPlGetTimeInIso8601(char Date[64], bool IsLocalTime)
+{
+#ifdef WIN32
+	struct tm TmTime;
+	__int64 Ltime;
+	_time64(&Ltime);
+	if (IsLocalTime) {
+		_localtime64_s(&TmTime, &Ltime);
+	} else {
+		_gmtime64_s(&TmTime, &Ltime);
+	}
+	int DiffHour = 0;
+	int DiffMinute = 0;
+	bool IsPlus = false;
+	if (IsLocalTime) {
+		struct _timeb TimeB;
+		_ftime64_s(&TimeB);
+		IsPlus = TimeB.timezone > 0 ? true : false;
+		DiffHour = abs(TimeB.timezone) / 60;
+		DiffMinute = abs(TimeB.timezone) % 60;
+	}
+	char Diff[16] = "";
+	if (!IsPlus) {
+		sprintf_s(Diff, 16, "+%02d:%02d", DiffHour, DiffMinute);
+	} else {
+		sprintf_s(Diff, 16, "-%02d:%02d", DiffHour, DiffMinute);
+	}
+
+	sprintf_s(Date, 64, "%d-%02d-%02dT%02d:%02d:%02d%s", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec, Diff);
+#else
+	struct tm* TmTime;
+	time_t Ltime;
+	time(&Ltime);
+	if (IsLocalTime) {
+		TmTime = localtime(&Ltime);
+	} else {
+		TmTime = gmtime(&Ltime);
+	}
+	int DiffHour = 0;
+	int DiffMinute = 0;
+	bool IsPlus = false;
+	if (IsLocalTime) {
+		struct timeb TimeB;
+		ftime(&TimeB);
+		IsPlus = TimeB.timezone > 0 ? true : false;
+		DiffHour = abs(TimeB.timezone) / 60;
+		DiffMinute = abs(TimeB.timezone) % 60;
+	}
+	char Diff[16] = "";
+	if (!IsPlus) {
+		sprintf(Diff, "+%02d:%02d", DiffHour, DiffMinute);
+	} else {
+		sprintf(Diff, "-%02d:%02d", DiffHour, DiffMinute);
+	}
+
+	sprintf(Date, "%d-%02d-%02d %02d:%02d:%02d%s", TmTime->tm_year + 1900, TmTime->tm_mon + 1, TmTime->tm_mday, TmTime->tm_hour, TmTime->tm_min, TmTime->tm_sec, Diff);
+#endif
+}
+
+void StkPlGetWTimeInIso8601(wchar_t Date[64], bool IsLocalTime)
+{
+	char DateTmp[64];
+	StkPlGetTimeInIso8601(DateTmp, IsLocalTime);
+	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
+}
+
 void StkPlGetTimeInOldFormat(char Date[64], bool IsLocalTime)
 {
 #ifdef WIN32
@@ -994,7 +1060,7 @@ void StkPlGetTimeInOldFormat(char Date[64], bool IsLocalTime)
 	} else {
 		_gmtime64_s(&TmTime, &Ltime);
 	}
-	sprintf_s(Date, 64, "%d-%d-%d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
+	sprintf_s(Date, 64, "%d-%02d-%02d %02d:%02d:%02d", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec);
 #else
 	struct tm* TmTime;
 	time_t Ltime;
@@ -1004,7 +1070,7 @@ void StkPlGetTimeInOldFormat(char Date[64], bool IsLocalTime)
 	} else {
 		TmTime = gmtime(&Ltime);
 	}
-	sprintf(Date, "%d-%d-%d %02d:%02d:%02d", TmTime->tm_year + 1900, TmTime->tm_mon + 1, TmTime->tm_mday, TmTime->tm_hour, TmTime->tm_min, TmTime->tm_sec);
+	sprintf(Date, "%d-%02d-%02d %02d:%02d:%02d", TmTime->tm_year + 1900, TmTime->tm_mon + 1, TmTime->tm_mday, TmTime->tm_hour, TmTime->tm_min, TmTime->tm_sec);
 #endif
 }
 

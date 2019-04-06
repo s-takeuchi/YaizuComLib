@@ -107,6 +107,8 @@ void StkPlGetTimeInRfc2822(char[64], bool);
 void StkPlGetWTimeInRfc2822(wchar_t[64], bool);
 void StkPlGetTimeInOldFormat(char[64], bool);
 void StkPlGetWTimeInOldFormat(wchar_t[64], bool);
+void StkPlGetTimeInIso8601(char[64], bool);
+void StkPlGetWTimeInIso8601(wchar_t[64], bool);
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
