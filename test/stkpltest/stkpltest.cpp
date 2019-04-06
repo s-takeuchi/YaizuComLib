@@ -171,6 +171,7 @@ void Test_Time()
 	StkPlPrintf("Test time in RFC 2822 ... ");
 	char Time[64];
 
+	//
 	StkPlGetTimeInRfc2822(Time, true);
 	if (Time == NULL || StkPlStrStr(Time, ",") == NULL || StkPlStrStr(Time, " ") == NULL || StkPlStrStr(Time, ":") == NULL) {
 		StkPlPrintf("NG case\n");
@@ -183,6 +184,7 @@ void Test_Time()
 	}
 	StkPlPrintf("OK case\n");
 
+	//
 	StkPlPrintf("Test time in ISO 8601 ... ");
 	StkPlGetTimeInIso8601(Time, true);
 	if (Time == NULL || StkPlStrStr(Time, "-") == NULL || StkPlStrStr(Time, "T") == NULL || StkPlStrStr(Time, ":") == NULL) {
@@ -196,6 +198,7 @@ void Test_Time()
 	}
 	StkPlPrintf("OK case\n");
 
+	//
 	StkPlPrintf("Test time in old format ... ");
 	StkPlGetTimeInOldFormat(Time, true);
 	if (Time == NULL || StkPlStrStr(Time, "-") == NULL || StkPlStrStr(Time, " ") == NULL || StkPlStrStr(Time, ":") == NULL) {

@@ -1038,7 +1038,7 @@ void StkPlGetTimeInIso8601(char Date[64], bool IsLocalTime)
 		sprintf(Diff, "-%02d:%02d", DiffHour, DiffMinute);
 	}
 
-	sprintf(Date, "%d-%02d-%02d %02d:%02d:%02d%s", TmTime->tm_year + 1900, TmTime->tm_mon + 1, TmTime->tm_mday, TmTime->tm_hour, TmTime->tm_min, TmTime->tm_sec, Diff);
+	sprintf(Date, "%d-%02d-%02dT%02d:%02d:%02d%s", TmTime->tm_year + 1900, TmTime->tm_mon + 1, TmTime->tm_mday, TmTime->tm_hour, TmTime->tm_min, TmTime->tm_sec, Diff);
 #endif
 }
 
