@@ -16,7 +16,7 @@
 #include <sys/timeb.h>
 #else
 #include <unistd.h>
-include <experimental/filesystem>
+#include <experimental/filesystem>
 #include <sys/timeb.h>
 #endif
 
@@ -754,7 +754,7 @@ char* StkPlCreateUtf8FromWideChar(const wchar_t* Wc)
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-// API for etc
+// APIs for etc
 
 int StkPlPrintf(const char* Format, ...)
 {
@@ -881,6 +881,11 @@ int StkPlGetUsedMemorySizeOfCurrentProcess()
 #endif
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// APIs for date and time
+
+
 long long StkPlGetTickCount()
 {
 #ifdef WIN32
@@ -952,9 +957,9 @@ void StkPlGetTimeInRfc2822(char Date[64], bool IsLocalTime)
 	}
 	char Diff[16] = "";
 	if (IsPlus) {
-		sprintf_s(Diff, 16, "+%02d%02d", DiffHour, DiffMinute);
+		sprintf(Diff, "+%02d%02d", DiffHour, DiffMinute);
 	} else {
-		sprintf_s(Diff, 16, "+%02d%02d", DiffHour, DiffMinute);
+		sprintf(Diff, "+%02d%02d", DiffHour, DiffMinute);
 	}
 
 	char MonStr[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
@@ -1012,7 +1017,7 @@ void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-// API for file access
+// APIs for file access
 
 // Get full path from the specified file name.
 // FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
