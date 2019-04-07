@@ -170,6 +170,7 @@ void Test_Time()
 {
 	StkPlPrintf("Test time in RFC 2822 ... ");
 	char Time[64];
+	wchar_t WTime[64];
 
 	//
 	StkPlGetTimeInRfc2822(Time, true);
@@ -179,6 +180,11 @@ void Test_Time()
 	}
 	StkPlGetTimeInRfc2822(Time, false);
 	if (Time == NULL || StkPlStrStr(Time, "+0000") == NULL) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	StkPlGetWTimeInRfc2822(WTime, true);
+	if (Time == NULL || StkPlWcsStr(WTime, L",") == NULL || StkPlWcsStr(WTime, L" ") == NULL || StkPlWcsStr(WTime, L":") == NULL) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(-1);
 	}
@@ -193,6 +199,11 @@ void Test_Time()
 	}
 	StkPlGetTimeInIso8601(Time, false);
 	if (Time == NULL || StkPlStrStr(Time, "+00:00") == NULL) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	StkPlGetWTimeInIso8601(WTime, true);
+	if (Time == NULL || StkPlWcsStr(WTime, L"-") == NULL || StkPlWcsStr(WTime, L"T") == NULL || StkPlWcsStr(WTime, L":") == NULL) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(-1);
 	}

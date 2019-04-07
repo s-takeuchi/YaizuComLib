@@ -12,7 +12,7 @@
 <H1>1. StkPl</H1>
 
 
-<H2 ID="1.1">1.1 StkPl API一覧</H2>
+<H4 ID="1.1">1.1 StkPl API一覧</H4>
 <div class="topic">
 StkPlが提供するAPI一覧を以下に示します。<p>
 <table class="tblstyle">
@@ -66,14 +66,14 @@ void StkPlGetWTimeInOldFormat(wchar_t[64], bool)<br/>
 
 
 
-<H2 ID="1.2">1.2<br/>
+<H4 ID="1.2">1.2<br/>
 size_t StkPlConvUtf16ToUtf32(char32_t* UtfRes, size_t Size, const char16_t* Utf)<br/>
 size_t StkPlConvUtf32ToUtf16(char16_t* UtfRes, size_t Size, const char32_t* Utf)<br/>
 size_t StkPlConvUtf8ToUtf32(char32_t* UtfRes, size_t Size, const char* Utf)<br/>
 size_t StkPlConvUtf32ToUtf8(char* UtfRes, size_t Size, const char32_t* Utf)<br/>
 size_t StkPlConvUtf8ToUtf16(char16_t* UtfRes, size_t Size, const char* Utf)<br/>
 size_t StkPlConvUtf16ToUtf8(char* UtfRes, size_t Size, const char16_t* Utf)<br/>
-</H2>
+</H4>
 <div class="topic">
 異なるUTFコードに変換します。<br/>
 Sizeに0を指定した場合，変換を行わず，変換後の領域のサイズを返します。このときUtfResは使用されません。<br/>
@@ -87,14 +87,14 @@ Sizeに0を指定した場合，変換を行わず，変換後の領域のサイ
 
 
 
-<H2 ID="1.3">1.3<br/>
+<H4 ID="1.3">1.3<br/>
 size_t StkPlConvUtf16ToWideChar(wchar_t* Res, size_t Size, const char16_t* Str)<br/>
 size_t StkPlConvWideCharToUtf16(char16_t* Res, size_t Size, const wchar_t* Str)<br/>
 size_t StkPlConvWideCharToUtf32(char32_t* Res, size_t Size, const wchar_t* Str)<br/>
 size_t StkPlConvUtf32ToWideChar(wchar_t* Res, size_t Size, const char32_t* Str)<br/>
 size_t StkPlConvUtf8ToWideChar(wchar_t* Res, size_t Size, const char* Str)<br/>
 size_t StkPlConvWideCharToUtf8(char* Res, size_t Size, const wchar_t* Str)<br/>
-</H2>
+</H4>
 <div class="topic">
 UTFとワイドキャラクタ文字列を相互に変換します。<br/>
 Sizeに0を指定した場合，変換を行わず，変換後の領域のサイズを返します。このときUtfResは使用されません。<br/>
@@ -108,14 +108,14 @@ Sizeに0を指定した場合，変換を行わず，変換後の領域のサイ
 
 
 
-<H2 ID="1.4">1.4<br/>
+<H4 ID="1.4">1.4<br/>
 char32_t* StkPlCreateUtf32FromUtf16(const char16_t* Utf)<br/>
 char16_t* StkPlCreateUtf16FromUtf32(const char32_t* Utf)<br/>
 char32_t* StkPlCreateUtf32FromUtf8(const char* Utf)<br/>
 char* StkPlCreateUtf8FromUtf32(const char32_t* Utf)<br/>
 char16_t* StkPlCreateUtf16FromUtf8(const char* Utf)<br/>
 char* StkPlCreateUtf8FromUtf16(const char16_t* Utf)<br/>
-</H2>
+</H4>
 <div class="topic">
 異なるUTFコードに変換します。同時に必要な領域を確保します。<br/>
 <table class="tblstyle">
@@ -126,14 +126,14 @@ char* StkPlCreateUtf8FromUtf16(const char16_t* Utf)<br/>
 
 
 
-<H2 ID="1.5">1.5<br/>
+<H4 ID="1.5">1.5<br/>
 wchar_t* StkPlCreateWideCharFromUtf16(const char16_t* Str)<br/>
 char16_t* StkPlCreateUtf16FromWideChar(const wchar_t* Str)<br/>
 char32_t* StkPlCreateUtf32FromWideChar(const wchar_t* Str)<br/>
 wchar_t* StkPlCreateWideCharFromUtf32(const char32_t* Str)<br/>
 wchar_t* StkPlCreateWideCharFromUtf8(const char* Str)<br/>
 char* StkPlCreateUtf8FromWideChar(const wchar_t* Str)<br/>
-</H2>
+</H4>
 <div class="topic">
 UTFとワイドキャラクタ文字列を相互に変換します。同時に必要な領域を確保します。<br/>
 <table class="tblstyle">
@@ -144,14 +144,16 @@ UTFとワイドキャラクタ文字列を相互に変換します。同時に�
 
 
 
-<H2 ID="1.6">1.6<br/>
+<H4 ID="1.6">1.6<br/>
 void StkPlGetTimeInRfc2822(char Date[64], bool IsLocalTime)<br/>
 void StkPlGetWTimeInRfc2822(wchar_t Date[64], bool IsLocalTime)<br/>
+void StkPlGetTimeInIso8601(char Date[64], bool IsLocalTime)<br/>
+void StkPlGetWTimeInIso8601(wchar_t Date[64], bool IsLocalTime)<br/>
 void StkPlGetTimeInOldFormat(char Date[64], bool IsLocalTime)<br/>
 void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)<br/>
-</H2>
+</H4>
 <div class="topic">
-RFC 2822またはYYYY-MM-DD hh:mm:ss形式で，ローカルタイムまたはUTCを返却します。<br/>
+RFC 2822形式, ISO 8601形式またはYYYY-MM-DD hh:mm:ss形式で，ローカルタイムまたはUTCを返却します。<br/>
 <table class="tblstyle">
 <tr><td>Date[入力]</td><td>ローカルタイムまたはUTC</td></tr>
 <tr><td>IsLocalTime[入力]</td><td>true : ローカルタイムを取得する<br/>false : UTCを取得する</td></tr>
