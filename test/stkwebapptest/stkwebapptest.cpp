@@ -563,10 +563,10 @@ void ReqResTest1(bool LargeFlag)
 		} else {
 			AddStkThread(SendIds[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainSend, NULL, NULL);
 		}
-		StkSocket_AddInfo(SendIds[Loop], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
+		StkSocket_AddInfo(SendIds[Loop], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 2080);
 	}
 
-	StkWebApp* Soc = new StkWebApp(Ids, THREADNUM, L"localhost", 8080);
+	StkWebApp* Soc = new StkWebApp(Ids, THREADNUM, L"localhost", 2080);
 
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
 	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, L"/aaa/bbb/", (StkWebAppExec*)Test1Hndl);
@@ -631,9 +631,9 @@ void ReqResTest2()
 	StkPlSwPrintf(Name, MAX_LENGTH_OF_STKTHREAD_NAME, L"Sender");
 	StkPlSwPrintf(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, L"Description");
 	AddStkThread(SendIds[0], Name, Desc, NULL, NULL, ElemStkThreadMainSend2, NULL, NULL);
-	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
+	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 2080);
 
-	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 8080);
+	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 2080);
 
 	StartSpecifiedStkThreads(SendIds, 1);
 	Soc->TheLoop();
@@ -655,9 +655,9 @@ void ReqResTest3()
 	StkPlSwPrintf(Name, MAX_LENGTH_OF_STKTHREAD_NAME, L"Sender");
 	StkPlSwPrintf(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, L"Description");
 	AddStkThread(SendIds[0], Name, Desc, NULL, NULL, ElemStkThreadMainSend3, NULL, NULL);
-	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
+	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 2080);
 
-	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 8080);
+	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 2080);
 	Soc->SetTimeoutInterval(5000);
 	StkWebAppTest4* Test4Hndl = new StkWebAppTest4();
 	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/aaa/$/", (StkWebAppExec*)Test4Hndl);
@@ -683,9 +683,9 @@ void ReqResTest4()
 	StkPlSwPrintf(Name, MAX_LENGTH_OF_STKTHREAD_NAME, L"Sender");
 	StkPlSwPrintf(Desc, MAX_LENGTH_OF_STKTHREAD_DESCRIPTION, L"Description");
 	AddStkThread(SendIds[0], Name, Desc, NULL, NULL, ElemStkThreadMainSend4, NULL, NULL);
-	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 8080);
+	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 2080);
 
-	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 8080);
+	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 2080);
 	StkPlPrintf("StkWebAppTest4:Test GetSendBufSize, GetRecvBufSize, SetSendBufSize, SetRecvBufSize ... ");
 	if (Soc->GetSendBufSize() != 1000000 || Soc->GetRecvBufSize() != 1000000) {
 		StkPlPrintf("NG\r\n");
@@ -735,9 +735,9 @@ void AddDeleteStkWebAppTest()
 		int TmpIds1[3] = {11, 12, 13};
 		int TmpIds2[4] = {21, 22, 23, 24};
 		int TmpIds3[1] = {31};
-		StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, L"localhost", 8081);
-		StkWebApp* TmpApp2 = new StkWebApp(TmpIds2, 4, L"localhost", 8082);
-		StkWebApp* TmpApp3 = new StkWebApp(TmpIds3, 1, L"localhost", 8083);
+		StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, L"localhost", 2081);
+		StkWebApp* TmpApp2 = new StkWebApp(TmpIds2, 4, L"localhost", 2082);
+		StkWebApp* TmpApp3 = new StkWebApp(TmpIds3, 1, L"localhost", 2083);
 		if (StkWebApp::GetStkWebAppByThreadId(11) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(13) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(21) == NULL ||
@@ -799,8 +799,8 @@ void AddDeleteReqHandlerTest()
 	StkPlPrintf("Add / Delete ReqHandler ... ");
 	int TmpIds1[3] = {11, 12, 13};
 	int TmpIds2[3] = {21, 22, 23};
-	StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, L"localhost", 8081);
-	StkWebApp* TmpApp2 = new StkWebApp(TmpIds2, 3, L"localhost", 8082);
+	StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, L"localhost", 2081);
+	StkWebApp* TmpApp2 = new StkWebApp(TmpIds2, 3, L"localhost", 2082);
 
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
 	int Add1 = TmpApp1->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"aaa", (StkWebAppExec*)Test1Hndl);
@@ -829,9 +829,9 @@ void AddDeleteReqHandlerTest()
 int StkWebAppSendTest1_T(int Id)
 {
 	int ResultCode = 0;
-	StkWebAppSend* Sender = new StkWebAppSend(20, L"localhost", 8081);
-	StkWebAppSend* Sender2 = new StkWebAppSend(22, L"localhostx", 8081);
-	StkWebAppSend* Sender3 = new StkWebAppSend(23, L"localhost", 8082);
+	StkWebAppSend* Sender = new StkWebAppSend(20, L"localhost", 2081);
+	StkWebAppSend* Sender2 = new StkWebAppSend(22, L"localhostx", 2081);
+	StkWebAppSend* Sender3 = new StkWebAppSend(23, L"localhost", 2082);
 	{
 		StkPlPrintf("StkWebAppSend: Appropriate object is returned. (Normal case) ... ");
 		StkObject* ReqObj = new StkObject(L"");
@@ -954,7 +954,7 @@ void StkWebAppSendTest1()
 	int TmpIds1[3] = { 11, 12, 13 };
 	int TmpIds_T[1] = { 14 };
 
-	StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, L"localhost", 8081);
+	StkWebApp* TmpApp1 = new StkWebApp(TmpIds1, 3, L"localhost", 2081);
 
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
 	int Add1 = TmpApp1->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"aaa", (StkWebAppExec*)Test1Hndl);
