@@ -71,7 +71,7 @@ void StartProcesses()
 	char TmpSrvProgram[FILENAME_MAX] = "xxxx";
 	wchar_t SrvProgram[FILENAME_MAX] = L"xxxx";
 	StkProperties *Prop = new StkProperties();
-	if (Prop->GetProperties(L"stkwebapp.conf") == 0) {
+	if (Prop->GetProperties(L"stkwebappcmd.conf") == 0) {
 		Prop->GetPropertyStr("serviceprogram", TmpSrvProgram);
 		wsprintf(SrvProgram, L"%S", TmpSrvProgram);
 	}
@@ -106,7 +106,7 @@ void StopProcesses()
 	char TmpSrvProgramConf[FILENAME_MAX] = "";
 	wchar_t SrvProgramConf[FILENAME_MAX] = L"";
 	StkProperties *PropSrv = new StkProperties();
-	if (PropSrv->GetProperties(L"stkwebapp.conf") == 0) {
+	if (PropSrv->GetProperties(L"stkwebappcmd.conf") == 0) {
 		PropSrv->GetPropertyStr("serviceprogram", TmpSrvProgramConf);
 		wsprintf(SrvProgramConf, L"%S.conf", TmpSrvProgramConf);
 	}
@@ -368,7 +368,7 @@ int main(int argc, char* argv[])
 		wsprintf(TargetFile[2], L"%s\\sc.exe", SystemDir);
 		wsprintf(TargetFile[3], L"%s\\net.exe", SystemDir);
 		wsprintf(TargetFile[4], L"%s\\conf\\nginx.conf", WorkPath);
-		wsprintf(TargetFile[5], L"%s\\stkwebapp.conf", WorkPath);
+		wsprintf(TargetFile[5], L"%s\\stkwebappcmd.conf", WorkPath);
 		wsprintf(TargetFile[6], L"%s\\nginx.exe", WorkPath);
 
 		for (int Loop = 0; Loop < 7; Loop++) {
@@ -452,7 +452,7 @@ int main(int argc, char* argv[])
 	bool InstFlag = false;
 	if (strcmp(argv[1], "inst") == 0) {
 		wchar_t Buf[512];
-		wsprintf(Buf, L"%s\\stkwebapp.conf", WorkPath);
+		wsprintf(Buf, L"%s\\stkwebappcmd.conf", WorkPath);
 		if (GetFileSize(Buf) > 0) {
 			printf("Program has already been installed.\r\n");
 			return 0;
@@ -474,10 +474,10 @@ int main(int argc, char* argv[])
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 
-		// Grant modify permission to stkwebapp.conf
+		// Grant modify permission to stkwebappcmd.conf
 		ZeroMemory(&si,sizeof(si));
 		si.cb=sizeof(si);
-		wsprintf(CmdLineForIcacls, L"\"%s\\icacls.exe\" \"%s\\stkwebapp.conf\" /grant Users:M", SystemDir, WorkPath);
+		wsprintf(CmdLineForIcacls, L"\"%s\\icacls.exe\" \"%s\\stkwebappcmd.conf\" /grant Users:M", SystemDir, WorkPath);
 		printf("%S\r\n", CmdLineForIcacls);
 		CreateProcess(NULL, CmdLineForIcacls, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 		WaitForSingleObject(pi.hProcess, INFINITE);
@@ -525,7 +525,7 @@ int main(int argc, char* argv[])
 		};
 
 		wchar_t StkWebAppConfPath[MAX_PATH];
-		swprintf(StkWebAppConfPath, MAX_PATH, L"%s\\stkwebapp.conf", WorkPath);
+		swprintf(StkWebAppConfPath, MAX_PATH, L"%s\\stkwebappcmd.conf", WorkPath);
 		FileHndl = CreateFile(StkWebAppConfPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (FileHndl != INVALID_HANDLE_VALUE) {
 			char ConfStr1[4096];

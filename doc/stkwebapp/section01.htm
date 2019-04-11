@@ -41,12 +41,12 @@ StkWebAppCmdは，下記のフォルダおよびファイル構成を前提と�
 /appnameフォルダ直下には，nginxの実行ファイル(nginx.exe)，nginxの関連フォルダ，および以下のファイルが存在する必要があります。<br/>
 <ul>
 <li>stkwebappcmd.exe</li>
-<li>stkwebapp.conf</li>
+<li>stkwebappcmd.conf</li>
 <li>xxxx.exe</li>
 <li>xxxx.dat</li>
 <li>xxxx.conf</li>
 </ul>
-(上記のxxxxは任意の名称であり，stkwebapp.confのserviceprogramで指定する)<br/>
+(上記のxxxxは任意の名称であり，stkwebappcmd.confのserviceprogramで指定する)<br/>
 <p>
 また，/appname/confには，nginxのConfigファイル(nginx.conf)が存在する必要があります。<br/>
 StkWebAppCmdがnginxのConfigファイルを書き換えることにより，nginxは以下のURLに届いたリクエストを，ユーザープログラム(REST API)に転送します。
