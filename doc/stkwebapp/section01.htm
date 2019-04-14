@@ -9,7 +9,7 @@
 
 <BODY>
 <div id="container">
-<H1>1. StkWebAppCmd</H1>
+<H1>1. StkWebAppCmd / StkWebAppStop</H1>
 <P>
 
 
@@ -17,7 +17,7 @@
 <H2 ID="1.1">1.1 StkWebAppCmd概要</H2>
 <div class="topic">
 StkWebAppCmdは，nginxおよびStkWebAppライブラリを利用するユーザープログラムを前提とした，
-Webアプリケーションの登録／削除／起動／停止を行うCLIです。主に以下の機能を提供します。<br/>
+Webアプリケーションの登録／削除／起動／停止を行うWindows用CLIです。主に以下の機能を提供します。<br/>
 <ul>
 <li>REST APIの動作のために，nginxおよびユーザープログラムのConfigファイルを書き換える。</li>
 <li>nginxおよびユーザープログラムのConfigファイル，ユーザープログラムのリポジトリファイルのアクセス権限を緩和する。</li>
@@ -98,6 +98,16 @@ Options
   WebHost : Host name or IP address of WEB service
   WebPort : Port number of WEB service
 </code></pre>
+</div><p>
+
+
+
+<H2 ID="1.4">1.4 StkWebAppStop</H2>
+<div class="topic">
+StkWebAppStopは，StkWebAppライブラリを利用するユーザープログラムを前提とした，
+Webアプリケーションの停止を行うLinux用CLIです。<br/>
+<p>StkWebAppStop &lt;Configuration File Name&gt;</p>
+servicehostおよびserviceportを定義したConfiguration Fileを指定します。<br/>
 </div><p>
 
 
