@@ -45,6 +45,7 @@ StkObject* StkWebAppSend::Impl::RecvResponse(int TargetId, wchar_t Header[1024])
 {
 	unsigned char *Dat = new unsigned char[RecvBufSize];
 	int Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, TimeoutInterval, NULL, -1);
+	StkSocket_Disconnect(TargetId, TargetId, true);
 	if (Ret == 0 || Ret == -1 || Ret == -2) {
 		delete Dat;
 		return NULL;
@@ -149,7 +150,10 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 	StkPlStrCpy(ReqDat, ReqDatLength + 1, "");
 	StkPlStrCat(ReqDat, ReqDatLength + 1, HttpHeader);
 	StkPlStrCat((char*)ReqDat, ReqDatLength + 1, Dat);
-	int RetD = StkSocket_Send(TargetId, TargetId, (unsigned char*)ReqDat, ReqDatLength);
+	int RetD = StkSocket_Connect(TargetId);
+	if (RetD == 0) {
+		RetD = StkSocket_Send(TargetId, TargetId, (unsigned char*)ReqDat, ReqDatLength);
+	}
 
 	// Delete array
 	delete Dat;
