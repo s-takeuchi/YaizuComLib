@@ -961,11 +961,9 @@ void StkPlGetTimeInRfc2822(char Date[64], bool IsLocalTime)
 	int DiffMinute = 0;
 	bool IsPlus = false;
 	if (IsLocalTime) {
-		struct timeb TimeB;
-		ftime(&TimeB);
-		IsPlus = TimeB.timezone > 0 ? true : false;
-		DiffHour = abs(TimeB.timezone) / 60;
-		DiffMinute = abs(TimeB.timezone) % 60;
+		IsPlus = timezone > 0 ? true : false;
+		DiffHour = abs(timezone) / 60 / 60;
+		DiffMinute = abs(timezone) / 60 % 60;
 	}
 	char Diff[16] = "";
 	if (!IsPlus) {
@@ -1025,6 +1023,7 @@ void StkPlGetTimeInIso8601(char Date[64], bool IsLocalTime)
 
 	sprintf_s(Date, 64, "%d-%02d-%02dT%02d:%02d:%02d%s", TmTime.tm_year + 1900, TmTime.tm_mon + 1, TmTime.tm_mday, TmTime.tm_hour, TmTime.tm_min, TmTime.tm_sec, Diff);
 #else
+	tzset();
 	struct tm* TmTime;
 	time_t Ltime;
 	time(&Ltime);
@@ -1037,11 +1036,9 @@ void StkPlGetTimeInIso8601(char Date[64], bool IsLocalTime)
 	int DiffMinute = 0;
 	bool IsPlus = false;
 	if (IsLocalTime) {
-		struct timeb TimeB;
-		ftime(&TimeB);
-		IsPlus = TimeB.timezone > 0 ? true : false;
-		DiffHour = abs(TimeB.timezone) / 60;
-		DiffMinute = abs(TimeB.timezone) % 60;
+		IsPlus = timezone > 0 ? true : false;
+		DiffHour = abs(timezone) / 60 / 60;
+		DiffMinute = abs(timezone) / 60 % 60;
 	}
 	char Diff[16] = "";
 	if (!IsPlus) {
