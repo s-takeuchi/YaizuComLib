@@ -881,6 +881,18 @@ int StkPlGetUsedMemorySizeOfCurrentProcess()
 #endif
 }
 
+void StkPlGetHostName(wchar_t* HostName, size_t Size)
+{
+#ifdef WIN32
+	DWORD SizeTmp = Size;
+	GetComputerName(HostName, &SizeTmp);
+#else
+	char HostNameTmp[1024];
+	gethostname(HostNameTmp, 1024);
+	StkPlConvUtf8ToWideChar(HostName, Size, HostNameTmp);
+#endif
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 // APIs for date and time
