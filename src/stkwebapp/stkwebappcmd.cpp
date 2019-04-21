@@ -515,7 +515,7 @@ int main(int argc, char* argv[])
 			char ConfStr3[4096];
 			sprintf_s(ConfStr3, 4096, "    listen %S;\r\n    listen [::]:%S;\r\n    server_name %S;\r\n    location / {\r\n      root html;\r\n      index index.html index.htm;\r\n    }\r\n", WebPort, WebPort, WebHost);
 			char ConfStr4[4096];
-			sprintf_s(ConfStr4, 4096, "    location /api/ {\r\n      proxy_pass http://%S:%S;\r\n    }\r\n    error_page 500 502 503 504  /50x.html;\r\n    location = /50x.html {\r\n      root html;\r\n    }\r\n  }\r\n}\r\n", SrvHost, SrvPort);
+			sprintf_s(ConfStr4, 4096, "    location /api/ {\r\n      proxy_pass http://%S:%S;\r\n      proxy_read_timeout 1200;\r\n    }\r\n    error_page 500 502 503 504  /50x.html;\r\n    location = /50x.html {\r\n      root html;\r\n    }\r\n  }\r\n}\r\n", SrvHost, SrvPort);
 			DWORD NumOfByteWrite;
 			WriteFile(FileHndl, ConfStr1, strlen(ConfStr1), &NumOfByteWrite, NULL);
 			WriteFile(FileHndl, ConfStr2, strlen(ConfStr2), &NumOfByteWrite, NULL);
