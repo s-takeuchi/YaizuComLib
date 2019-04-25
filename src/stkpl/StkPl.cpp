@@ -1250,28 +1250,40 @@ void StkPlCloseFile(void* FileHndl)
 #endif
 }
 
-int StkPlRead(void* FileHndl, char* Ptr, size_t Size)
+int StkPlRead(void* FileHndl, char* Ptr, size_t Size, size_t* ActSize)
 {
 #ifdef WIN32
 	DWORD TmpSize = 0;
 	if (ReadFile(FileHndl, (LPVOID)Ptr, Size, &TmpSize, NULL) == 0) {
 		return 0;
 	}
-	return TmpSize;
+	*ActSize = TmpSize;
+	return 1;
 #else
-	return fread(Ptr, sizeof(char), (int)Size, (FILE*)FileHndl);
+	size_t TmpSize = fread(Ptr, sizeof(char), (int)Size, (FILE*)FileHndl);
+	if (TmpSize < Size) {
+		return 0;
+	}
+	*ActSize = TmpSize;
+	return 1;
 #endif
 }
 
-int StkPlWrite(void* FileHndl, char* Ptr, size_t Size)
+int StkPlWrite(void* FileHndl, char* Ptr, size_t Size, size_t* ActSize)
 {
 #ifdef WIN32
 	DWORD TmpSize = 0;
 	if (WriteFile(FileHndl, (LPVOID)Ptr, Size, &TmpSize, NULL) == 0) {
 		return 0;
 	}
-	return TmpSize;
+	*ActSize = TmpSize;
+	return 1;
 #else
-	return fwrite(Ptr, sizeof(char), (int)Size, (FILE*)FileHndl);
+	size_t TmpSize = fwrite(Ptr, sizeof(char), (int)Size, (FILE*)FileHndl);
+	if (TmpSize < Size) {
+		return 0;
+	}
+	*ActSize = TmpSize;
+	return 1;
 #endif
 }

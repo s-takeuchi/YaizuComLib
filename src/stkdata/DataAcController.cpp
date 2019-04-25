@@ -1239,20 +1239,18 @@ int DataAcController::SaveData(const wchar_t* FilePath)
 		return -1;
 	};
 
-	int NumOfByteWrite;
+	size_t NumOfByteWrite;
 	// Write key code
 	wchar_t KeyCode[16];
 	StkPlWcsCpy(KeyCode, 16, L"StkData_0100");
-	NumOfByteWrite = StkPlWrite(FileHndl, (char*)KeyCode, sizeof(KeyCode));
-	if (NumOfByteWrite == 0) {
+	if (StkPlWrite(FileHndl, (char*)KeyCode, sizeof(KeyCode), &NumOfByteWrite) == 0) {
 		StkPlCloseFile(FileHndl);
 		return -1;
 	}
 
 	// Write table count
 	int32_t TableCount = GetTableCount();
-	NumOfByteWrite = StkPlWrite(FileHndl, (char*)&TableCount, sizeof(TableCount));
-	if (NumOfByteWrite == 0) {
+	if (StkPlWrite(FileHndl, (char*)&TableCount, sizeof(TableCount), &NumOfByteWrite) == 0) {
 		StkPlCloseFile(FileHndl);
 		return -1;
 	}
@@ -1265,24 +1263,21 @@ int DataAcController::SaveData(const wchar_t* FilePath)
 		wchar_t TableName[TABLE_NAME_SIZE];
 		StkPlWcsNCpy(TableName, TABLE_NAME_SIZE, m_TableName[LoopTbl], TABLE_NAME_SIZE - 1);
 		TableName[TABLE_NAME_SIZE - 1] = L'\0';
-		NumOfByteWrite = StkPlWrite(FileHndl, (char*)TableName, sizeof(TableName));
-		if (NumOfByteWrite == 0) {
+		if (StkPlWrite(FileHndl, (char*)TableName, sizeof(TableName), &NumOfByteWrite) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}
 
 		// Write max record size
 		int32_t MaxRecordCount = (int32_t)(m_TableSize[LoopTbl] / m_RecordSize[LoopTbl]);
-		NumOfByteWrite = StkPlWrite(FileHndl, (char*)&MaxRecordCount, sizeof(MaxRecordCount));
-		if (NumOfByteWrite == 0) {
+		if (StkPlWrite(FileHndl, (char*)&MaxRecordCount, sizeof(MaxRecordCount), &NumOfByteWrite) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}
 
 		// Write column count
 		int32_t ColumnCount = (int32_t)m_ColumnCount[LoopTbl];
-		NumOfByteWrite = StkPlWrite(FileHndl, (char*)&ColumnCount, sizeof(ColumnCount));
-		if (NumOfByteWrite == 0) {
+		if (StkPlWrite(FileHndl, (char*)&ColumnCount, sizeof(ColumnCount), &NumOfByteWrite) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}
@@ -1292,24 +1287,21 @@ int DataAcController::SaveData(const wchar_t* FilePath)
 			wchar_t ColumnName[COLUMN_NAME_SIZE];
 			StkPlWcsNCpy(ColumnName, COLUMN_NAME_SIZE, m_ColumnName[LoopTbl][LoopClm], COLUMN_NAME_SIZE - 1);
 			ColumnName[COLUMN_NAME_SIZE - 1] = L'\0';
-			NumOfByteWrite = StkPlWrite(FileHndl, (char*)ColumnName, sizeof(ColumnName));
-			if (NumOfByteWrite == 0) {
+			if (StkPlWrite(FileHndl, (char*)ColumnName, sizeof(ColumnName), &NumOfByteWrite) == 0) {
 				StkPlCloseFile(FileHndl);
 				return -1;
 			}
 
 			// Write column type
 			int32_t ColumnType = (int32_t)m_ColumnType[LoopTbl][LoopClm];
-			NumOfByteWrite = StkPlWrite(FileHndl, (char*)&ColumnType, sizeof(ColumnType));
-			if (NumOfByteWrite == 0) {
+			if (StkPlWrite(FileHndl, (char*)&ColumnType, sizeof(ColumnType), &NumOfByteWrite) == 0) {
 				StkPlCloseFile(FileHndl);
 				return -1;
 			}
 			if (ColumnType == COLUMN_TYPE_STR || ColumnType == COLUMN_TYPE_WSTR || ColumnType == COLUMN_TYPE_BIN) {
 				// Write column size
 				int32_t ColumnSize = (int32_t)m_ColumnSize[LoopTbl][LoopClm];
-				NumOfByteWrite = StkPlWrite(FileHndl, (char*)&ColumnSize, sizeof(ColumnSize));
-				if (NumOfByteWrite == 0) {
+				if (StkPlWrite(FileHndl, (char*)&ColumnSize, sizeof(ColumnSize), &NumOfByteWrite) == 0) {
 					StkPlCloseFile(FileHndl);
 					return -1;
 				}
@@ -1321,15 +1313,13 @@ int DataAcController::SaveData(const wchar_t* FilePath)
 		Header[0] = (int32_t)m_TableSize[LoopTbl];
 		Header[1] = (int32_t)m_RecordSize[LoopTbl];
 		Header[2] = (int32_t)m_RecordCount[LoopTbl];
-		NumOfByteWrite = StkPlWrite(FileHndl, (char*)Header, sizeof(Header));
-		if (NumOfByteWrite == 0) {
+		if (StkPlWrite(FileHndl, (char*)Header, sizeof(Header), &NumOfByteWrite) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}
 
 		// Write data
-		NumOfByteWrite = StkPlWrite(FileHndl, (char*)m_TableAddr[LoopTbl], m_RecordSize[LoopTbl] * m_RecordCount[LoopTbl]);
-		if (NumOfByteWrite == 0) {
+		if (StkPlWrite(FileHndl, (char*)m_TableAddr[LoopTbl], m_RecordSize[LoopTbl] * m_RecordCount[LoopTbl], &NumOfByteWrite) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}
@@ -1376,11 +1366,10 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 		return -1;
 	}
 
-	int NumOfByteRead;
+	size_t NumOfByteRead;
 	// Read key code
 	wchar_t KeyCode[16];
-	NumOfByteRead = StkPlRead(FileHndl, (char*)KeyCode, sizeof(KeyCode));
-	if (NumOfByteRead == 0) {
+	if (StkPlRead(FileHndl, (char*)KeyCode, sizeof(KeyCode), &NumOfByteRead) == 0) {
 		StkPlCloseFile(FileHndl);
 		return -1;
 	}
@@ -1391,8 +1380,7 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 	}
 	// Read table count
 	int32_t TableCount;
-	NumOfByteRead = StkPlRead(FileHndl, (char*)&TableCount, sizeof(TableCount));
-	if (NumOfByteRead == 0) {
+	if (StkPlRead(FileHndl, (char*)&TableCount, sizeof(TableCount), &NumOfByteRead) == 0) {
 		StkPlCloseFile(FileHndl);
 		return -1;
 	}
@@ -1400,24 +1388,21 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 	for (LoopTbl = 0; LoopTbl < TableCount; LoopTbl++) {
 		// Read table name
 		wchar_t TableName[TABLE_NAME_SIZE];
-		NumOfByteRead = StkPlRead(FileHndl, (char*)TableName, sizeof(TableName));
-		if (NumOfByteRead == 0) {
+		if (StkPlRead(FileHndl, (char*)TableName, sizeof(TableName), &NumOfByteRead) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}
 
 		// Read max record size
 		int32_t MaxRecordCount;
-		NumOfByteRead = StkPlRead(FileHndl, (char*)&MaxRecordCount, sizeof(MaxRecordCount));
-		if (NumOfByteRead == 0) {
+		if (StkPlRead(FileHndl, (char*)&MaxRecordCount, sizeof(MaxRecordCount), &NumOfByteRead) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}
 
 		// Read column count
 		int32_t ColumnCount;
-		NumOfByteRead = StkPlRead(FileHndl, (char*)&ColumnCount, sizeof(ColumnCount));
-		if (NumOfByteRead == 0) {
+		if (StkPlRead(FileHndl, (char*)&ColumnCount, sizeof(ColumnCount), &NumOfByteRead) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}
@@ -1428,24 +1413,21 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 		for (LoopClm = 0; LoopClm < ColumnCount; LoopClm++) {
 			// Read column name
 			wchar_t ColumnName[COLUMN_NAME_SIZE];
-			NumOfByteRead = StkPlRead(FileHndl, (char*)ColumnName, sizeof(ColumnName));
-			if (NumOfByteRead == 0) {
+			if (StkPlRead(FileHndl, (char*)ColumnName, sizeof(ColumnName), &NumOfByteRead) == 0) {
 				StkPlCloseFile(FileHndl);
 				return -1;
 			}
 
 			// Read column type
 			int32_t ColumnType;
-			NumOfByteRead = StkPlRead(FileHndl, (char*)&ColumnType, sizeof(ColumnType));
-			if (NumOfByteRead == 0) {
+			if (StkPlRead(FileHndl, (char*)&ColumnType, sizeof(ColumnType), &NumOfByteRead) == 0) {
 				StkPlCloseFile(FileHndl);
 				return -1;
 			}
 			if (ColumnType == COLUMN_TYPE_STR || ColumnType == COLUMN_TYPE_WSTR || ColumnType == COLUMN_TYPE_BIN) {
 				// Read column size
 				int32_t ColumnSize;
-				NumOfByteRead = StkPlRead(FileHndl, (char*)&ColumnSize, sizeof(ColumnSize));
-				if (NumOfByteRead == 0) {
+				if (StkPlRead(FileHndl, (char*)&ColumnSize, sizeof(ColumnSize), &NumOfByteRead) == 0) {
 					StkPlCloseFile(FileHndl);
 					return -1;
 				}
@@ -1484,8 +1466,7 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 
 		// Read table information
 		int32_t Header[3];
-		NumOfByteRead = StkPlRead(FileHndl, (char*)Header, sizeof(Header));
-		if (NumOfByteRead == 0) {
+		if (StkPlRead(FileHndl, (char*)Header, sizeof(Header), &NumOfByteRead) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}
@@ -1498,8 +1479,7 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 		m_RecordCount[TableId] = Header[2];
 
 		// Read data
-		NumOfByteRead = StkPlRead(FileHndl, (char*)m_TableAddr[TableId], m_RecordSize[LoopTbl] * m_RecordCount[LoopTbl]);
-		if (NumOfByteRead == 0) {
+		if (StkPlRead(FileHndl, (char*)m_TableAddr[TableId], m_RecordSize[LoopTbl] * m_RecordCount[LoopTbl], &NumOfByteRead) == 0) {
 			StkPlCloseFile(FileHndl);
 			return -1;
 		}

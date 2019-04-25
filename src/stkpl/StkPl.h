@@ -121,5 +121,5 @@ int StkPlReadFile(const wchar_t[FILENAME_MAX], char*, size_t);
 void* StkPlOpenFileForRead(const wchar_t[FILENAME_MAX]);
 void* StkPlOpenFileForWrite(const wchar_t[FILENAME_MAX]);
 void StkPlCloseFile(void*);
-int StkPlRead(void*, char*, size_t);
-int StkPlWrite(void*, char*, size_t);
+int StkPlRead(void*, char*, size_t, size_t*);
+int StkPlWrite(void*, char*, size_t, size_t*);
