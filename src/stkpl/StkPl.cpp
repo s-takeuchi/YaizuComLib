@@ -1116,12 +1116,12 @@ void StkPlGetTime(int* Year, int* Mon, int* Day, int* Hour, int* Min, int* Sec, 
 	} else {
 		TmTime = gmtime(&Ltime);
 	}
-	*Year = TmTime.tm_year + 1900;
-	*Mon = TmTime.tm_mon + 1;
-	*Day = TmTime.tm_mday;
-	*Hour = TmTime.tm_hour;
-	*Min = TmTime.tm_min;
-	*Sec = TmTime.tm_sec;
+	*Year = TmTime->tm_year + 1900;
+	*Mon = TmTime->tm_mon + 1;
+	*Day = TmTime->tm_mday;
+	*Hour = TmTime->tm_hour;
+	*Min = TmTime->tm_min;
+	*Sec = TmTime->tm_sec;
 #endif
 }
 
