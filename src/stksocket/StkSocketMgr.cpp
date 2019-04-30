@@ -851,6 +851,13 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 							return Offset;
 						}
 					}
+					if ((int)(CurrTime - CurrWaitTime) > 1000) {
+						StkPlSleepMs(1);
+					} else if ((int)(CurrTime - CurrWaitTime) > 10000) {
+						StkPlSleepMs(10);
+					} else if ((int)(CurrTime - CurrWaitTime) > 100000) {
+						StkPlSleepMs(100);
+					}
 				}
 				continue;
 			}
