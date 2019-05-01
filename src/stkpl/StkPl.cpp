@@ -1238,6 +1238,36 @@ int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fil
 #endif
 }
 
+int StkPlWriteFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t FileSize)
+{
+#ifdef WIN32
+	HANDLE WriteFileHndl = CreateFile(FilePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (WriteFileHndl == INVALID_HANDLE_VALUE) {
+		return -1;
+	}
+
+	DWORD TmpSize = 0;
+	if (WriteFile(WriteFileHndl, (LPVOID)Buffer, FileSize, &TmpSize, NULL) == 0) {
+		CloseHandle(WriteFileHndl);
+		return -1;
+	}
+
+	CloseHandle(WriteFileHndl);
+	return TmpSize;
+#else
+	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
+	FILE *fp = fopen(FileNameUtf8, "w");
+	if (fp == NULL) {
+		return -1;
+	}
+	char* work_dat = new char[(int)FileSize + 1];
+	int actual_filesize = fwrite(Buffer, sizeof(char), (int)FileSize, fp);
+	fclose(fp);
+	delete FileNameUtf8;
+	return actual_filesize;
+#endif
+}
+
 void* StkPlOpenFileForRead(const wchar_t FilePath[FILENAME_MAX])
 {
 #ifdef WIN32
