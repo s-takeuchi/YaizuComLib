@@ -810,6 +810,11 @@ int StkPlSwScanf(const wchar_t* Str, const wchar_t* Format, ...)
 	return Ret;
 }
 
+int StkPlSystem(const char* Command)
+{
+	return system(Command);
+}
+
 void StkPlExit(int Status)
 {
 	exit(Status);

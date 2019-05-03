@@ -89,6 +89,7 @@ int StkPlSwPrintf(wchar_t*, size_t, const wchar_t*, ...);
 int StkPlSScanf(const char* Str, const char* Format, ...);
 int StkPlSwScanf(const wchar_t* Str, const wchar_t* Format, ...);
 
+int StkPlSystem(const char*);
 void StkPlExit(int);
 int StkPlRand();
 void StkPlSleepMs(int);
