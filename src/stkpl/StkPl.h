@@ -126,3 +126,4 @@ void* StkPlOpenFileForWrite(const wchar_t[FILENAME_MAX]);
 void StkPlCloseFile(void*);
 int StkPlRead(void*, char*, size_t, size_t*);
 int StkPlWrite(void*, char*, size_t, size_t*);
+void StkPlSeekFromBegin(void*, size_t);

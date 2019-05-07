@@ -1357,3 +1357,12 @@ int StkPlWrite(void* FileHndl, char* Ptr, size_t Size, size_t* ActSize)
 	return 1;
 #endif
 }
+
+void StkPlSeekFromBegin(void* FileHndl, size_t Offset)
+{
+#ifdef WIN32
+	SetFilePointer(FileHndl, Offset, 0, FILE_BEGIN);
+#else
+	fseek((FILE*)FileHndl, Offset, SEEK_SET);
+#endif
+}
