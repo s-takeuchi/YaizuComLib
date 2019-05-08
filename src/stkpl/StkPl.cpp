@@ -1307,10 +1307,10 @@ void* StkPlOpenFileForWrite(const wchar_t FilePath[FILENAME_MAX], bool AddFlag)
 #else
 	char Type[8] = "w";
 	if (AddFlag) {
-		strcpy(Type, "w+");
+		strcpy(Type, "a");
 	}
 	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
-	FILE *fp = fopen(FileNameUtf8, "w");
+	FILE *fp = fopen(FileNameUtf8, Type);
 	if (fp == NULL) {
 		return NULL;
 	}
