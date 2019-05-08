@@ -291,49 +291,49 @@ wchar_t* StkObject::Impl::GetJsonString(const wchar_t* OrgStr, int* Len)
 	wchar_t* RtnValue = new wchar_t[OutLength + 1];
 	int RtnLoop = 0;
 	for (const wchar_t* Loop = OrgStr; Loop < CurPnt; Loop++) {
-		if (StkPlWcsStr(Loop, L"\\\"") == Loop) {
+		if (*Loop == L'\\' && *(Loop + 1) == L'\"') {
 			RtnValue[RtnLoop] = '\"';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StkPlWcsStr(Loop, L"\\\\") == Loop) {
+		if (*Loop == L'\\' && *(Loop + 1) == L'\\') {
 			RtnValue[RtnLoop] = '\\';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StkPlWcsStr(Loop, L"\\/") == Loop) {
+		if (*Loop == L'\\' && *(Loop + 1) == L'/') {
 			RtnValue[RtnLoop] = '/';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StkPlWcsStr(Loop, L"\\b") == Loop) {
+		if (*Loop == L'\\' && *(Loop + 1) == L'b') {
 			RtnValue[RtnLoop] = '\b';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StkPlWcsStr(Loop, L"\\f") == Loop) {
+		if (*Loop == L'\\' && *(Loop + 1) == L'f') {
 			RtnValue[RtnLoop] = '\f';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StkPlWcsStr(Loop, L"\\n") == Loop) {
+		if (*Loop == L'\\' && *(Loop + 1) == L'n') {
 			RtnValue[RtnLoop] = '\n';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StkPlWcsStr(Loop, L"\\r") == Loop) {
+		if (*Loop == L'\\' && *(Loop + 1) == L'r') {
 			RtnValue[RtnLoop] = '\r';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
-		if (StkPlWcsStr(Loop, L"\\t") == Loop) {
+		if (*Loop == L'\\' && *(Loop + 1) == L't') {
 			RtnValue[RtnLoop] = '\t';
 			RtnLoop++;
 			Loop++;

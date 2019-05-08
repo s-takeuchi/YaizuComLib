@@ -1292,15 +1292,23 @@ void* StkPlOpenFileForRead(const wchar_t FilePath[FILENAME_MAX])
 #endif
 }
 
-void* StkPlOpenFileForWrite(const wchar_t FilePath[FILENAME_MAX])
+void* StkPlOpenFileForWrite(const wchar_t FilePath[FILENAME_MAX], bool AddFlag)
 {
 #ifdef WIN32
-	HANDLE FileHndl = CreateFile(FilePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	DWORD Type = CREATE_ALWAYS;
+	if (AddFlag) {
+		Type = OPEN_ALWAYS;
+	}
+	HANDLE FileHndl = CreateFile(FilePath, GENERIC_WRITE, 0, NULL, Type, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (FileHndl == INVALID_HANDLE_VALUE) {
 		return NULL;
 	};
 	return (void*)FileHndl;
 #else
+	char Type[8] = "w";
+	if (AddFlag) {
+		strcpy(Type, "w+");
+	}
 	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
 	FILE *fp = fopen(FileNameUtf8, "w");
 	if (fp == NULL) {
@@ -1364,5 +1372,14 @@ void StkPlSeekFromBegin(void* FileHndl, size_t Offset)
 	SetFilePointer(FileHndl, Offset, 0, FILE_BEGIN);
 #else
 	fseek((FILE*)FileHndl, Offset, SEEK_SET);
+#endif
+}
+
+void StkPlSeekFromEnd(void* FileHndl, size_t Offset)
+{
+#ifdef WIN32
+	SetFilePointer(FileHndl, Offset, 0, FILE_END);
+#else
+	fseek((FILE*)FileHndl, Offset, SEEK_END);
 #endif
 }
