@@ -1367,6 +1367,24 @@ void JsonDecodingTest1()
 	StkObject* RetObj;
 
 	////////////////////////////////////////////////////
+	StkPlLStrCpy(Msg, L"\"Aaa\" : { \"Bbb\" : -0, \"Ccc\" : -2147483647, \"Ddd\" : -999.9, \"Eee\" : 2147483647 }");
+	StkPlPrintf("JSON Decoding : %ls ...", Msg);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
+	if (RetObj == NULL || RetObj->GetChildElementCount() != 4 || StkPlWcsCmp(RetObj->GetName(), L"Aaa") != 0 ||
+		RetObj->GetFirstChildElement()->GetIntValue() != 0 ||
+		RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetFloatValue() != -999.9f) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(-1);
+	}
+	int TmpA = RetObj->GetFirstChildElement()->GetNext()->GetIntValue();
+	int TmpB = RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetIntValue();
+	if (TmpA != -2147483647 || TmpB != 2147483647) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(-1);
+	}
+	delete RetObj;
+	StkPlPrintf("OK\r\n");
+	////////////////////////////////////////////////////
 	StkPlLStrCpy(Msg, L"\"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : 999.9 }");
 	StkPlPrintf("JSON Decoding : %ls ...", Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);

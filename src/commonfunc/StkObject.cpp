@@ -242,6 +242,9 @@ bool StkObject::Impl::GetJsonNumber(const wchar_t* OrgStr, int* Len, int* ValInt
 			ValueLength++;
 			CurPnt++;
 			FloatFlag = true;
+		} else if (*CurPnt == wchar_t('-')) {
+			ValueLength++;
+			CurPnt++;
 		} else {
 			break;
 		}
@@ -1544,7 +1547,7 @@ StkObject* StkObject::CreateObjectFromJson(const wchar_t* Json, int* Offset, Stk
 		}
 
 		// if decimal number is appeared...
-		if (Json[Loop] >= wchar_t('0') && Json[Loop] <= wchar_t('9')) {
+		if ((Json[Loop] >= wchar_t('0') && Json[Loop] <= wchar_t('9')) || Json[Loop] == wchar_t('-')) {
 			int ValInt = 0;
 			float ValFloat = 0;
 			if (PrevStatus == ELEMOBJ_START) {
