@@ -1134,6 +1134,27 @@ void StkPlGetTime(int* Year, int* Mon, int* Day, int* Hour, int* Min, int* Sec, 
 //////////////////////////////////////////////////////////////////////////////
 // APIs for file access
 
+// Change current directory
+// PathToDir [in] : Path to directory where current directory is changed.
+// Return : 0: Success, -1 Failure
+int ChangeCurrentDirectory(const wchar_t* PathToDir)
+{
+	int Ret = 0;
+#ifdef WIN32
+	Ret = SetCurrentDirectory(PathToDir);
+	if (Ret == 0) {
+		Ret = 1;
+	} else {
+		Ret = -1;
+	}
+#else
+	char* PathToDirUtf8 = StkPlCreateUtf8FromWideChar(PathToDir);
+	Ret = chdir(PathToDirUtf8);
+	delete PathToDirUtf8;
+#endif
+	return Ret;
+}
+
 // Get full path from the specified file name.
 // FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
 // FullPath [out] : Acquired full path for the specified file.
