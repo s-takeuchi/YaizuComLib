@@ -513,7 +513,7 @@ int main(int argc, char* argv[])
 			char ConfStr1[4096] = "worker_processes 1;\r\nevents {\r\n  worker_connections 1024;\r\n}\r\n";
 			char ConfStr2[4096] = "http {\r\n  include mime.types;\r\n  default_type application/octet-stream;\r\n  sendfile on;\r\n  keepalive_timeout 65;\r\n  server {\r\n";
 			char ConfStr3[4096];
-			sprintf_s(ConfStr3, 4096, "    listen %S;\r\n    listen [::]:%S;\r\n    server_name %S;\r\n    location / {\r\n      root html;\r\n      index index.html index.htm;\r\n    }\r\n", WebPort, WebPort, WebHost);
+			sprintf_s(ConfStr3, 4096, "    client_max_body_size 10m;\r\n    listen %S;\r\n    listen [::]:%S;\r\n    server_name %S;\r\n    location / {\r\n      root html;\r\n      index index.html index.htm;\r\n    }\r\n", WebPort, WebPort, WebHost);
 			char ConfStr4[4096];
 			sprintf_s(ConfStr4, 4096, "    location /api/ {\r\n      proxy_pass http://%S:%S;\r\n      proxy_read_timeout 1200;\r\n    }\r\n    error_page 500 502 503 504  /50x.html;\r\n    location = /50x.html {\r\n      root html;\r\n    }\r\n  }\r\n}\r\n", SrvHost, SrvPort);
 			DWORD NumOfByteWrite;
