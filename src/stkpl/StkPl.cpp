@@ -1360,9 +1360,6 @@ int StkPlRead(void* FileHndl, char* Ptr, size_t Size, size_t* ActSize)
 	return 1;
 #else
 	size_t TmpSize = fread(Ptr, sizeof(char), (int)Size, (FILE*)FileHndl);
-	if (TmpSize < Size) {
-		return 0;
-	}
 	*ActSize = TmpSize;
 	return 1;
 #endif
