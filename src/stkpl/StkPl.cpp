@@ -1095,6 +1095,19 @@ void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)
 	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
 }
 
+long long StkPlGetTime()
+{
+#ifdef WIN32
+	__int64 Ltime;
+	_time64(&Ltime);
+	return (long long)Ltime;
+#else
+	time_t Ltime;
+	time(&Ltime);
+	return (long long)Ltime;
+#endif
+}
+
 void StkPlGetTime(int* Year, int* Mon, int* Day, int* Hour, int* Min, int* Sec, bool IsLocalTime)
 {
 #ifdef WIN32

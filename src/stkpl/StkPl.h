@@ -111,6 +111,7 @@ void StkPlGetTimeInOldFormat(char[64], bool);
 void StkPlGetWTimeInOldFormat(wchar_t[64], bool);
 void StkPlGetTimeInIso8601(char[64], bool);
 void StkPlGetWTimeInIso8601(wchar_t[64], bool);
+long long StkPlGetTime();
 void StkPlGetTime(int*, int*, int*, int*, int*, int*, bool);
 
 //////////////////////////////////////////////////////////////////////////////
