@@ -1385,6 +1385,31 @@ void JsonDecodingTest1()
 	delete RetObj;
 	StkPlPrintf("OK\r\n");
 	////////////////////////////////////////////////////
+	StkPlLStrCpy(Msg, L"\"Aaa\" : { \"Bbb\" : [-0.5, -1.0, -20.0],  \"Ccc\" : [-2.0, -2.0] }");
+	StkPlPrintf("JSON Decoding : %ls ...", Msg);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
+	if (RetObj == NULL) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(-1);
+	}
+	wchar_t Buf[1024] = L"";
+	RetObj->ToJson(Buf, 1024);
+	delete RetObj;
+	RetObj = StkObject::CreateObjectFromJson(Buf, &Offset);
+
+	int ChildCnt = RetObj->GetChildElementCount();
+	float Bbb1 = RetObj->GetFirstChildElement()->GetFloatValue();
+	float Bbb2 = RetObj->GetFirstChildElement()->GetNext()->GetFloatValue();
+	float Bbb3 = RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetFloatValue();
+	float Bbb4 = RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetFloatValue();
+	float Bbb5 = RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetNext()->GetFloatValue();
+	if (ChildCnt != 5 || Bbb1 != -0.5 || Bbb2 != -1.0 || Bbb3 != -20.0 || Bbb4 != -2.0 || Bbb5 != -2.0) {
+		StkPlPrintf("NG\r\n");
+		StkPlExit(-1);
+	}
+	delete RetObj;
+	StkPlPrintf("OK\r\n");
+	////////////////////////////////////////////////////
 	StkPlLStrCpy(Msg, L"\"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : 999.9 }");
 	StkPlPrintf("JSON Decoding : %ls ...", Msg);
 	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
