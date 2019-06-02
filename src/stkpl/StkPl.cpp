@@ -1156,9 +1156,9 @@ int ChangeCurrentDirectory(const wchar_t* PathToDir)
 #ifdef WIN32
 	Ret = SetCurrentDirectory(PathToDir);
 	if (Ret == 0) {
-		Ret = 1;
-	} else {
 		Ret = -1;
+	} else {
+		Ret = 0;
 	}
 #else
 	char* PathToDirUtf8 = StkPlCreateUtf8FromWideChar(PathToDir);
