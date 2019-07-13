@@ -117,7 +117,7 @@ char16_t* StkPlCreateUtf16FromUtf8(const char* Utf)<br/>
 char* StkPlCreateUtf8FromUtf16(const char16_t* Utf)<br/>
 </H4>
 <div class="topic">
-異なるUTFコードに変換します。同時に必要な領域を確保します。<br/>
+異なるUTFコードに変換します。同時に必要な領域を確保します。このAPIの呼び出し元は，変換したコードを使用後，領域を解放する必要があります。<br/>
 <table class="tblstyle">
 <tr><td>Utf[入力]</td><td>変換前のUTFコードが格納される領域</td></tr>
 <tr><td>[戻り値]</td><td>変換後のUTFコードが格納される領域</td></tr>
@@ -135,7 +135,7 @@ wchar_t* StkPlCreateWideCharFromUtf8(const char* Str)<br/>
 char* StkPlCreateUtf8FromWideChar(const wchar_t* Str)<br/>
 </H4>
 <div class="topic">
-UTFとワイドキャラクタ文字列を相互に変換します。同時に必要な領域を確保します。<br/>
+UTFとワイドキャラクタ文字列を相互に変換します。同時に必要な領域を確保します。このAPIの呼び出し元は，変換したコードを使用後，領域を解放する必要があります。<br/>
 <table class="tblstyle">
 <tr><td>Str[入力]</td><td>変換前のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
 <tr><td>[戻り値]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
