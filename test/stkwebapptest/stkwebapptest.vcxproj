@@ -68,10 +68,10 @@
       <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;Debug\commonfunc.lib;Debug\stkdata.lib;Debug\stkthread.lib;Debug\stksocket.lib;Debug\stkpl.lib;Debug\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <HeapReserveSize>10000000</HeapReserveSize>
-      <HeapCommitSize>10000000</HeapCommitSize>
-      <StackReserveSize>10000000</StackReserveSize>
-      <StackCommitSize>10000000</StackCommitSize>
+      <HeapReserveSize>40000000</HeapReserveSize>
+      <HeapCommitSize>40000000</HeapCommitSize>
+      <StackReserveSize>20000000</StackReserveSize>
+      <StackCommitSize>20000000</StackCommitSize>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -90,8 +90,8 @@
       <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;Release\commonfunc.lib;Release\stkdata.lib;Release\stkthread.lib;Release\stksocket.lib;Release\stkpl.lib;Release\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <HeapReserveSize>10000000</HeapReserveSize>
-      <HeapCommitSize>10000000</HeapCommitSize>
+      <HeapReserveSize>40000000</HeapReserveSize>
+      <HeapCommitSize>40000000</HeapCommitSize>
       <StackReserveSize>20000000</StackReserveSize>
       <StackCommitSize>20000000</StackCommitSize>
       <OptimizeReferences>true</OptimizeReferences>

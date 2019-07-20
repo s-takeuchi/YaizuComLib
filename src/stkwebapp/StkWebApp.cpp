@@ -39,7 +39,7 @@ public:
 	const wchar_t* SkipHttpHeader(wchar_t*);
 
 	unsigned char* MakeHttpHeader(int, int, int);
-	StkObject* RecvRequest(int, int*, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t[3]);
+	StkObject* RecvRequest(int, int*, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t[3], wchar_t**);
 	void SendResponse(StkObject*, int, int, int);
 	StkObject* MakeErrorResponse(int ErrId);
 
@@ -175,11 +175,12 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	return (unsigned char*)HeaderData;
 }
 
-StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], wchar_t Locale[3])
+StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], wchar_t Locale[3], wchar_t** PrmHttpHeader)
 {
 	*XmlJsonType = -1;
 	*Method = StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED;
 	StkPlWcsCpy(UrlPath, StkWebAppExec::URL_PATH_LENGTH, L"");
+	*PrmHttpHeader = NULL;
 
 	int Ret = StkSocket_Accept(TargetId);
 	if (Ret == -1) {
@@ -267,7 +268,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	} else if (*XmlJsonType == 0) {
 	}
 	delete DatWc;
-	delete HttpHeader;
+	*PrmHttpHeader = HttpHeader;
 	return ReqObj;
 }
 
@@ -413,11 +414,15 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH];
 	int ResultCode = 200;
 	wchar_t Locale[3];
+	wchar_t* HttpHeader = NULL;
 
-	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath, Locale);
+	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath, Locale, &HttpHeader);
 
 	// If no request is received, return from this method.
 	if (StkObjReq == NULL && Method == StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED && StkPlWcsCmp(UrlPath, L"") == 0 && XmlJsonType == -1) {
+		if (HttpHeader != NULL) {
+			delete HttpHeader;
+		}
 		return 0;
 	}
 
@@ -446,6 +451,9 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			StkObjRes = pImpl->MakeErrorResponse(1002);
 		}
 		FndFlag = true;
+	}
+	if (HttpHeader != NULL) {
+		delete HttpHeader;
 	}
 
 	// If service stop request is presented...
