@@ -39,7 +39,7 @@ public:
 	const wchar_t* SkipHttpHeader(wchar_t*);
 
 	unsigned char* MakeHttpHeader(int, int, int);
-	StkObject* RecvRequest(int, int*, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t[3], wchar_t**);
+	StkObject* RecvRequest(int, int*, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t**);
 	void SendResponse(StkObject*, int, int, int);
 	StkObject* MakeErrorResponse(int ErrId);
 
@@ -175,7 +175,7 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	return (unsigned char*)HeaderData;
 }
 
-StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], wchar_t Locale[3], wchar_t** PrmHttpHeader)
+StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], wchar_t** PrmHttpHeader)
 {
 	*XmlJsonType = -1;
 	*Method = StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED;
@@ -255,10 +255,6 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 			return NULL;
 		}
 	}
-
-	// Acquire a locale
-	StkPlWcsCpy(Locale, 3, L"");
-	StkStringParser::ParseInto2Params(HttpHeader, L"#Accept-Language: #", L'#', NULL, 0, Locale, 3);
 
 	// Create JSON object
 	int ErrorCode = 0;
@@ -413,10 +409,9 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	int Method;
 	wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH];
 	int ResultCode = 200;
-	wchar_t Locale[3];
 	wchar_t* HttpHeader = NULL;
 
-	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath, Locale, &HttpHeader);
+	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath, &HttpHeader);
 
 	// If no request is received, return from this method.
 	if (StkObjReq == NULL && Method == StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED && StkPlWcsCmp(UrlPath, L"") == 0 && XmlJsonType == -1) {
@@ -436,7 +431,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			int MethodCalRes = Method & pImpl->HandlerMethod[Loop];
 			int FindRes = StkStringParser::ParseInto4Params(UrlPath, pImpl->HandlerUrlPath[Loop], L'$', Param[0], Param[1], Param[2], Param[3]);
 			if (MethodCalRes && FindRes == 1) {
-				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode, Locale);
+				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode, HttpHeader);
 				FndFlag = true;
 				break;
 			}
