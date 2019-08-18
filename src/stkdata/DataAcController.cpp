@@ -1338,12 +1338,15 @@ int DataAcController::SaveData(const wchar_t* FilePath)
 				NumOfByteWrite = 0;
 				if (ColumnType == COLUMN_TYPE_INT) {
 					StkPlWrite(FileHndl, (char*)DatPtr, sizeof(int32_t), &NumOfByteWrite);
+					DatPtr += sizeof(int32_t);
 				} else if (ColumnType == COLUMN_TYPE_FLOAT) {
 					StkPlWrite(FileHndl, (char*)DatPtr, sizeof(float), &NumOfByteWrite);
+					DatPtr += sizeof(float);
 				} else if (ColumnType == COLUMN_TYPE_STR || ColumnType == COLUMN_TYPE_BIN) {
 					int ColumnSize = m_ColumnSize[LoopTbl][LoopClm];
 					StkPlWrite(FileHndl, (char*)DatPtr, ColumnSize, &NumOfByteWrite);
-				} else if (COLUMN_TYPE_WSTR) {
+					DatPtr += m_ColumnSize[LoopTbl][LoopClm];
+				} else if (ColumnType == COLUMN_TYPE_WSTR) {
 					int ColumnSize = m_ColumnSize[LoopTbl][LoopClm] / sizeof(wchar_t);
 					wchar_t* TmpWStr = new wchar_t[ColumnSize];
 					char16_t* TmpUtf16 = new char16_t[ColumnSize];
@@ -1353,8 +1356,8 @@ int DataAcController::SaveData(const wchar_t* FilePath)
 					StkPlWrite(FileHndl, (char*)TmpUtf16, ColumnSize * sizeof(char16_t), &NumOfByteWrite);
 					delete TmpWStr;
 					delete TmpUtf16;
+					DatPtr += m_ColumnSize[LoopTbl][LoopClm];
 				}
-				DatPtr += NumOfByteWrite;
 			}
 		}
 	}
@@ -1533,20 +1536,23 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 				NumOfByteRead = 0;
 				if (ColumnType == COLUMN_TYPE_INT) {
 					StkPlRead(FileHndl, (char*)DatPtr, sizeof(int32_t), &NumOfByteRead);
+					DatPtr += sizeof(int32_t);
 				} else if (ColumnType == COLUMN_TYPE_FLOAT) {
 					StkPlRead(FileHndl, (char*)DatPtr, sizeof(float), &NumOfByteRead);
+					DatPtr += sizeof(float);
 				} else if (ColumnType == COLUMN_TYPE_STR || ColumnType == COLUMN_TYPE_BIN) {
 					int ColumnSize = m_ColumnSize[TableId][LoopClm];
 					StkPlRead(FileHndl, (char*)DatPtr, ColumnSize, &NumOfByteRead);
-				} else if (COLUMN_TYPE_WSTR) {
+					DatPtr += m_ColumnSize[TableId][LoopClm];
+				} else if (ColumnType == COLUMN_TYPE_WSTR) {
 					int ColumnSize = m_ColumnSize[TableId][LoopClm] / sizeof(wchar_t);
 					char16_t* TmpUtf16 = new char16_t[ColumnSize];
 					StkPlRead(FileHndl, (char*)TmpUtf16, ColumnSize * sizeof(char16_t), &NumOfByteRead);
 					TmpUtf16[ColumnSize - 1] = L'\0';
 					StkPlConvUtf16ToWideChar((wchar_t*)DatPtr, ColumnSize, TmpUtf16);
 					delete TmpUtf16;
+					DatPtr += m_ColumnSize[TableId][LoopClm];
 				}
-				DatPtr += NumOfByteRead;
 			}
 		}
 	}
