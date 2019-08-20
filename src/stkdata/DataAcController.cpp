@@ -1307,6 +1307,9 @@ int DataAcController::SaveData(const wchar_t* FilePath)
 			if (ColumnType == COLUMN_TYPE_STR || ColumnType == COLUMN_TYPE_WSTR || ColumnType == COLUMN_TYPE_BIN) {
 				// Write column size
 				int32_t ColumnSize = (int32_t)m_ColumnSize[LoopTbl][LoopClm];
+				if (ColumnType == COLUMN_TYPE_WSTR) {
+					ColumnSize /= (sizeof(wchar_t) / sizeof(char16_t));
+				}
 				if (StkPlWrite(FileHndl, (char*)&ColumnSize, sizeof(ColumnSize), &NumOfByteWrite) == 0) {
 					StkPlCloseFile(FileHndl);
 					return -1;
@@ -1316,8 +1319,8 @@ int DataAcController::SaveData(const wchar_t* FilePath)
 
 		// Write table information
 		int32_t Header[3];
-		Header[0] = (int32_t)m_TableSize[LoopTbl];
-		Header[1] = (int32_t)m_RecordSize[LoopTbl];
+		Header[0] = (int32_t)0; // This parameter is not used.
+		Header[1] = (int32_t)0; // This parameter is not used.
 		Header[2] = (int32_t)m_RecordCount[LoopTbl];
 		if (StkPlWrite(FileHndl, (char*)Header, sizeof(Header), &NumOfByteWrite) == 0) {
 			StkPlCloseFile(FileHndl);
@@ -1474,6 +1477,9 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 					StkPlCloseFile(FileHndl);
 					return -1;
 				}
+				if (ColumnType == COLUMN_TYPE_WSTR) {
+					ColumnSize *= (sizeof(wchar_t) / sizeof(char16_t));
+				}
 
 				// Column definition
 				if (ColumnType == COLUMN_TYPE_STR) {
@@ -1514,11 +1520,7 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 			return -1;
 		}
 		int TableId = SearchTable(TableName);
-		if ((size_t)Header[0] != m_TableSize[TableId]) {
-			StkPlCloseFile(FileHndl);
-			return -1;
-		}
-		m_RecordSize[TableId] = Header[1];
+		// Header[0] and Header[1] are not used.
 		m_RecordCount[TableId] = Header[2];
 
 		// Read data
