@@ -811,7 +811,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (LockAllTable(LOCK_EXCLUSIVE) != 0) {
 				UnlockAllTable();
 			}
-			LoadData(FileName);
+			if (LoadData(FileName) == -1) {
+				MessageBox(hWnd, L"Failed to open the file.", L"Notice!", MB_OK);
+			}
 			UnlockAllTable();
 			RefreshTableMenu(hWnd, NULL);
 			ChangeWindowTitle(hWnd);
