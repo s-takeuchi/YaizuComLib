@@ -257,15 +257,62 @@ int Insert16383Records()
 	}
 
 	{
-		StkPlPrintf("Preserve table information to\"Insert16383records.std\".");
+		StkPlPrintf("Preserve data to\"Insert16383records.std\".");
+
+		ColumnData* SearchDat[1] = {new ColumnDataInt(L"ID", 25)};
+		RecordData *SearchRec = new RecordData(L"Person", SearchDat, 1);
+		ColumnData* UpdateDat[2] = { new ColumnDataWStr(L"Name", L"𠮷𠮷𠮷𠮷𠮷𠮷𠮷𠮷𠮷"), new ColumnDataWStr(L"Address", L"あいうえおかきくけこさしすせ") };
+		RecordData *UpdateRec = new RecordData(L"Person", UpdateDat, 2);
+		LockTable(L"Person", LOCK_EXCLUSIVE);
+		UpdateRecord(SearchRec, UpdateRec);
+		UnlockTable(L"Person");
+		delete SearchRec;
+		delete UpdateRec;
+
 		LockAllTable(LOCK_SHARE);
+		long long CalCntStart = StkPlGetTickCount();
 		if (SaveData(L"Insert16383records.std") != 0) {
 			StkPlPrintf("...[NG]\r\n");
 			UnlockAllTable();
 			return -1;
 		}
+		long long CalCntEnd = StkPlGetTickCount();
 		UnlockAllTable();
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("... (%d msec) [OK]\r\n", CalCntEnd - CalCntStart);
+	}
+
+	{
+		StkPlPrintf("Load data from \"Insert16383records.std\".");
+		LockAllTable(LOCK_EXCLUSIVE);
+		long long CalCntStart = StkPlGetTickCount();
+		if (LoadData(L"Insert16383records.std") != 0) {
+			StkPlPrintf("...[NG]\r\n");
+			UnlockAllTable();
+			return -1;
+		}
+		long long CalCntEnd = StkPlGetTickCount();
+		UnlockAllTable();
+
+		//ColumnData* SearchDat[1] = { new ColumnDataWStr(L"Name", L"𠮷𠮷𠮷𠮷") };
+		ColumnData* SearchDat[2] = { new ColumnDataInt(L"ID", 25), new ColumnDataWStr(L"Address", L"あいうえおかきくけこさしすせ") };
+		RecordData *SearchRec = new RecordData(L"Person", SearchDat, 2);
+		LockTable(L"Person", LOCK_SHARE);
+		RecordData* Rec = GetRecord(SearchRec);
+		UnlockTable(L"Person");
+		if (Rec == NULL) {
+			StkPlPrintf("...[NG]\r\n");
+			return -1;
+		} else {
+			ColumnDataWStr* Dat = (ColumnDataWStr*)Rec->GetColumn(0);
+			if (StkPlWcsStr(Dat->GetValue(), L"𠮷𠮷𠮷𠮷") == NULL || StkPlWcsStr(Dat->GetValue(), L"𠮷𠮷𠮷𠮷𠮷") != NULL) {
+				StkPlPrintf("...[NG]\r\n");
+				return -1;
+			}
+		}
+		delete SearchRec;
+		delete Rec;
+
+		StkPlPrintf("... (%d msec) [OK]\r\n", CalCntEnd - CalCntStart);
 	}
 
 	{
