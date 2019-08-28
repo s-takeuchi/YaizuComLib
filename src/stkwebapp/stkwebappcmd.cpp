@@ -23,6 +23,9 @@ bool g_bRun = true;
 bool g_bService = true;
 SERVICE_STATUS_HANDLE g_hServiceStatus = NULL;
 
+HANDLE WappProcHndl = NULL;
+HANDLE NginxProcHndl = NULL;
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // Get file size of the specified file name
@@ -83,6 +86,7 @@ void StartProcesses()
 	si_wapp.cb = sizeof(si_wapp);
 	wsprintf(CmdLine, L"%s\\%s.exe", Buf, SrvProgram);
 	CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_wapp, &pi_wapp);
+	WappProcHndl = pi_wapp.hProcess;
 
 	STARTUPINFO si_nginx;
 	PROCESS_INFORMATION pi_nginx;
@@ -90,6 +94,7 @@ void StartProcesses()
 	si_nginx.cb = sizeof(si_nginx);
 	wsprintf(CmdLine, L"\"%s\\nginx.exe\"", Buf); /* instead of  [cmd.exe /c "start \nginx.exe"] */
 	CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginx);
+	NginxProcHndl = pi_wapp.hProcess;
 }
 
 void StopProcesses()
@@ -140,7 +145,7 @@ void StopProcesses()
 		StkSocket_Disconnect(1, 1, true);
 	}
 	StkSocket_DeleteInfo(1);
-	Sleep(5000); // This is a wait for secure stopping. stkwebappcmd cannot detect SrvProgram stop hence wait for tentative interval.
+	WaitForSingleObject(WappProcHndl, INFINITE);
 
 	/***** Stop nginx *****/
 	PROCESS_INFORMATION pi_nginxstop;
@@ -149,6 +154,7 @@ void StopProcesses()
 	si_nginx.cb = sizeof(si_nginx);
 	wsprintf(CmdLine, L"\"%s\\nginx.exe\" -s stop", Buf);
 	CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginxstop);
+	WaitForSingleObject(NginxProcHndl, INFINITE);
 }
 
 DWORD WINAPI HandlerEx (DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext)
