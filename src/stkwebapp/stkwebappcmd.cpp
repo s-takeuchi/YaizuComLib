@@ -94,7 +94,7 @@ void StartProcesses()
 	si_nginx.cb = sizeof(si_nginx);
 	wsprintf(CmdLine, L"\"%s\\nginx.exe\"", Buf); /* instead of  [cmd.exe /c "start \nginx.exe"] */
 	CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_nginx, &pi_nginx);
-	NginxProcHndl = pi_wapp.hProcess;
+	NginxProcHndl = pi_nginx.hProcess;
 }
 
 void StopProcesses()
