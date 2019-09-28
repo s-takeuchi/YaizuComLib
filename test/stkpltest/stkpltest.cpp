@@ -255,7 +255,7 @@ int main(int Argc, char* Argv[])
 	{
 		char16_t Input[32] = u"𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿";
 		Input[5] = u'\0';
-		Test_Invalid_String_Utf16_Utf32(Input, 2);
+		Test_Invalid_String_Utf16_Utf32(Input, 3);
 
 		Test_Invalid_String_Utf8_Utf32("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x00\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 2);
 		Test_Invalid_String_Utf8_Utf32("\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x00\x90\xe3\x9b\x90\xe3\x9b\x90\xe3\x9b\x90", 3);
@@ -307,9 +307,9 @@ int main(int Argc, char* Argv[])
 		StkPlPrintf("OK case\n");
 
 		StkPlPrintf("Create UTF32 & UTF16 string ... ");
-		char32_t* Utf32a = StkPlCreateUtf32FromUtf16(u"abcdeあいうえお");
-		char16_t* Utf16a = StkPlCreateUtf16FromUtf32(U"abcdeあいうえお");
-		if (StkPlMemCmp(Utf32a, U"abcdeあいうえお", 10) != 0 || StkPlMemCmp(Utf16a, u"abcdeあいうえお", 15) != 0) {
+		char32_t* Utf32a = StkPlCreateUtf32FromUtf16(u"abcdeあいうえお，a２３４");
+		char16_t* Utf16a = StkPlCreateUtf16FromUtf32(U"abcdeあいうえお，a２３４");
+		if (StkPlMemCmp(Utf32a, U"abcdeあいうえお，a２３４", 60) != 0 || StkPlMemCmp(Utf16a, u"abcdeあいうえお，a２３４", 30) != 0) {
 			StkPlPrintf("NG case\n");
 			StkPlExit(-1);
 		}
@@ -331,7 +331,7 @@ int main(int Argc, char* Argv[])
 
 	{
 		StkPlPrintf("Wide char conversion ... ");
-		wchar_t* Str1 = StkPlCreateWideCharFromUtf16(u"abcdeあいうえお㛐㛐魑魅魍魎 0123456789 𠮷野家㛐㛐わをんxyz!!!");
+		wchar_t* Str1 = StkPlCreateWideCharFromUtf16(u"abcdeあいうえお㛐㛐魑魅魍魎 0123456789 １２３４５６７８９０，a　￥ 𠮷野家㛐㛐わをんxyz!!!");
 		char32_t* Str2 = StkPlCreateUtf32FromWideChar(Str1);
 		wchar_t* Str3 = StkPlCreateWideCharFromUtf32(Str2);
 		char* Str4 = StkPlCreateUtf8FromWideChar(Str3);

@@ -265,10 +265,7 @@ size_t StkPlConvUtf16ToUtf32(char32_t* Utf32, size_t SizeInWord, const char16_t*
 		SizeInWord = (size_t)-1;
 	}
 	while (*Utf16Ptr != u'\0' && ActualSize < SizeInWord - 1) {
-		if ((*Utf16Ptr & 0b1101100000000000) == 0b1101100000000000) {
-			if ((*(Utf16Ptr + 1) & 0b1101110000000000) != 0b1101110000000000) {
-				break;
-			}
+		if ((*Utf16Ptr >> 10) == 0b110110 && (*(Utf16Ptr + 1) >> 10) == 0b110111) {
 			if (ConversionFlag) {
 				*Utf32Ptr = 0x10000 + (*Utf16Ptr - 0b1101100000000000) * 0x400 + (*(Utf16Ptr + 1) - 0b1101110000000000);
 			}
@@ -518,10 +515,7 @@ size_t StkPlConvUtf16ToUtf8(char* Utf8, size_t SizeInWord, const char16_t* Utf16
 		SizeInWord = (size_t)-1;
 	}
 	while (*Utf16Ptr != u'\0' && ActualSize < SizeInWord - 1) {
-		if ((*Utf16Ptr & 0b1101100000000000) == 0b1101100000000000) {
-			if ((*(Utf16Ptr + 1) & 0b1101110000000000) != 0b1101110000000000) {
-				break;
-			}
+		if ((*Utf16Ptr >> 10) == 0b110110 && (*(Utf16Ptr + 1) >> 10) == 0b110111) {
 			char32_t Utf32 = 0x10000 + (*Utf16Ptr - 0b1101100000000000) * 0x400 + (*(Utf16Ptr + 1) - 0b1101110000000000);
 			if (Utf32 < 0x200000) {
 				if (ActualSize + 3 >= SizeInWord - 1) {
