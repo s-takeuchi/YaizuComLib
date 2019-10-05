@@ -296,7 +296,7 @@ int GenerateLogs()
 
 	StkPlPrintf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each. Current number of log messages is 64...");
 	for (int Loop = 0; Loop < 40; Loop++) {
-		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", Loop + 3000);
+		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", Loop + 2300);
 		StkSocket_Open(Loop);
 	}
 	for (int Loop = 0; Loop < 40; Loop++) {
@@ -412,7 +412,7 @@ int GenerateLogs()
 
 	StkPlPrintf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each...");
 	for (int Loop = 0; Loop < 40; Loop++) {
-		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", Loop + 3000);
+		StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", Loop + 2300);
 		StkSocket_Open(Loop);
 	}
 	for (int Loop = 0; Loop < 40; Loop++) {
