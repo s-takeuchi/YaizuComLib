@@ -105,6 +105,35 @@ function initLoadingModal() {
     $('body').append(loadingModal);
 }
 
+function initMainPage() {
+    var navBarHeader = $('<div class="navbar-header"><a class="navbar-brand" href=""><strong>Management Server</strong></a><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#top-nav"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button></div>');
+    var navBarNav = $('<ul class="nav navbar-nav">');
+    navBarNav.append($('<li id="menu-agtinfo" style="display:none"><a onclick="activateTopic(\'agtinfo\')"><span class="glyphicon glyphicon-eye-open"></span> Agent Info</a></li>'));
+    navBarNav.append($('<li id="menu-svrinfo" style="display:none"><a onclick="activateTopic(\'svrinfo\')"><span class="glyphicon glyphicon-tower"></span> Server Info</a></li>'));
+    navBarNav.append($('<li id="menu-command" style="display:none"><a onclick="activateTopic(\'command\')"><span class="glyphicon glyphicon-flash"></span> Command</a></li>'));
+    navBarNav.append($('<li id="menu-loginfo" style="display:none"><a onclick="activateTopic(\'loginfo\')"><span class="glyphicon glyphicon-time"></span> Audit Log</a></li>'));
+    navBarNav.append($('<li id="menu-usermgt" style="display:none"><a onclick="activateTopic(\'usermgt\')"><span class="glyphicon glyphicon-user"></span> User Management</a></li>'));
+    var navBarNavRight = $('<ul class="nav navbar-nav navbar-right"><li><a onclick="tryLogout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li></u>')
+    var navBarCollapse = $('<div class="collapse navbar-collapse" id="top-nav">');
+    navBarCollapse.append(navBarNav);
+    navBarCollapse.append(navBarNavRight);
+    var containerFluid = $('<div class="container-fluid">');
+    containerFluid.append(navBarHeader);
+    containerFluid.append(navBarCollapse);
+    var navBarDefault = $('<nav class="navbar navbar-default">');
+    navBarDefault.append(containerFluid);
+    var containerFluidWorkSpace = $('<div class="container-fluid">');
+    containerFluidWorkSpace.append('<div id="agtinfo" class="row" style="display:none"><div id="workspace_agtinfo" class="col-xs-12"></div></div>');
+    containerFluidWorkSpace.append('<div id="svrinfo" class="row" style="display:none"><div id="workspace_svrinfo" class="col-xs-12"></div></div>');
+    containerFluidWorkSpace.append('<div id="command" class="row" style="display:none"><div id="workspace_command" class="col-xs-12"></div></div>');
+    containerFluidWorkSpace.append('<div id="loginfo" class="row" style="display:none"><div id="workspace_loginfo" class="col-xs-12"></div></div>');
+    containerFluidWorkSpace.append('<div id="usermgt" class="row" style="display:none"><div id="workspace_usermgt" class="col-xs-12"></div></div>');
+    var container = $('<div id="container">');
+    container.append(navBarDefault);
+    container.append(containerFluidWorkSpace);
+    $('body').append(container);
+}
+
 function addClientMessage(code, msg) {
     if (msg.en !== undefined && msg.ja !== undefined) {
         clientMsg[code] = msg;
