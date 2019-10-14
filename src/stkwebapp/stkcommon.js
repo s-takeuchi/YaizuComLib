@@ -132,6 +132,7 @@ function initMainPage(contents) {
     container.append(navBarDefault);
     container.append(containerFluidWorkSpace);
     $('body').append(container);
+    $('#container').hide();
 }
 
 function addClientMessage(code, msg) {
