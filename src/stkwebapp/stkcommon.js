@@ -110,7 +110,7 @@ function initMainPage(contents) {
     var navBarNav = $('<ul class="nav navbar-nav">');
     if (contents instanceof Array) {
         for (var key in contents) {
-            navBarNav.append($('<li id="menu-' + contents[key].id + '" style="display:none"><a onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"><span class="' + contents[key].icon + '"></span> Agent Info</a></li>'));
+            navBarNav.append($('<li id="menu-' + contents[key].id + '" style="display:none"><a onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"><span class="' + contents[key].icon + '"></span> ' + contents[key].title + '</a></li>'));
         }
     }
     var navBarNavRight = $('<ul class="nav navbar-nav navbar-right"><li><a onclick="tryLogout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li></u>')
@@ -245,6 +245,7 @@ function sendRequestRecvResponse(method, url, request, keystring, asyncFlag) {
                 } else {
                     statusCode[keystring] = xhr.status;
                     try {
+                        responseData[keystring] = {};
                         $.extend(responseData[keystring], JSON.parse(xhr.responseText));
                     } catch (e) {
                         responseData[keystring] = {};
@@ -278,6 +279,7 @@ function sendRequestRecvResponse(method, url, request, keystring, asyncFlag) {
                 } else {
                     statusCode[keystring] = xhr.status;
                     try {
+                        responseData[keystring] = {};
                         $.extend(responseData[keystring], JSON.parse(xhr.responseText));
                     } catch (e) {
                         responseData[keystring] = {};
