@@ -27,5 +27,7 @@ public:
 	int GetTimeoutInterval();
 	void SetTimeoutInterval(int);
 
+	void SetAutholization(char*);
+
 	StkObject* SendRequestRecvResponse(int, const char*, StkObject*, int*);
 };

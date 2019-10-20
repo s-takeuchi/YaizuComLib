@@ -14,6 +14,8 @@ public:
 
 	int MyId;
 
+	char* Auth;
+
 public:
 	const wchar_t* SkipHttpHeader(const wchar_t*);
 	StkObject* RecvResponse(int, wchar_t[1024]);
@@ -136,6 +138,13 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 			delete TargetAddru8;
 		}
 	}
+	{
+		if (Auth != NULL) {
+			StkPlStrCat(HttpHeader, 1024, "Authorization: ");
+			StkPlStrCat(HttpHeader, 1024, Auth);
+			StkPlStrCat(HttpHeader, 1024, "\r\n");
+		}
+	}
 	StkPlStrCat(HttpHeader, 1024, "\r\n");
 	int HeaderLength = StkPlStrLen(HttpHeader);
 
@@ -164,12 +173,16 @@ StkWebAppSend::StkWebAppSend(int TargetId, const wchar_t* HostNameOrIpAddr, int 
 	pImpl->RecvBufSize = 1000000;
 	pImpl->TimeoutInterval = 3000;
 	pImpl->MyId = TargetId;
+	pImpl->Auth = NULL;
 	StkSocket_AddInfo(pImpl->MyId, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, HostNameOrIpAddr, PortNum);
 }
 
 StkWebAppSend::~StkWebAppSend()
 {
 	StkSocket_DeleteInfo(pImpl->MyId);
+	if (pImpl->Auth != NULL) {
+		delete pImpl->Auth;
+	}
 	delete pImpl;
 };
 
@@ -182,19 +195,15 @@ StkObject* StkWebAppSend::SendRequestRecvResponse(int Method, const char* Url, S
 	}
 
 	StkObject* ResDat = NULL;
-	wchar_t Header[1024];
+	wchar_t Header[1024] = L"";
 	int RetSend = pImpl->SendRequest(pImpl->MyId, Method, Url, ReqObj);
 	if (RetSend >= 0) {
 		ResDat = pImpl->RecvResponse(pImpl->MyId, Header);
-		if (ResDat == NULL) {
-			*ResultCode = -1;
-		} else {
-			wchar_t TmpStr[16] = L"";
-			wchar_t StrResultCode[16] = L"";
-			StkStringParser::ParseInto3Params(Header, L"$ $ $", L'$', NULL, -1, StrResultCode, 16, NULL, -1);
-			if (StrResultCode != NULL) {
-				*ResultCode = StkPlWcsToL(StrResultCode);
-			}
+		*ResultCode = -1;
+		wchar_t StrResultCode[16] = L"";
+		StkStringParser::ParseInto3Params(Header, L"$ $ $", L'$', NULL, -1, StrResultCode, 16, NULL, -1);
+		if (StrResultCode != NULL) {
+			*ResultCode = StkPlWcsToL(StrResultCode);
 		}
 	} else {
 		*ResultCode = -1;
@@ -233,4 +242,13 @@ int StkWebAppSend::GetTimeoutInterval()
 void StkWebAppSend::SetTimeoutInterval(int Interval)
 {
 	pImpl->TimeoutInterval = Interval;
+}
+
+void StkWebAppSend::SetAutholization(char* Auth)
+{
+	if (pImpl->Auth != NULL) {
+		delete pImpl->Auth;
+	}
+	pImpl->Auth = new char[256];
+	StkPlStrCpy(pImpl->Auth, 256, Auth);
 }
