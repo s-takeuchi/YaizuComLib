@@ -455,7 +455,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	if (FndFlag == false && Method == StkWebAppExec::STKWEBAPP_METHOD_POST && StkPlWcsCmp(UrlPath, L"/service/") == 0) {
 		int ErrorCode;
 		StkObject* TmpObj = StkObject::CreateObjectFromJson(L"{ \"Operation\" : \"Stop\" }", &ErrorCode);
-		if (StkObjReq->Equals(TmpObj) == true) {
+		if (StkObjReq != NULL && StkObjReq->Equals(TmpObj) == true) {
 			ResultCode = 202;
 			FndFlag = true;
 			pImpl->StopFlag = true;
