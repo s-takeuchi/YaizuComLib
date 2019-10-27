@@ -106,6 +106,8 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 		StkPlStrCat(HttpHeader, 1024, "DELETE ");
 	} else if (Method == STKWEBAPP_METHOD_HEAD) {
 		StkPlStrCat(HttpHeader, 1024, "HEAD ");
+	} else if (Method == STKWEBAPP_METHOD_OPTION) {
+		StkPlStrCat(HttpHeader, 1024, "OPTION ");
 	}
 	StkPlStrCat(HttpHeader, 1024, Url);
 	StkPlStrCat(HttpHeader, 1024, " HTTP/1.1\r\n");

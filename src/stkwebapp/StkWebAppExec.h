@@ -10,7 +10,8 @@ public:
 	static const unsigned char STKWEBAPP_METHOD_POST      = 0x04;
 	static const unsigned char STKWEBAPP_METHOD_PUT       = 0x08;
 	static const unsigned char STKWEBAPP_METHOD_DELETE    = 0x10;
-	static const unsigned char STKWEBAPP_METHOD_INVALID   = 0x20;
+	static const unsigned char STKWEBAPP_METHOD_OPTION    = 0x20;
+	static const unsigned char STKWEBAPP_METHOD_INVALID   = 0x40;
 
 	static const int URL_PATH_LENGTH = 1024;
 

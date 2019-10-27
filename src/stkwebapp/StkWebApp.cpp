@@ -81,6 +81,7 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	char ContLen[64] = "";
 	char Connection[64] = "";
 	char CacheCont[64] = "";
+	char AllowOrigin[64] = "";
 	char Date[64] = "";
 	char DateTmp[64] = "";
 
@@ -159,6 +160,7 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	StkPlSPrintf(ContLen, 64, "Content-Length: %d\r\n", DataLength);
 	StkPlSPrintf(Connection, 64, "Connection: close\r\n");
 	StkPlSPrintf(CacheCont, 64, "Cache-Control: no-cache\r\n");
+	StkPlSPrintf(AllowOrigin, 64, "Access-Control-Allow-Origin: *\r\n");
 
 	StkPlGetTimeInRfc2822(DateTmp, false);
 	StkPlSPrintf(Date, 64, "Date: %s\r\n", DateTmp);
@@ -168,6 +170,7 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	StkPlStrCat(HeaderData, 1024, ContLen);
 	StkPlStrCat(HeaderData, 1024, Connection);
 	StkPlStrCat(HeaderData, 1024, CacheCont);
+	StkPlStrCat(HeaderData, 1024, AllowOrigin);
 	StkPlStrCat(HeaderData, 1024, Date);
 
 	StkPlStrCat(HeaderData, 1024, "\r\n");
@@ -230,6 +233,8 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_PUT;
 	} else if (StkPlWcsCmp(MethodStr, L"DELETE") == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_DELETE;
+	} else if (StkPlWcsCmp(MethodStr, L"OPTION") == 0) {
+		*Method = StkWebAppExec::STKWEBAPP_METHOD_OPTION;
 	} else {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
 		delete DatWc;
@@ -431,7 +436,12 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			int MethodCalRes = Method & pImpl->HandlerMethod[Loop];
 			int FindRes = StkStringParser::ParseInto4Params(UrlPath, pImpl->HandlerUrlPath[Loop], L'$', Param[0], Param[1], Param[2], Param[3]);
 			if (MethodCalRes && FindRes == 1) {
-				StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode, HttpHeader);
+				if (Method == StkWebAppExec::STKWEBAPP_METHOD_OPTION) {
+					StkObjRes = NULL;
+					ResultCode = 200;
+				} else {
+					StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode, HttpHeader);
+				}
 				FndFlag = true;
 				break;
 			}
