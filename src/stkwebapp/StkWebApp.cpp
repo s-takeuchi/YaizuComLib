@@ -72,8 +72,8 @@ const wchar_t* StkWebApp::Impl::SkipHttpHeader(wchar_t* Txt)
 
 unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJsonType)
 {
-	char* HeaderData = new char[1024];
-	StkPlStrCpy(HeaderData, 1024, "");
+	char* HeaderData = new char[2048];
+	StkPlStrCpy(HeaderData, 2048, "");
 
 	char Status[32] = "";
 	char RespLine[64] = "";
@@ -81,7 +81,6 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	char ContLen[64] = "";
 	char Connection[64] = "";
 	char CacheCont[64] = "";
-	char AllowOrigin[64] = "";
 	char Date[64] = "";
 	char DateTmp[64] = "";
 
@@ -160,20 +159,22 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	StkPlSPrintf(ContLen, 64, "Content-Length: %d\r\n", DataLength);
 	StkPlSPrintf(Connection, 64, "Connection: close\r\n");
 	StkPlSPrintf(CacheCont, 64, "Cache-Control: no-cache\r\n");
-	StkPlSPrintf(AllowOrigin, 64, "Access-Control-Allow-Origin: *\r\n");
 
 	StkPlGetTimeInRfc2822(DateTmp, false);
 	StkPlSPrintf(Date, 64, "Date: %s\r\n", DateTmp);
 
-	StkPlStrCat(HeaderData, 1024, RespLine);
-	StkPlStrCat(HeaderData, 1024, ContType);
-	StkPlStrCat(HeaderData, 1024, ContLen);
-	StkPlStrCat(HeaderData, 1024, Connection);
-	StkPlStrCat(HeaderData, 1024, CacheCont);
-	StkPlStrCat(HeaderData, 1024, AllowOrigin);
-	StkPlStrCat(HeaderData, 1024, Date);
+	StkPlStrCat(HeaderData, 2048, RespLine);
+	StkPlStrCat(HeaderData, 2048, ContType);
+	StkPlStrCat(HeaderData, 2048, ContLen);
+	StkPlStrCat(HeaderData, 2048, Connection);
+	StkPlStrCat(HeaderData, 2048, CacheCont);
+	StkPlStrCat(HeaderData, 2048, "Access-Control-Allow-Origin: *\r\n");
+	StkPlStrCat(HeaderData, 2048, "Access-Control-Allow-Headers: Authorization, Origin, Accept, Content-Type\r\n");
+	StkPlStrCat(HeaderData, 2048, "Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\n");
+	StkPlStrCat(HeaderData, 2048, "Access-Control-Max-Age: 3600\r\n");
+	StkPlStrCat(HeaderData, 2048, Date);
 
-	StkPlStrCat(HeaderData, 1024, "\r\n");
+	StkPlStrCat(HeaderData, 2048, "\r\n");
 
 	return (unsigned char*)HeaderData;
 }
