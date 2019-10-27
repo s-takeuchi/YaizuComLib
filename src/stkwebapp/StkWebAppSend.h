@@ -14,7 +14,7 @@ public:
 	static const unsigned char STKWEBAPP_METHOD_POST      = 0x04;
 	static const unsigned char STKWEBAPP_METHOD_PUT       = 0x08;
 	static const unsigned char STKWEBAPP_METHOD_DELETE    = 0x10;
-	static const unsigned char STKWEBAPP_METHOD_OPTION    = 0x20;
+	static const unsigned char STKWEBAPP_METHOD_OPTIONS   = 0x20;
 	static const unsigned char STKWEBAPP_METHOD_INVALID   = 0x40;
 
 	StkWebAppSend(int, const wchar_t*, int);
@@ -28,7 +28,7 @@ public:
 	int GetTimeoutInterval();
 	void SetTimeoutInterval(int);
 
-	void SetAutholization(char*);
+	void SetAutholization(const char*);
 
 	StkObject* SendRequestRecvResponse(int, const char*, StkObject*, int*);
 };

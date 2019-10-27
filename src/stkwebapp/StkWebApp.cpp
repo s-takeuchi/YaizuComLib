@@ -233,8 +233,8 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_PUT;
 	} else if (StkPlWcsCmp(MethodStr, L"DELETE") == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_DELETE;
-	} else if (StkPlWcsCmp(MethodStr, L"OPTION") == 0) {
-		*Method = StkWebAppExec::STKWEBAPP_METHOD_OPTION;
+	} else if (StkPlWcsCmp(MethodStr, L"OPTIONS") == 0) {
+		*Method = StkWebAppExec::STKWEBAPP_METHOD_OPTIONS;
 	} else {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
 		delete DatWc;
@@ -436,7 +436,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 			int MethodCalRes = Method & pImpl->HandlerMethod[Loop];
 			int FindRes = StkStringParser::ParseInto4Params(UrlPath, pImpl->HandlerUrlPath[Loop], L'$', Param[0], Param[1], Param[2], Param[3]);
 			if (MethodCalRes && FindRes == 1) {
-				if (Method == StkWebAppExec::STKWEBAPP_METHOD_OPTION) {
+				if (Method == StkWebAppExec::STKWEBAPP_METHOD_OPTIONS) {
 					StkObjRes = NULL;
 					ResultCode = 200;
 				} else {
