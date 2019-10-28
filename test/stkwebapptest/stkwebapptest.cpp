@@ -132,7 +132,7 @@ bool SendTestData(int Id, const char* Dat)
 	}
 }
 
-int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, const char* ContType, int* ErrorCode, wchar_t Header[256] = NULL, int ContLen = -1)
+int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, const char* ContType, int* ErrorCode, wchar_t Header[1024] = NULL, int ContLen = -1)
 {
 	char Tmp[256];
 	unsigned char RecvDat[8192];
@@ -168,8 +168,8 @@ int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, 
 	wchar_t* RecvDatW = StkPlCreateWideCharFromUtf8((char*)RecvDat);
 
 	if (Header != NULL) {
-		StkPlWcsNCpy(Header, 256, RecvDatW, 256 - 1);
-		Header[255] = L'\0';
+		StkPlWcsNCpy(Header, 1024, RecvDatW, 1024 - 1);
+		Header[1023] = L'\0';
 	}
 
 	// Skip HTTP header
@@ -302,7 +302,7 @@ int ElemStkThreadMainSend2(int Id)
 
 	// Timeout detection start
 	{
-		wchar_t Header[256];
+		wchar_t Header[1024];
 
 		int Ret = 0;
 		long long StartTime = 0;
@@ -352,7 +352,7 @@ int ElemStkThreadMainSend2(int Id)
 int ElemStkThreadMainSend3(int Id)
 {
 	int ErrorCode;
-	wchar_t Header[256];
+	wchar_t Header[1024];
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/100/ [{ \"AAA\":\"aaa\" }] == 100 Continue");
 	if (SendTestData2(Id, "GET", "/aaa/100/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 100 || StkPlWcsStr(Header, L"Continue") == NULL || ErrorCode != -1) {
@@ -449,7 +449,7 @@ int ElemStkThreadMainSend3(int Id)
 
 	// Timeout detection start
 	{
-		wchar_t Header[256];
+		wchar_t Header[1024];
 
 		int Ret = 0;
 		long long StartTime = 0;
