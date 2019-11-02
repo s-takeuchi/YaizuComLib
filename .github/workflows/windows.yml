@@ -1,19 +1,21 @@
-name: YaizuComLib CI
+name: YaizuComLib Windows CI
 
 on: [push]
 
 jobs:
   build:
 
-    runs-on: ubuntu-18.04
+    runs-on: windows-2016
 
     steps:
     - uses: actions/checkout@v1
     - name: exec build
+      env:
+        APPVEYOR: true
       run: |
         cd build
-        ./build.sh
-    - name: exec pwd ls
+        ./build.bat
+    - name: exec test
       run: |
         cd build
-        ./test.sh
+        ./test.bat

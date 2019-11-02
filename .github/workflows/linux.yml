@@ -1,0 +1,19 @@
+name: YaizuComLib Linux CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: exec build
+      run: |
+        cd build
+        ./build.sh
+    - name: exec test
+      run: |
+        cd build
+        ./test.sh
