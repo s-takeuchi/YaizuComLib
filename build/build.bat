@@ -20,6 +20,8 @@ if defined GITHUBACTIONS (
   goto definitionend
 )
 
+set LOCALMACHINE="true"
+
 set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
 set WKHTMLTOPDF="C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
 set PDFTK="C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
@@ -68,7 +70,7 @@ if exist deployment del deployment
 mkdir deployment
 
 
-if not defined APPVEYOR (
+if defined LOCALMACHINE (
   rem ########## Create PDF files ##########
   echo;
   echo ==========================================
@@ -263,7 +265,7 @@ del ..\build\deployment\StkWebApp.h
 del ..\build\deployment\StkWebAppExec.h
 
 
-if not defined APPVEYOR (
+if defined LOCALMACHINE (
   echo;
   %LCOUNTER% ..\src /subdir
 )
@@ -273,7 +275,7 @@ echo;
 echo Building process for YaizuComLib has ended.
 echo;
 
-if not defined APPVEYOR (
+if defined LOCALMACHINE (
   pause
 )
 exit /b %ERRORLEVEL%

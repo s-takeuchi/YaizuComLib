@@ -10,6 +10,7 @@ if defined GITHUBACTIONS (
   goto definitionend
 )
 
+set LOCALMACHINE="true"
 set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
 
 :definitionend
@@ -69,7 +70,7 @@ echo;
 echo Testing libraries has done.
 echo;
 
-if not defined APPVEYOR (
+if defined LOCALMACHINE (
   pause
 )
 exit /b %ERRORLEVEL%
