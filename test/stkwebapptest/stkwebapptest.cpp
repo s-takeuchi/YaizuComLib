@@ -590,7 +590,12 @@ void ReqResTest1(bool LargeFlag)
 	}
 	StkPlPrintf("(Repeat=%d)", SendTestDataCount);
 	StopSpecifiedStkThreads(SendIds, THREADNUM);
+	int WaitingStopCnt = 0;
 	while (GetNumOfRunStkThread() != THREADNUM) {
+		if (WaitingStopCnt == 20) {
+			StkPlPrintf("... NG(Time up for waiting threads stop)\r\n");
+			StkPlExit(-1);
+		}
 		StkPlSleepMs(100);
 	}
 	////////// Main logic ends
