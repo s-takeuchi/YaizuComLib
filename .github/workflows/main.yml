@@ -1,0 +1,17 @@
+name: YaizuComLib Build
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/YaizuComLib@master
+    - name: exec ls
+      run: ls
+    - name: exec pwd ls
+      run: |
+        pwd
+        ls -l
