@@ -15,5 +15,5 @@ jobs:
         ./build.sh
     - name: exec pwd ls
       run: |
-        pwd
-        ls -l
+        cd build
+        ./test.sh
