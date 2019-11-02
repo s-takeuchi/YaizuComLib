@@ -16,7 +16,7 @@ jobs:
         cd build
         ./build.bat
     - name: exec test
-       env:
+      env:
         GITHUBACTIONS: true
      run: |
         cd build
