@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-    - uses: actions/YaizuComLib@master
+    - uses: actions/checkout@v1
     - name: exec ls
       run: ls
     - name: exec pwd ls
