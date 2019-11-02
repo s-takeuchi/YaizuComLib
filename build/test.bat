@@ -2,11 +2,17 @@
 
 if defined APPVEYOR (
   set MSBUILD="msbuild.exe"
+  goto definitionend
 )
 
-if not defined APPVEYOR (
-  set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+if defined GITHUBACTIONS (
+  set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe"
+  goto definitionend
 )
+
+set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+
+:definitionend
 
 rem ########## Testing libraries ##########
 echo;

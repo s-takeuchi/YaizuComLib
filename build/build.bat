@@ -7,43 +7,51 @@ if defined APPVEYOR (
   set PDFTK=""
   set SEVENZIP="7z.exe"
   set LCOUNTER=""
+  goto definitionend
 )
 
-if not defined APPVEYOR (
-  set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
-  set WKHTMLTOPDF="C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
-  set PDFTK="C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
-  set SEVENZIP="C:\Program Files\7-Zip\7z.exe"
-  set LCOUNTER="C:\Program Files (x86)\lcounter\lcounter.exe"
+if defined GITHUBACTIONS (
+  echo For AppVeyor
+  set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe"
+  set WKHTMLTOPDF=""
+  set PDFTK=""
+  set SEVENZIP="7z.exe"
+  set LCOUNTER=""
+  goto definitionend
 )
+
+set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+set WKHTMLTOPDF="C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+set PDFTK="C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
+set SEVENZIP="C:\Program Files\7-Zip\7z.exe"
+set LCOUNTER="C:\Program Files (x86)\lcounter\lcounter.exe"
+
+echo;
+echo This batch file requires softwares shown below.
+echo 1. Microsoft Visual Studio 2017
+echo 2. wkhtmltopdf 0.12.0.3
+echo 3. PDFtk Server 2.02
+echo 4. 7-Zip 9.20
+echo 5. Line Counter
+
+if not exist %MSBUILD% (
+  exit
+) else if not exist %WKHTMLTOPDF% (
+  exit
+) else if not exist %PDFTK% (
+  exit
+) else if not exist %SEVENZIP% (
+  exit
+) else if not exist %LCOUNTER% (
+  exit
+)
+
+:definitionend
 
 echo;
 echo =========================================
 echo Build YaizuComLib
 echo =========================================
-
-if not defined APPVEYOR (
-  echo;
-  echo This batch file requires softwares shown below.
-  echo 1. Microsoft Visual Studio 2017
-  echo 2. wkhtmltopdf 0.12.0.3
-  echo 3. PDFtk Server 2.02
-  echo 4. 7-Zip 9.20
-  echo 5. Line Counter
-
-  if not exist %MSBUILD% (
-    exit
-  ) else if not exist %WKHTMLTOPDF% (
-    exit
-  ) else if not exist %PDFTK% (
-    exit
-  ) else if not exist %SEVENZIP% (
-    exit
-  ) else if not exist %LCOUNTER% (
-    exit
-  )
-)
-
 echo;
 echo Building process for YaizuComLib has started.
 echo;
@@ -80,7 +88,6 @@ if not defined APPVEYOR (
   xcopy /y /q /s /i "..\doc\commonfunc" deployment\commonfunc
   pushd deployment\commonfunc
   %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm commonfunc00.pdf
-  %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm commonfunc01.pdf
   %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm commonfunc02.pdf
   %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section03.htm commonfunc03.pdf
   %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section04.htm commonfunc04.pdf
