@@ -1,4 +1,4 @@
-name: YaizuComLib Build
+name: YaizuComLib CI
 
 on: [push]
 
@@ -9,8 +9,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: exec ls
-      run: ls
+    - name: exec build
+      run: |
+        cd build
+        ./build.sh
     - name: exec pwd ls
       run: |
         pwd
