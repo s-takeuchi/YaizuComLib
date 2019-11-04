@@ -8,7 +8,7 @@
 #include "StkWebApp.h"
 #include "StkWebAppExec.h"
 
-#define MAX_THREAD_COUNT 64
+#define MAX_THREAD_COUNT MAX_NUM_OF_STKTHREADS
 #define MAX_REQHANDLER_COUNT 1024
 #define MAX_IMPL_COUNT 8
 
