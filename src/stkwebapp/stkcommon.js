@@ -1,4 +1,7 @@
 ﻿
+// Server url
+var svrUrl = ".";
+
 // Timeout in milliseconds for API call
 var timeout = 10000;
 
@@ -226,10 +229,11 @@ function sendRequestRecvResponse(method, url, request, keystring, asyncFlag) {
         $.ajax({
             type: method,
             dataType: 'json',
-            url: url,
+            url: svrUrl + url,
             data: request,
             async: asyncFlag,
             timeout: timeout,
+            crossDomain: true,
             beforeSend: function( xhr, settings ) {
                 xhr.setRequestHeader('Authorization', 'Bearer ' + loginId + ' ' + loginPw);
             },
@@ -259,13 +263,14 @@ function sendRequestRecvResponse(method, url, request, keystring, asyncFlag) {
         $.ajax({
             type: method,
             dataType: 'json',
-            url: url,
+            url: svrUrl + url,
             data: JSON.stringify(request),
             contentType: 'application/json',
             async: asyncFlag,
             timeout: timeout,
+            crossDomain: true,
             beforeSend: function( xhr, settings ) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + loginId + loginPw);
+                xhr.setRequestHeader('Authorization', 'Bearer ' + loginId + ' ' + loginPw);
             },
             success: function(msg, textStatus, xhr) {
                 statusCode[keystring] = xhr.status;
