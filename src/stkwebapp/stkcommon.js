@@ -53,8 +53,8 @@ function tryLogin(func) {
     }
     if (func() == true) {
         $('#login_Modal').modal('hide');
-        document.cookie = "loginId=" + encodeURIComponent(window.btoa(loginId));
-        document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw));
+        document.cookie = "loginId=" + encodeURIComponent(window.btoa(loginId)) + ";max-age=86400;samesite=strict;secure";
+        document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw)) + ";max-age=86400;samesite=strict;secure";
     } else {
         $('#login_Modal_Body').empty();
         $('#login_Modal_Body').append('The email address or password is incorrect.');
