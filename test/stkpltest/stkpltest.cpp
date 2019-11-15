@@ -224,6 +224,28 @@ void Test_Time()
 	StkPlPrintf("OK case\n");
 }
 
+void TestHostName()
+{
+	StkPlPrintf("Test StkPlCheckHostName ... ");
+	if (!StkPlCheckHostName(L"09azAz-.:")) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	if (StkPlCheckHostName(L"あいうえおわをん")) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	if (StkPlCheckHostName(L"*")) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	if (StkPlCheckHostName(L"$")) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	StkPlPrintf("OK case\n");
+}
+
 int main(int Argc, char* Argv[])
 {
 	StkPlPrintf("stkpltest started.\n");
@@ -370,6 +392,9 @@ int main(int Argc, char* Argv[])
 		delete Str6;
 		delete Str7;
 	}
+
+	TestHostName();
+
 	StkPlPrintf("stkpltest completed.\n\n\n");
 	return 0;
 }

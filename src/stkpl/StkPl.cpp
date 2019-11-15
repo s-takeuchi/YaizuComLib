@@ -892,6 +892,25 @@ void StkPlGetHostName(wchar_t* HostName, size_t Size)
 #endif
 }
 
+bool StkPlCheckHostName(const wchar_t* HostName)
+{
+	bool ValidFlag = true;
+	const wchar_t* HostNamePtr = HostName;
+	while (*HostNamePtr) {
+		if (*HostNamePtr >= L'a' && *HostNamePtr <= L'z') {
+		} else if (*HostNamePtr >= L'A' && *HostNamePtr <= L'Z') {
+		} else if (*HostNamePtr >= L'0' && *HostNamePtr <= L'9') {
+		} else if (*HostNamePtr == L'-') {
+		} else if (*HostNamePtr == L'.') {
+		} else if (*HostNamePtr == L':') { // For IPv6
+		} else {
+			ValidFlag = false;
+		}
+		HostNamePtr++;
+	}
+	return ValidFlag;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 // APIs for date and time
