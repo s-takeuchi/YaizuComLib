@@ -93,10 +93,10 @@ void StkSocketIPv6::TestIPv6()
 		StkPlSleepMs(100);
 	}
 	if (Loop == 30) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	} else {
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 
 	StkPlPrintf("[StkSocketIPv6] : Wait for stopping sender and receiver ... ");
@@ -107,20 +107,20 @@ void StkSocketIPv6::TestIPv6()
 		StkPlSleepMs(250);
 	}
 	if (Loop == 30) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkSocket_DeleteInfo(121);
 	StkSocket_DeleteInfo(201);
 
 	StkPlPrintf("[StkSocketIPv6] : Check that appropriate data is reecived ... ");
 	if (ErrFlag) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	} else {
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 
 	Receiver->join();
@@ -170,7 +170,7 @@ void StkSocketIPv6::TestIPv6Udp()
 	StkSocket_Connect(201);
 
 	if (StkSocket_GetNumOfStkInfos() != 2 || StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN || StkSocket_GetStatus(201) != STKSOCKET_STATUS_OPEN) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
 
@@ -189,10 +189,10 @@ void StkSocketIPv6::TestIPv6Udp()
 		StkPlSleepMs(100);
 	}
 	if (Loop == 30) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkSocket_Disconnect(201, 201, false);
 	StkSocket_Close(121, false);

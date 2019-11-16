@@ -7,10 +7,10 @@ int StkSocketTestGetSockInfo::TestAddDel()
 	{
 		StkPlPrintf("[GetSockInfo] : Current number of existing sock info is zero ... ");
 		if (StkSocket_GetNumOfStkInfos() != 0) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			return -1;
 		}
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	/////////////////////////
 	{
@@ -23,10 +23,10 @@ int StkSocketTestGetSockInfo::TestAddDel()
 		bool CopiedFlag;
 		int Ret = StkSocket_GetInfo(0, &TargetId, &SocketType, &ActionType, TargetIpAddr, &TargetPort, &CopiedFlag);
 		if (Ret != -1) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			return -1;
 		}
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	/////////////////////////
 	{
@@ -92,7 +92,7 @@ int StkSocketTestGetSockInfo::TestAddDel()
 			StkPlPrintf("NG[5]\r\n");
 			return -1;
 		}
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	/////////////////////////
 	{
@@ -129,7 +129,7 @@ int StkSocketTestGetSockInfo::TestAddDel()
 			StkPlPrintf("NG[4]\r\n");
 			return -1;
 		}
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	/////////////////////////
 	{
@@ -152,7 +152,7 @@ int StkSocketTestGetSockInfo::TestAddDel()
 			StkPlPrintf("NG[1]\r\n");
 			return -1;
 		}
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	return 0;
 }

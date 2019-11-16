@@ -18,10 +18,10 @@ int Insert16383Records()
 	TabDefPerson.AddColumnDef(&ColDefKey);
 	TabDefPerson.AddColumnDef(&ColDefHeight);
 	if (CreateTable(&TabDefPerson) != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("16383 records can be added to Person table with 16383 repeat of InsertRecord.");
@@ -52,75 +52,75 @@ int Insert16383Records()
 		LockTable(L"Person", 2);
 		if (InsertRecord(CurRecDat) != 0) {
 			UnlockTable(L"Person");
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			delete CurRecDat;
 			return -1;
 		}
 		UnlockTable(L"Person");
 		delete CurRecDat;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	{
 		StkPlPrintf("-1 is returned if sorting of (AzSortRecord(L\"Person\", L\"ID\")) is performed without locking.");
 		if (AzSortRecord(L"Person", L"ID") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("-1 is returned if sorting of (ZaSortRecord(L\"Person\", L\"ID\")) is performed without locking.");
 		if (ZaSortRecord(L"Person", L"ID") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("-1 is returned if sorting of (AzSortRecord(L\"Person\", L\"ID\")) is performed after shared lock.");
 		LockTable(L"Person", LOCK_SHARE);
 		if (AzSortRecord(L"Person", L"ID") != -1) {
 			UnlockTable(L"Person");
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"Person");
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("-1 is returned if sorting of (ZaSortRecord(L\"Person\", L\"ID\")) is performed after shared lock.");
 		LockTable(L"Person", LOCK_SHARE);
 		if (ZaSortRecord(L"Person", L"ID") != -1) {
 			UnlockTable(L"Person");
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"Person");
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("0 is returned if sorting of (AzSortRecord(L\"Person\", L\"ID\")) is performed after exclusive lock.");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (AzSortRecord(L"Person", L"ID") != 0) {
 			UnlockTable(L"Person");
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"Person");
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("0 is returned if sorting of (ZaSortRecord(\"Person\", L\"ID\")) is performed after exclusive lock.");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (ZaSortRecord(L"Person", L"ID") != 0) {
 			UnlockTable(L"Person");
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"Person");
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 
@@ -136,11 +136,11 @@ int Insert16383Records()
 			RecDatGet = RecDatGet->GetNextRecord();
 		}
 		if (Count != 16383) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		delete RecDatGet;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 
@@ -169,26 +169,26 @@ int Insert16383Records()
 		UnlockTable(L"Person");
 
 		if (RecDatGet == NULL) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		int NumOfFnd = 0;
 		for (RecordData* CurRecDat = RecDatGet; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
 			ColumnDataWStr* ColName = (ColumnDataWStr*)CurRecDat->GetColumn(L"Name");
 			if (StkPlWcsStr(ColName->GetValue(), L"木村") == NULL && StkPlWcsStr(ColName->GetValue(), L"田中") == NULL ) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			ColumnDataInt* ColId = (ColumnDataInt*)CurRecDat->GetColumn(L"ID");
 			if (ColId->GetValue() <= 1000 && ColId->GetValue() >= 2000) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			NumOfFnd++;
 		}
 		delete RecDatKim;
 		delete RecDatGet;
-		StkPlPrintf("...%d records found [OK]\r\n", NumOfFnd);
+		StkPlPrintf("...%d records found [OK]\n", NumOfFnd);
 	}
 
 
@@ -207,18 +207,18 @@ int Insert16383Records()
 			ColumnDataWStr *ColDatName = (ColumnDataWStr*)(RecDatGet->GetColumn(0));
 			wchar_t *Name = ColDatName->GetValue();
 			if (StkPlWcsCmp(Name, L"竹内 伸也") != 0) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			FndCnt++;
 			RecDatGet = RecDatGet->GetNextRecord();
 		}
 		if (FndCnt != 4) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		delete RecDatGet;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
@@ -231,29 +231,29 @@ int Insert16383Records()
 		RecDatGet = GetRecord(&RecDat);
 		UnlockTable(L"Person");
 		if (RecDatGet != NULL) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		delete RecDatGet;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
 		StkPlPrintf("Number of records which is acquired by GetNumOfRecords(\"Person\") shows 16383.");
 		if (GetNumOfRecords(L"Person") != 16383) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
 		StkPlPrintf("Number of records which is acquired by GetMaxNumOfRecords(\"Person\") shows 16383.");
 		if (GetMaxNumOfRecords(L"Person") != 16383) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
@@ -272,13 +272,13 @@ int Insert16383Records()
 		LockAllTable(LOCK_SHARE);
 		long long CalCntStart = StkPlGetTickCount();
 		if (SaveData(L"Insert16383records.std") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			UnlockAllTable();
 			return -1;
 		}
 		long long CalCntEnd = StkPlGetTickCount();
 		UnlockAllTable();
-		StkPlPrintf("... (%d msec) [OK]\r\n", CalCntEnd - CalCntStart);
+		StkPlPrintf("... (%d msec) [OK]\n", CalCntEnd - CalCntStart);
 	}
 
 	{
@@ -286,7 +286,7 @@ int Insert16383Records()
 		LockAllTable(LOCK_EXCLUSIVE);
 		long long CalCntStart = StkPlGetTickCount();
 		if (LoadData(L"Insert16383records.std") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			UnlockAllTable();
 			return -1;
 		}
@@ -300,19 +300,19 @@ int Insert16383Records()
 		RecordData* Rec = GetRecord(SearchRec);
 		UnlockTable(L"Person");
 		if (Rec == NULL) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		} else {
 			ColumnDataWStr* Dat = (ColumnDataWStr*)Rec->GetColumn(0);
 			if (StkPlWcsStr(Dat->GetValue(), L"𠮷𠮷𠮷𠮷") == NULL || StkPlWcsStr(Dat->GetValue(), L"𠮷𠮷𠮷𠮷𠮷") != NULL) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 		}
 		delete SearchRec;
 		delete Rec;
 
-		StkPlPrintf("... (%d msec) [OK]\r\n", CalCntEnd - CalCntStart);
+		StkPlPrintf("... (%d msec) [OK]\n", CalCntEnd - CalCntStart);
 	}
 
 	{
@@ -321,70 +321,70 @@ int Insert16383Records()
 		Col[0] = new ColumnDataWStr(L"Name", L"竹内 伸也");
 		RecordData* Rec = new RecordData(L"Person", Col, 1);
 		if (DeleteRecord(Rec) != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetNumOfRecords(L"Person") != 16383) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("In case DeleteRecord(Person-Name=existing name) is executed with shared lock, -1 is returned and GetNumOfRecords(L\"Person\") returns 16383.");
 		LockTable(L"Person", LOCK_SHARE);
 		if (DeleteRecord(Rec) != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"Person");
 		if (GetNumOfRecords(L"Person") != 16383) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("In case DeleteRecord(Person-Name=same name of previous execution) is executed with exclusive lock, 0 is returned and GetNumOfRecords(L\"Person\") returns 16379.");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (DeleteRecord(Rec) != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"Person");
 		if (GetNumOfRecords(L"Person") != 16379) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		delete Rec;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
 		StkPlPrintf("In case DeleteRecord(L\"Person\") is executed without lock, -1 is returned and GetNumOfRecords(L\"Person\") returns 16379.");
 		if (DeleteRecord(L"Person") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetNumOfRecords(L"Person") != 16379) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("In case DeleteRecord(L\"Person\") is executed with shared lock, -1 is returned and GetNumOfRecords(L\"Person\") returns 16379.");
 		LockTable(L"Person", LOCK_SHARE);
 		if (DeleteRecord(L"Person") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"Person");
 		if (GetNumOfRecords(L"Person") != 16379) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 
@@ -420,7 +420,7 @@ int Insert16383Records()
 		UnlockTable(L"Person");
 
 		if (RecDatGet == NULL) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		int NumOfKey = 0;
@@ -432,26 +432,26 @@ int Insert16383Records()
 
 			if ((StkPlWcsStr(ColName->GetValue(), L"由紀") != NULL || StkPlWcsStr(ColName->GetValue(), L"由美") != NULL) && ColId->GetValue() > 100 && ColId->GetValue() < 500) {
 				if (StkPlStrCmp(ColKey->GetValue(), "Key exist") != 0) {
-					StkPlPrintf("...[NG]\r\n");
+					StkPlPrintf("...[NG]\n");
 					return -1;
 				} else {
 					NumOfKey++;
 				}
 			} else {
 				if (StkPlStrCmp(ColKey->GetValue(), "No Key") != 0) {
-					StkPlPrintf("...[NG]\r\n");
+					StkPlPrintf("...[NG]\n");
 					return -1;
 				} else {
 					NumOfNoKey++;
 				}
 			}
 		}
-		StkPlPrintf("(Key=%d, NoKey=%d)...[OK]\r\n", NumOfKey, NumOfNoKey);
+		StkPlPrintf("(Key=%d, NoKey=%d)...[OK]\n", NumOfKey, NumOfNoKey);
 
 
 		StkPlPrintf("The records are deleted in the condition that 16383 records contains particular name in multibyte  and ID is in the scope of 100 < ID < 500.");
 		if (GetNumOfRecords(L"Person") != 16379) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		LockTable(L"Person", LOCK_EXCLUSIVE);
@@ -459,10 +459,10 @@ int Insert16383Records()
 		UnlockTable(L"Person");
 		int Rest = GetNumOfRecords(L"Person");
 		if (Rest != (16379 - NumOfKey)) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("(Deleted count = %d, Rest = %d)...[OK]\r\n", NumOfKey, Rest);
+		StkPlPrintf("(Deleted count = %d, Rest = %d)...[OK]\n", NumOfKey, Rest);
 
 		delete RecDatSch1;
 		delete RecDatUpd;
@@ -474,35 +474,35 @@ int Insert16383Records()
 		StkPlPrintf("The value of GetNumOfRecords(L\"Person\") becomes zero because zero is returned if DeleteRecord(L\"Person\") is executed with exclusive lock.");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (DeleteRecord(L"Person") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"Person");
 		if (GetNumOfRecords(L"Person") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("-1 is returned due to target table not exist in case DeleteRecord(L\"Person\") is executed with exclusive lock again.");
 		LockTable(L"Person", LOCK_EXCLUSIVE);
 		if (DeleteRecord(L"Person") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"Person");
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 
 	{
 		StkPlPrintf("Table can be deleted using DeleteTable(\"Person\").");
 		if (DeleteTable(L"Person") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	return 0;

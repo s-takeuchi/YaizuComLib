@@ -17,11 +17,11 @@ void StkSocketTestHttp::TestRecvHttpTermination1()
 		}
 		Ret = StkSocket_Receive(100, 100, Dat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, -1);
 		if (Ret == -1 || Ret == -2) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(0);
 		}
 		if (StkPlStrStr((char*)Dat, "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\0") == NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(0);
 		}
 
@@ -33,7 +33,7 @@ void StkSocketTestHttp::TestRecvHttpTermination1()
 		StkPlStrCat((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
 		int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
 		if (RetS <= 0) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(0);
 		}
 		StkSocket_CloseAccept(100, 100, true);
@@ -56,7 +56,7 @@ void StkSocketTestHttp::TestSendHttpTermination1()
 	StkSocket_Connect(101);
 	int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
 	if (RetS <= 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		StkPlExit(0);
 	}
 	int RetR;
@@ -69,11 +69,11 @@ void StkSocketTestHttp::TestSendHttpTermination1()
 	}
 	StkSocket_Disconnect(101, 101, true);
 	if (RetR <= 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		StkPlExit(0);
 	}
 	if (StkPlStrStr((char*)Dat, "0123456789012345678901234567890123456789012345678z\0") == NULL) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		StkPlExit(0);
 	}
 }
@@ -176,7 +176,7 @@ void StkSocketTestHttp::TestSendHttpTermination2()
 		}
 		int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
 		if (RetS <= 0) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(0);
 		}
 		if (Loop == 12) {
@@ -194,11 +194,11 @@ void StkSocketTestHttp::TestSendHttpTermination2()
 		}
 		StkSocket_Disconnect(101, 101, true);
 		if (RetR <= 0) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(0);
 		}
 		if (StkPlStrStr((char*)Dat, "0123456789012345678901234567890123456789012345678z\0") == NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(0);
 		}
 	}
@@ -219,7 +219,7 @@ void StkSocketTestHttp::TestHttpTermination()
 		delete Receiver;
 		delete Sender;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkPlPrintf("[StkSocketTestHttp]:Abnormal case (no Content-Length) ... ");
 	{
@@ -230,7 +230,7 @@ void StkSocketTestHttp::TestHttpTermination()
 		delete Receiver;
 		delete Sender;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkSocket_DeleteInfo(101);
 	StkSocket_Close(100, true);

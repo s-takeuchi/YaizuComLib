@@ -16,7 +16,7 @@ int BasicBinaryTest01()
 	TabDefTest.AddColumnDef(&ColDefImg1);
 	TabDefTest.AddColumnDef(&ColDefImg2);
 	CreateTable(&TabDefTest);
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	// テーブル"Bin-Test"にInsertRecordで1レコードを追加
 	{
@@ -33,7 +33,7 @@ int BasicBinaryTest01()
 		InsertRecord(RecDat);
 		UnlockTable(L"Bin-Test");
 		delete RecDat;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// テーブル"Bin-Test"にInsertRecordで連結されたレコード３個を追加
@@ -73,7 +73,7 @@ int BasicBinaryTest01()
 		InsertRecord(RecDat1);
 		UnlockTable(L"Bin-Test");
 		delete RecDat1;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// テーブル"Bin-Test"にInsertRecordで1レコードを追加
@@ -91,7 +91,7 @@ int BasicBinaryTest01()
 		InsertRecord(RecDat);
 		UnlockTable(L"Bin-Test");
 		delete RecDat;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	return 0;
@@ -145,10 +145,10 @@ int BasicBinaryTest02()
 	delete TopRecDat;
 
 	if (Err == 1 || Cnt != 5) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 	return 0;
 }
 
@@ -186,7 +186,7 @@ int BasicBinaryTest04()
 
 	delete RecDat;
 	delete GetRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 	return 0;
 }
 
@@ -223,7 +223,7 @@ int BasicBinaryTest05()
 
 	delete RecDat;
 	delete GetRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 	return 0;
 }
 
@@ -262,7 +262,7 @@ int BasicBinaryTest06()
 
 	delete RecDat;
 	delete GetRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 	return 0;
 }
 
@@ -295,7 +295,7 @@ int BasicBinaryTest07()
 
 	delete RecDat;
 	delete GetRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 	return 0;
 }
 
@@ -332,7 +332,7 @@ int BasicBinaryTest08()
 
 	delete RecDat1;
 	delete GetRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 	return 0;
 }
 
@@ -399,10 +399,10 @@ int BasicBinaryTest09()
 		GetRecDat = GetRecDat->GetNextRecord();
 	}
 	if (GetRecDat != NULL) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	// バイナリ型カラム"Img2"を指定してレコードを降順ソート→適正にソートされている
 	{
@@ -413,7 +413,7 @@ int BasicBinaryTest09()
 
 		LockTable(L"Bin-Test", LOCK_EXCLUSIVE);
 		if (ZaSortRecord(L"Bin-Test", L"Img2") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		RecordData* Top = GetRecord(L"Bin-Test");
@@ -422,11 +422,11 @@ int BasicBinaryTest09()
 		ColumnDataInt* Col = (ColumnDataInt*)Cul->GetColumn(0);
 		int Val = Col->GetValue();
 		if (Val != 12345) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		delete Top;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// Img1がソートで最小と評価されるレコードを追加後，バイナリ型カラム"Img1"を指定してレコードを昇順ソートする→適正にソートされている
@@ -447,7 +447,7 @@ int BasicBinaryTest09()
 
 		LockTable(L"Bin-Test", LOCK_EXCLUSIVE);
 		if (AzSortRecord(L"Bin-Test", L"Img1") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		RecordData* Top = GetRecord(L"Bin-Test");
@@ -456,11 +456,11 @@ int BasicBinaryTest09()
 		ColumnDataInt* Col = (ColumnDataInt*)Cul->GetColumn(0);
 		int Val = Col->GetValue();
 		if (Val != 9292) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		delete Top;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// バイナリデータを検索条件にしてレコードを削除する
@@ -476,10 +476,10 @@ int BasicBinaryTest09()
 	delete Top;
 
 	if (DeleteTable(L"Bin-Test") != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 	return 0;
 }
 
@@ -518,7 +518,7 @@ int LargeBinaryTableTest01()
 			StkPlSwPrintf(MsgBuf, 256, L"Failed to delete table.  %d", i);
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	return 0;
@@ -538,10 +538,10 @@ int LargeBinaryTableTest02()
 	LargeBinTable->AddColumnDef(ColDef[1]);
 	int Ret = CreateTable(LargeBinTable);
 	if (Ret != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	StkPlPrintf("InsertRecord : insert in 64 times for records include 6MB binary data.");
 	unsigned char *Dat = new unsigned char[6000000];
@@ -560,10 +560,10 @@ int LargeBinaryTableTest02()
 	}
 	UnlockTable(L"LargeBinTable2");
 	if (DeleteTable(L"LargeBinTable2") != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	return 0;
 }

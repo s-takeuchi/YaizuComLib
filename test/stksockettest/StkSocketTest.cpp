@@ -32,13 +32,13 @@ int ConnectDisconnectTcpPort()
 	StkSocket_Connect(22);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_CONNERROR && ParamInt2 != 10061) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_Disconnect(22, 22, true);
 	StkSocket_Close(22, true);
 	StkSocket_DeleteInfo(22);
-	StkPlPrintf("OK [%d]\r\n", ParamInt2);
+	StkPlPrintf("OK [%d]\n", ParamInt2);
 	return 0;
 }
 
@@ -56,17 +56,17 @@ int ConnectDisconnectUdpPort()
 	StkSocket_Connect(22);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SUCCESSCS) {
-		StkPlPrintf("NG (LOG_SUCCESSCS is not returned.\r\n");
+		StkPlPrintf("NG (LOG_SUCCESSCS is not returned.\n");
 		return -1;
 	}
 	StkSocket_Disconnect(22, 22, true);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSOCKCLOSE) {
-		StkPlPrintf("NG (LOG_UDPSOCKCLOSE is not returned.)\r\n");
+		StkPlPrintf("NG (LOG_UDPSOCKCLOSE is not returned.)\n");
 		return -1;
 	}
 	StkSocket_DeleteInfo(22);
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	return 0;
 }
 
@@ -83,7 +83,7 @@ int OpenClosePort()
 	StkPlPrintf("[OpenSocket()/CloseSocket()] : Open and close using same port. Check open and close operation are successfully end...");
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	if (StkSocket_GetNumOfStkInfos() != 1) {
-		StkPlPrintf("NG (Number of Socket Info is invalid.)\r\n");
+		StkPlPrintf("NG (Number of Socket Info is invalid.)\n");
 		return -1;
 	}
 	{
@@ -101,7 +101,7 @@ int OpenClosePort()
 			StkPlWcsCmp(TargetAddr, L"127.0.0.1") != 0 ||
 			TargetPort != 2001 ||
 			CopiedFlag != false) {
-			StkPlPrintf("NG (Acquired socket information is not matched.)\r\n");
+			StkPlPrintf("NG (Acquired socket information is not matched.)\n");
 			return -1;
 		}
 	}
@@ -109,20 +109,20 @@ int OpenClosePort()
 	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	if (StkSocket_GetNumOfStkInfos() != 0) {
-		StkPlPrintf("NG (Number of Socket Info is invalid. (not zero))\r\n");
+		StkPlPrintf("NG (Number of Socket Info is invalid. (not zero))\n");
 		return -1;
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SOCKCLOSE) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SUCCESSCSBNLS) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[OpenSocket()/CloseSocket()] : If OpenSocket is called twice with the same ID, the method processes nothing...");
@@ -130,32 +130,32 @@ int OpenClosePort()
 	StkSocket_Open(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SUCCESSCSBNLS) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_Open(1);
 	if (StkSocket_GetNumOfLogs() != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_Close(1, true);
 	StkSocket_DeleteInfo(1);
 	if (StkSocket_GetNumOfLogs() != 1) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_ClearLog();
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[OpenSocket()/CloseSocket()] : If CloseSocket is called with nonexisting ID, the method processes nothing...");
 	StkSocket_Close(9999, true);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[OpenSocket()/CloseSocket()] : If the receiver IP address is invalid(11.11.11.11), test program fails the socket opening...");
@@ -163,12 +163,12 @@ int OpenClosePort()
 	StkSocket_Open(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_BINDLISTENERR && ParamInt2 != 10049) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
-	StkPlPrintf("OK [%d]\r\n", ParamInt2);
+	StkPlPrintf("OK [%d]\n", ParamInt2);
 
 
 	StkPlPrintf("[OpenSocket()/CloseSocket()] : If OpenSocket is called with invalid host name, An error (LOG_NAMESOLVEERR) occurred...");
@@ -178,10 +178,10 @@ int OpenClosePort()
 	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	if (Msg != STKSOCKET_LOG_NAMESOLVEERR && ParamInt2 != 11004) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK [%d]\r\n", ParamInt2);
+	StkPlPrintf("OK [%d]\n", ParamInt2);
 
 
 	return 0;
@@ -204,15 +204,15 @@ int OpenCloseUdpPort()
 	StkSocket_DeleteInfo(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSOCKCLOSE) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SUCCESSCSBN) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[OpenSocket()/CloseSocket() for UDP] : If OpenSocket is called twice with the same ID, the method processes nothing...");
@@ -220,32 +220,32 @@ int OpenCloseUdpPort()
 	StkSocket_Open(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SUCCESSCSBN) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_Open(1);
 	if (StkSocket_GetNumOfLogs() != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_Close(1, true);
 	StkSocket_DeleteInfo(1);
 	if (StkSocket_GetNumOfLogs() != 1) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_ClearLog();
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[OpenSocket()/CloseSocket() for UDP] : If CloseSocket is called with nonexisting ID, the method processes nothing...");
 	StkSocket_Close(9999, true);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[OpenSocket()/CloseSocket() for UDP] : If the receiver IP address is invalid(11.11.11.11), test program fails the socket opening...");
@@ -253,12 +253,12 @@ int OpenCloseUdpPort()
 	StkSocket_Open(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_BINDERR && ParamInt2 != 10049) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
-	StkPlPrintf("OK [%d]\r\n", ParamInt2);
+	StkPlPrintf("OK [%d]\n", ParamInt2);
 
 
 	StkPlPrintf("[OpenSocket()/CloseSocket() for UDP] : If OpenSocket is called with invalid host name, An error (LOG_NAMESOLVEERR) occurred...");
@@ -268,10 +268,10 @@ int OpenCloseUdpPort()
 	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
 	if (Msg != STKSOCKET_LOG_NAMESOLVEERR && ParamInt2 != 11004) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK [%d]\r\n", ParamInt2);
+	StkPlPrintf("OK [%d]\n", ParamInt2);
 
 
 	return 0;
@@ -288,10 +288,10 @@ int GenerateLogs()
 
 	StkPlPrintf("[Logging] : Check the current number of logs is zero...");
 	if (StkSocket_GetNumOfLogs() != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each. Current number of log messages is 64...");
@@ -304,80 +304,80 @@ int GenerateLogs()
 		StkSocket_DeleteInfo(Loop);
 	}
 	if (StkSocket_GetNumOfLogs() != STKSOCKET_MAX_NUM_OF_LOG) {
-		StkPlPrintf("NG %d\r\n", StkSocket_GetNumOfLogs());
+		StkPlPrintf("NG %d\n", StkSocket_GetNumOfLogs());
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Take log messages in 20 times. Check the log messages taken are LOG_SOCKCLOSE...");
 	for (int Loop = 0; Loop < 20; Loop++) {
 		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 		if (Msg != STKSOCKET_LOG_SOCKCLOSE) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : After taking 20 log messages, number of the left log messages is 44...");
 	if (StkSocket_GetNumOfLogs() != 44) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Moreover take 20 log messages. Check the log messages taken are LOG_SOCKCLOSE...");
 	for (int Loop = 0; Loop < 20; Loop++) {
 		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 		if (Msg != STKSOCKET_LOG_SOCKCLOSE) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : After taking 20 log messages, number of the left log messages is 24...");
 	if (StkSocket_GetNumOfLogs() != 24) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Take one more log message. Check the log message is LOG_SUCCESSCSBN...");
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_SUCCESSCSBNLS) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : After ClearLog() execution, number of logs left is zero...");
 	StkSocket_ClearLog();
 	if (StkSocket_GetNumOfLogs() != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
 	StkSocket_ClearLog();
 	if (StkSocket_GetNumOfLogs() != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Call TakeLastLog() but empty log is returned...");
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each. Current number of log messages is 64 but after ClearLog is called left Msg becomes zero...");
@@ -390,24 +390,24 @@ int GenerateLogs()
 		StkSocket_DeleteInfo(Loop);
 	}
 	if (StkSocket_GetNumOfLogs() != STKSOCKET_MAX_NUM_OF_LOG) {
-		StkPlPrintf("NG %d\r\n", StkSocket_GetNumOfLogs());
+		StkPlPrintf("NG %d\n", StkSocket_GetNumOfLogs());
 		return -1;
 	}
 	StkSocket_ClearLog();
 	if (StkSocket_GetNumOfLogs() != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Call TakeFirstLog() but empty log is returned...");
 	StkSocket_TakeFirstLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Repeat OpenSocket and CloseSocket in 40 times for each...");
@@ -420,49 +420,49 @@ int GenerateLogs()
 		StkSocket_DeleteInfo(Loop);
 	}
 	if (StkSocket_GetNumOfLogs() != STKSOCKET_MAX_NUM_OF_LOG) {
-		StkPlPrintf("NG %d\r\n", StkSocket_GetNumOfLogs());
+		StkPlPrintf("NG %d\n", StkSocket_GetNumOfLogs());
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Take log using TakeFirstLog method in 24 times. Check the log messages taken are STKSOCKET_LOG_SUCCESSCSBNLS...");
 	for (int Loop = 0; Loop < 24; Loop++) {
 		StkSocket_TakeFirstLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 		if (Msg != STKSOCKET_LOG_SUCCESSCSBNLS) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : After taking 24 log messages, number of the left log messages is 40...");
 	if (StkSocket_GetNumOfLogs() != 40) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Take log using TakeFirstLog method in 40 times. Check the log messages taken are STKSOCKET_LOG_SOCKCLOSE...");
 	for (int Loop = 0; Loop < 40; Loop++) {
 		StkSocket_TakeFirstLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 		if (Msg != STKSOCKET_LOG_SOCKCLOSE) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[Logging] : Call TakeFirstLog() but empty log is returned...");
 	StkSocket_TakeFirstLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	return 0;
@@ -473,58 +473,58 @@ int TestAddDeleteSocketInfo()
 	StkPlPrintf("[AddSocketInfo()] : If ActionType is invalid, -1 is returned...");
 	int Ret = StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, 2, L"11.11.11.11", 2000);
 	if (Ret != -1) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[AddSocketInfo()] : Maximum number of stksockets can be registered...");
 	for (int Loop = 0; Loop < STKSOCKET_MAX_SOCKET_NUMBER; Loop++) {
 		if (StkSocket_AddInfo(Loop, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"11.11.11.11", Loop + 2000) != 0) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[AddSocketInfo()] : If Maximum number of stksockets is exceeded, -1 is returned...");
 	if (StkSocket_AddInfo(STKSOCKET_MAX_SOCKET_NUMBER, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"11.11.11.11", STKSOCKET_MAX_SOCKET_NUMBER + 2000) != -1) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[AddSocketInfo()] : If duplicated stksocket ID is registered, -1 is returned...");
 	if (StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"11.11.11.11", 2000) != -1) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[DeleteSocketInfo()] : If nonexisting ID is specified with DeleteSocketInfo(), -1 is returned...");
 	if (StkSocket_DeleteInfo(99999) != -1) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 
 	StkPlPrintf("[DeleteSocketInfo()] : Delete all of stksocketinfos registered. After that check whether GetNumOfStkInfos returns 0...");
 	for (int Loop = 0; Loop < STKSOCKET_MAX_SOCKET_NUMBER; Loop++) {
 		if (StkSocket_DeleteInfo(Loop) != 0) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			return -1;
 		}
 	}
 	if (StkSocket_GetNumOfStkInfos() != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		return -1;
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	return 0;
 }
@@ -556,13 +556,13 @@ void TestThreadProc0()
 			if (Ret > 0) {
 				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					StkPlPrintf("OK [%ls]\r\n", (wchar_t*)Buffer);
+					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
 					const wchar_t* TmpDat = L"Reply Hello, world!!";
 					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
 					StkSocket_CloseAccept(0, 0, true);
 					break;
 				} else {
-					StkPlPrintf("NG\r\n");
+					StkPlPrintf("NG\n");
 					exit(-1);
 				}
 			}
@@ -579,13 +579,13 @@ void TestThreadProc0()
 			if (Ret > 0) {
 				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Dummy data!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					StkPlPrintf("OK [%ls]\r\n", (wchar_t*)Buffer);
+					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
 					const wchar_t* TmpDat = L"Reply Dummy data!!";
 					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
 					StkSocket_CloseAccept(0, 0, true);
 					break;
 				} else {
-					StkPlPrintf("NG\r\n");
+					StkPlPrintf("NG\n");
 					exit(-1);
 				}
 			}
@@ -623,7 +623,7 @@ void TestThreadProc1()
 	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
 		StkPlPrintf("[Recv/Send] : Send data ...");
-		StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
+		StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\n", Buf, LogId, Msg);
 		exit(-1);
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -634,10 +634,10 @@ void TestThreadProc1()
 			StkPlPrintf("[Recv/Send] : Sender received data...");
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsCmp((wchar_t*)Buf, L"Reply Hello, world!!") != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
-				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
+				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\n", Buf, LogId, Msg);
 				exit(-1);
 			}
-			StkPlPrintf("OK [%ls]\r\n", Buf);
+			StkPlPrintf("OK [%ls]\n", Buf);
 		}
 	} while (Ret <= 0);
 	StkSocket_Disconnect(1, 1, true);
@@ -654,7 +654,7 @@ void TestThreadProc1()
 	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
 		StkPlPrintf("[Recv/Send] : Send data %ls...", Buf);
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -665,10 +665,10 @@ void TestThreadProc1()
 			StkPlPrintf("[Recv/Send] : Sender received data...");
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsCmp((wchar_t*)Buf, L"Reply Dummy data!!") != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
-				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\r\n", Buf, LogId, Msg);
+				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\n", Buf, LogId, Msg);
 				exit(-1);
 			}
-			StkPlPrintf("OK [%ls]\r\n", Buf);
+			StkPlPrintf("OK [%ls]\n", Buf);
 		}
 	} while (Ret <= 0);
 	StkSocket_Disconnect(1, 1, true);
@@ -690,7 +690,7 @@ void TestThreadProc2()
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2020);
 	if (StkSocket_Open(0) == -1) {
 		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-		StkPlPrintf("[Recv/Send2] : Appropriate string has been received by receiver... NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\r\n", Msg, ParamInt1, ParamInt2);
+		StkPlPrintf("[Recv/Send2] : Appropriate string has been received by receiver... NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\n", Msg, ParamInt1, ParamInt2);
 		exit(-1);
 	}
 	unsigned char Buffer[10000]; 
@@ -705,10 +705,10 @@ void TestThreadProc2()
 			if (Ret > 0) {
 				StkPlPrintf("[Recv/Send2] : Appropriate string has been received by receiver...");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					StkPlPrintf("OK [%ls]\r\n", (wchar_t*)Buffer);
+					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
 					break;
 				} else {
-					StkPlPrintf("NG\r\n");
+					StkPlPrintf("NG\n");
 					exit(-1);
 				}
 			}
@@ -718,9 +718,9 @@ void TestThreadProc2()
 	StkSocket_DeleteInfo(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0) {
-		StkPlPrintf("[Recv/Send2] : Receiver socket close is called...OK\r\n");
+		StkPlPrintf("[Recv/Send2] : Receiver socket close is called...OK\n");
 	} else {
-		StkPlPrintf("[Recv/Send2] : Receiver socket close is called...NG\r\n");
+		StkPlPrintf("[Recv/Send2] : Receiver socket close is called...NG\n");
 		exit(-1);
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -750,17 +750,17 @@ void TestThreadProc3()
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
-		StkPlPrintf("NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\r\n", Msg, ParamInt1, ParamInt2);
+		StkPlPrintf("NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\n", Msg, ParamInt1, ParamInt2);
 		exit(-1);
 	}
-	StkPlPrintf("OK [%ls]\r\n", Buf);
+	StkPlPrintf("OK [%ls]\n", Buf);
 
 	StkSocket_DeleteInfo(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_SOCKCLOSE && LogId == 1) {
-		StkPlPrintf("[Recv/Send2] : Sender socket close is called...OK\r\n");
+		StkPlPrintf("[Recv/Send2] : Sender socket close is called...OK\n");
 	} else {
-		StkPlPrintf("[Recv/Send2] : Sender socket close is called...NG\r\n");
+		StkPlPrintf("[Recv/Send2] : Sender socket close is called...NG\n");
 		exit(-1);
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -781,7 +781,7 @@ void TestThreadProc4()
 	StkSocket_Open(0);
 
 	if (StkSocket_GetNumOfStkInfos() < 3) {
-		StkPlPrintf("[Recv/Send for UDP] : Number of socket info is invalid...NG\r\n");
+		StkPlPrintf("[Recv/Send for UDP] : Number of socket info is invalid...NG\n");
 		exit(-1);
 	}
 	{
@@ -797,7 +797,7 @@ void TestThreadProc4()
 			if (SockType != STKSOCKET_TYPE_DGRAM ||
 				StkPlWcsCmp(TargetAddr, L"127.0.0.1") != 0 ||
 				CopiedFlag != false) {
-				StkPlPrintf("[Recv/Send for UDP] : NG (Acquired socket information is invalid.)\r\n");
+				StkPlPrintf("[Recv/Send for UDP] : NG (Acquired socket information is invalid.)\n");
 				exit(-1);
 			}
 		}
@@ -809,10 +809,10 @@ void TestThreadProc4()
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsStr((wchar_t*)Buffer, L"Hello, world!!") != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
-				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by receiver...OK [%ls]\r\n", (wchar_t*)Buffer);
+				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by receiver...OK [%ls]\n", (wchar_t*)Buffer);
 				break;
 			} else {
-				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by receiver...NG [%ls:%d]\r\n", (wchar_t*)Buffer, Msg);
+				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by receiver...NG [%ls:%d]\n", (wchar_t*)Buffer, Msg);
 				exit(-1);
 			}
 		}
@@ -831,10 +831,10 @@ void TestThreadProc4()
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
-		StkPlPrintf("[Recv/Send for UDP] : Receiver replied data...NG\r\n");
+		StkPlPrintf("[Recv/Send for UDP] : Receiver replied data...NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("[Recv/Send for UDP] : Receiver replied data...OK [%ls]\r\n", Buf);
+	StkPlPrintf("[Recv/Send for UDP] : Receiver replied data...OK [%ls]\n", Buf);
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
@@ -842,9 +842,9 @@ void TestThreadProc4()
 	StkSocket_DeleteInfo(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_UDPSOCKCLOSE && LogId == 0) {
-		StkPlPrintf("[Recv/Send for UDP] : Receiver socket close is called...OK\r\n");
+		StkPlPrintf("[Recv/Send for UDP] : Receiver socket close is called...OK\n");
 	} else {
-		StkPlPrintf("[Recv/Send for UDP] : Receiver socket close is called...NG\r\n");
+		StkPlPrintf("[Recv/Send for UDP] : Receiver socket close is called...NG\n");
 		exit(-1);
 	}
 }
@@ -870,10 +870,10 @@ void TestThreadProc5()
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg != STKSOCKET_LOG_UDPSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
-		StkPlPrintf("[Recv/Send for UDP] : Sender sent data...NG\r\n");
+		StkPlPrintf("[Recv/Send for UDP] : Sender sent data...NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("[Recv/Send for UDP] : Sender sent data...OK [%ls]\r\n", Buf);
+	StkPlPrintf("[Recv/Send for UDP] : Sender sent data...OK [%ls]\n", Buf);
 
 	unsigned char Buffer[10000]; 
 	while (true) {
@@ -881,10 +881,10 @@ void TestThreadProc5()
 		if (Ret > 0) {
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsStr((wchar_t*)Buffer, L"Shinya Takeuchi") != 0 && (Msg == STKSOCKET_LOG_UDPRECV || Msg == STKSOCKET_LOG_UDPSEND)) { // There is a possibility that STKSOCKET_LOG_ACPTSEND is taken depends on the timing.
-				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by sender...OK [%ls]\r\n", (wchar_t*)Buffer);
+				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by sender...OK [%ls]\n", (wchar_t*)Buffer);
 				break;
 			} else {
-				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by sender...NG [%ls:%d]\r\n", (wchar_t*)Buffer, Msg);
+				StkPlPrintf("[Recv/Send for UDP] : Appropriate string has been received by sender...NG [%ls:%d]\n", (wchar_t*)Buffer, Msg);
 				exit(-1);
 			}
 		}
@@ -894,9 +894,9 @@ void TestThreadProc5()
 	StkSocket_DeleteInfo(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_UDPSOCKCLOSE && LogId == 1) {
-		StkPlPrintf("[Recv/Send for UDP] : Sender socket close is called...OK\r\n");
+		StkPlPrintf("[Recv/Send for UDP] : Sender socket close is called...OK\n");
 	} else {
-		StkPlPrintf("[Recv/Send for UDP] : Sender socket close is called...NG\r\n");
+		StkPlPrintf("[Recv/Send for UDP] : Sender socket close is called...NG\n");
 		exit(-1);
 	}
 }
@@ -912,7 +912,7 @@ void TestThreadProc6()
 	while (true) {
 		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 		if (Ret > 0) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			exit(-1);
 		}
 		if (FinishFlag == true) {
@@ -921,7 +921,7 @@ void TestThreadProc6()
 	}
 	StkSocket_Close(0, false);
 	StkSocket_DeleteInfo(0);
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 }
 
 void TestThreadProc7()
@@ -948,7 +948,7 @@ void TestThreadProc8()
 	}
 	StkSocket_Close(0, true);
 	StkSocket_DeleteInfo(0);
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	return;
 }
 
@@ -1008,13 +1008,13 @@ void TestThreadProc10(int Command)
 				int TmpLogParamInt1;
 				int TmpLogParamInt2;
 				StkSocket_TakeLastLog(&TmpLog, &TmpLogId, TmpLogParamStr1, TmpLogParamStr2, &TmpLogParamInt1, &TmpLogParamInt2);
-				StkPlPrintf("NG (return=%d, expectation=%d) [%d, %d, %ls, %ls, %d, %d]\r\n", Ret, Size, TmpLog, TmpLogId, TmpLogParamStr1, TmpLogParamStr2, TmpLogParamInt1, TmpLogParamInt2);
+				StkPlPrintf("NG (return=%d, expectation=%d) [%d, %d, %ls, %ls, %d, %d]\n", Ret, Size, TmpLog, TmpLogId, TmpLogParamStr1, TmpLogParamStr2, TmpLogParamInt1, TmpLogParamInt2);
 				exit(-1);
 			}
 			break;
 		}
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	PeerCloseOkFlag = true;
 
 	StkSocket_Close(10, true);
@@ -1073,7 +1073,7 @@ void TestThreadForAcceptRecv1()
 			std::this_thread::sleep_for(std::chrono::milliseconds((rand() % 10) * 100));
 		}
 	}
-	StkPlPrintf("[Multi accepts] : Acceptor #1 is working...OK\r\n");
+	StkPlPrintf("[Multi accepts] : Acceptor #1 is working...OK\n");
 	FindFlagCounter++;
 	return;
 }
@@ -1096,7 +1096,7 @@ void TestThreadForAcceptRecv2()
 			std::this_thread::sleep_for(std::chrono::milliseconds((rand() % 10) * 100));
 		}
 	}
-	StkPlPrintf("[Multi accepts] : Acceptor #2 is working...OK\r\n");
+	StkPlPrintf("[Multi accepts] : Acceptor #2 is working...OK\n");
 	FindFlagCounter++;
 	return;
 }
@@ -1119,7 +1119,7 @@ void TestThreadForAcceptRecv3()
 			std::this_thread::sleep_for(std::chrono::milliseconds((rand() % 10) * 100));
 		}
 	}
-	StkPlPrintf("[Multi accepts] : Acceptor #3 is working...OK\r\n");
+	StkPlPrintf("[Multi accepts] : Acceptor #3 is working...OK\n");
 	FindFlagCounter++;
 	return;
 }
@@ -1182,51 +1182,51 @@ void TestThreadForAcceptSendRecv()
 {
 	StkSocket_AddInfo(101, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	if (StkSocket_CopyInfo(102, 101) != -1) {
-		StkPlPrintf("[Multi accepts] : CopySocketInfo successed ... OK\r\n");
+		StkPlPrintf("[Multi accepts] : CopySocketInfo successed ... OK\n");
 	} else {
-		StkPlPrintf("[Multi accepts] : Failed to CopySocketInfo execution ... NG\r\n");
+		StkPlPrintf("[Multi accepts] : Failed to CopySocketInfo execution ... NG\n");
 		exit(-1);
 	}
 	if (StkSocket_GetNumOfStkInfos() == 2) {
-		StkPlPrintf("[Multi accepts] : The number of StkInfo is two ... OK\r\n");
+		StkPlPrintf("[Multi accepts] : The number of StkInfo is two ... OK\n");
 	} else {
-		StkPlPrintf("[Multi accepts] : The number of StkInfo is not two ... NG\r\n");
+		StkPlPrintf("[Multi accepts] : The number of StkInfo is not two ... NG\n");
 		exit(-1);
 	}
 	StkSocket_DeleteInfo(102);
 	if (StkSocket_GetNumOfStkInfos() == 1) {
-		StkPlPrintf("[Multi accepts] : After deleting StkSock, the number of StkInfo is one ... OK\r\n");
+		StkPlPrintf("[Multi accepts] : After deleting StkSock, the number of StkInfo is one ... OK\n");
 	} else {
-		StkPlPrintf("[Multi accepts] : After deleting StkSock, the number of StkInfo is not two ... NG\r\n");
+		StkPlPrintf("[Multi accepts] : After deleting StkSock, the number of StkInfo is not two ... NG\n");
 		exit(-1);
 	}
 
 	StkSocket_Open(101);
 	if (StkSocket_CopyInfo(102, 101) != 0) {
-		StkPlPrintf("[Multi accepts] : Invalid return code detected ... NG\r\n");
+		StkPlPrintf("[Multi accepts] : Invalid return code detected ... NG\n");
 		exit(-1);
 	} else {
-		StkPlPrintf("[Multi accepts] : Success to copy StkSocketInfo ... OK\r\n");
+		StkPlPrintf("[Multi accepts] : Success to copy StkSocketInfo ... OK\n");
 	}
 	if (StkSocket_CopyInfo(103, 101) != 0) {
-		StkPlPrintf("[Multi accepts] : Invalid return code detected ... NG\r\n");
+		StkPlPrintf("[Multi accepts] : Invalid return code detected ... NG\n");
 		exit(-1);
 	} else {
-		StkPlPrintf("[Multi accepts] : Success to copy one more StkSocketInfo ... OK\r\n");
+		StkPlPrintf("[Multi accepts] : Success to copy one more StkSocketInfo ... OK\n");
 	}
 	if (StkSocket_CopyInfo(104, 999) != -1) {
-		StkPlPrintf("[Multi accepts] : Invalid return code detected ... NG\r\n");
+		StkPlPrintf("[Multi accepts] : Invalid return code detected ... NG\n");
 		exit(-1);
 	} else {
-		StkPlPrintf("[Multi accepts] : Success to detect invalid code for unexistence base info ... OK\r\n");
+		StkPlPrintf("[Multi accepts] : Success to detect invalid code for unexistence base info ... OK\n");
 	}
 	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	StkSocket_AddInfo(202, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	StkSocket_AddInfo(203, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	if (StkSocket_GetNumOfStkInfos() == 6) {
-		StkPlPrintf("[Multi accepts] : 3 socket information exists ... OK\r\n");
+		StkPlPrintf("[Multi accepts] : 3 socket information exists ... OK\n");
 	} else {
-		StkPlPrintf("[Multi accepts] : 3 socket information exists ... NG\r\n");
+		StkPlPrintf("[Multi accepts] : 3 socket information exists ... NG\n");
 		exit(-1);
 	}
 
@@ -1249,9 +1249,9 @@ void TestThreadForAcceptSendRecv()
 	StkPlPrintf("[Multi accepts] : Try StkSocket_CopyInfo() after source socket closure with StkSocket_Close() ... ");
 	StkSocket_Close(101, true);
 	if (StkSocket_CopyInfo(104, 101) != -1) {
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	} else {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
 	StkSocket_DeleteInfo(101);
@@ -1269,9 +1269,9 @@ void TestThreadForAcceptSendRecv()
 	delete Sender3;
 
 	if (StkSocket_GetNumOfStkInfos() == 0) {
-		StkPlPrintf("[Multi accepts] : No socket information exists ... OK\r\n");
+		StkPlPrintf("[Multi accepts] : No socket information exists ... OK\n");
 	} else {
-		StkPlPrintf("[Multi accepts] : No socket information exists ... NG\r\n");
+		StkPlPrintf("[Multi accepts] : No socket information exists ... NG\n");
 		exit(-1);
 	}
 }
@@ -1293,10 +1293,10 @@ void TestMultiAccept1()
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(124) != STKSOCKET_STATUS_OPEN) {
-			StkPlPrintf("[Multi accepts] : Status validation [open] ... NG\r\n");
+			StkPlPrintf("[Multi accepts] : Status validation [open] ... NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("[Multi accepts] : Status validation [open] ... OK\r\n");
+	StkPlPrintf("[Multi accepts] : Status validation [open] ... OK\n");
 
 	StkSocket_Close(121, false);
 	if (StkSocket_GetStatus(111) != STKSOCKET_STATUS_OPEN ||
@@ -1305,7 +1305,7 @@ void TestMultiAccept1()
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(124) != STKSOCKET_STATUS_CLOSE) {
-			StkPlPrintf("[Multi accepts] : Status validation [close] ... NG\r\n");
+			StkPlPrintf("[Multi accepts] : Status validation [close] ... NG\n");
 			exit(-1);
 	}
 
@@ -1313,10 +1313,10 @@ void TestMultiAccept1()
 	StkSocket_Close(131, false);
 	if (StkSocket_GetStatus(111) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(131) != STKSOCKET_STATUS_CLOSE) {
-			StkPlPrintf("[Multi accepts] : Status validation [close+] ... NG\r\n");
+			StkPlPrintf("[Multi accepts] : Status validation [close+] ... NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("[Multi accepts] : Status validation [close] ... OK\r\n");
+	StkPlPrintf("[Multi accepts] : Status validation [close] ... OK\n");
 	StkSocket_DeleteInfo(111);
 	StkSocket_DeleteInfo(121);
 	StkSocket_DeleteInfo(131);
@@ -1327,7 +1327,7 @@ void TestMultiAccept1()
 
 int main(int Argc, char* Argv[])
 {
-	StkPlPrintf("Test started\r\n");
+	StkPlPrintf("Test started\n");
 
 	if (ConnectDisconnectTcpPort() != 0) {
 		return -1;
@@ -1424,7 +1424,7 @@ int main(int Argc, char* Argv[])
 	objStkSocketMemoryLeak.CheckLeakTcp();
 	objStkSocketMemoryLeak.CheckLeakUdp();
 
-	StkPlPrintf("Test completed\r\n");
+	StkPlPrintf("Test completed\n");
 
 	return 0;
 }

@@ -119,10 +119,10 @@ void StkSocketTestMa::TestMultiAccept2()
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_OPEN) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2202);
 	StkSocket_Open(201);
@@ -156,20 +156,20 @@ void StkSocketTestMa::TestMultiAccept2()
 	}
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept2] : All threads are started [wait=%d msec] ... ", Loop * 100);
 	if (Loop == 30) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept2] : All receiver status are showing STKSOCKET_STATUS_ACCEPT ... ");
 	if (StkSocket_GetStatus(122) != STKSOCKET_STATUS_ACCEPT ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_ACCEPT ||
 		StkSocket_GetStatus(121) != STKSOCKET_STATUS_ACCEPT) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	StkSocket_Close(122, false);
@@ -177,10 +177,10 @@ void StkSocketTestMa::TestMultiAccept2()
 	if (StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_ACCEPT ||
 		StkSocket_GetStatus(121) != STKSOCKET_STATUS_ACCEPT) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	StkSocket_Close(121, false);
@@ -188,10 +188,10 @@ void StkSocketTestMa::TestMultiAccept2()
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	for (Loop = 0; Loop < 150; Loop++) {
@@ -202,10 +202,10 @@ void StkSocketTestMa::TestMultiAccept2()
 	}
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept2] : All threads are ended [wait=%d msec] ... ", Loop * 100);
 	if (Loop == 50) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkSocket_DeleteInfo(121);
 	StkSocket_DeleteInfo(122);
@@ -234,50 +234,50 @@ void StkSocketTestMa::TestMultiAccept3()
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : Check the copied sockets are also opened after source socket opened ... ");
 	StkSocket_Open(121);
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_OPEN) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : Check the copied sockets are also closed after source socket closed ... ");
 	StkSocket_Close(121, true);
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : Check only copied socket is opened. Source socket is closed ... ");
 	StkSocket_Open(122);
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : Check all copied socket is opened after source socket is opend ... ");
 	StkSocket_Open(121);
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_OPEN ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_OPEN) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : Run threads ... ");
 	StkSocket_AddInfo(201, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2202);
@@ -300,7 +300,7 @@ void StkSocketTestMa::TestMultiAccept3()
 	Sender2->join();
 	Sender3->join();
 
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	int Loop;
 	for (Loop = 0; Loop < 30; Loop++) {
@@ -314,20 +314,20 @@ void StkSocketTestMa::TestMultiAccept3()
 	}
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : All threads are started [wait=%d msec] ... ", Loop * 100);
 	if (Loop == 30) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : All receiver status are showing STKSOCKET_STATUS_ACCEPT ... ");
 	if (StkSocket_GetStatus(122) != STKSOCKET_STATUS_ACCEPT ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_ACCEPT ||
 		StkSocket_GetStatus(121) != STKSOCKET_STATUS_ACCEPT) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : Check only copied socket is closed ... ");
@@ -335,20 +335,20 @@ void StkSocketTestMa::TestMultiAccept3()
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_ACCEPT ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_ACCEPT) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : Check all copied socket is closed after source socket is closed ... ");
 	StkSocket_Close(121, true);
 	if (StkSocket_GetStatus(121) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(122) != STKSOCKET_STATUS_CLOSE ||
 		StkSocket_GetStatus(123) != STKSOCKET_STATUS_CLOSE) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	for (Loop = 0; Loop < 150; Loop++) {
@@ -359,10 +359,10 @@ void StkSocketTestMa::TestMultiAccept3()
 	}
 	StkPlPrintf("[StkSocketTestMa::TestMultiAccept3] : All threads are ended [wait=%d msec] ... ", Loop * 100);
 	if (Loop == 50) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkSocket_DeleteInfo(121);
 	StkSocket_DeleteInfo(122);

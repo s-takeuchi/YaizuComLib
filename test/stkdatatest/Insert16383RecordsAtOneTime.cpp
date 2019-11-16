@@ -16,10 +16,10 @@ int Insert16383RecordsAtOneTime()
 	TabDefPerson.AddColumnDef(&ColDefType);
 	TabDefPerson.AddColumnDef(&ColDefManuf);
 	if (CreateTable(&TabDefPerson) != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("16383 records can be added by one time invocation of InsertRecord for automobile table using 16383 connected records.");
@@ -44,20 +44,20 @@ int Insert16383RecordsAtOneTime()
 	LockTable(L"自動車", 2);
 	if (InsertRecord(TopRecDat) != 0) {
 		delete TopRecDat;
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
 	UnlockTable(L"自動車");
 	delete TopRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("GetTableVersion(particular table name) returns 16383.");
 	if (GetTableVersion(L"自動車") != 16383) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Connected 16383 records can be acquired from 16383 records which are added using GetRecord(record specification).");
@@ -71,40 +71,40 @@ int Insert16383RecordsAtOneTime()
 	UnlockTable(L"自動車");
 	while (RecDatGet) {
 		if (StkPlWcsCmp(((ColumnDataWStr*)(RecDatGet->GetColumn(1)))->GetValue(), L"スーパーチャージャー付2400cc 2シーターオープンカー ドーロスター VS") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		Count++;
 		RecDatGet = RecDatGet->GetNextRecord();
 	}
 	if (Count != 16383) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
 	delete RecDatGet;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	{
 		StkPlPrintf("Same value '4' is returned from both GetColumnCount(table name) and GetColumnName(table name). 1st acquired column by GetColumnName shows index. 4th acquired column shows manufactular.");
 		wchar_t ColNames[MAX_COLUMN_NUMBER][16];
 		if (GetColumnCount(L"自動車") != 4) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetColumnName(L"自動車", ColNames) != 4) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (StkPlWcsCmp(ColNames[0], L"通し番号") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (StkPlWcsCmp(ColNames[3], L"製造会社") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 
@@ -112,14 +112,14 @@ int Insert16383RecordsAtOneTime()
 		StkPlPrintf("Both GetColumnCount(L\"Automobile\") and GetColumnName(L\"Automobile\") return -1.");
 		wchar_t ColNames[MAX_COLUMN_NUMBER][16];
 		if (GetColumnCount(L"自転車") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetColumnName(L"自転車", ColNames) != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
@@ -150,13 +150,13 @@ int Insert16383RecordsAtOneTime()
 			UnlockTable(L"自動車");
 			delete TopRecDat;
 			delete CurRecDat;
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"自動車");
 		delete TopRecDat;
 		delete CurRecDat;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("Records which are acquired by GetRecord(L\"Automobile\") contain two record types which records have even index number and odd index number.");
@@ -169,29 +169,29 @@ int Insert16383RecordsAtOneTime()
 			wchar_t *ColName = ((ColumnDataWStr*)(RecDatGet->GetColumn(1)))->GetValue();
 			if (Count % 2 == 0) {
 				if (StkPlWcsCmp(ColName, L"スーパーチャージャー付2400cc 2シーターオープンカー ドーロスター VS") != 0) {
-					StkPlPrintf("...[NG]\r\n");
+					StkPlPrintf("...[NG]\n");
 					return -1;
 				}
 			} else {
 				if (StkPlWcsCmp(ColName, L"日本国内閣総理大臣専用クーペ") != 0) {
-					StkPlPrintf("...[NG]\r\n");
+					StkPlPrintf("...[NG]\n");
 					return -1;
 				}
 			}
 			Count++;
 			RecDatGet = RecDatGet->GetNextRecord();
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 
 
 		StkPlPrintf("GetRecord(L\"Automibile\") returns 16383 records and GetNumOfRecords() also returns 16383.");
 		if (Count != 16383 || GetNumOfRecords(L"自動車") != 16383) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			delete RecDatGet;
 			return -1;
 		}
 		delete RecDatGet;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
@@ -201,16 +201,16 @@ int Insert16383RecordsAtOneTime()
 		RecordData *RecDat = new RecordData(L"自動車", ColDat, 1);
 		LockTable(L"自動車", LOCK_EXCLUSIVE);
 		if (DeleteRecord(RecDat) != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"自動車");
 		delete RecDat;
 		if (GetNumOfRecords(L"自動車") != 16383) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 
@@ -221,43 +221,43 @@ int Insert16383RecordsAtOneTime()
 		RecordData *RecDat = new RecordData(L"自動車", ColDat, 1);
 		LockTable(L"自動車", LOCK_EXCLUSIVE);
 		if (DeleteRecord(RecDat) != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"自動車");
 		delete RecDat;
 		if (GetNumOfRecords(L"自動車") != 8192) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
 		StkPlPrintf("GetMaxNumOfRecords(L\"Automobile\") returns 16383.");
 		if (GetMaxNumOfRecords(L"自動車") != 16383) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 
 	{
 		StkPlPrintf("Both GetNumOfRecords(\"Automobile\") and GetMaxNumOfRecords(\"Automobile\") returns -1 after execution of DeleteTable(\"Automobile\") that the table contains 8192 records.");
 		if (DeleteTable(L"自動車") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetMaxNumOfRecords(L"自動車") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetNumOfRecords(L"自動車") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 

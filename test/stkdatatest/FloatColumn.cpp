@@ -71,18 +71,18 @@ int BasicFloatTest01()
 	TabDefTest.AddColumnDef(&ColDef30);
 	TabDefTest.AddColumnDef(&ColDef31);
 	if (CreateTable(&TabDefTest) != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Check the table \"Float-Test\" has 32 columns.");
 	if (GetColumnCount(L"Float-Test") != 32) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Check the size of any 0th, 1st, 30th and 31st column of \"Float-Test\" table shows 4 bytes.");
@@ -90,20 +90,20 @@ int BasicFloatTest01()
 		GetColumnSize(L"Float-Test", L"Fcol01") != 4 ||
 		GetColumnSize(L"Float-Test", L"Fcol30") != 4 ||
 		GetColumnSize(L"Float-Test", L"Fcol31") != 4) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Check the type of Fcol10, Fcol20 and Fcol30 column of \"Float-Test\" table is float.");
 	if (GetColumnType(L"Float-Test", L"Fcol10") != COLUMN_TYPE_FLOAT ||
 		GetColumnSize(L"Float-Test", L"Fcol20") != COLUMN_TYPE_FLOAT ||
 		GetColumnSize(L"Float-Test", L"Fcol30") != COLUMN_TYPE_FLOAT) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	return 0;
 }
@@ -122,7 +122,7 @@ int BasicFloatTest02()
 		}
 		RecDat = new RecordData(L"Float-Test", ColDat, 32);
 		if (InsertRecord(RecDat) != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			delete RecDat;
 			UnlockTable(L"Float-Test");
 			return -1;
@@ -130,15 +130,15 @@ int BasicFloatTest02()
 		delete RecDat;
 	}
 	UnlockTable(L"Float-Test");
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Check the number of records which are existed in \"Float-Test\" table is 10.");
 	if (GetNumOfRecords(L"Float-Test") != 10) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Check that 10 records (with Fcol00-Fcol31 column) in \"Float-Test\" table added can be acquired appropriately.");
@@ -149,7 +149,7 @@ int BasicFloatTest02()
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != (float)(100.0 + 0.1 * j + i * 0.001)) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				delete AcquiredRecDat;
 				return -1;
 			}
@@ -157,7 +157,7 @@ int BasicFloatTest02()
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
 	delete AcquiredRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	return 0;
 }
@@ -177,7 +177,7 @@ int BasicFloatTest03()
 		UpdColDat[1] = new ColumnDataFloat(L"Fcol01", 999999000000.0f);
 		UpdRecDat = new RecordData(L"Float-Test", UpdColDat, 2);
 		if (UpdateRecord(RecDat, UpdRecDat) != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			delete RecDat;
 			delete UpdRecDat;
 			UnlockTable(L"Float-Test");
@@ -186,7 +186,7 @@ int BasicFloatTest03()
 		delete UpdRecDat;
 	}
 	UnlockTable(L"Float-Test");
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	RecordData *AcquiredRecDat;
@@ -198,13 +198,13 @@ int BasicFloatTest03()
 		for (int i = 0; i < 32; i++) {
 			if (i == 0) {
 				if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != 0) {
-					StkPlPrintf("...[NG]\r\n");
+					StkPlPrintf("...[NG]\n");
 					delete AcquiredRecDat;
 					return -1;
 				}
 			} else if (i == 1) {
 			} else if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != (float)(100.0 + 0.1 * j + i * 0.001)) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				delete AcquiredRecDat;
 				return -1;
 			}
@@ -212,7 +212,7 @@ int BasicFloatTest03()
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
 	delete AcquiredRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	return 0;
 }
@@ -240,14 +240,14 @@ int BasicFloatTest04()
 	}
 	LockTable(L"Float-Test", LOCK_EXCLUSIVE);
 	if (InsertRecord(HeadRecDat) != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		delete HeadRecDat;
 		UnlockTable(L"Float-Test");
 		return -1;
 	}
 	UnlockTable(L"Float-Test");
 	delete HeadRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	{
 		StkPlPrintf("Search \"Float-table\" table (with Less than specification)");
@@ -259,20 +259,20 @@ int BasicFloatTest04()
 		UnlockTable(L"Float-Test");
 		RecordData* CurRecDat;
 		if (HeadRecDat == NULL) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		for (CurRecDat = HeadRecDat; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
 			ColumnDataFloat* TmpCol = (ColumnDataFloat*)CurRecDat->GetColumn(L"Fcol05");
 			float TmpFl = TmpCol->GetValue();
 			if (TmpFl >= 200.5) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 		}
 		delete HeadRecDat;
 		delete RecDat;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
@@ -284,28 +284,28 @@ int BasicFloatTest04()
 		UnlockTable(L"Float-Test");
 		RecordData* CurRecDat;
 		if (HeadRecDat == NULL) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		for (CurRecDat = HeadRecDat; CurRecDat != NULL; CurRecDat = CurRecDat->GetNextRecord()) {
 			ColumnDataFloat* TmpCol = (ColumnDataFloat*)CurRecDat->GetColumn(L"Fcol05");
 			float TmpFl = TmpCol->GetValue();
 			if (TmpFl < 200.5) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 		}
 		delete HeadRecDat;
 		delete RecDat;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	StkPlPrintf("Check the number of existed records which are in \"Float-Test\" table.");
 	if (GetNumOfRecords(L"Float-Test") != 20) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Check that 10 records information can be acquired appropriately from 20 records in \"Float-Test\" table with criteria specification.");
@@ -325,13 +325,13 @@ int BasicFloatTest04()
 	UnlockTable(L"Float-Test");
 	delete HeadRecDat;
 	if (AcquiredRecDat == NULL) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(i)))->GetValue() != (float)(200.0 + 0.1 * j + i * 0.001)) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				delete AcquiredRecDat;
 				return -1;
 			}
@@ -339,7 +339,7 @@ int BasicFloatTest04()
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
 	delete AcquiredRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	return 0;
 }
@@ -368,7 +368,7 @@ int BasicFloatTest05()
 	UpdColDat[1] = new ColumnDataFloat(L"Fcol01", 999999000000.0f);
 	UpdRecDat = new RecordData(L"Float-Test", UpdColDat, 2);
 	if (UpdateRecord(HeadRecDat, UpdRecDat) != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		delete HeadRecDat;
 		delete UpdRecDat;
 		UnlockTable(L"Float-Test");
@@ -376,7 +376,7 @@ int BasicFloatTest05()
 	delete HeadRecDat;
 	delete UpdRecDat;
 	UnlockTable(L"Float-Test");
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	RecordData *AcquiredRecDat;
@@ -386,14 +386,14 @@ int BasicFloatTest05()
 	StkPlPrintf("Check that all of records (Fcol00) including updated 10 records can be acquired appropriately.");
 	for (int j = 0; j < 20; j++) {
 		if (((ColumnDataFloat*)(AcquiredRecDat->GetColumn(0)))->GetValue() != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			delete AcquiredRecDat;
 			return -1;
 		}
 		AcquiredRecDat = AcquiredRecDat->GetNextRecord();
 	}
 	delete AcquiredRecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	return 0;
@@ -404,12 +404,12 @@ int BasicFloatTest06()
 	StkPlPrintf("Preserve table information into \"FloatColumn.std\".");
 	LockAllTable(LOCK_SHARE);
 	if (SaveData(L"FloatColumn.std") != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		UnlockAllTable();
 		return -1;
 	}
 	UnlockAllTable();
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Delete all records (search the records whose value of Fcol00 is zero) from table.");
@@ -418,41 +418,41 @@ int BasicFloatTest06()
 	RecordData *RecDat = new RecordData(L"Float-Test", ColDat, 1);
 	LockTable(L"Float-Test", LOCK_EXCLUSIVE);
 	if (DeleteRecord(RecDat) != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		UnlockTable(L"Float-Test");
 		delete RecDat;
 		return -1;
 	}
 	UnlockTable(L"Float-Test");
 	delete RecDat;
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Check that all of records can be deleted from \"Float-Test\" table.");
 	if (GetNumOfRecords(L"Float-Test") != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Load table information from \"FloatColumn.std\".");
 	LockAllTable(LOCK_EXCLUSIVE);
 	if (LoadData(L"FloatColumn.std") != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		UnlockAllTable();
 		return -1;
 	}
 	UnlockAllTable();
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	StkPlPrintf("Check the number of records which are in \"Float-Test\" table is 20.");
 	if (GetNumOfRecords(L"Float-Test") != 20) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	return 0;

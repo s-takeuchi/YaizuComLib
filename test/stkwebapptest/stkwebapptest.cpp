@@ -114,7 +114,7 @@ bool SendTestData(int Id, const char* Dat)
 			break;
 		}
 		if (RetR <= 0) {
-			StkPlPrintf("... NG (Ret=%d)\r\n", RetR);
+			StkPlPrintf("... NG (Ret=%d)\n", RetR);
 			StkPlExit(-1);
 		}
 	}
@@ -246,59 +246,59 @@ int ElemStkThreadMainSend2(int Id)
 
 	StkPlPrintf("StkWebAppTest2:Invalid request 1 == 400");
 	if (SendTestData2(Id, NULL, NULL, "dummy", "", &ErrorCode) != 400 || ErrorCode != 1005) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest2:Invalid request 2 == 400");
 	if (SendTestData2(Id, NULL, NULL, "Aaaaaaaaaaaaaaaaaaaaaaaaa\r\n\r\n Bbbbbbbbbbbbbb HTTP Cccccccccccccccccccccccccccc", "", &ErrorCode) != 400 || ErrorCode != 1005) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest2:GET /aaa/ [{ \"AAA\":123 } with No Content-Type] == 404");
 	if (SendTestData2(Id, NULL, NULL, "GET /aaa/ HTTP/1.1\r\n\r\n{ \"AAA\":123 }\n", "", &ErrorCode) != 404 || ErrorCode != 1001) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest2:GET /abc/ [{ \"AAA\":123 }] == 404");
 	if (SendTestData2(Id, "GET", "/abc/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 404 || ErrorCode != 1001) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest2:GET /abc/ [\"aaa\" : {\"bbb\" : \"xxx\"}] == 404");
 	if (SendTestData2(Id, "GET", "/abc/", "\"aaa\" : {\"bbb\" : \"xxx\"}\n", "application/json", &ErrorCode) != 404 || ErrorCode != 1001) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest2:GET /abc/ [{ \"AAA\":123 } with application/xml] == 400");
 	if (SendTestData2(Id, "GET", "/abc/", "{ \"AAA\":123 }\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1002) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest2:GET /abc/ [XYZ] == 400");
 	if (SendTestData2(Id, "GET", "/abc/", "XYZ\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1002) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest2:GET /abc/ [<Aaa><Bbb/></Aaa>] == 400");
 	if (SendTestData2(Id, "GET", "/abc/", "<Aaa><Bbb/></Aaa>\n", "application/xml", &ErrorCode) != 400 || ErrorCode != 1002) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	// Timeout detection start
 	{
@@ -311,38 +311,38 @@ int ElemStkThreadMainSend2(int Id)
 		StkPlPrintf("StkWebAppTest2:Invalid Content-Length (Timeout default 3000 milliseconds)");
 		StartTime = StkPlGetTickCount();
 		if ((Ret = SendTestData2(Id, "POST", "/test/", "{ \"Test\" : \"1\" }\n", "application/json", &ErrorCode, Header, 1024)) != 404 || ErrorCode != 1001) {
-			StkPlPrintf("... NG\r\n");
+			StkPlPrintf("... NG\n");
 			StkPlExit(-1);
 		}
 		EndTime = StkPlGetTickCount();
 		if ((EndTime - StartTime) < 3000 || (EndTime - StartTime) > 4000) {
-			StkPlPrintf("... NG\r\n");
+			StkPlPrintf("... NG\n");
 			StkPlExit(-1);
 		}
-		StkPlPrintf("... OK\r\n");
+		StkPlPrintf("... OK\n");
 	}
 	// Timeout detection end
 
 	StkPlPrintf("StkWebAppTest2:POST /service/ [{ \"Operation\" : \"Start\" }] == 400");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Start\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1004) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest2:POST /service/ [{ \"Stop\" : \"YES\" }] == 400");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Stop\" : \"YES\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1004) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest2:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlSleepMs(1000);
 
@@ -356,36 +356,36 @@ int ElemStkThreadMainSend3(int Id)
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/100/ [{ \"AAA\":\"aaa\" }] == 100 Continue");
 	if (SendTestData2(Id, "GET", "/aaa/100/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 100 || StkPlWcsStr(Header, L"Continue") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/102/ [{ \"AAA\":\"aaa\" }] == 102 Processing");
 	if (SendTestData2(Id, "GET", "/aaa/102/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 102 || StkPlWcsStr(Header, L"Processing") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/202/ [{ \"AAA\":\"aaa\" }] == 202 Accepted");
 	if (SendTestData2(Id, "GET", "/aaa/202/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 202 || StkPlWcsStr(Header, L"Accepted") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/204/ [{ \"AAA\":\"aaa\" }] == 204 No Content");
 	if (SendTestData2(Id, "GET", "/aaa/204/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 204 || StkPlWcsStr(Header, L"No Content") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3: Check whether proper date is set in HTTP header or not.");
 	const wchar_t* TmpHeader = StkPlWcsStr(Header, L"Date:");
 	if (TmpHeader == 0) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
 	wchar_t TmpDate[32];
@@ -393,59 +393,59 @@ int ElemStkThreadMainSend3(int Id)
 	int TmpDay;
 	StkPlSwScanf(TmpHeader, L"%s %s %d", TmpDate, TmpWDay, &TmpDay);
 	if (TmpDay < 1 || TmpDay > 31) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/304/ [{ \"AAA\":\"aaa\" }] == 304 Not Modified");
 	if (SendTestData2(Id, "GET", "/aaa/304/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 304 || StkPlWcsStr(Header, L"Not Modified") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/400/ [{ \"AAA\":\"aaa\" }] == 400 Bad Request");
 	if (SendTestData2(Id, "GET", "/aaa/400/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 400 || StkPlWcsStr(Header, L"Bad Request") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/401/ [{ \"AAA\":\"aaa\" }] == 401 Unauthorized");
 	if (SendTestData2(Id, "GET", "/aaa/401/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 401 || StkPlWcsStr(Header, L"Unauthorized") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/404/ [{ \"AAA\":\"aaa\" }] == 404 Not Found");
 	if (SendTestData2(Id, "GET", "/aaa/404/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 404 || StkPlWcsStr(Header, L"Not Found") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/414/ [{ \"AAA\":\"aaa\" }] == 414 URI Too Long");
 	if (SendTestData2(Id, "GET", "/aaa/414/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 414 || StkPlWcsStr(Header, L"URI Too Long") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/500/ [{ \"AAA\":\"aaa\" }] == 500 Internal Server Error");
 	if (SendTestData2(Id, "GET", "/aaa/500/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 500 || StkPlWcsStr(Header, L"Internal Server Error") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/510/ [{ \"AAA\":\"aaa\" }] == 510 Not Extended");
 	if (SendTestData2(Id, "GET", "/aaa/510/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 510 || StkPlWcsStr(Header, L"Not Extended") == NULL || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	// Timeout detection start
 	{
@@ -458,24 +458,24 @@ int ElemStkThreadMainSend3(int Id)
 		StkPlPrintf("StkWebAppTest3:Invalid Content-Length (Timeout 5000 milliseconds)");
 		StartTime = StkPlGetTickCount();
 		if ((Ret = SendTestData2(Id, "GET", "/aaa/200/", "{ \"Test\" : \"1\" }\n", "application/json", &ErrorCode, Header, 1024)) != 200 || ErrorCode != -1) {
-			StkPlPrintf("... NG\r\n");
+			StkPlPrintf("... NG\n");
 			StkPlExit(-1);
 		}
 		EndTime = StkPlGetTickCount();
 		if ((EndTime - StartTime) < 5000 || (EndTime - StartTime) > 6000) {
-			StkPlPrintf("... NG\r\n");
+			StkPlPrintf("... NG\n");
 			StkPlExit(-1);
 		}
-		StkPlPrintf("... OK\r\n");
+		StkPlPrintf("... OK\n");
 	}
 	// Timeout detection end
 
 	StkPlPrintf("StkWebAppTest3:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlSleepMs(1000);
 
@@ -488,38 +488,38 @@ int ElemStkThreadMainSend4(int Id)
 
 	StkPlPrintf("StkWebAppTest4:GET /bigdata/ [{ \"AAA\":123 }] == 500 buffer over flow");
 	if (SendTestData2(Id, "GET", "/bigdata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500 || ErrorCode != 1006) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest4:GET /middledata/ [{ \"AAA\":123 }] == 500 buffer over flow");
 	if (SendTestData2(Id, "GET", "/middledata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500 || ErrorCode != 1006) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest4:GET /smalldata/ [{ \"AAA\":123 }] == 200 sufficient buffer allocated");
 	if (SendTestData2(Id, "GET", "/smalldata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 200) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest4:POST /smalldata/ [{ \"AAAAAAAAAABBBBBBBBBB\":\"CCCCCCCCCCDDDDDDDDDD\" }] == 400 read buffer over flow");
 	if (SendTestData2(Id, "POST", "/smalldata/", "{ \"AAAAAAAAAABBBBBBBBBB\":\"CCCCCCCCCCDDDDDDDDDD\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1002) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest4:POST /service/ [{ \"Operation\" : \"Stop\" }] == 202");
 	if (SendTestData2(Id, "POST", "/service/", "{ \"Operation\" : \"Stop\" }\n", "application/json", &ErrorCode) != 202 || ErrorCode != -1) {
-		StkPlPrintf("... NG\r\n");
+		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("... OK\r\n");
+	StkPlPrintf("... OK\n");
 
 	StkPlSleepMs(1000);
 
@@ -593,7 +593,7 @@ void ReqResTest1(bool LargeFlag)
 	int WaitingStopCnt = 0;
 	while (GetNumOfRunStkThread() != THREADNUM) {
 		if (WaitingStopCnt == 20) {
-			StkPlPrintf("... NG(Time up for waiting threads stop)\r\n");
+			StkPlPrintf("... NG(Time up for waiting threads stop)\n");
 			StkPlExit(-1);
 		}
 		StkPlSleepMs(100);
@@ -612,17 +612,17 @@ void ReqResTest1(bool LargeFlag)
 	}
 
 	if (SendTestDataFailed == true) {
-		StkPlPrintf("... NG(1)\r\n");
+		StkPlPrintf("... NG(1)\n");
 		StkPlExit(-1);
 	} else if (MemChk[0] < MemChk[1] && MemChk[1] < MemChk[2] && MemChk[2] < MemChk[3] &&
 				MemChk[3] < MemChk[4] && MemChk[4] < MemChk[5]) {
-		StkPlPrintf("... NG(2)\r\n");
+		StkPlPrintf("... NG(2)\n");
 		StkPlExit(-1);
 	} else if (Add1 != 1 || Add2 != 2 || Add3 != 3 || Del1 != 2 || Del2 != 1 || Del3 != 0) {
-		StkPlPrintf("... NG(3)\r\n");
+		StkPlPrintf("... NG(3)\n");
 		StkPlExit(-1);
 	}else {
-		StkPlPrintf("... OK\r\n");
+		StkPlPrintf("... OK\n");
 	}
 }
 
@@ -693,16 +693,16 @@ void ReqResTest4()
 	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 2080);
 	StkPlPrintf("StkWebAppTest4:Test GetSendBufSize, GetRecvBufSize, SetSendBufSize, SetRecvBufSize ... ");
 	if (Soc->GetSendBufSize() != 1000000 || Soc->GetRecvBufSize() != 1000000) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		StkPlExit(-1);
 	}
 	Soc->SetSendBufSize(2000);
 	Soc->SetRecvBufSize(100);
 	if (Soc->GetSendBufSize() != 2000 || Soc->GetRecvBufSize() != 100) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 
 	StkWebAppTest5* Test5aHndl = new StkWebAppTest5();
 	StkWebAppTest5* Test5bHndl = new StkWebAppTest5();
@@ -729,10 +729,10 @@ void AddDeleteStkWebAppTest()
 	{
 		StkPlPrintf("Search StkWebApp which contains specified ID (No StkWebApp exists) ... ");
 		if (StkWebApp::GetStkWebAppByThreadId(1) != NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 
 	{
@@ -748,24 +748,24 @@ void AddDeleteStkWebAppTest()
 			StkWebApp::GetStkWebAppByThreadId(21) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(24) == NULL ||
 			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		StkWebApp* AcquiredApp2 = StkWebApp::GetStkWebAppByThreadId(23);
 		if (AcquiredApp2 == NULL ||
 			AcquiredApp2->Contains(22) == false || AcquiredApp2->Contains(11) == true || AcquiredApp2->Contains(25) == true) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 
 		StkPlPrintf("Search StkWebApp which contains specified ID (Abnormal case) ... ");
 		if (StkWebApp::GetStkWebAppByThreadId(41) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(1) != NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 
 		StkPlPrintf("Search StkWebApp which contains specified ID (Search deleted StkWebApp) ... ");
 		delete TmpApp2;
@@ -774,7 +774,7 @@ void AddDeleteStkWebAppTest()
 			StkWebApp::GetStkWebAppByThreadId(21) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(24) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		delete TmpApp1;
@@ -783,7 +783,7 @@ void AddDeleteStkWebAppTest()
 			StkWebApp::GetStkWebAppByThreadId(21) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(24) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(31) == NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		delete TmpApp3;
@@ -792,10 +792,10 @@ void AddDeleteStkWebAppTest()
 			StkWebApp::GetStkWebAppByThreadId(21) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(24) != NULL ||
 			StkWebApp::GetStkWebAppByThreadId(31) != NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 }
 
@@ -825,10 +825,10 @@ void AddDeleteReqHandlerTest()
 	delete TmpApp2;
 
 	if (Add1 != 1 || Add2 != -1 || Add3 != 1 || Del1 != 0 || Del2 != -1 || Del3 != 0) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		StkPlExit(-1);
 	}
-	StkPlPrintf("OK\r\n");
+	StkPlPrintf("OK\n");
 }
 
 int StkWebAppSendTest1_T(int Id)
@@ -845,12 +845,12 @@ int StkWebAppSendTest1_T(int Id)
 		ReqObj->AppendChildElement(new StkObject(L"Kanagawa", 200));
 		StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "aaa", ReqObj, &ResultCode);
 		if (ResultCode != 200 || ReqObj->Equals(ResObj) == false) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		delete ReqObj;
 		delete ResObj;
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	{
 		StkPlPrintf("StkWebAppSend: Appropriate object is returned. (Normal case) ... ");
@@ -860,57 +860,57 @@ int StkWebAppSendTest1_T(int Id)
 		ReqObj->AppendChildElement(new StkObject(L"zzz", L"ZZZ"));
 		StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "bbb", ReqObj, &ResultCode);
 		if (ResultCode != 200 || ReqObj->Equals(ResObj) == false) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		delete ReqObj;
 		delete ResObj;
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	{
 		StkPlPrintf("StkWebAppSend: No object is passed as request. (Normal case) ... ");
 		StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 		if (ResultCode != 200) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		delete ResObj;
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	{
 		StkPlPrintf("StkWebAppSend: Undefined API is called. (Abnormal case) ... ");
 		StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "xxx", NULL, &ResultCode);
 		if (ResultCode != 404 || ResObj == NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		StkObject* CodeObj = ResObj->GetFirstChildElement();
 		if (CodeObj == NULL || CodeObj->GetIntValue() != 1001) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		delete ResObj;
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	{
 		StkPlPrintf("StkWebAppSend: Incorrect host name is specified. (Abnormal case) ... ");
 		StkObject* ResObj = Sender2->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 		if (ResultCode != -1 || ResObj != NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		delete ResObj;
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	{
 		StkPlPrintf("StkWebAppSend: Incorrect port number is specified. (Abnormal case) ... ");
 		StkObject* ResObj = Sender3->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 		if (ResultCode != -1 || ResObj != NULL) {
-			StkPlPrintf("NG\r\n");
+			StkPlPrintf("NG\n");
 			StkPlExit(-1);
 		}
 		delete ResObj;
-		StkPlPrintf("OK\r\n");
+		StkPlPrintf("OK\n");
 	}
 	{
 		StkPlPrintf("StkWebAppSend: No memory leak is occurred. (Normal case) ... ");
@@ -925,7 +925,7 @@ int StkWebAppSendTest1_T(int Id)
 			for (int Loop2 = 0; Loop2 < 200; Loop2++) {
 				StkObject* ResObj = Sender->SendRequestRecvResponse(StkWebAppSend::STKWEBAPP_METHOD_GET, "/bigdata/", NULL, &ResultCode);
 				if (ResultCode != 200 || ResObj == NULL) {
-					StkPlPrintf("NG\r\n");
+					StkPlPrintf("NG\n");
 					StkPlExit(-1);
 				}
 				delete ResObj;
@@ -935,10 +935,10 @@ int StkWebAppSendTest1_T(int Id)
 		}
 		if (MemChk[0] < MemChk[1] && MemChk[1] < MemChk[2] && MemChk[2] < MemChk[3] &&
 			MemChk[3] < MemChk[4] && MemChk[4] < MemChk[5]) {
-			StkPlPrintf(" NG\r\n");
+			StkPlPrintf(" NG\n");
 			StkPlExit(-1);
 		}
-		StkPlPrintf(" OK\r\n");
+		StkPlPrintf(" OK\n");
 	}
 	{
 		StkObject* ReqObj = new StkObject(L"");

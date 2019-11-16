@@ -107,7 +107,7 @@ void StkSocketMemoryLeak::CheckLeakUdp()
 	StkSocket_Connect(201);
 
 	if (StkSocket_GetNumOfStkInfos() != 2 || StkSocket_GetStatus(121) != STKSOCKET_STATUS_OPEN || StkSocket_GetStatus(201) != STKSOCKET_STATUS_OPEN) {
-		StkPlPrintf("NG\r\n");
+		StkPlPrintf("NG\n");
 		exit(-1);
 	}
 

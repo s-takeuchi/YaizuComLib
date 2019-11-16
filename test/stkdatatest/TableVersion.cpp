@@ -28,11 +28,11 @@ int TableVersion()
 	{
 		StkPlPrintf("GetTableVersion(L\"customer\") and GetTableVersion(L\"merchandise\") return -1 before merchandise and customer tables are created.");
 		if (GetTableVersion(L"商品") != -1 || GetTableVersion(L"顧客") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	// CreateTableで"商品"テーブルを最大レコード=500として生成することができる
 	{
@@ -47,11 +47,11 @@ int TableVersion()
 		TabDefMarc.AddColumnDef(&ColDefPrice);
 		TabDefMarc.AddColumnDef(&ColDefCount);
 		if (CreateTable(&TabDefMarc) != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	// CreateTableで"顧客"テーブルを最大レコード=5000として生成することができる
 	{
@@ -64,21 +64,21 @@ int TableVersion()
 		TabDefCustomer.AddColumnDef(&ColDefAddr);
 		TabDefCustomer.AddColumnDef(&ColDefTel);
 		if (CreateTable(&TabDefCustomer) != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	// "商品"テーブル, "顧客"テーブルを生成後のGetTableVersion(L"商品")またはGetTableVersion(L"顧客")呼び出しで0が返る
 	{
 		StkPlPrintf("GetTableVersion(L\"merchandise\") and GetTableVersion(L\"customer\") return 0 after merchandise table and customer table are created.");
 		if (GetTableVersion(L"商品") != 0 || GetTableVersion(L"顧客") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	// InsertRecordでテーブル"顧客"に1レコード追加後，GetTableVersion("顧客")で1が返却される。GetTableVersion("商品")は0のまま
 	{
@@ -93,11 +93,11 @@ int TableVersion()
 		UnlockTable(L"顧客");
 		delete RecDat;
 		if (GetTableVersion(L"商品") != 0 || GetTableVersion(L"顧客") != 1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	// InsertRecordでテーブル"顧客"に存在しないカラムを指定してもレコードは追加されず，GetTableVersion("顧客")で1が返却される。GetTableVersion("商品")は0のまま
 	{
@@ -112,15 +112,15 @@ int TableVersion()
 		UnlockTable(L"顧客");
 		delete RecDat;
 		if (GetNumOfRecords(L"顧客") != 1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetTableVersion(L"商品") != 0 || GetTableVersion(L"顧客") != 1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	// UpdateRecordでテーブル"顧客"の1レコード（2カラム分）を更新後，GetTableVersion("顧客")で2が返却される。GetTableVersion("商品")は0のまま
 	{
@@ -140,10 +140,10 @@ int TableVersion()
 		delete RecUpd;
 		int a = GetTableVersion(L"顧客");
 		if (GetTableVersion(L"商品") != 0 || GetTableVersion(L"顧客") != 2) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// GetRecordでテーブル"顧客"の1レコードを取得後，GetTableVersion("顧客")で2が返却される。GetTableVersion("商品")は0のまま
@@ -158,17 +158,17 @@ int TableVersion()
 		UnlockTable(L"顧客");
 		ColumnDataWStr* GetCol = (ColumnDataWStr*)RecGet->GetColumn(1);
 		if (StkPlWcsCmp(GetCol->GetValue(), L"埼玉県熊谷市") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		delete RecDat;
 		delete RecGet;
 		if (GetTableVersion(L"商品") != 0 || GetTableVersion(L"顧客") != 2) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	// DeleteRecordでテーブル"顧客"の1レコードを削除後，GetTableVersion("顧客")で3が返却される。GetTableVersion("商品")は0のまま
 	{
@@ -181,14 +181,14 @@ int TableVersion()
 		UnlockTable(L"顧客");
 		delete RecDat;
 		if (GetNumOfRecords(L"顧客") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetTableVersion(L"商品") != 0 || GetTableVersion(L"顧客") != 3) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// InsertRecordで5レコード分（内2レコードは不正）追加後，GetTableVersion("顧客")で3が返却され，GetTableVersion("商品")で3が返却される
@@ -234,10 +234,10 @@ int TableVersion()
 		UnlockTable(L"商品");
 
 		if (GetTableVersion(L"商品") != 3 || GetTableVersion(L"顧客") != 3) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// UpdateRecord"商品"(Search=複数カラム指定:ただし不正, Update=複数カラム指定:適正)後，GetTableVersion("顧客")で3が返却され，GetTableVersion("商品")で3が返却される
@@ -274,10 +274,10 @@ int TableVersion()
 		delete RecUpd;
 
 		if (GetTableVersion(L"商品") != 3 || GetTableVersion(L"顧客") != 3) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// UpdateRecord"商品"(Search=複数カラム指定:正しい3レコード指定で検索, Update=複数カラム指定:ただし不正)後，GetTableVersion("顧客")で3が返却され，GetTableVersion("商品")で3が返却される
@@ -315,10 +315,10 @@ int TableVersion()
 		int a = GetTableVersion(L"商品");
 
 		if (GetTableVersion(L"商品") != 3 || GetTableVersion(L"顧客") != 3) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// UpdateRecord"商品"で3レコード更新(Search=複数カラム指定, Update=複数カラム指定)後，GetTableVersion("顧客")で3が返却され，GetTableVersion("商品")で6が返却される
@@ -355,10 +355,10 @@ int TableVersion()
 		delete RecUpd;
 
 		if (GetTableVersion(L"商品") != 6 || GetTableVersion(L"顧客") != 3) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// SaveData後，GetTableVersion("顧客")で3が返却され，GetTableVersion("商品")で6が返却される
@@ -369,19 +369,19 @@ int TableVersion()
 		SaveData(L"TableVersion.std");
 		UnlockAllTable();
 		if (GetTableVersion(L"商品") != 6 || GetTableVersion(L"顧客") != 3) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 		StkPlPrintf("Both GetTableVersion(\"customer\") and GetTableVersion(\"merchandise\") return 0 after LoadData.");
 		LockAllTable(LOCK_EXCLUSIVE);
 		LoadData(L"TableVersion.std");
 		UnlockAllTable();
 		if (GetTableVersion(L"商品") != 0 || GetTableVersion(L"顧客") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// 商品名="竹内伸也"を指定してDeleteRecord後，GetTableVersion("顧客")で0が返却され，GetTableVersion("商品")で3が返却される
@@ -396,38 +396,38 @@ int TableVersion()
 		UnlockTable(L"商品");
 		delete RecDat;
 		if (GetTableVersion(L"商品") != 3 || GetTableVersion(L"顧客") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// DeleteTable(L"商品")でテーブルを削除後，GetTableVersion(L"商品")で-1が返り，GetTableVersion(L"顧客")で-1以外が返る
 	{
 		StkPlPrintf("GetTableVersion(L\"merchandise\") returns -1 and GetTableVersion(L\"customer\") returns other than -1 after table removal by DeleteTable(L\"merchandise\").");
 		if (DeleteTable(L"商品") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetTableVersion(L"商品") != -1 || GetTableVersion(L"顧客") == -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	// さらにDeleteTable(L"顧客")でテーブルを削除後，GetTableVersion(L"商品")，GetTableVersion(L"顧客")ともに-1が返る
 	{
 		StkPlPrintf("Both GetTableVersion(L\"merchandise\") and GetTableVersion(\"customer\") return -1 after table removal by DeleteTable(L\"customer\")");
 		if (DeleteTable(L"顧客") != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		if (GetTableVersion(L"商品") != -1 || GetTableVersion(L"顧客") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	return 0;

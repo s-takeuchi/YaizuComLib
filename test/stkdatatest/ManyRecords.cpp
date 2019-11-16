@@ -21,7 +21,7 @@ int ManyRecords()
 			LargeTable.AddColumnDef(ColDef[i]);
 		}
 		if (CreateTable(&LargeTable) != 0) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		for (int i = 0; i < 32; i++) {
@@ -44,13 +44,13 @@ int ManyRecords()
 			RecDat = new RecordData(L"焼津沼津辰口町和泉町中田北白楽", ColDat, 32);
 			LockTable(L"焼津沼津辰口町和泉町中田北白楽", 2);
 			if (InsertRecord(RecDat) != 0) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 			delete RecDat;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
@@ -63,26 +63,26 @@ int ManyRecords()
 		do {
 			ColumnDataWStr* ColDat0 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛0");
 			if (ColDat0 == NULL) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			wchar_t* ColDat0Value = ColDat0->GetValue();
 			if (ColDat0Value == NULL || StkPlWcsLen(ColDat0Value) == 0) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			ColumnDataWStr* ColDat31 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛31");
 			if (ColDat31 == NULL) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			wchar_t* ColDat31Value = ColDat0->GetValue();
 			if (ColDat31Value == NULL || StkPlWcsLen(ColDat31Value) == 0) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 		} while (CurRecDat = CurRecDat->GetNextRecord());
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 		delete RecDat;
 	}
 
@@ -102,23 +102,23 @@ int ManyRecords()
 			ColumnDataWStr* ColDat2 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛2");
 			ColumnDataWStr* ColDat3 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛3");
 			if (ColDat2 == NULL || ColDat3 == NULL) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			wchar_t* ColDat0Value2 = ColDat2->GetValue();
 			wchar_t* ColDat0Value3 = ColDat3->GetValue();
 			if (StkPlWcsStr(ColDat0Value2, L"100 2 :") == NULL) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			if (StkPlWcsStr(ColDat0Value3, L"100 3 :") == NULL) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 		} while (CurRecDat = CurRecDat->GetNextRecord());
 		delete RecDatSch;
 		delete RecDatRet;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
@@ -131,11 +131,11 @@ int ManyRecords()
 		RecordData* RecDatRet = GetRecord(RecDatSch);
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 		if (RecDatRet != NULL) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		delete RecDatSch;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
@@ -153,24 +153,24 @@ int ManyRecords()
 			ColumnDataWStr* ColDat2 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛2");
 			ColumnDataWStr* ColDat3 = (ColumnDataWStr*)CurRecDat->GetColumn(L"東西南北老若男女焼肉定食愛3");
 			if (ColDat2 == NULL || ColDat3 == NULL) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			wchar_t* ColDat0Value2 = ColDat2->GetValue();
 			wchar_t* ColDat0Value3 = ColDat3->GetValue();
 			if (StkPlWcsStr(ColDat0Value2, L"100 2 :") != NULL) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			if (StkPlWcsStr(ColDat0Value3, L"100 3 :") != NULL) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			NumOfDat++;
 		} while (CurRecDat = CurRecDat->GetNextRecord());
 		delete RecDatSch;
 		delete RecDatRet;
-		StkPlPrintf("...%d[OK]\r\n", NumOfDat);
+		StkPlPrintf("...%d[OK]\n", NumOfDat);
 	}
 
 	{
@@ -183,11 +183,11 @@ int ManyRecords()
 		RecordData* RecDatRet = GetRecord(RecDatSch);
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 		if (RecDatRet != NULL) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		delete RecDatSch;
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
@@ -220,29 +220,29 @@ int ManyRecords()
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
 		delete TopRecDat;
 		if (GetNumOfRecords(L"焼津沼津辰口町和泉町中田北白楽") != 16373) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	{
 		StkPlPrintf("-1 is returned if non existing column name is specified to ZaSortRecord.");
 		LockTable(L"焼津沼津辰口町和泉町中田北白楽", LOCK_EXCLUSIVE);
 		if (ZaSortRecord(L"焼津沼津辰口町和泉町中田北白楽", L"aaa") != -1) {
-			StkPlPrintf("...[NG]\r\n");
+			StkPlPrintf("...[NG]\n");
 			return -1;
 		}
 		UnlockTable(L"焼津沼津辰口町和泉町中田北白楽");
-		StkPlPrintf("...[OK]\r\n");
+		StkPlPrintf("...[OK]\n");
 	}
 
 	StkPlPrintf("Delete a table which contains large number of records.");
 	if (DeleteTable(L"焼津沼津辰口町和泉町中田北白楽") != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	return 0;
 }

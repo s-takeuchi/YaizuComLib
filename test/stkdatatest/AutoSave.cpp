@@ -7,10 +7,10 @@ int AutoSaveTest()
 {
 	StkPlPrintf("AutoSave start (interval=30sec, target=AutoSave.std)");
 	if (AutoSave(L"AutoSave.std", 30, true) != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 
 	for (int Loop = 0; Loop < 30; Loop++) {
@@ -22,10 +22,10 @@ int AutoSaveTest()
 			TabDefPerson.AddColumnDef(&ColDefName);
 			TabDefPerson.AddColumnDef(&ColDefAge);
 			if (CreateTable(&TabDefPerson) != 0) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
-			StkPlPrintf("...[OK]\r\n");
+			StkPlPrintf("...[OK]\n");
 		}
 
 
@@ -39,12 +39,12 @@ int AutoSaveTest()
 			if (InsertRecord(RecDat) != 0) {
 				UnlockTable(L"Person");
 				delete RecDat;
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			UnlockTable(L"Person");
 			delete RecDat;
-			StkPlPrintf("...[OK]\r\n");
+			StkPlPrintf("...[OK]\n");
 		}
 
 
@@ -58,12 +58,12 @@ int AutoSaveTest()
 			if (InsertRecord(RecDat) != 0) {
 				UnlockTable(L"Person");
 				delete RecDat;
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			UnlockTable(L"Person");
 			delete RecDat;
-			StkPlPrintf("...[OK]\r\n");
+			StkPlPrintf("...[OK]\n");
 		}
 
 
@@ -77,22 +77,22 @@ int AutoSaveTest()
 			if (InsertRecord(RecDat) != 0) {
 				UnlockTable(L"Person");
 				delete RecDat;
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			UnlockTable(L"Person");
 			delete RecDat;
-			StkPlPrintf("...[OK]\r\n");
+			StkPlPrintf("...[OK]\n");
 		}
 
 
 		if (Loop == 20) {
 			StkPlPrintf("AutoSave(interval=30sec) Stop 'AutoSave' after 200 sec later of start.");
 			if (AutoSave(L"AutoSave.std", 30, false) != 0) {
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
-			StkPlPrintf("...[OK]\r\n");
+			StkPlPrintf("...[OK]\n");
 		}
 
 		if (Loop == 21) {
@@ -105,12 +105,12 @@ int AutoSaveTest()
 			if (InsertRecord(RecDat) != 0) {
 				UnlockTable(L"Person");
 				delete RecDat;
-				StkPlPrintf("...[NG]\r\n");
+				StkPlPrintf("...[NG]\n");
 				return -1;
 			}
 			UnlockTable(L"Person");
 			delete RecDat;
-			StkPlPrintf("...[OK]\r\n");
+			StkPlPrintf("...[OK]\n");
 		}
 
 		StkPlSleepMs(10000);
@@ -119,16 +119,16 @@ int AutoSaveTest()
 	StkPlPrintf("Load the preserved data (AutoSave.std) using 'AutoSave' and then, check 3 records exist.");
 	LockAllTable(LOCK_EXCLUSIVE);
 	if (LoadData(L"AutoSave.std") != 0) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
 	LockAllTable(LOCK_EXCLUSIVE);
 	UnlockAllTable();
 	if (GetNumOfRecords(L"Person") != 3) {
-		StkPlPrintf("...[NG]\r\n");
+		StkPlPrintf("...[NG]\n");
 		return -1;
 	}
-	StkPlPrintf("...[OK]\r\n");
+	StkPlPrintf("...[OK]\n");
 
 	return 0;
 }
