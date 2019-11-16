@@ -231,6 +231,18 @@ void TestHostName()
 		StkPlPrintf("NG case\n");
 		StkPlExit(-1);
 	}
+	if (!StkPlCheckHostName(L"xxx.example.com")) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	if (!StkPlCheckHostName(L"192.168.0.1")) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	if (!StkPlCheckHostName(L"1::2::3::4")) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
 	if (StkPlCheckHostName(L"あいうえおわをん")) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(-1);
