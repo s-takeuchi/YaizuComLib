@@ -60,10 +60,10 @@ void StkSocketMemoryLeak::CheckLeakTcp()
 		MaxMem[48] < MaxMem[51] &&
 		MaxMem[51] < MaxMem[54] &&
 		MaxMem[54] < MaxMem[57]) {
-		StkPlPrintf("[NG] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[30], MaxMem[33], MaxMem[36], MaxMem[39], MaxMem[42], MaxMem[45], MaxMem[48], MaxMem[51], MaxMem[54]);
+		StkPlPrintf("[NG] : %d %d %d %d %d %d %d %d %d\n", MaxMem[30], MaxMem[33], MaxMem[36], MaxMem[39], MaxMem[42], MaxMem[45], MaxMem[48], MaxMem[51], MaxMem[54]);
 		exit(-1);
 	}
-	StkPlPrintf("[OK] : %d %d %d %d %d %d %d %d %d\r\n", MaxMem[30], MaxMem[33], MaxMem[36], MaxMem[39], MaxMem[42], MaxMem[45], MaxMem[48], MaxMem[51], MaxMem[54]);
+	StkPlPrintf("[OK] : %d %d %d %d %d %d %d %d %d\n", MaxMem[30], MaxMem[33], MaxMem[36], MaxMem[39], MaxMem[42], MaxMem[45], MaxMem[48], MaxMem[51], MaxMem[54]);
 	StkSocket_ClearLog();
 }
 
