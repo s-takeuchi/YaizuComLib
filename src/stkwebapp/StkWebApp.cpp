@@ -434,7 +434,7 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		// If valid request is received...
 		for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
 			wchar_t Param[4][StkWebAppExec::URL_PATH_LENGTH] = {L"", L"", L"", L""};
-			int MethodCalRes = Method & pImpl->HandlerMethod[Loop];
+			int MethodCalRes = (Method & pImpl->HandlerMethod[Loop]) | (Method & StkWebAppExec::STKWEBAPP_METHOD_OPTIONS);
 			int FindRes = StkStringParser::ParseInto4Params(UrlPath, pImpl->HandlerUrlPath[Loop], L'$', Param[0], Param[1], Param[2], Param[3]);
 			if (MethodCalRes && FindRes == 1) {
 				if (Method == StkWebAppExec::STKWEBAPP_METHOD_OPTIONS) {

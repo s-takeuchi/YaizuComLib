@@ -17,8 +17,9 @@
 <H2 ID="2.1">2.1 StkWebApp概要</H2>
 <div class="topic">
 StkWebAppは，REST APIを実現するためのクラスを提供します。<br/>
-想定する主な使用方法としては，下図のように，HTTP Serverのリバースプロキシ機能を用いて，特定のURLに対するアクセスをStkWebAppにディスパッチする方法で，
+想定する主な使用方法としては，左図のように，HTTP Serverのリバースプロキシ機能を用いて，特定のURLに対するアクセスをStkWebAppにディスパッチする方法で，
 これによりWeb BrowserからのリクエストをStkWebAppで処理します。<br/>
+また，右図のようにCross DomainでのAPI呼び出しも想定しています。<br/>
 StkWebAppは，リクエストデータとしてJSON形式のデータを受け付け，レスポンスデータとしてJSON形式のデータを返却します。<br/>
 <img src="stkwebapp.gif" alt="Component relation"><br/>
 
@@ -91,7 +92,7 @@ StkWebApp()の内部でStkThreadの生成および起動を行います。その
 ある特定のメソッドおよびURLと関連付くリクエストを処理するハンドラを登録します。<br/>
 <table class="tblstyle">
 <tr><td>
-Method[入力]</td><td>ハンドラの処理対象となるメソッド。以下の論理積を許す。<br/>
+Method[入力]</td><td>ハンドラの処理対象となるメソッド。以下の論理和を許す。<br/>
 StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED<br/>
 StkWebAppExec::STKWEBAPP_METHOD_GET<br/>
 StkWebAppExec::STKWEBAPP_METHOD_HEAD<br/>
@@ -108,7 +109,7 @@ StkWebAppExec::STKWEBAPP_METHOD_DELETE<br/>
 <p>int DeleteReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])</p>
 登録済のハンドラを削除します。<br/>
 <table class="tblstyle">
-<tr><td>Method[入力]</td><td>削除するハンドラを登録したときに指定したメソッドおよびその論理積<br/></td></tr>
+<tr><td>Method[入力]</td><td>削除するハンドラを登録したときに指定したメソッドおよびその論理和<br/></td></tr>
 <tr><td>UrlPath[入力]</td><td>削除するハンドラを登録したときに指定したURL</td></tr>
 <tr><td>戻り値</td><td>-1:指定したハンドラが登録されていない<br/>-1以外:削除後のハンドラの数</td></tr>
 </table>
