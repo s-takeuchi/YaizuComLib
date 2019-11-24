@@ -123,7 +123,7 @@ function initMainPage(contents) {
     var containerFluid = $('<div class="container-fluid">');
     containerFluid.append(navBarHeader);
     containerFluid.append(navBarCollapse);
-    var navBarDefault = $('<nav class="navbar navbar-default">');
+    var navBarDefault = $('<nav class="navbar navbar-default navbar-fixed-top">');
     navBarDefault.append(containerFluid);
     var containerFluidWorkSpace = $('<div class="container-fluid">');
     if (contents instanceof Array) {
@@ -135,6 +135,7 @@ function initMainPage(contents) {
     container.append(navBarDefault);
     container.append(containerFluidWorkSpace);
     $('body').append(container);
+    $("body").css({ "padding-top" : "70px" });
     $('#container').hide();
 }
 
