@@ -109,34 +109,29 @@ function initLoadingModal() {
 }
 
 function initMainPage(contents) {
-    var navBarHeader = $('<div class="navbar-header"><a class="navbar-brand" href=""><strong>Management Server</strong></a><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#top-nav"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button></div>');
-    var navBarNav = $('<ul class="nav navbar-nav">');
+    var navBarHeader = $('<a class="navbar-brand" href=""><strong>Management Server</strong></a><button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon"></span></button>');
+    var navBarNav = $('<ul class="navbar-nav  mr-auto">');
     if (contents instanceof Array) {
         for (var key in contents) {
-            navBarNav.append($('<li id="menu-' + contents[key].id + '" style="display:none"><a onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"><span class="' + contents[key].icon + '"></span> ' + contents[key].title + '</a></li>'));
+            navBarNav.append($('<li class="nav-item" id="menu-' + contents[key].id + '" style="display:none"><a class="nav-link" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"> ' + contents[key].title + '</a></li>'));
         }
     }
-    var navBarNavRight = $('<ul class="nav navbar-nav navbar-right"><li><a onclick="tryLogout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li></u>')
-    var navBarCollapse = $('<div class="collapse navbar-collapse" id="top-nav">');
+    var navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item"><a class="nav-link" onclick="tryLogout()"> Logout</a></li></u>')
+    var navBarCollapse = $('<div class="collapse navbar-collapse justify-content-start" id="top-nav">');
     navBarCollapse.append(navBarNav);
     navBarCollapse.append(navBarNavRight);
-    var containerFluid = $('<div class="container-fluid">');
-    containerFluid.append(navBarHeader);
-    containerFluid.append(navBarCollapse);
-    var navBarDefault = $('<nav class="navbar navbar-default navbar-fixed-top">');
-    navBarDefault.append(containerFluid);
+    var navBarDefault = $('<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">');
+    navBarDefault.append(navBarHeader);
+    navBarDefault.append(navBarCollapse);
     var containerFluidWorkSpace = $('<div class="container-fluid">');
     if (contents instanceof Array) {
         for (var key in contents) {
             containerFluidWorkSpace.append('<div><div id="' + contents[key].id + '" class="row col-xs-12" style="display:none"></div></div>');
         }
     }
-    var container = $('<div id="container">');
-    container.append(navBarDefault);
-    container.append(containerFluidWorkSpace);
-    $('body').append(container);
-    $("body").css({ "padding-top" : "70px" });
-    $('#container').hide();
+    $('body').append(navBarDefault);
+    $('body').append(containerFluidWorkSpace);
+    $('body').css('padding-top', '70px');
 }
 
 function addClientMessage(code, msg) {
