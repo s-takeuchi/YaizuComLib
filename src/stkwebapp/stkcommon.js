@@ -109,7 +109,7 @@ function initLoadingModal() {
 }
 
 function initMainPage(contents) {
-    var navBarHeader = $('<a class="navbar-brand" href=""><strong>Management Server</strong></a><button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon"></span></button>');
+    var navBarHeader = $('<a class="navbar-brand" href=""><img src="squirrel.svg" width=22 height=22><strong>Commander</strong></a> <div id="rsCommand"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon"></span></button>');
     var navBarNav = $('<ul class="navbar-nav  mr-auto">');
     if (contents instanceof Array) {
         for (var key in contents) {
@@ -132,6 +132,20 @@ function initMainPage(contents) {
     $('body').append(navBarDefault);
     $('body').append(containerFluidWorkSpace);
     $('body').css('padding-top', '70px');
+}
+
+function addRsCommand(func, icon, enable)
+{
+    if (enable == true) {
+        $('#rsCommand').append('<a href="#" onclick="' + func + '"><span class="icon ' + icon + '" style="font-size:30px;"> </span></a>');
+    } else {
+        $('#rsCommand').append('<span class="icon ' + icon + '" style="font-size:30px;"> </span>');
+    }
+}
+
+function clearRsCommand()
+{
+    $('#rsCommand').empty();
 }
 
 function addClientMessage(code, msg) {
