@@ -109,7 +109,7 @@ function initLoadingModal() {
 }
 
 function initMainPage(contents) {
-    var navBarHeader = $('<a class="navbar-brand" href=""><img src="squirrel.svg" width=22 height=22><strong>Commander</strong></a> <div id="rsCommand"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon"></span></button>');
+    var navBarHeader = $('<a class="navbar-brand" href=""><img src="squirrel.svg" width=22 height=22><strong>SERVAL</strong></a> <div id="rsCommand"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
     var navBarNav = $('<ul class="navbar-nav  mr-auto">');
     if (contents instanceof Array) {
         for (var key in contents) {
@@ -137,9 +137,9 @@ function initMainPage(contents) {
 function addRsCommand(func, icon, enable)
 {
     if (enable == true) {
-        $('#rsCommand').append('<a href="#" onclick="' + func + '"><span class="icon ' + icon + '" style="font-size:30px;"> </span></a>');
+        $('#rsCommand').append('<a href="#" onclick="' + func + '"><span class="icon ' + icon + '" style="font-size:30px;"></span> </a>');
     } else {
-        $('#rsCommand').append('<span class="icon ' + icon + '" style="font-size:30px;"> </span>');
+        $('#rsCommand').append('<span class="icon ' + icon + '" style="font-size:30px;"></span> ');
     }
 }
 
