@@ -28,14 +28,15 @@ function initLoginModal(func) {
     var loginModal = $('<div id="login_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
     var modalDialog = $('<div class="modal-dialog">');
     var modalContent = $('<div class="modal-content">');
-    var modalHeader = $('<div class="modal-header" style="padding: 0px; text-align: center;"><h3 style="margin-top: 5px;">Login</h3></div>');
-    var modalBody = $('<div class="modal-body"><div style="height:150px"><div class="form-group"><input type="email" maxlength="254" class="form-control" id="loginId" placeholder="Your Email *" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="Your Password *" value="" /></div><div id="login_Modal_Body"></div><button type="button" class="btn btn-primary" onclick="tryLogin(' + func + ')">Login</button></div></div>');
+    var modalHeader = $('<h3 class="modal-header">Login</h3>');
+    var modalBody = $('<div class="modal-body"><div style="height:190px"><div class="form-group"><input type="email" maxlength="254" class="form-control" id="loginId" placeholder="Your Email" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="Your Password" value="" /></div><div id="login_Modal_Body"></div><button type="button" class="btn btn-dark" onclick="tryLogin(' + func + ')">Login</button></div></div>');
 
     modalContent.append(modalHeader);
     modalContent.append(modalBody);
     modalDialog.append(modalContent);
     loginModal.append(modalDialog);
     $('body').append(loginModal);
+    $('#login_Modal_Body').append('<p>Input email address and password.</p>');
 }
 
 function tryLogin(func) {
@@ -43,12 +44,12 @@ function tryLogin(func) {
     loginPw = $("#loginPw").val();
     if (!loginId.match(/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/)) {
         $('#login_Modal_Body').empty();
-        $('#login_Modal_Body').append('The format of the email address is incorrect.');
+        $('#login_Modal_Body').append('<p>The format of the email address is incorrect.</p>');
         return;
     }
     if (!loginPw.match(/^([a-zA-Z0-9!\?\.\+\$%#&\*=@])+$/)) {
         $('#login_Modal_Body').empty();
-        $('#login_Modal_Body').append('The passwprd is empty or contains abnormal character(s).');
+        $('#login_Modal_Body').append('<p>The passwprd is empty or contains abnormal character(s).</p>');
         return;
     }
     if (func() == true) {
@@ -57,7 +58,7 @@ function tryLogin(func) {
         document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw)) + ";max-age=86400;samesite=strict;secure";
     } else {
         $('#login_Modal_Body').empty();
-        $('#login_Modal_Body').append('The email address or password is incorrect.');
+        $('#login_Modal_Body').append('<p>The email address or password is incorrect.</p>');
     }
 }
 
@@ -98,8 +99,8 @@ function initLoadingModal() {
     var loadingModal = $('<div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
     var modalDialog = $('<div class="modal-dialog">');
     var modalContent = $('<div class="modal-content">');
-    var modalHeader = $('<div class="modal-header" style="padding: 0px; text-align: center;"><h3 style="margin-top: 5px;">Now loading ...</h3></div>');
-    var modalBody = $('<div class="modal-body"><div style="height:20px"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%"> </div></div></div></div>');
+    var modalHeader = $('<h5 class="modal-header">Now loading ...</h5>');
+    var modalBody = $('<div class="modal-body"><div style="height:20px"><div class="progress"><div class="progress-bar bg-primary progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%"> </div></div></div></div>');
 
     modalContent.append(modalHeader);
     modalContent.append(modalBody);
@@ -108,8 +109,8 @@ function initLoadingModal() {
     $('body').append(loadingModal);
 }
 
-function initMainPage(contents) {
-    var navBarHeader = $('<a class="navbar-brand" href=""><img src="squirrel.svg" width=22 height=22><strong>SERVAL</strong></a> <div id="rsCommand"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
+function initMainPage(title, contents) {
+    var navBarHeader = $('<a class="navbar-brand" href=""><img src="squirrel.svg" width=22 height=22><strong>' + title + '</strong></a> <div id="rsCommand"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
     var navBarNav = $('<ul class="navbar-nav  mr-auto">');
     if (contents instanceof Array) {
         for (var key in contents) {
