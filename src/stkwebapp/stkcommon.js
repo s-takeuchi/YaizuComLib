@@ -209,6 +209,17 @@ function apiCall(method, url, request, keystring, targetFunc) {
     }
 }
 
+function MultiApiCall(contents, targetFunc) {
+    for (var key in contents) {
+        if (contents[key].method != null && contents[key].url != null && contents[key].keystring !== '') {
+            sendRequestRecvResponse(contents[key].method, contents[key].url, contents[key].request, contents[key].keystring, true);
+        }
+    }
+    if (targetFunc != null) {
+        setTimeout(function() {waitForResponse(0, targetFunc);}, 1);
+    }
+}
+
 function waitForResponse(count, targetFunc) {
     if (initLoadingModalFlag == false) {
         initLoadingModalFlag = true;
