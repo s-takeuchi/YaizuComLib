@@ -8,7 +8,7 @@ var timeout = 10000;
 // underComm = 0 : No communication state, >= 1 : Communication state
 var underComm = 0;
 
-// [0] : for API-1, [1] : for API-2, [2] : for API-3, ...
+// Acquired data
 var statusCode = {};
 var responseData = {};
 
@@ -20,16 +20,19 @@ var loginPw = "";
 // Init flag of loading modal
 var initLoadingModalFlag = false;
 
+// Init flag of input modal
+var initInputModalFlag = false;
+
 // Client messages
 var clientMsg = {};
 var clientLanguage = 0;
 
 function initLoginModal(func) {
     var loginModal = $('<div id="login_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
-    var modalDialog = $('<div class="modal-dialog">');
+    var modalDialog = $('<div class="modal-dialog modal-xl">');
     var modalContent = $('<div class="modal-content">');
     var modalHeader = $('<h3 class="modal-header">Login</h3>');
-    var modalBody = $('<div class="modal-body"><div style="height:190px"><div class="form-group"><input type="email" maxlength="254" class="form-control" id="loginId" placeholder="Your Email" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="Your Password" value="" /></div><div id="login_Modal_Body"></div><button type="button" class="btn btn-dark" onclick="tryLogin(' + func + ')">Login</button></div></div>');
+    var modalBody = $('<div class="modal-body"><div"><div class="form-group"><input type="email" maxlength="254" class="form-control" id="loginId" placeholder="Your Email" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="Your Password" value="" /></div><div id="login_Modal_Body"></div><button type="button" class="btn btn-dark" onclick="tryLogin(' + func + ')">Login</button></div></div>');
 
     modalContent.append(modalHeader);
     modalContent.append(modalBody);
@@ -97,7 +100,7 @@ function showLoginModal(func) {
 
 function initLoadingModal() {
     var loadingModal = $('<div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
-    var modalDialog = $('<div class="modal-dialog">');
+    var modalDialog = $('<div class="modal-dialog modal-xl">');
     var modalContent = $('<div class="modal-content">');
     var modalHeader = $('<h5 class="modal-header">Now loading ...</h5>');
     var modalBody = $('<div class="modal-body"><div style="height:20px"><div class="progress"><div class="progress-bar bg-primary progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%"> </div></div></div></div>');
@@ -109,12 +112,44 @@ function initLoadingModal() {
     $('body').append(loadingModal);
 }
 
+function initInputModal() {
+    var inputModal = $('<div id="inputDlgModal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
+    var modalDialog = $('<div class="modal-dialog modal-xl">');
+    var modalContent = $('<div class="modal-content">');
+    var modalHeader = $('<h5 class="modal-header" id="inputDlgModalTitle"/>');
+    var modalBody = $('<div class="modal-body" id="inputDlgModalBody"/>');
+
+    modalContent.append(modalHeader);
+    modalContent.append(modalBody);
+    modalDialog.append(modalContent);
+    inputModal.append(modalDialog);
+    $('body').append(inputModal);
+}
+
+function showInputModal(title, contents) {
+    if (initInputModalFlag == false) {
+        initInputModalFlag = true;
+        initInputModal();
+    }
+    $('#inputDlgModalTitle').empty();
+    $('#inputDlgModalBody').empty();
+    $('#inputDlgModalTitle').append(title);
+    $('#inputDlgModalBody').append(contents);
+    $('#inputDlgModal').modal('show');
+}
+
+function closeInputModal() {
+    $('#inputDlgModal').modal('hide');
+}
+
 function initMainPage(title, contents) {
     var navBarHeader = $('<a class="navbar-brand" href=""><img src="squirrel.svg" width=22 height=22><strong>' + title + '</strong></a> <div id="rsCommand"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
     var navBarNav = $('<ul class="navbar-nav  mr-auto">');
     if (contents instanceof Array) {
         for (var key in contents) {
-            navBarNav.append($('<li class="nav-item" id="menu-' + contents[key].id + '" style="display:none"><a class="nav-link" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"> ' + contents[key].title + '</a></li>'));
+            if (contents[key].actApiName != null && contents[key].title != null) {
+                navBarNav.append($('<li class="nav-item" id="menu-' + contents[key].id + '" style="display:none"><a class="nav-link" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"> ' + contents[key].title + '</a></li>'));
+            }
         }
     }
     var navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item"><a class="nav-link" onclick="tryLogout()"> Logout</a></li></u>')
@@ -132,7 +167,6 @@ function initMainPage(title, contents) {
     }
     $('body').append(navBarDefault);
     $('body').append(containerFluidWorkSpace);
-    $('body').css('padding-top', '70px');
 }
 
 function addRsCommand(func, icon, enable)
