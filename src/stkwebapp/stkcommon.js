@@ -124,7 +124,7 @@ function initMainPage(title, contents) {
     var navBarDefault = $('<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">');
     navBarDefault.append(navBarHeader);
     navBarDefault.append(navBarCollapse);
-    var containerFluidWorkSpace = $('<div class="container-fluid">');
+    var containerFluidWorkSpace = $('<div class="container">');
     if (contents instanceof Array) {
         for (var key in contents) {
             containerFluidWorkSpace.append('<div><div id="' + contents[key].id + '" class="row col-xs-12" style="display:none"></div></div>');
@@ -169,6 +169,10 @@ function getClientMessageJa(code) {
 
 function setClientLanguage(lang) {
     clientLanguage = lang;
+}
+
+function getClientLanguage() {
+    return clientLanguage;
 }
 
 function getClientMessage(code) {
