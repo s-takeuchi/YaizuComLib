@@ -12,16 +12,6 @@ td {
     max-height: 100%;
 }
 
-a, a:active {
-    color: #a0a0a0;
-    text-decoration: none;
-}
-
-a:hover, a:focus {
-    color: #f0f0f0;
-    text-decoration: none;
-}
-
 @font-face {
     font-family: 'IcoMoon-Free';
     src: url('IcoMoon-Free.ttf') format('truetype');
