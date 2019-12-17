@@ -172,7 +172,7 @@ function initMainPage(title, contents) {
 function addRsCommand(func, icon, enable)
 {
     if (enable == true) {
-        $('#rsCommand').append('<span class="icon ' + icon + '" style="font-size:30px;cursor: pointer;color:#a0a0a0;" onclick="' + func + '" style=""></span> ');
+        $('#rsCommand').append('<a href="#" onclick="' + func + '"><span class="icon ' + icon + '" style="font-size:30px;"></span> </a>');
     } else {
         $('#rsCommand').append('<span class="icon ' + icon + '" style="font-size:30px;"></span> ');
     }

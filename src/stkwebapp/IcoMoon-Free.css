@@ -7,6 +7,21 @@ td {
     vertical-align: middle
 }
 
+a, a:active {
+    color: #a0a0a0;
+    text-decoration: none;
+}
+
+a:hover, a:focus {
+    color: #f0f0f0;
+    text-decoration: none;
+}
+
+.dropdown-menu li a { color: #000000; text-decoration: none; }
+.dropdown-menu li a:active { color: #000000; text-decoration: none; }
+.dropdown-menu li a:hover { color: #505050; text-decoration: none; }
+.dropdown-menu li a:focus { color: #505050; text-decoration: none; }
+
 .modal {
     overflow-y: auto;
     max-height: 100%;
