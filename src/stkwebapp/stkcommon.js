@@ -184,11 +184,15 @@ function clearRsCommand()
 }
 
 function addDropDown(dropdownTitle) {
-    $('#rsCommand').append('<div id="rsNavDropDown" class="nav-item dropdown rscommand"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' + dropdownTitle + '</a></div>');
+    $('#rsCommand').append('<div class="nav-item dropdown rscommand"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' + dropdownTitle + '</a><div id="rsNavDropDown" class="dropdown-menu" aria-labelledby="navbarDropdown"/></div>');
 }
 
-function addDropDownMenu(menuTitle) {
-    $('#rsNavDropDown').append('<div class="dropdown-menu" aria-labelledby="navbarDropdown"><a class="dropdown-item" href="#">' + menuTitle + '</a></div>');
+function changeDropDownTitle(dropdownTitle) {
+    $('#navbarDropdown').text(dropdownTitle);
+}
+
+function addDropDownMenu(menuTitle, func) {
+    $('#rsNavDropDown').append('<a class="dropdown-item" href="#" onclick="' + func + '">' + menuTitle + '</a>');
 }
 
 function addClientMessage(code, msg) {
