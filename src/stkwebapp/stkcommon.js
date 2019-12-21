@@ -172,15 +172,23 @@ function initMainPage(title, contents) {
 function addRsCommand(func, icon, enable)
 {
     if (enable == true) {
-        $('#rsCommand').append('<a href="#" onclick="' + func + '"><span class="icon ' + icon + '" style="font-size:30px;"></span> </a>');
+        $('#rsCommand').append('<div class="rscommand"><a href="#" onclick="' + func + '"><span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;&nbsp;</a></div>');
     } else {
-        $('#rsCommand').append('<span class="icon ' + icon + '" style="font-size:30px;"></span> ');
+        $('#rsCommand').append('<div class="rscommand"><span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;&nbsp;</div>');
     }
 }
 
 function clearRsCommand()
 {
     $('#rsCommand').empty();
+}
+
+function addDropDown(dropdownTitle) {
+    $('#rsCommand').append('<div id="rsNavDropDown" class="nav-item dropdown rscommand"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' + dropdownTitle + '</a></div>');
+}
+
+function addDropDownMenu(menuTitle) {
+    $('#rsNavDropDown').append('<div class="dropdown-menu" aria-labelledby="navbarDropdown"><a class="dropdown-item" href="#">' + menuTitle + '</a></div>');
 }
 
 function addClientMessage(code, msg) {
