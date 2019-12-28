@@ -143,7 +143,7 @@ function closeInputModal() {
 }
 
 function initMainPage(title, contents) {
-    var navBarHeader = $('<a class="navbar-brand" href=""><img src="squirrel.svg" width=22 height=22><strong>' + title + '</strong></a> <div id="rsCommand"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
+    var navBarHeader = $('<a class="navbar-brand" href=""><img src="squirrel.svg" width=22 height=22/><div class="d-none d-sm-block rstitle">' + title + '</div></a> <div id="rsCommand"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
     var navBarNav = $('<ul class="navbar-nav  mr-auto">');
     if (contents instanceof Array) {
         for (var key in contents) {
@@ -184,15 +184,23 @@ function clearRsCommand()
 }
 
 function addDropDown(dropdownTitle) {
-    $('#rsCommand').append('<div class="nav-item dropdown rscommand"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' + dropdownTitle + '</a><div id="rsNavDropDown" class="dropdown-menu" aria-labelledby="navbarDropdown"/></div>');
+    var tmpTitle = dropdownTitle.substring(0, 6);
+    tmpTitle = tmpTitle + '...';
+    $('#rsCommand').append('<div class="nav-item dropdown rscommand"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' + tmpTitle + '</a><div id="rsNavDropDown" class="dropdown-menu" aria-labelledby="navbarDropdown"/></div>');
 }
 
 function changeDropDownTitle(dropdownTitle) {
-    $('#navbarDropdown').text(dropdownTitle);
+    var tmpTitle = dropdownTitle.substring(0, 6);
+    tmpTitle = tmpTitle + '...';
+    $('#navbarDropdown').text(tmpTitle);
 }
 
-function addDropDownMenu(menuTitle, func) {
-    $('#rsNavDropDown').append('<a class="dropdown-item" href="#" onclick="' + func + '">' + menuTitle + '</a>');
+function getDropDownMenu(index) {
+    return $('#dropDownMenu_' + index).text();
+}
+
+function addDropDownMenu(index, menuTitle, func) {
+    $('#rsNavDropDown').append('<a id="dropDownMenu_' + index + '" class="dropdown-item" href="#" onclick="' + func + '">' + menuTitle + '</a>');
 }
 
 function addClientMessage(code, msg) {

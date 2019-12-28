@@ -22,6 +22,8 @@ a:hover, a:focus {
 .dropdown-menu li a:hover { color: #505050; text-decoration: none; }
 .dropdown-menu li a:focus { color: #505050; text-decoration: none; }
 
+.rstitle { float:right; }  
+
 .rscommand { float:left; }  
 
 .modal {
