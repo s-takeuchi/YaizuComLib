@@ -133,7 +133,7 @@ function showInputModal(title, contents) {
     }
     $('#inputDlgModalTitle').empty();
     $('#inputDlgModalBody').empty();
-    $('#inputDlgModalTitle').append(title);
+    $('#inputDlgModalTitle').append('<div style="float:left;">' + title + '</div><div class="plane-link" style="float:right;"><a href="#" onclick="closeInputModal()"><span class="icon icon-cross" style="font-size:22px;"></span></div>');
     $('#inputDlgModalBody').append(contents);
     $('#inputDlgModal').modal('show');
 }

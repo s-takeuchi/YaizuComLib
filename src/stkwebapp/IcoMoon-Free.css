@@ -7,20 +7,20 @@ td {
     vertical-align: middle
 }
 
-a, a:active {
-    color: #a0a0a0;
-    text-decoration: none;
-}
+a { color: #a0a0a0; text-decoration: none; }
+a:active { color: #a0a0a0; text-decoration: none; }
+a:hover { color: #f0f0f0; text-decoration: none; }
+a:focus { color: #f0f0f0; text-decoration: none; }
 
-a:hover, a:focus {
-    color: #f0f0f0;
-    text-decoration: none;
-}
+.plane-link a { color: #505050; text-decoration: none; }
+.plane-link a:active { color: #505050; text-decoration: none; }
+.plane-link a:hover { color: #202020; text-decoration: none; }
+.plane-link a:focus { color: #202020; text-decoration: none; }
 
-.dropdown-menu li a { color: #000000; text-decoration: none; }
-.dropdown-menu li a:active { color: #000000; text-decoration: none; }
-.dropdown-menu li a:hover { color: #505050; text-decoration: none; }
-.dropdown-menu li a:focus { color: #505050; text-decoration: none; }
+.dropdown-menu li a { color: #303030; text-decoration: none; }
+.dropdown-menu li a:active { color: #303030; text-decoration: none; }
+.dropdown-menu li a:hover { color: #000000; text-decoration: none; }
+.dropdown-menu li a:focus { color: #000000; text-decoration: none; }
 
 .rscommand { float:left; }  
 
