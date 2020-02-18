@@ -45,12 +45,12 @@ function initLoginModal(func) {
 function tryLogin(func) {
     loginId = $("#loginId").val();
     loginPw = $("#loginPw").val();
-    if (!loginId.match(/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/)) {
+    if (!loginId.match(/^([a-zA-Z0-9\._\-/@])+$/)) {
         $('#login_Modal_Body').empty();
         $('#login_Modal_Body').append('<p>The format of the email address is incorrect.</p>');
         return;
     }
-    if (!loginPw.match(/^([a-zA-Z0-9!\?\.\+\$%#&\*=@])+$/)) {
+    if (!loginPw.match(/^([a-zA-Z0-9!\?\.\+\-\$%#&\*/=@])+$/)) {
         $('#login_Modal_Body').empty();
         $('#login_Modal_Body').append('<p>The passwprd is empty or contains abnormal character(s).</p>');
         return;
