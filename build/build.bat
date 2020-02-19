@@ -158,9 +158,10 @@ if defined LOCALMACHINE (
 
   xcopy /y /q /s /i "..\doc\stkwebapp" deployment\stkwebapp
   pushd deployment\stkwebapp
-  %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm stkwebapp01.pdf
-  %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm stkwebapp02.pdf
-  %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm stkwebapp03.pdf
+  %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale frame_r.htm stkwebapp00.pdf
+  %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section01.htm stkwebapp01.pdf
+  %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section02.htm stkwebapp02.pdf
+  %WKHTMLTOPDF% --zoom 1.3 --disable-internal-links --disable-external-links --grayscale section03.htm stkwebapp03.pdf
   %PDFTK% *.pdf output stkwebapp.pdf
   copy stkwebapp.pdf ..
   del *.pdf

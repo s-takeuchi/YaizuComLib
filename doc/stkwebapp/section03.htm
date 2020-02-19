@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+
+<html lang="ja">
+
+<HEAD>
+<title>StkWebApp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="./style.css" type="text/css">
+</HEAD>
+
+<BODY>
+<div id="container">
+<H1>3. stkcommon.js</H1>
+
+
+
+<H2 ID="3.1">3.1 stkcommon.js概要</H2>
+<div class="topic">
+  stkcommon.jsは，レスポンシブなWebアプリケーションを実現するための，共通のライブラリです。<br/>
+  stkcommon.jsを使用することにより，レスポンシブなWebアプリケーションを，効率よく開発することができます。<br/>
+</div><p>
+
+
+
+<H2 ID="3.2">3.2 stkcommon.jsの前提ソフトウェア</H2>
+<div class="topic">
+  stkcommon.jsは以下のソフトウェアを前提とします。<br/>
+  stkcommon.jsを使用するソフトウェアは，事前にこれらのソフトウェアを組み込んでおく必要があります。<br/>
+  <ul>
+  <li>Bootstrap 4.4.1</li>
+  <li>JQuery 3.2.0</li>
+  <li>IcoMoon-Free</li>
+  </ul>
+</div>
+
+
+
+<H2 ID="3.3">3.3 stkcommon.jsのAPI</H2>
+<div class="topic">
+stkcommon.jsの公開APIには下記のものがあります。<br/>
+<table class="tblstyle">
+<tr><td>function showLoginModal(func)</td><td>ログインダイアログを表示します。</td></tr>
+<tr><td>function showInputModal(title, contents)</td><td>入力ダイアログを表示します。</td></tr>
+<tr><td>function closeInputModal()</td><td>入力ダイアログを閉じます。</td></tr>
+<tr><td>function initMainPage(title, iconname, contents)</td><td>メインページを初期化します。</td></tr>
+<tr><td>function addRsCommand(func, icon, enable)</td><td>コマンドアイコンを追加します。</td></tr>
+<tr><td>function clearRsCommand()</td><td>コマンドアイコンをクリアします。</td></tr>
+<tr><td>function addDropDown(dropdownTitle)</td><td>ドロップダウンを追加します。</td></tr>
+</table>
+</div>
+
+
+
+</div>
+</BODY>
+</html>
