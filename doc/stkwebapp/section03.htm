@@ -43,9 +43,19 @@ stkcommon.jsの公開APIには下記のものがあります。<br/>
 <tr><td>function showInputModal(title, contents)</td><td>入力ダイアログを表示します。</td></tr>
 <tr><td>function closeInputModal()</td><td>入力ダイアログを閉じます。</td></tr>
 <tr><td>function initMainPage(title, iconname, contents)</td><td>メインページを初期化します。</td></tr>
-<tr><td>function addRsCommand(func, icon, enable)</td><td>コマンドアイコンを追加します。</td></tr>
-<tr><td>function clearRsCommand()</td><td>コマンドアイコンをクリアします。</td></tr>
-<tr><td>function addDropDown(dropdownTitle)</td><td>ドロップダウンを追加します。</td></tr>
+<tr><td>function addRsCommand(func, icon, enable)</td><td>ナビゲーションバーにコマンドアイコンを追加します。</td></tr>
+<tr><td>function clearRsCommand()</td><td>ナビゲーションバーのコマンドアイコンおよびドロップダウンメニューをクリアします。</td></tr>
+<tr><td>function addDropDown(dropdownTitle)</td><td>ナビゲーションバーにドロップダウンメニュータイトルを追加します。</td></tr>
+<tr><td>function changeDropDownTitle(dropdownTitle)</td><td>ナビゲーションバーのドロップダウンメニュータイトルを変更します。</td></tr>
+<tr><td>function getDropDownMenu(index)</td><td>ナビゲーションバーのドロップダウンメニュー項目名を取得します。</td></tr>
+<tr><td>function addDropDownMenu(index, menuTitle, func)</td><td>ナビゲーションバーのドロップダウンメニュー項目を追加します。</td></tr>
+<tr><td>function addClientMessage(code, msg)</td><td>クライアントメッセージを追加します。</td></tr>
+<tr><td>function deleteClientMessage(code)</td><td>クライアントメッセージを削除します。</td></tr>
+<tr><td>function getClientMessageEn(code)</td><td>クライアントメッセージ(英語)を取得します。</td></tr>
+<tr><td>function getClientMessageJa(code)</td><td>クライアントメッセージ(日本語)を取得します。</td></tr>
+<tr><td>function setClientLanguage(lang)</td><td>クライアントメッセージの言語を指定します。</td></tr>
+<tr><td>function getClientLanguage()</td><td>クライアントメッセージの言語を取得します。</td></tr>
+<tr><td>function getClientMessage(code)</td><td>クライアントメッセージを指定した言語で取得します。</td></tr>
 </table>
 </div>
 
