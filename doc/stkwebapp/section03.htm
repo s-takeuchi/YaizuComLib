@@ -45,21 +45,21 @@ stkcommon.jsの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.4">function initMainPage(title, iconname, contents)</a></td><td>メインページを初期化します。</td></tr>
 <tr><td><a href="#3.4.5">function addRsCommand(func, icon, enable)</a></td><td>ナビゲーションバーにコマンドアイコンを追加します。</td></tr>
 <tr><td><a href="#3.4.6">function clearRsCommand()</a></td><td>ナビゲーションバーのコマンドアイコンおよびドロップダウンメニューをクリアします。</td></tr>
-<tr><td>function addDropDown(dropdownTitle)</td><td>ナビゲーションバーにドロップダウンメニューを追加します。</td></tr>
-<tr><td>function changeDropDownTitle(dropdownTitle)</td><td>ナビゲーションバーのドロップダウンメニューのタイトルを変更します。</td></tr>
-<tr><td>function getDropDownMenu(index)</td><td>ナビゲーションバーのドロップダウンメニューの要素名を取得します。</td></tr>
-<tr><td>function addDropDownMenu(index, menuTitle, func)</td><td>ナビゲーションバーのドロップダウンメニューに要素を追加します。</td></tr>
-<tr><td>function addClientMessage(code, msg)</td><td>クライアントメッセージを追加します。</td></tr>
-<tr><td>function deleteClientMessage(code)</td><td>クライアントメッセージを削除します。</td></tr>
-<tr><td>function getClientMessageEn(code)</td><td>クライアントメッセージ(英語)を取得します。</td></tr>
-<tr><td>function getClientMessageJa(code)</td><td>クライアントメッセージ(日本語)を取得します。</td></tr>
-<tr><td>function setClientLanguage(lang)</td><td>クライアントメッセージの言語を指定します。</td></tr>
-<tr><td>function getClientLanguage()</td><td>クライアントメッセージの言語を取得します。</td></tr>
-<tr><td>function getClientMessage(code)</td><td>クライアントメッセージを指定した言語で取得します。</td></tr>
-<tr><td>function displayAlertSuccess(parent, msg)</td><td>Successメッセージを表示します。</td></tr>
-<tr><td>function displayAlertDanger(parent, msg)</td><td>Dangerメッセージを表示します。</td></tr>
-<tr><td>function displayAlertWarning(parent, msg)</td><td>Warningメッセージを表示します。</td></tr>
-<tr><td>function displayAlertInfo(parent, msg)</td><td>Infoメッセージを表示します。</td></tr>
+<tr><td><a href="#3.4.7">function addDropDown(dropdownTitle)</a></td><td>ナビゲーションバーにドロップダウンメニューを追加します。</td></tr>
+<tr><td><a href="#3.4.8">function changeDropDownTitle(dropdownTitle)</a></td><td>ナビゲーションバーのドロップダウンメニューのタイトルを変更します。</td></tr>
+<tr><td><a href="#3.4.9">function getDropDownMenu(index)</a></td><td>ナビゲーションバーのドロップダウンメニューの要素名を取得します。</td></tr>
+<tr><td><a href="#3.4.10">function addDropDownMenu(index, menuTitle, func)</a></td><td>ナビゲーションバーのドロップダウンメニューに要素を追加します。</td></tr>
+<tr><td><a href="#3.4.11">function addClientMessage(code, msg)</a></td><td>クライアントメッセージを追加します。</td></tr>
+<tr><td><a href="#3.4.12">function deleteClientMessage(code)</a></td><td>クライアントメッセージを削除します。</td></tr>
+<tr><td><a href="#3.4.13">function getClientMessageEn(code)</a></td><td>クライアントメッセージ(英語)を取得します。</td></tr>
+<tr><td><a href="#3.4.14">function getClientMessageJa(code)</a></td><td>クライアントメッセージ(日本語)を取得します。</td></tr>
+<tr><td><a href="#3.4.15">function setClientLanguage(lang)</a></td><td>クライアントメッセージの言語を指定します。</td></tr>
+<tr><td><a href="#3.4.16">function getClientLanguage()</a></td><td>クライアントメッセージの言語を取得します。</td></tr>
+<tr><td><a href="#3.4.17">function getClientMessage(code)</a></td><td>クライアントメッセージを指定した言語で取得します。</td></tr>
+<tr><td><a href="#3.4.18">function displayAlertSuccess(parent, msg)</a></td><td>Successメッセージを表示します。</td></tr>
+<tr><td><a href="#3.4.19">function displayAlertDanger(parent, msg)</a></td><td>Dangerメッセージを表示します。</td></tr>
+<tr><td><a href="#3.4.20">function displayAlertWarning(parent, msg)</a></td><td>Warningメッセージを表示します。</td></tr>
+<tr><td><a href="#3.4.21">function displayAlertInfo(parent, msg)</a></td><td>Infoメッセージを表示します。</td></tr>
 <tr><td>function apiCall(method, url, request, keystring, targetFunc)</td><td>REST APIを呼び出します。</td></tr>
 <tr><td>function MultiApiCall(contents, targetFunc)</td><td>複数のREST APIを同時に呼び出します。</td></tr>
 </table>
@@ -109,9 +109,11 @@ func()関数内ではグローバル変数loginId, loginPwを評価する必要�
 <tr><td>iconname[入力]</td><td>アイコンファイルのパス</td></tr>
 <tr><td>contents[入力]</td><td>
   ナビゲーションバーに表示するメニューに関する次の要素を含む情報を指定。<br/>
-  id : メニューのID<br/>
-  actApiName : メニューを押下したときに呼ぶ関数名。括弧および引数は指定できない。<br/>
-  title : 表示するメニューの名称<br/>
+  <ul>
+  <li>id<br/>メニューのID</li>
+  <li>actApiName<br/>メニューを押下したときに呼ぶ関数名。括弧および引数は指定できない。</li>
+  <li>title<br/>表示するメニューの名称</li>
+  </ul>
   initMainPageを呼び出しただけでは，ナビゲーションバーにメニューは表示されない。メニュを表示するには，メニューに対してshow()を実行する。
 </td></tr>
 </table>
@@ -123,7 +125,7 @@ func()関数内ではグローバル変数loginId, loginPwを評価する必要�
 <div class="topic">
 ナビゲーションバーにコマンドアイコンを追加します。<br/>
 <table class="tblstyle">
-<tr><td>func[入力]</td><td>コマンドアイコンを押下したときに呼び出される関数。括弧および引数の指定を許す。</td></tr>
+<tr><td>func[入力]</td><td>コマンドアイコンを押下したときに呼び出される関数。括弧付きで指定する。</td></tr>
 <tr><td>icon[入力]</td><td>IcoMoonのアイコンID</td></tr>
 <tr><td>enable[入力]</td><td>true:活性, false:非活性</td></tr>
 </table>
@@ -134,6 +136,166 @@ func()関数内ではグローバル変数loginId, loginPwを評価する必要�
 <H3 ID="3.4.6">3.4.6 function clearRsCommand()</H3>
 <div class="topic">
 ナビゲーションバーのコマンドアイコンおよびドロップダウンメニューをクリアします。<br/>
+</div>
+
+
+
+<H3 ID="3.4.7">3.4.7 function addDropDown(dropdownTitle)</H3>
+<div class="topic">
+ナビゲーションバーにドロップダウンメニューを追加します。<br/>
+<table class="tblstyle">
+<tr><td>dropdownTitle[入力]</td><td>ドロップダウンメニューのタイトル</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.8">3.4.8 function changeDropDownTitle(dropdownTitle)</H3>
+<div class="topic">
+ナビゲーションバーのドロップダウンメニューのタイトルを変更します。<br/>
+<table class="tblstyle">
+<tr><td>dropdownTitle[入力]</td><td>ドロップダウンメニューのタイトル</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.9">3.4.9 function getDropDownMenu(index)</H3>
+<div class="topic">
+ナビゲーションバーのドロップダウンメニューの要素名を取得します。<br/>
+<table class="tblstyle">
+<tr><td>index[入力]</td><td>取得する要素のindex</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.10">3.4.10 function addDropDownMenu(index, menuTitle, func)</H3>
+<div class="topic">
+ナビゲーションバーのドロップダウンメニューに要素を追加します。<br/>
+<table class="tblstyle">
+<tr><td>index[入力]</td><td>追加先のindex</td></tr>
+<tr><td>menuTitle[入力]</td><td>ドロップダウンメニューに追加する要素名</td></tr>
+<tr><td>func[入力]</td><td>ドロップダウンメニューの要素選択時に実行する関数。括弧付きで指定する。</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.11">3.4.11 function addClientMessage(code, msg)</H3>
+<div class="topic">
+クライアントメッセージを追加します。<br/>
+<table class="tblstyle">
+<tr><td>code[入力]</td><td>追加するメッセージのキー</td></tr>
+<tr><td>msg[入力]</td><td>
+  メッセージ。次の要素を含む情報を指定。<br/>
+  <ul>
+  <li>en<br/>英語メッセージ</li>
+  <li>ja<br/>日本語メッセージ</li>
+  </ul>
+</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.12">3.4.12 deleteClientMessage(code)</H3>
+<div class="topic">
+クライアントメッセージを削除します。<br/>
+<table class="tblstyle">
+<tr><td>code[入力]</td><td>削除するメッセージのキー</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.13">3.4.13 function getClientMessageEn(code)</H3>
+<div class="topic">
+クライアントメッセージ(英語)を取得します。<br/>
+<table class="tblstyle">
+<tr><td>code[入力]</td><td>取得するメッセージのキー</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.14">3.4.14 function getClientMessageJa(code)</H3>
+<div class="topic">
+クライアントメッセージ(日本語)を取得します。<br/>
+<table class="tblstyle">
+<tr><td>code[入力]</td><td>取得するメッセージのキー</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.15">3.4.15 function setClientLanguage(lang)</H3>
+<div class="topic">
+クライアントメッセージの言語を指定します。<br/>
+getClientMessage()で取得するメッセージがここで指定した言語に切り替わります。
+<table class="tblstyle">
+<tr><td>lang[入力]</td><td>getClientMessageで取得するメッセージの言語。0:英語, 1:日本語</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.16">3.4.16 function getClientLanguage()</H3>
+<div class="topic">
+クライアントメッセージの言語を取得します。<br/>
+0:英語, 1:日本語
+</div>
+
+
+
+<H3 ID="3.4.17">3.4.17 function getClientLanguage()</H3>
+<div class="topic">
+クライアントメッセージを指定した言語で取得します。<br/>
+言語の指定は，setClientLanguage(lang)で行います。
+</div>
+
+
+
+<H3 ID="3.4.18">3.4.18 function displayAlertSuccess(parent, msg)</H3>
+<div class="topic">
+Successメッセージを表示します。<br/>
+<table class="tblstyle">
+<tr><td>parent[入力]</td><td>メッセージを挿入するdiv要素のID</td></tr>
+<tr><td>msg[入力]</td><td>挿入するメッセージ</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.19">3.4.19 function displayAlertDanger(parent, msg)</H3>
+<div class="topic">
+Dangerメッセージを表示します。<br/>
+<table class="tblstyle">
+<tr><td>parent[入力]</td><td>メッセージを挿入するdiv要素のID</td></tr>
+<tr><td>msg[入力]</td><td>挿入するメッセージ</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.20">3.4.20 function displayAlertWarning(parent, msg)</H3>
+<div class="topic">
+Warningメッセージを表示します。<br/>
+<table class="tblstyle">
+<tr><td>parent[入力]</td><td>メッセージを挿入するdiv要素のID</td></tr>
+<tr><td>msg[入力]</td><td>挿入するメッセージ</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.21">3.4.21 function displayAlertInfo(parent, msg)</H3>
+<div class="topic">
+Infoメッセージを表示します。<br/>
+<table class="tblstyle">
+<tr><td>parent[入力]</td><td>メッセージを挿入するdiv要素のID</td></tr>
+<tr><td>msg[入力]</td><td>挿入するメッセージ</td></tr>
+</table>
 </div>
 
 
