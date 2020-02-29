@@ -39,16 +39,16 @@
 <div class="topic">
 stkcommon.jsの公開APIには下記のものがあります。<br/>
 <table class="tblstyle">
-<tr><td>function showLoginModal(func)</td><td>ログインダイアログを表示します。</td></tr>
-<tr><td>function showInputModal(title, contents)</td><td>入力ダイアログを表示します。</td></tr>
-<tr><td>function closeInputModal()</td><td>入力ダイアログを閉じます。</td></tr>
-<tr><td>function initMainPage(title, iconname, contents)</td><td>メインページを初期化します。</td></tr>
-<tr><td>function addRsCommand(func, icon, enable)</td><td>ナビゲーションバーにコマンドアイコンを追加します。</td></tr>
-<tr><td>function clearRsCommand()</td><td>ナビゲーションバーのコマンドアイコンおよびドロップダウンメニューをクリアします。</td></tr>
-<tr><td>function addDropDown(dropdownTitle)</td><td>ナビゲーションバーにドロップダウンメニュータイトルを追加します。</td></tr>
-<tr><td>function changeDropDownTitle(dropdownTitle)</td><td>ナビゲーションバーのドロップダウンメニュータイトルを変更します。</td></tr>
-<tr><td>function getDropDownMenu(index)</td><td>ナビゲーションバーのドロップダウンメニュー項目名を取得します。</td></tr>
-<tr><td>function addDropDownMenu(index, menuTitle, func)</td><td>ナビゲーションバーのドロップダウンメニュー項目を追加します。</td></tr>
+<tr><td><a href="#3.4.1">function showLoginModal(func)</a></td><td>ログインダイアログを表示します。</td></tr>
+<tr><td><a href="#3.4.2">function showInputModal(title, contents)</a></td><td>入力ダイアログを表示します。</td></tr>
+<tr><td><a href="#3.4.3">function closeInputModal()</a></td><td>入力ダイアログを閉じます。</td></tr>
+<tr><td><a href="#3.4.4">function initMainPage(title, iconname, contents)</a></td><td>メインページを初期化します。</td></tr>
+<tr><td><a href="#3.4.5">function addRsCommand(func, icon, enable)</a></td><td>ナビゲーションバーにコマンドアイコンを追加します。</td></tr>
+<tr><td><a href="#3.4.6">function clearRsCommand()</a></td><td>ナビゲーションバーのコマンドアイコンおよびドロップダウンメニューをクリアします。</td></tr>
+<tr><td>function addDropDown(dropdownTitle)</td><td>ナビゲーションバーにドロップダウンメニューを追加します。</td></tr>
+<tr><td>function changeDropDownTitle(dropdownTitle)</td><td>ナビゲーションバーのドロップダウンメニューのタイトルを変更します。</td></tr>
+<tr><td>function getDropDownMenu(index)</td><td>ナビゲーションバーのドロップダウンメニューの要素名を取得します。</td></tr>
+<tr><td>function addDropDownMenu(index, menuTitle, func)</td><td>ナビゲーションバーのドロップダウンメニューに要素を追加します。</td></tr>
 <tr><td>function addClientMessage(code, msg)</td><td>クライアントメッセージを追加します。</td></tr>
 <tr><td>function deleteClientMessage(code)</td><td>クライアントメッセージを削除します。</td></tr>
 <tr><td>function getClientMessageEn(code)</td><td>クライアントメッセージ(英語)を取得します。</td></tr>
@@ -68,7 +68,7 @@ stkcommon.jsの公開APIには下記のものがあります。<br/>
 
 
 <H2 ID="3.4">3.4 stkcommon.jsのAPI詳細</H2>
-<H3 ID="3.3.1">3.3.1 function showLoginModal(func)</H3>
+<H3 ID="3.4.1">3.4.1 function showLoginModal(func)</H3>
 <div class="topic">
 ログインダイアログを表示します。<br/>
 ログインダイアログで設定したログインIDおよびパスワードは，stkcommon.jsのグローバル変数loginId, loginPwに格納されます。<br/>
@@ -76,27 +76,64 @@ stkcommon.jsの公開APIには下記のものがあります。<br/>
 func()関数内ではグローバル変数loginId, loginPwを評価する必要があります。func()がtrueを返却した場合，認証は成功。func()がfalseを返却した場合，認証は失敗となります。<br/>
 認証が成功すると，ログインダイアログは自動的に閉じます。また，cookieにloginId, loginPwを指定します。<br/>
 <table class="tblstyle">
-<tr><td>func[入力]</td><td>認証用関数。trueを返す場合，認証成功。falseを返す場合，認証失敗。<br/></td></tr>
+<tr><td>func[入力]</td><td>認証用関数。trueを返す場合，認証成功。falseを返す場合，認証失敗。</td></tr>
 </table>
 </div>
 
 
 
-<H3 ID="3.3.2">3.3.2 function showInputModal(title, contents)</H3>
+<H3 ID="3.4.2">3.4.2 function showInputModal(title, contents)</H3>
 <div class="topic">
 入力ダイアログを表示します。<br/>
 入力ダイアログを閉じるには，closeInputModal()を呼びます。<br/>
 <table class="tblstyle">
-<tr><td>title[入力]</td><td>入力ダイアログのタイトル<br/></td></tr>
-<tr><td>contents[入力]</td><td>入力ダイアログに表示するHTML要素(Contents)<br/></td></tr>
+<tr><td>title[入力]</td><td>入力ダイアログのタイトル</td></tr>
+<tr><td>contents[入力]</td><td>入力ダイアログに表示するHTML要素(Contents)</td></tr>
 </table>
 </div>
 
 
 
-<H3 ID="3.3.3">3.3.3 function closeInputModal()</H3>
+<H3 ID="3.4.3">3.4.3 function closeInputModal()</H3>
 <div class="topic">
 入力ダイアログを閉じます。<br/>
+</div>
+
+
+
+<H3 ID="3.4.4">3.4.4 function initMainPage(title, iconname, contents)</H3>
+<div class="topic">
+メインページを初期化します。<br/>
+<table class="tblstyle">
+<tr><td>title[入力]</td><td>ナビゲーションバーの左側に表示するブランド名</td></tr>
+<tr><td>iconname[入力]</td><td>アイコンファイルのパス</td></tr>
+<tr><td>contents[入力]</td><td>
+  ナビゲーションバーに表示するメニューに関する次の要素を含む情報を指定。<br/>
+  id : メニューのID<br/>
+  actApiName : メニューを押下したときに呼ぶ関数名。括弧および引数は指定できない。<br/>
+  title : 表示するメニューの名称<br/>
+  initMainPageを呼び出しただけでは，ナビゲーションバーにメニューは表示されない。メニュを表示するには，メニューに対してshow()を実行する。
+</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.5">3.4.5 function addRsCommand(func, icon, enable)</H3>
+<div class="topic">
+ナビゲーションバーにコマンドアイコンを追加します。<br/>
+<table class="tblstyle">
+<tr><td>func[入力]</td><td>コマンドアイコンを押下したときに呼び出される関数。括弧および引数の指定を許す。</td></tr>
+<tr><td>icon[入力]</td><td>IcoMoonのアイコンID</td></tr>
+<tr><td>enable[入力]</td><td>true:活性, false:非活性</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.6">3.4.6 function clearRsCommand()</H3>
+<div class="topic">
+ナビゲーションバーのコマンドアイコンおよびドロップダウンメニューをクリアします。<br/>
 </div>
 
 
