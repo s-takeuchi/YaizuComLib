@@ -60,8 +60,8 @@ stkcommon.jsの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.19">function displayAlertDanger(parent, msg)</a></td><td>Dangerメッセージを表示します。</td></tr>
 <tr><td><a href="#3.4.20">function displayAlertWarning(parent, msg)</a></td><td>Warningメッセージを表示します。</td></tr>
 <tr><td><a href="#3.4.21">function displayAlertInfo(parent, msg)</a></td><td>Infoメッセージを表示します。</td></tr>
-<tr><td>function apiCall(method, url, request, keystring, targetFunc)</td><td>REST APIを呼び出します。</td></tr>
-<tr><td>function MultiApiCall(contents, targetFunc)</td><td>複数のREST APIを同時に呼び出します。</td></tr>
+<tr><td><a href="#3.4.22">function apiCall(method, url, request, keystring, targetFunc)</a></td><td>REST APIを呼び出します。</td></tr>
+<tr><td><a href="#3.4.23">function MultiApiCall(contents, targetFunc)</a></td><td>複数のREST APIを同時に呼び出します。</td></tr>
 </table>
 </div>
 
@@ -295,6 +295,47 @@ Infoメッセージを表示します。<br/>
 <table class="tblstyle">
 <tr><td>parent[入力]</td><td>メッセージを挿入するdiv要素のID</td></tr>
 <tr><td>msg[入力]</td><td>挿入するメッセージ</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.22">3.4.22 function apiCall(method, url, request, keystring, targetFunc)</H3>
+<div class="topic">
+REST APIを呼び出します。<br/>
+REST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
+リクエスト送信後，500ミリ秒経過してもREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
+レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
+REST API呼び出しにおけるステータスおよびレスポンスデータは，statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
+<table class="tblstyle">
+<tr><td>method[入力]</td><td>HTTPメソッド。'GET', 'POST', 'DELETE', etc</td></tr>
+<tr><td>url[入力]</td><td>URL</td></tr>
+<tr><td>request[入力]</td><td>リクエストデータ</td></tr>
+<tr><td>keystring[入力]</td><td>ステータスおよびレスポンスデータを識別するキー</td></tr>
+<tr><td>targetFunc[入力]</td><td>レスポンス受信後に呼び出される関数。括弧および引数は指定できない。</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.23">3.4.23 function MultiApiCall(contents, targetFunc)</H3>
+<div class="topic">
+複数のREST APIを同時に呼び出します。<br/>
+すべてのREST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
+リクエスト送信後，500ミリ秒経過してもすべてのREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
+レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
+REST API呼び出しにおけるステータスおよびレスポンスデータは，statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
+<table class="tblstyle">
+<tr><td>contents[入力]</td><td>
+  複数のAPIを呼び出すための各種パラメータ。次の要素を含む情報を指定。
+  <ul>
+  <li>method<br/>HTTPメソッド。'GET', 'POST', 'DELETE', etc</li>
+  <li>url<br/>URL</li>
+  <li>request<br/>リクエストデータ</li>
+  <li>keystring<br/>ステータスおよびレスポンスデータを識別するキー</li>
+  </ul>
+</td></tr>
+<tr><td>targetFunc[入力]</td><td>レスポンス受信後に呼び出される関数。括弧および引数は指定できない。</td></tr>
 </table>
 </div>
 
