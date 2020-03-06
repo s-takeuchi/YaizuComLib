@@ -72,7 +72,8 @@ stkcommon.jsの公開APIには下記のものがあります。<br/>
 <div class="topic">
 ログインダイアログを表示します。<br/>
 ログインダイアログで設定したログインIDおよびパスワードは，stkcommon.jsのグローバル変数loginId, loginPwに格納されます。<br/>
-また，loginId, loginPwは，cookieに記憶され，以降のREST API呼び出しにおいて，HTTPヘッダのAuthorizationに，"Bearer loginId loginPw"が指定されます。<br/>
+loginId, loginPwは，cookieにも24時間記憶され，loginId，loginPwがcookieに存在する間は，本関数を呼び出してもログインダイアログが表示されません。<br/>
+REST API呼び出しにおいて，HTTPヘッダのAuthorizationに，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。<br/>
 認証のため，引数で指定された関数func()を呼び出します。<br/>
 func()関数内ではグローバル変数loginId, loginPwを評価する必要があります。func()がtrueを返却した場合，認証は成功。func()がfalseを返却した場合，認証は失敗となります。<br/>
 認証が成功すると，ログインダイアログは自動的に閉じます。<br/>
@@ -308,6 +309,7 @@ REST APIからレスポンスを受信後，指定した関数をコールバッ
 リクエスト送信後，500ミリ秒経過してもREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
 レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
 REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommon.jsのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
+REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
 <table class="tblstyle">
 <tr><td>method[入力]</td><td>HTTPメソッド。'GET', 'POST', 'DELETE', etc</td></tr>
 <tr><td>url[入力]</td><td>URL</td></tr>
@@ -326,6 +328,7 @@ REST API呼び出しにおけるステータスおよびレスポンスデータ
 リクエスト送信後，500ミリ秒経過してもすべてのREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
 レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
 REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommon.jsのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
+REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
 <table class="tblstyle">
 <tr><td>contents[入力]</td><td>
   複数のAPIを呼び出すための各種パラメータ。次の要素を含む情報を指定。
