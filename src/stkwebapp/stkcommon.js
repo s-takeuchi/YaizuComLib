@@ -32,7 +32,7 @@ function initLoginModal(func) {
     var modalDialog = $('<div class="modal-dialog modal-xl">');
     var modalContent = $('<div class="modal-content">');
     var modalHeader = $('<h3 class="modal-header">Login</h3>');
-    var modalBody = $('<div class="modal-body"><div"><div class="form-group"><input type="email" maxlength="254" class="form-control" id="loginId" placeholder="User name" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="Password" value="" /></div><div id="login_Modal_Body"></div><button type="button" class="btn btn-dark" onclick="tryLogin(' + func + ')">Login</button></div></div>');
+    var modalBody = $('<div class="modal-body"><div"><div class="form-group"><input type="text" maxlength="31" class="form-control" id="loginId" placeholder="User name" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="Password" value="" /></div><div id="login_Modal_Body"></div><button type="button" class="btn btn-dark" onclick="tryLogin(' + func + ')">Login</button></div></div>');
 
     modalContent.append(modalHeader);
     modalContent.append(modalBody);
@@ -47,12 +47,12 @@ function tryLogin(func) {
     loginPw = $("#loginPw").val();
     if (!loginId.match(/^([a-zA-Z0-9\._\-/@])+$/)) {
         $('#login_Modal_Body').empty();
-        $('#login_Modal_Body').append('<p>The format of the user name is incorrect.</p>');
+        $('#login_Modal_Body').append('<p>The user name is empty or contains fobidden character(s).</p>');
         return;
     }
     if (!loginPw.match(/^([a-zA-Z0-9!\?\.\+\-\$%#&\*/=@])+$/)) {
         $('#login_Modal_Body').empty();
-        $('#login_Modal_Body').append('<p>The passwprd is empty or contains abnormal character(s).</p>');
+        $('#login_Modal_Body').append('<p>The passwprd is empty or contains forbidden character(s).</p>');
         return;
     }
     if (func() == true) {
