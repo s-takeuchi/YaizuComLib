@@ -152,7 +152,7 @@ function initMainPage(title, iconname, contents) {
             }
         }
     }
-    var navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item"><a class="nav-link" onclick="tryLogout()"> Logout</a></li></u>')
+    var navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item dropdown"><a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">' + loginId + '</a><div id="rsUserMenu" class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" onclick="tryLogout()">Logout</a></div></li></u>')
     var navBarCollapse = $('<div class="collapse navbar-collapse justify-content-start" id="top-nav">');
     navBarCollapse.append(navBarNav);
     navBarCollapse.append(navBarNavRight);
@@ -167,6 +167,17 @@ function initMainPage(title, iconname, contents) {
     }
     $('body').append(navBarDefault);
     $('body').append(containerFluidWorkSpace);
+}
+
+function addRsUserMenu(contents)
+{
+    if (contents instanceof Array) {
+        for (var key in contents) {
+            if (contents[key].actApiName != null && contents[key].title != null) {
+                $('#rsUserMenu').prepend($('<a class="dropdown-item" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')">' + contents[key].title + '</a>'));
+            }
+        }
+    }
 }
 
 function addRsCommand(func, icon, enable)
