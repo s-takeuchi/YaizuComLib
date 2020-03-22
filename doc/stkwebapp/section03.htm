@@ -62,6 +62,7 @@ stkcommon.jsの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.21">function displayAlertInfo(parent, msg)</a></td><td>Infoメッセージを表示します。</td></tr>
 <tr><td><a href="#3.4.22">function apiCall(method, url, request, keystring, targetFunc)</a></td><td>REST APIを呼び出します。</td></tr>
 <tr><td><a href="#3.4.23">function MultiApiCall(contents, targetFunc)</a></td><td>複数のREST APIを同時に呼び出します。</td></tr>
+<tr><td><a href="#3.4.24">function changeLoginPassword(password)</a></td><td>ログインユーザーのパスワードを変更します。</td></tr>
 </table>
 </div>
 
@@ -341,6 +342,16 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
   </ul>
 </td></tr>
 <tr><td>targetFunc[入力]</td><td>レスポンス受信後に呼び出される関数。括弧および引数は指定できない。</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.24">3.4.24 function changeLoginPassword(password)</H3>
+<div class="topic">
+ログインユーザーのパスワードを変更します。<br/>
+<table class="tblstyle">
+<tr><td>password[入力]</td><td>新しいパスワード</td></tr>
 </table>
 </div>
 
