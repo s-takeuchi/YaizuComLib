@@ -65,6 +65,12 @@ function tryLogin(func) {
     }
 }
 
+function changeLoginPassword(password) {
+    loginPw = password;
+    document.cookie = "loginId=" + encodeURIComponent(window.btoa(loginId)) + ";max-age=86400;samesite=strict;secure";
+    document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw)) + ";max-age=86400;samesite=strict;secure";
+}
+
 function tryLogout() {
     loginId = "";
     loginPw = "";
