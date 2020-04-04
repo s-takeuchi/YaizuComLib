@@ -189,9 +189,9 @@ function addRsUserMenu(contents)
 function addRsCommand(func, icon, enable)
 {
     if (enable == true) {
-        $('#rsCommand').append('<div class="rscommand"><a href="#" onclick="' + func + '"><span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;&nbsp;</a></div>');
+        $('#rsCommand').append('<div class="rscommand"><a href="#" onclick="' + func + '">&nbsp;<span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;</a></div>');
     } else {
-        $('#rsCommand').append('<div class="rscommand"><span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;&nbsp;</div>');
+        $('#rsCommand').append('<div class="rscommand">&nbsp;<span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;</div>');
     }
 }
 
@@ -201,19 +201,11 @@ function clearRsCommand()
 }
 
 function addDropDown(dropdownTitle) {
-    var tmpTitle = dropdownTitle.substring(0, 6);
-    if (tmpTitle !== dropdownTitle) {
-        tmpTitle = tmpTitle + '...';
-    }
-    $('#rsCommand').append('<div class="nav-item dropdown rscommand"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  style="padding-left:0px;padding-right:0px;margin-left:-10px">' + tmpTitle + '</a><div id="rsNavDropDown" class="dropdown-menu" aria-labelledby="navbarDropdown"/></div>');
+    $('#rsCommand').append('<div class="nav-item dropdown rscommand"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  style="padding-left:0px;padding-right:0px;margin-left:-10px">' + dropdownTitle + '</a><div id="rsNavDropDown" class="dropdown-menu" aria-labelledby="navbarDropdown"/></div>');
 }
 
 function changeDropDownTitle(dropdownTitle) {
-    var tmpTitle = dropdownTitle.substring(0, 6);
-    if (tmpTitle !== dropdownTitle) {
-        tmpTitle = tmpTitle + '...';
-    }
-    $('#navbarDropdown').text(tmpTitle);
+    $('#navbarDropdown').text(dropdownTitle);
 }
 
 function getDropDownMenu(index) {
