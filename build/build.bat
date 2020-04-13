@@ -269,6 +269,7 @@ del ..\build\deployment\StkWebAppExec.h
 if defined LOCALMACHINE (
   echo;
   %LCOUNTER% ..\src /subdir
+  %LCOUNTER% ..\src\stkwebapp\stkcommon.js
 )
 
 :buildexit

@@ -149,7 +149,7 @@ function closeInputModal() {
 }
 
 function initMainPage(title, iconname, contents) {
-    var navBarHeader = $('<div class="d-none d-sm-block rscommand"><a class="navbar-brand" href=""><img src="' + iconname + '" width=22 height=22/><small>' + title + '</small></a></div> <div id="rsCommand"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
+    var navBarHeader = $('<div class="d-none d-sm-block rscommand"><a class="navbar-brand" href=""><img src="' + iconname + '" width=22 height=22/><small>' + title + '</small></a></div> <div id="rsCommand"/> <div class="d-none d-lg-block" style="width:40px;"/><div class="d-none d-xl-block" style="width:40px;"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
     var navBarNav = $('<ul class="navbar-nav  mr-auto">');
     if (contents instanceof Array) {
         for (var key in contents) {
