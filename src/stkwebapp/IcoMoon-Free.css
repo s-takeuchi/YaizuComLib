@@ -29,6 +29,11 @@ a:focus { color: #f0f0f0; text-decoration: none; }
     max-height: 100%;
 }
 
+.dropdown-menu {         
+    overflow-x: auto;
+    max-height: 300px;
+}
+
 @font-face {
     font-family: 'IcoMoon-Free';
     src: url('IcoMoon-Free.ttf') format('truetype');
