@@ -3,7 +3,7 @@
 var svrUrl = ".";
 
 // Timeout in milliseconds for API call
-var timeout = 10000;
+var timeout = 99000;
 
 // underComm = 0 : No communication state, >= 1 : Communication state
 var underComm = 0;
