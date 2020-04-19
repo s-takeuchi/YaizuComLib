@@ -55,11 +55,11 @@ int StkObject::Impl::XmlEncodeSize(wchar_t* InMsg)
 	int Size = 0;
 	int InMsgLen = StkPlWcsLen(InMsg);
 	for (int Loop = 0; Loop < InMsgLen; Loop++) {
-		if (InMsg[Loop] == '<') Size += 4;
-		else if (InMsg[Loop] == '>') Size += 4;
-		else if (InMsg[Loop] == '&') Size += 5;
-		else if (InMsg[Loop] == '\"') Size += 6;
-		else if (InMsg[Loop] == '\'') Size += 6;
+		if (InMsg[Loop] == L'<') Size += 4;
+		else if (InMsg[Loop] == L'>') Size += 4;
+		else if (InMsg[Loop] == L'&') Size += 5;
+		else if (InMsg[Loop] == L'\"') Size += 6;
+		else if (InMsg[Loop] == L'\'') Size += 6;
 		else Size ++;
 	}
 	return Size;
@@ -73,10 +73,12 @@ int StkObject::Impl::JsonEncodeSize(wchar_t* InMsg)
 	int Size = 0;
 	int InMsgLen = StkPlWcsLen(InMsg);
 	for (int Loop = 0; Loop < InMsgLen; Loop++) {
-		if (InMsg[Loop] == '\"' || InMsg[Loop] == '\\' || InMsg[Loop] == '/' ||
-			InMsg[Loop] == '\b' || InMsg[Loop] == '\f' || InMsg[Loop] == '\n' ||
-			InMsg[Loop] == '\r' || InMsg[Loop] == '\t') {
+		if (InMsg[Loop] == L'\"' || InMsg[Loop] == L'\\' || InMsg[Loop] == L'/' ||
+			InMsg[Loop] == L'\b' || InMsg[Loop] == L'\f' || InMsg[Loop] == L'\n' ||
+			InMsg[Loop] == L'\r' || InMsg[Loop] == L'\t') {
 				Size += 2;
+		} else if (InMsg[Loop] >= 0x00 && InMsg[Loop] <= 0x1f) {
+			Size += 6;
 		} else {
 			Size ++;
 		}
@@ -93,35 +95,35 @@ void StkObject::Impl::XmlEncode(wchar_t* InMsg, wchar_t* OutMsg, int SizeOfOutMs
 	int OutMsgIndex = 0;
 	int InMsgLen = StkPlWcsLen(InMsg);
 	for (int Loop = 0; Loop < InMsgLen; Loop++) {
-		if (InMsg[Loop] == '<') {
+		if (InMsg[Loop] == L'<') {
 			if (OutMsgIndex + 4 >= SizeOfOutMsg)
 				break;
 			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&lt;");
 			OutMsgIndex += 4;
 			continue;
 		}
-		if (InMsg[Loop] == '>') {
+		if (InMsg[Loop] == L'>') {
 			if (OutMsgIndex + 4 >= SizeOfOutMsg)
 				break;
 			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&gt;");
 			OutMsgIndex += 4;
 			continue;
 		}
-		if (InMsg[Loop] == '&') {
+		if (InMsg[Loop] == L'&') {
 			if (OutMsgIndex + 5 >= SizeOfOutMsg)
 				break;
 			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&amp;");
 			OutMsgIndex += 5;
 			continue;
 		}
-		if (InMsg[Loop] == '\"') {
+		if (InMsg[Loop] == L'\"') {
 			if (OutMsgIndex + 6 >= SizeOfOutMsg)
 				break;
 			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&quot;");
 			OutMsgIndex += 6;
 			continue;
 		}
-		if (InMsg[Loop] == '\'') {
+		if (InMsg[Loop] == L'\'') {
 			if (OutMsgIndex + 6 >= SizeOfOutMsg)
 				break;
 			StkPlLStrCpy(&OutMsg[OutMsgIndex], L"&apos;");
@@ -133,7 +135,7 @@ void StkObject::Impl::XmlEncode(wchar_t* InMsg, wchar_t* OutMsg, int SizeOfOutMs
 		OutMsg[OutMsgIndex] = InMsg[Loop];
 		OutMsgIndex++;
 	}
-	OutMsg[OutMsgIndex] = '\0';
+	OutMsg[OutMsgIndex] = L'\0';
 }
 
 // Convert the string to escaped message.
@@ -145,31 +147,40 @@ void StkObject::Impl::JsonEncode(wchar_t* InData, wchar_t* OutData, int OutDataL
 	wchar_t* CurInPtr = InData;
 	wchar_t* CurOutPtr = OutData;
 	for (;;) {
-		if (*CurInPtr == '\0') {
-			*CurOutPtr = '\0';
+		if (*CurInPtr == L'\0') {
+			*CurOutPtr = L'\0';
 			return;
-		} else if (*CurInPtr == '\"' || *CurInPtr == '\\' || *CurInPtr == '/' ||
-			*CurInPtr == '\b' || *CurInPtr == '\f' || *CurInPtr == '\n' ||
-			*CurInPtr == '\r' || *CurInPtr == '\t') {
-			*CurOutPtr = '\\';
+		} else if (*CurInPtr == L'\"' || *CurInPtr == L'\\' || *CurInPtr == L'/' ||
+			*CurInPtr == L'\b' || *CurInPtr == L'\f' || *CurInPtr == L'\n' ||
+			*CurInPtr == L'\r' || *CurInPtr == L'\t') {
+			*CurOutPtr = L'\\';
 			CurOutPtr++;
 			switch (*CurInPtr) {
-			case '\"': *CurOutPtr = '\"'; break;
-			case '\\': *CurOutPtr = '\\'; break;
-			case '/': *CurOutPtr = '/';  break;
-			case '\b': *CurOutPtr = 'b';  break;
-			case '\f': *CurOutPtr = 'f';  break;
-			case '\n': *CurOutPtr = 'n';  break;
-			case '\r': *CurOutPtr = 'r';  break;
-			case '\t': *CurOutPtr = 't';  break;
+			case L'\"': *CurOutPtr = L'\"'; break;
+			case L'\\': *CurOutPtr = L'\\'; break;
+			case L'/': *CurOutPtr = L'/';  break;
+			case L'\b': *CurOutPtr = L'b';  break;
+			case L'\f': *CurOutPtr = L'f';  break;
+			case L'\n': *CurOutPtr = L'n';  break;
+			case L'\r': *CurOutPtr = L'r';  break;
+			case L'\t': *CurOutPtr = L't';  break;
 			}
+		} else if (*CurInPtr >= 0x00 && *CurInPtr <= 0x1f) {
+			wchar_t MappingTable[16] = { L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9', L'a', L'b', L'c', L'd', L'e', L'f' };
+			*CurOutPtr = L'\\';
+			*(CurOutPtr + 1) = L'u';
+			*(CurOutPtr + 2) = L'0';
+			*(CurOutPtr + 3) = L'0';
+			*(CurOutPtr + 4) = MappingTable[int((*CurInPtr) / 16)];
+			*(CurOutPtr + 5) = MappingTable[int((*CurInPtr) % 16)];
+			CurOutPtr += 5;
 		} else {
 			*CurOutPtr = *CurInPtr;
 		}
 		CurOutPtr++;
 		CurInPtr++;
 		if (CurOutPtr - OutData == OutDataLen) {
-			*CurOutPtr = '\0';
+			*CurOutPtr = L'\0';
 			return;
 		}
 	}
@@ -201,7 +212,7 @@ bool StkObject::Impl::IsArrayExpression(StkObject* Obj)
 int StkObject::Impl::AddString(wchar_t* Msg, const wchar_t* EndPoint, const wchar_t* Tgt)
 {
 	int Loop = 0;
-	for (; Msg + Loop < EndPoint - 1 && Tgt[Loop] != '\0'; Loop++) {
+	for (; Msg + Loop < EndPoint - 1 && Tgt[Loop] != L'\0'; Loop++) {
 		Msg[Loop] = Tgt[Loop];
 	}
 	Msg[Loop] = L'\0';
@@ -276,6 +287,9 @@ wchar_t* StkObject::Impl::GetJsonString(const wchar_t* OrgStr, int* Len)
 				*(CurPnt + 1) == wchar_t('f') || *(CurPnt + 1) == wchar_t('n') || *(CurPnt + 1) == wchar_t('r') || *(CurPnt + 1) == wchar_t('t')) {
 				OutLength++;
 				CurPnt += 2;
+			} else if (*(CurPnt + 1) == wchar_t('u')) {
+				OutLength++;
+				CurPnt += 6;
 			} else {
 				OutLength++;
 				CurPnt++;
@@ -295,51 +309,58 @@ wchar_t* StkObject::Impl::GetJsonString(const wchar_t* OrgStr, int* Len)
 	int RtnLoop = 0;
 	for (const wchar_t* Loop = OrgStr; Loop < CurPnt; Loop++) {
 		if (*Loop == L'\\' && *(Loop + 1) == L'\"') {
-			RtnValue[RtnLoop] = '\"';
+			RtnValue[RtnLoop] = L'\"';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
 		if (*Loop == L'\\' && *(Loop + 1) == L'\\') {
-			RtnValue[RtnLoop] = '\\';
+			RtnValue[RtnLoop] = L'\\';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
 		if (*Loop == L'\\' && *(Loop + 1) == L'/') {
-			RtnValue[RtnLoop] = '/';
+			RtnValue[RtnLoop] = L'/';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
 		if (*Loop == L'\\' && *(Loop + 1) == L'b') {
-			RtnValue[RtnLoop] = '\b';
+			RtnValue[RtnLoop] = L'\b';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
 		if (*Loop == L'\\' && *(Loop + 1) == L'f') {
-			RtnValue[RtnLoop] = '\f';
+			RtnValue[RtnLoop] = L'\f';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
 		if (*Loop == L'\\' && *(Loop + 1) == L'n') {
-			RtnValue[RtnLoop] = '\n';
+			RtnValue[RtnLoop] = L'\n';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
 		if (*Loop == L'\\' && *(Loop + 1) == L'r') {
-			RtnValue[RtnLoop] = '\r';
+			RtnValue[RtnLoop] = L'\r';
 			RtnLoop++;
 			Loop++;
 			continue;
 		}
 		if (*Loop == L'\\' && *(Loop + 1) == L't') {
-			RtnValue[RtnLoop] = '\t';
+			RtnValue[RtnLoop] = L'\t';
 			RtnLoop++;
 			Loop++;
+			continue;
+		}
+		if (*Loop == L'\\' && *(Loop + 1) == L'u') {
+			wchar_t Val = ((*(Loop + 2) - L'0') * 16 * 16 * 16) + ((*(Loop + 3) - L'0') * 16 * 16) + ((*(Loop + 4) - L'0') * 16) + (*(Loop + 5) - L'0');
+			RtnValue[RtnLoop] = Val;
+			RtnLoop++;
+			Loop += 5;
 			continue;
 		}
 		RtnValue[RtnLoop] = *Loop;
@@ -400,31 +421,31 @@ wchar_t* StkObject::Impl::GetValue(const wchar_t* TgtValue, int* Len)
 	int RtnLoop = 0;
 	for (const wchar_t* Loop = TgtValue; Loop < CurPnt; Loop++) {
 		if (StkPlWcsStr(Loop, L"&lt;") == Loop) {
-			RtnValue[RtnLoop] = '<';
+			RtnValue[RtnLoop] = L'<';
 			RtnLoop++;
 			Loop += 3;
 			continue;
 		}
 		if (StkPlWcsStr(Loop, L"&gt;") == Loop) {
-			RtnValue[RtnLoop] = '>';
+			RtnValue[RtnLoop] = L'>';
 			RtnLoop++;
 			Loop += 3;
 			continue;
 		}
 		if (StkPlWcsStr(Loop, L"&amp;") == Loop) {
-			RtnValue[RtnLoop] = '&';
+			RtnValue[RtnLoop] = L'&';
 			RtnLoop++;
 			Loop += 4;
 			continue;
 		}
 		if (StkPlWcsStr(Loop, L"&quot;") == Loop) {
-			RtnValue[RtnLoop] = '\"';
+			RtnValue[RtnLoop] = L'\"';
 			RtnLoop++;
 			Loop += 5;
 			continue;
 		}
 		if (StkPlWcsStr(Loop, L"&apos;") == Loop) {
-			RtnValue[RtnLoop] = '\'';
+			RtnValue[RtnLoop] = L'\'';
 			RtnLoop++;
 			Loop += 5;
 			continue;

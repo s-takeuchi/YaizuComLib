@@ -819,6 +819,7 @@ void JsonEncodingTest1()
 	Obj->AppendChildElement(new StkObject(L"Element6", L"Hello-\r\r\r\r\r-World!!"));
 	Obj->AppendChildElement(new StkObject(L"Element7", L"Hello-\n\n\n\n\n-World!!"));
 	Obj->AppendChildElement(new StkObject(L"Element8", L"Hello-\t\t\t\t\t-World!!"));
+	Obj->AppendChildElement(new StkObject(L"Element9", L"Hello-\x01\x02\x03\x1d\x1e\x1f-World!!"));
 	wchar_t JsonTxt[2048] = L"";
 	Obj->ToJson(JsonTxt, 2048);
 	StkPlPrintf("JSON Encoding#Escape ... ");
@@ -829,7 +830,8 @@ void JsonEncodingTest1()
 		StkPlWcsStr(JsonTxt, L"\"Element5\" : \"Hello-\\f\\f\\f\\f\\f-World!!\"") == 0 ||
 		StkPlWcsStr(JsonTxt, L"\"Element6\" : \"Hello-\\r\\r\\r\\r\\r-World!!\"") == 0 ||
 		StkPlWcsStr(JsonTxt, L"\"Element7\" : \"Hello-\\n\\n\\n\\n\\n-World!!\"") == 0 ||
-		StkPlWcsStr(JsonTxt, L"\"Element8\" : \"Hello-\\t\\t\\t\\t\\t-World!!\"") == 0) {
+		StkPlWcsStr(JsonTxt, L"\"Element8\" : \"Hello-\\t\\t\\t\\t\\t-World!!\"") == 0 ||
+		StkPlWcsStr(JsonTxt, L"\"Element9\" : \"Hello-\\u0001\\u0002\\u0003\\u001d\\u001e\\u001f-World!!\"") == 0) {
 		StkPlPrintf("NG\n");
 		StkPlExit(-1);
 	} else {
@@ -1565,14 +1567,17 @@ void JsonDecodingTest2()
 	wchar_t Msg2[512];
 	wchar_t Msg3[512];
 	wchar_t Msg4[512];
+	wchar_t Msg5[512];
 	StkObject* RetObj1;
 	StkObject* RetObj2;
 	StkObject* RetObj3;
 	StkObject* RetObj4;
+	StkObject* RetObj5;
 	wchar_t Str1[1024] = L"";
 	wchar_t Str2[1024] = L"";
 	wchar_t Str3[1024] = L"";
 	wchar_t Str4[1024] = L"";
+	wchar_t Str5[1024] = L"";
 	int Offset;
 
 	////////////////////////////////////////////////////
@@ -1580,16 +1585,19 @@ void JsonDecodingTest2()
 	StkPlLStrCpy(Msg2, L"\"Aaa\"    :    {    \"Bbb\"    :    [    {    \"Xxx\"    :    123    ,    \"Bbb\"    :    456    ,    \"Ccc\"    :    789    }    ,    \"test\"    ,    0.1    ]    }    ");
 	StkPlLStrCpy(Msg3, L"\t\t\"Aaa\"\t\t:\t\t{\t\t\"Bbb\"\t\t:\t\t[\t\t{\t\t\"Xxx\"\t\t:\t\t123\t\t,\t\t\"Bbb\"\t\t:\t\t456\t\t,\t\t\"Ccc\"\t\t:\t\t789\t\t}\t\t,\t\t\"test\"\t\t,\t\t0.1\t\t]\t\t}\t\t");
 	StkPlLStrCpy(Msg4, L"\r\n\"Aaa\"\r\n:\r\n{\r\n\"Bbb\"\r\n:\r\n[\r\n{\r\n\"Xxx\"\r\n:\r\n123\r\n,\r\n\"Bbb\"\r\n:\r\n456\r\n,\r\n\"Ccc\"\r\n:\r\n789\r\n}\r\n,\r\n\"test\"\r\n,\r\n0.1\r\n]\r\n}\r\n");
+	StkPlLStrCpy(Msg5, L"\"\\u0041aa\":{\"\\u0042bb\":[{\"Xxx\":123,\"Bbb\":456,\"Ccc\":789},\"te\\u0073\\u0074\",0.1]}");
 	RetObj1 = StkObject::CreateObjectFromJson(Msg1, &Offset);
 	RetObj2 = StkObject::CreateObjectFromJson(Msg2, &Offset);
 	RetObj3 = StkObject::CreateObjectFromJson(Msg3, &Offset);
 	RetObj4 = StkObject::CreateObjectFromJson(Msg4, &Offset);
+	RetObj5 = StkObject::CreateObjectFromJson(Msg5, &Offset);
 	RetObj1->ToJson(Str1, 1024);
 	RetObj2->ToJson(Str2, 1024);
 	RetObj3->ToJson(Str3, 1024);
 	RetObj4->ToJson(Str4, 1024);
+	RetObj5->ToJson(Str5, 1024);
 	StkPlPrintf("JSON Decoding (empty charactor)...");
-	if (StkPlWcsCmp(Str1, Str2) != 0 || StkPlWcsCmp(Str2, Str3) != 0 || StkPlWcsCmp(Str3, Str4) != 0) {
+	if (StkPlWcsCmp(Str1, Str2) != 0 || StkPlWcsCmp(Str2, Str3) != 0 || StkPlWcsCmp(Str3, Str4) != 0 || StkPlWcsCmp(Str4, Str5) != 0 || StkPlWcsCmp(Str5, Str1) != 0) {
 		StkPlPrintf("NG\n");
 		StkPlExit(-1);
 	}
