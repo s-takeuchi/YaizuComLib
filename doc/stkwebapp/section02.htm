@@ -26,10 +26,12 @@ StkWebAppは，リクエストデータとしてJSON形式のデータを受け�
 StkWebAppは，内部的に下記のライブラリを利用します。<br/>
 StkWebAppを使用するプログラムは，下記のライブラリも組み込む必要があります。<br/>
 <ul>
+<li>StkPl</li>
 <li>StkSocket</li>
 <li>StkThread</li>
-<li>StkObject</li>
-<li>StkStringParser</li>
+<li>commonfunc/StkObject</li>
+<li>commonfunc/StkStringParser</li>
+<li>commonfunc/msgproc</li>
 </ul>
 
 </div><p>
@@ -244,8 +246,31 @@ StkWebAppExecクラスの派生クラスが実装するメソッドです。純�
 </table>
 <hr/>
 
+<p>void SetTimeoutInterval(int Interval)</p>
+受信処理は何らかのデータを受信した後，そのデータが完結していない場合(データサイズがHTTPヘッダのContent-Lengthに達していない場合)，次のデータの受信を待ちます。
+受信待ち処理のタイムアウト時間をミリ秒で設定します。<br/>デフォルト値は3,000ミリ秒です。<br/>
+<table class="tblstyle">
+<tr><td>Interval[入力]</td><td>タイムアウト時間(ミリ秒)<br/></td></tr>
+</table>
+<hr/>
+
+<p>void SetAutholization(const char* Auth)</p>
+リクエストヘッダのAuthorizationに認証用トークン指定します。<br/>
+<table class="tblstyle">
+<tr><td>Auth[入力]</td><td>リクエストヘッダのAuthorizationに指定する認証用トークン<br/></td></tr>
+</table>
+<hr/>
+
 <p>StkObject* SendRequestRecvResponse(int Method, const char* Url, StkObject* ReqObj, int* ResultCode)</p>
 HTTP Serverにリクエストを送信し，HTTP Serverからのレスポンスを返却します。<br/>
+送信時にHTTPのリクエストヘッダには，以下が指定されます。<br/>
+<ul>
+<li>Content-Length: xxx (リクエストボディのサイズ)</li>
+<li>Content-Type: application/json</li>
+<li>Host: yyy (接続先のホスト名またはIPアドレス)</li>
+<li>Authorization: zzz (SetAuthorizationで指定した認証用トークン。)</li>
+<li>Date: aaa (リクエストが送信された時刻)</li>
+</ul>
 <table class="tblstyle">
 <tr><td>Method[入力]</td><td>HTTPリクエストのメソッド。以下の何れかを指定する。<br/>
 StkWebAppSend::STKWEBAPP_METHOD_UNDEFINED<br/>
