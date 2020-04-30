@@ -257,16 +257,22 @@ copy "..\src\stkwebapp\Release\stkwebappcmd.exe" deployment
 copy "..\src\stkwebapp\StkWebApp.h" deployment
 copy "..\src\stkwebapp\StkWebAppExec.h" deployment
 copy "..\src\stkwebapp\StkWebAppSend.h" deployment
+copy "..\src\stkwebapp\stkcommon.js" deployment
+copy "..\src\stkwebapp\stkcommon.css" deployment
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebapp.lib
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkwebappcmd.exe
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\StkWebApp.h
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\StkWebAppExec.h
 %SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\StkWebAppSend.h
+%SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkcommon.js
+%SEVENZIP% a ..\build\deployment\stkwebapp.zip ..\build\deployment\stkcommon.css
 del ..\build\deployment\stkwebapp.lib
 del ..\build\deployment\stkwebappcmd.exe
 del ..\build\deployment\StkWebApp.h
 del ..\build\deployment\StkWebAppExec.h
 del ..\build\deployment\StkWebAppSend.h
+del ..\build\deployment\stkcommon.js
+del ..\build\deployment\stkcommon.css
 
 
 if defined LOCALMACHINE (

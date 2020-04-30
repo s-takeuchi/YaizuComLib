@@ -1,39 +1,4 @@
 
-body {
-    padding-top: 56px
-}
-
-td {
-    vertical-align: middle
-}
-
-a { color: #a0a0a0; text-decoration: none; }
-a:active { color: #a0a0a0; text-decoration: none; }
-a:hover { color: #f0f0f0; text-decoration: none; }
-a:focus { color: #f0f0f0; text-decoration: none; }
-
-.plane-link a { color: #505050; text-decoration: none; }
-.plane-link a:active { color: #505050; text-decoration: none; }
-.plane-link a:hover { color: #202020; text-decoration: none; }
-.plane-link a:focus { color: #202020; text-decoration: none; }
-
-.dropdown-menu li a { color: #303030; text-decoration: none; }
-.dropdown-menu li a:active { color: #303030; text-decoration: none; }
-.dropdown-menu li a:hover { color: #000000; text-decoration: none; }
-.dropdown-menu li a:focus { color: #000000; text-decoration: none; }
-
-.rscommand { float:left; }  
-
-.modal {
-    overflow-y: auto;
-    max-height: 100%;
-}
-
-.dropdown-menu {         
-    overflow-x: auto;
-    max-height: 300px;
-}
-
 @font-face {
     font-family: 'IcoMoon-Free';
     src: url('IcoMoon-Free.ttf') format('truetype');
