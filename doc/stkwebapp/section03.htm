@@ -10,35 +10,40 @@
 
 <BODY>
 <div id="container">
-<H1>3. stkcommon.js</H1>
+<H1>3. stkcommon</H1>
 
 
 
-<H2 ID="3.1">3.1 stkcommon.js概要</H2>
+<H2 ID="3.1">3.1 stkcommon概要</H2>
 <div class="topic">
-  stkcommon.jsは，レスポンシブなWebアプリケーションを実現するための，共通のライブラリです。<br/>
-  stkcommon.jsを使用することにより，レスポンシブなWebアプリケーションを，効率よく開発することができます。<br/>
+  stkcommonは，レスポンシブなWebアプリケーションを実現するための，共通のライブラリです。<br/>
+  stkcommonを使用することにより，レスポンシブなWebアプリケーションを，効率よく開発することができます。<br/>
+  stkcommonは以下のファイルを含んでいます。<br/>
+  <ul>
+  <li>stkcommon.js</li>
+  <li>stkcommon.css</li>
+  <li>IcoMoon-Free.ttf</li>
+  <li>IcoMoon-Free.css</li>
+  </ul>
 </div><p>
 
 
 
-<H2 ID="3.2">3.2 stkcommon.jsの前提ソフトウェア</H2>
+<H2 ID="3.2">3.2 stkcommonの前提ソフトウェア</H2>
 <div class="topic">
-  stkcommon.jsは以下のソフトウェアを前提とします。<br/>
-  stkcommon.jsを使用するソフトウェアは，事前にこれらのソフトウェアを組み込んでおく必要があります。<br/>
+  stkcommonは以下のソフトウェアを前提とします。<br/>
+  stkcommonを使用するソフトウェアは，事前にこれらのソフトウェアを組み込んでおく必要があります。<br/>
   <ul>
   <li>Bootstrap 4.4.1</li>
   <li>JQuery 3.2.0</li>
-  <li>IcoMoon-Free</li>
-  <li>stkcommon.css</li>
   </ul>
 </div>
 
 
 
-<H2 ID="3.3">3.3 stkcommon.jsのAPI一覧</H2>
+<H2 ID="3.3">3.3 stkcommonのAPI一覧</H2>
 <div class="topic">
-stkcommon.jsの公開APIには下記のものがあります。<br/>
+stkcommonの公開APIには下記のものがあります。<br/>
 <table class="tblstyle">
 <tr><td><a href="#3.4.1">function showLoginModal(func)</a></td><td>ログインダイアログを表示します。</td></tr>
 <tr><td><a href="#3.4.2">function showInputModal(title, contents)</a></td><td>入力ダイアログを表示します。</td></tr>
@@ -69,11 +74,11 @@ stkcommon.jsの公開APIには下記のものがあります。<br/>
 
 
 
-<H2 ID="3.4">3.4 stkcommon.jsのAPI詳細</H2>
+<H2 ID="3.4">3.4 stkcommonのAPI詳細</H2>
 <H3 ID="3.4.1">3.4.1 function showLoginModal(func)</H3>
 <div class="topic">
 ログインダイアログを表示します。<br/>
-ログインダイアログで設定したログインIDおよびパスワードは，stkcommon.jsのグローバル変数loginId, loginPwに格納されます。<br/>
+ログインダイアログで設定したログインIDおよびパスワードは，stkcommonのグローバル変数loginId, loginPwに格納されます。<br/>
 loginId, loginPwは，cookieにも24時間記憶され，loginId，loginPwがcookieに存在する間は，本関数を呼び出してもログインダイアログが表示されません。<br/>
 REST API呼び出しにおいて，HTTPヘッダのAuthorizationに，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。<br/>
 認証のため，引数で指定された関数func()を呼び出します。<br/>
@@ -311,7 +316,7 @@ REST APIを呼び出します。<br/>
 REST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
 リクエスト送信後，500ミリ秒経過してもREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
 レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
-REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommon.jsのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
+REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommonのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
 REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
 <table class="tblstyle">
 <tr><td>method[入力]</td><td>HTTPメソッド。'GET', 'POST', 'DELETE', etc</td></tr>
@@ -330,7 +335,7 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 すべてのREST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
 リクエスト送信後，500ミリ秒経過してもすべてのREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
 レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
-REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommon.jsのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
+REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommonのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
 REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
 <table class="tblstyle">
 <tr><td>contents[入力]</td><td>
