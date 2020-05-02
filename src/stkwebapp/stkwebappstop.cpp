@@ -53,13 +53,20 @@ void StopProcess(const wchar_t* ConfFileName)
 
 int main(int argc, char* argv[])
 {
-	if (argc != 2) {
-		StkPlPrintf("Usage %s <configuration file name>\r\n", argv[0]);
+	if (argc != 3) {
+		StkPlPrintf("Usage %s <configuration file name> <path to execution file>\r\n", argv[0]);
 		return -1;
 	}
 	wchar_t* ConfFileName = StkPlCreateWideCharFromUtf8(argv[1]);
 	StopProcess(ConfFileName);
 	delete ConfFileName;
+
+	char CmdBuf[1024] = "";
+	StkPlSPrintf(CmdBuf, 1024, "ps -fe|awk '{ print $8 }'|grep %s", argv[2]);
+	for (int Loop = 0; argc == 3 && !StkPlSystem(CmdBuf) && Loop < 20; Loop++) {
+		StkPlPrintf("Waiting for process termination...\n");
+		StkPlSleepMs(1000);
+	}
 
 	return 0;
 }
