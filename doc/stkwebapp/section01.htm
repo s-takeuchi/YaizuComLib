@@ -107,8 +107,13 @@ Options
 <div class="topic">
 StkWebAppStopは，StkWebAppライブラリを利用するユーザープログラムを前提とした，
 Webアプリケーションの停止を行うLinux用CLIです。<br/>
-<p>StkWebAppStop &lt;Configuration File Name&gt;</p>
-servicehostおよびserviceportを定義したConfiguration Fileを指定します。<br/>
+<p>StkWebAppStop &lt;Configuration File Name&gt; &lt;Path to Execution File&gt;</p>
+<ul>
+<li>&lt;Configuration File Name&gt;<br/>servicehostおよびserviceportを定義したConfiguration Fileを指定します。<br/></li>
+<li>&lt;Path to Execution File&gt;<br/>停止を監視するWebアプリケーションの実行ファイルを指定します。<br/></li>
+</ul>
+このプログラムは，最初にConfiguration File内のservicehost, serviceportに対して，{ "Operation" : "Stop" }をPOSTします。<br/>
+その後，Path to Execution Fileを実行ファイルとするプロセスの監視を行います。このプログラムは，対象のプロセスが停止するか20秒経過するまで，終了しません。<br/>
 </div><p>
 
 
