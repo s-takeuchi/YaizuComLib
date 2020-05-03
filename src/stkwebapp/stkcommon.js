@@ -2,391 +2,434 @@
 // Server url
 var svrUrl = ".";
 
-// Timeout in milliseconds for API call
-var timeout = 99000;
-
-// underComm = 0 : No communication state, >= 1 : Communication state
-var underComm = 0;
-
 // Acquired data
 var statusCode = {};
 var responseData = {};
 
-// For login info
-var initLoginModalFlag = false;
-var loginId = "";
-var loginPw = "";
+////////////////////////////////////////
+//
+//  Functions for login and logout
+//
+////////////////////////////////////////
+{
+    // For login info
+    let initLoginModalFlag = false;
+    var loginId = "";
+    var loginPw = "";
 
-// Init flag of loading modal
-var initLoadingModalFlag = false;
+    let tryLogin = function(func) {
+        loginId = $("#loginId").val();
+        loginPw = $("#loginPw").val();
+        if (!loginId.match(/^([a-zA-Z0-9\._\-/@])+$/)) {
+            $('#login_Modal_Body').empty();
+            $('#login_Modal_Body').append('<p>The user name is empty or contains fobidden character(s).</p>');
+            return;
+        }
+        if (!loginPw.match(/^([a-zA-Z0-9!\?\.\+\-\$%#&\*/=@])+$/)) {
+            $('#login_Modal_Body').empty();
+            $('#login_Modal_Body').append('<p>The passwprd is empty or contains forbidden character(s).</p>');
+            return;
+        }
+        if (func() == true) {
+            $('#login_Modal').modal('hide');
+            document.cookie = "loginId=" + encodeURIComponent(window.btoa(loginId)) + ";max-age=86400;samesite=strict;secure";
+            document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw)) + ";max-age=86400;samesite=strict;secure";
+        } else {
+            $('#login_Modal_Body').empty();
+            $('#login_Modal_Body').append('<p>The user name or password is incorrect.</p>');
+        }
+    };
 
-// Init flag of input modal
-var initInputModalFlag = false;
+    let initLoginModal = function(func) {
+        var loginModal = $('<div id="login_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
+        var modalDialog = $('<div class="modal-dialog modal-xl">');
+        var modalContent = $('<div class="modal-content">');
+        var modalHeader = $('<h3 class="modal-header">Login</h3>');
+        var modalBody = $('<div class="modal-body"><div"><div class="form-group"><input type="text" maxlength="31" class="form-control" id="loginId" placeholder="User name" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="Password" value="" /></div><div id="login_Modal_Body"></div><button id="loginButton" type="button" class="btn btn-dark">Login</button></div></div>');
 
-// Client messages
-var clientMsg = {};
-var clientLanguage = 0;
+        modalContent.append(modalHeader);
+        modalContent.append(modalBody);
+        modalDialog.append(modalContent);
+        loginModal.append(modalDialog);
+        $('body').append(loginModal);
+        $('#login_Modal_Body').append('<p>Input user name and password.</p>');
+        $('#loginButton').on('click', function() { tryLogin(func); });
+    };
 
-function initLoginModal(func) {
-    var loginModal = $('<div id="login_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
-    var modalDialog = $('<div class="modal-dialog modal-xl">');
-    var modalContent = $('<div class="modal-content">');
-    var modalHeader = $('<h3 class="modal-header">Login</h3>');
-    var modalBody = $('<div class="modal-body"><div"><div class="form-group"><input type="text" maxlength="31" class="form-control" id="loginId" placeholder="User name" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="Password" value="" /></div><div id="login_Modal_Body"></div><button type="button" class="btn btn-dark" onclick="tryLogin(' + func + ')">Login</button></div></div>');
-
-    modalContent.append(modalHeader);
-    modalContent.append(modalBody);
-    modalDialog.append(modalContent);
-    loginModal.append(modalDialog);
-    $('body').append(loginModal);
-    $('#login_Modal_Body').append('<p>Input user name and password.</p>');
-}
-
-function tryLogin(func) {
-    loginId = $("#loginId").val();
-    loginPw = $("#loginPw").val();
-    if (!loginId.match(/^([a-zA-Z0-9\._\-/@])+$/)) {
-        $('#login_Modal_Body').empty();
-        $('#login_Modal_Body').append('<p>The user name is empty or contains fobidden character(s).</p>');
-        return;
-    }
-    if (!loginPw.match(/^([a-zA-Z0-9!\?\.\+\-\$%#&\*/=@])+$/)) {
-        $('#login_Modal_Body').empty();
-        $('#login_Modal_Body').append('<p>The passwprd is empty or contains forbidden character(s).</p>');
-        return;
-    }
-    if (func() == true) {
-        $('#login_Modal').modal('hide');
+    function changeLoginPassword(password) {
+        loginPw = password;
         document.cookie = "loginId=" + encodeURIComponent(window.btoa(loginId)) + ";max-age=86400;samesite=strict;secure";
         document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw)) + ";max-age=86400;samesite=strict;secure";
-    } else {
-        $('#login_Modal_Body').empty();
-        $('#login_Modal_Body').append('<p>The user name or password is incorrect.</p>');
+    }
+
+    function tryLogout() {
+        loginId = "";
+        loginPw = "";
+        document.cookie = "loginId=" + loginId;
+        document.cookie = "loginPw=" + loginPw;
+        location.reload();
+    }
+
+    function showLoginModal(func) {
+        if (initLoginModalFlag == false) {
+            initLoginModalFlag = true;
+            initLoginModal(func);
+        }
+        var myCookies = document.cookie.split(';');
+        myCookies.forEach(function(value) {
+            var content = value.split('=');
+            if (content.length == 2 && content[0].trim() === 'loginId') {
+                loginId = window.atob(decodeURIComponent(content[1]));
+            }
+            if (content.length == 2 && content[0].trim() === 'loginPw') {
+                loginPw = window.atob(decodeURIComponent(content[1]));
+            }
+        })
+        if (loginId !== "" && loginPw !== "") {
+            if (func() == true) {
+                return;
+            } else {
+                $('#login_Modal').modal('show');
+            }
+        }
+        $('#login_Modal').modal('show');
     }
 }
 
-function changeLoginPassword(password) {
-    loginPw = password;
-    document.cookie = "loginId=" + encodeURIComponent(window.btoa(loginId)) + ";max-age=86400;samesite=strict;secure";
-    document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw)) + ";max-age=86400;samesite=strict;secure";
-}
+////////////////////////////////////////
+//
+//  Functions for input modal
+//
+////////////////////////////////////////
+{
+    // Init flag of input modal
+    let initInputModalFlag = false;
 
-function tryLogout() {
-    loginId = "";
-    loginPw = "";
-    document.cookie = "loginId=" + loginId;
-    document.cookie = "loginPw=" + loginPw;
-    location.reload();
-}
+    let initInputModal = function() {
+        var inputModal = $('<div id="inputDlgModal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
+        var modalDialog = $('<div class="modal-dialog modal-xl">');
+        var modalContent = $('<div class="modal-content">');
+        var modalHeader = $('<h5 class="modal-header" id="inputDlgModalTitle"/>');
+        var modalBody = $('<div class="modal-body" id="inputDlgModalBody"/>');
 
-function showLoginModal(func) {
-    if (initLoginModalFlag == false) {
-        initLoginModalFlag = true;
-        initLoginModal(func);
+        modalContent.append(modalHeader);
+        modalContent.append(modalBody);
+        modalDialog.append(modalContent);
+        inputModal.append(modalDialog);
+        $('body').append(inputModal);
     }
-    var myCookies = document.cookie.split(';');
-    myCookies.forEach(function(value) {
-        var content = value.split('=');
-        if (content.length == 2 && content[0].trim() === 'loginId') {
-            loginId = window.atob(decodeURIComponent(content[1]));
+
+    function showInputModal(title, contents) {
+        if (initInputModalFlag == false) {
+            initInputModalFlag = true;
+            initInputModal();
         }
-        if (content.length == 2 && content[0].trim() === 'loginPw') {
-            loginPw = window.atob(decodeURIComponent(content[1]));
+        $('#inputDlgModalTitle').empty();
+        $('#inputDlgModalBody').empty();
+        $('#inputDlgModalTitle').append('<div style="float:left;">' + title + '</div><div class="plane-link" style="float:right;"><a href="#" onclick="closeInputModal()"><span class="icon icon-cross" style="font-size:22px;"></span></div>');
+        $('#inputDlgModalBody').append(contents);
+        $('#inputDlgModal').modal('show');
+    }
+
+    function closeInputModal() {
+        $('#inputDlgModal').modal('hide');
+    }
+}
+
+////////////////////////////////////////
+//
+//  Functions for main console
+//
+////////////////////////////////////////
+{
+    function initMainPage(title, iconname, contents) {
+        var navBarHeader = $('<div class="d-none d-sm-block rscommand"><a class="navbar-brand" href=""><img src="' + iconname + '" width=22 height=22/><small>' + title + '</small></a></div> <div id="rsCommand"/> <div class="d-none d-lg-block" style="width:40px;"/><div class="d-none d-xl-block" style="width:40px;"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
+        var navBarNav = $('<ul class="navbar-nav  mr-auto">');
+        if (contents instanceof Array) {
+            for (var key in contents) {
+                if (contents[key].actApiName != null && contents[key].title != null) {
+                    navBarNav.append($('<li class="nav-item" id="menu-' + contents[key].id + '" style="display:none"><a class="nav-link" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"> ' + contents[key].title + '</a></li>'));
+                }
+            }
         }
-    })
-    if (loginId !== "" && loginPw !== "") {
-        if (func() == true) {
-            return;
+        var navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item dropdown"><a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">' + loginId + '</a><div id="rsUserMenu" class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" onclick="tryLogout()">Logout</a></div></li></u>')
+        var navBarCollapse = $('<div class="collapse navbar-collapse justify-content-start" id="top-nav">');
+        navBarCollapse.append(navBarNav);
+        navBarCollapse.append(navBarNavRight);
+        var navBarDefault = $('<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">');
+        navBarDefault.append(navBarHeader);
+        navBarDefault.append(navBarCollapse);
+        var containerFluidWorkSpace = $('<div class="container">');
+        if (contents instanceof Array) {
+            for (var key in contents) {
+                containerFluidWorkSpace.append('<div><div id="' + contents[key].id + '" class="row col-xs-12" style="display:none"></div></div>');
+            }
+        }
+        $('body').append(navBarDefault);
+        $('body').append(containerFluidWorkSpace);
+    }
+
+    function addRsUserMenu(contents)
+    {
+        if (contents instanceof Array) {
+            for (var key in contents) {
+                if (contents[key].actApiName != null && contents[key].title != null) {
+                    $('#rsUserMenu').prepend($('<a class="dropdown-item" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')">' + contents[key].title + '</a>'));
+                }
+            }
+        }
+    }
+
+    function addRsCommand(func, icon, enable)
+    {
+        if (enable == true) {
+            $('#rsCommand').append('<div class="rscommand"><a href="#" onclick="' + func + '">&nbsp;<span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;</a></div>');
         } else {
-            $('#login_Modal').modal('show');
+            $('#rsCommand').append('<div class="rscommand">&nbsp;<span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;</div>');
         }
     }
-    $('#login_Modal').modal('show');
-}
 
-function initLoadingModal() {
-    var loadingModal = $('<div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
-    var modalDialog = $('<div class="modal-dialog modal-xl">');
-    var modalContent = $('<div class="modal-content">');
-    var modalHeader = $('<h5 class="modal-header">Now loading ...</h5>');
-    var modalBody = $('<div class="modal-body"><div style="height:20px"><div class="progress"><div class="progress-bar bg-primary progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%"> </div></div></div></div>');
-
-    modalContent.append(modalHeader);
-    modalContent.append(modalBody);
-    modalDialog.append(modalContent);
-    loadingModal.append(modalDialog);
-    $('body').append(loadingModal);
-}
-
-function initInputModal() {
-    var inputModal = $('<div id="inputDlgModal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
-    var modalDialog = $('<div class="modal-dialog modal-xl">');
-    var modalContent = $('<div class="modal-content">');
-    var modalHeader = $('<h5 class="modal-header" id="inputDlgModalTitle"/>');
-    var modalBody = $('<div class="modal-body" id="inputDlgModalBody"/>');
-
-    modalContent.append(modalHeader);
-    modalContent.append(modalBody);
-    modalDialog.append(modalContent);
-    inputModal.append(modalDialog);
-    $('body').append(inputModal);
-}
-
-function showInputModal(title, contents) {
-    if (initInputModalFlag == false) {
-        initInputModalFlag = true;
-        initInputModal();
+    function clearRsCommand()
+    {
+        $('#rsCommand').empty();
     }
-    $('#inputDlgModalTitle').empty();
-    $('#inputDlgModalBody').empty();
-    $('#inputDlgModalTitle').append('<div style="float:left;">' + title + '</div><div class="plane-link" style="float:right;"><a href="#" onclick="closeInputModal()"><span class="icon icon-cross" style="font-size:22px;"></span></div>');
-    $('#inputDlgModalBody').append(contents);
-    $('#inputDlgModal').modal('show');
-}
 
-function closeInputModal() {
-    $('#inputDlgModal').modal('hide');
-}
-
-function initMainPage(title, iconname, contents) {
-    var navBarHeader = $('<div class="d-none d-sm-block rscommand"><a class="navbar-brand" href=""><img src="' + iconname + '" width=22 height=22/><small>' + title + '</small></a></div> <div id="rsCommand"/> <div class="d-none d-lg-block" style="width:40px;"/><div class="d-none d-xl-block" style="width:40px;"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
-    var navBarNav = $('<ul class="navbar-nav  mr-auto">');
-    if (contents instanceof Array) {
-        for (var key in contents) {
-            if (contents[key].actApiName != null && contents[key].title != null) {
-                navBarNav.append($('<li class="nav-item" id="menu-' + contents[key].id + '" style="display:none"><a class="nav-link" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"> ' + contents[key].title + '</a></li>'));
-            }
-        }
+    function addDropDown(dropdownTitle) {
+        $('#rsCommand').append('<div class="nav-item dropdown rscommand"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  style="padding-left:0px;padding-right:0px;margin-left:-10px">' + dropdownTitle + '</a><div id="rsNavDropDown" class="dropdown-menu" aria-labelledby="navbarDropdown"/></div>');
     }
-    var navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item dropdown"><a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">' + loginId + '</a><div id="rsUserMenu" class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" onclick="tryLogout()">Logout</a></div></li></u>')
-    var navBarCollapse = $('<div class="collapse navbar-collapse justify-content-start" id="top-nav">');
-    navBarCollapse.append(navBarNav);
-    navBarCollapse.append(navBarNavRight);
-    var navBarDefault = $('<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">');
-    navBarDefault.append(navBarHeader);
-    navBarDefault.append(navBarCollapse);
-    var containerFluidWorkSpace = $('<div class="container">');
-    if (contents instanceof Array) {
-        for (var key in contents) {
-            containerFluidWorkSpace.append('<div><div id="' + contents[key].id + '" class="row col-xs-12" style="display:none"></div></div>');
-        }
+
+    function changeDropDownTitle(dropdownTitle) {
+        $('#navbarDropdown').text(dropdownTitle);
     }
-    $('body').append(navBarDefault);
-    $('body').append(containerFluidWorkSpace);
+
+    function getDropDownMenu(index) {
+        return $('#dropDownMenu_' + index).text();
+    }
+
+    function addDropDownMenu(index, menuTitle, func) {
+        $('#rsNavDropDown').append('<a id="dropDownMenu_' + index + '" class="dropdown-item" href="#" onclick="' + func + '">' + menuTitle + '</a>');
+    }
 }
 
-function addRsUserMenu(contents)
+////////////////////////////////////////
+//
+//  Functions for label and message
+//
+////////////////////////////////////////
 {
-    if (contents instanceof Array) {
-        for (var key in contents) {
-            if (contents[key].actApiName != null && contents[key].title != null) {
-                $('#rsUserMenu').prepend($('<a class="dropdown-item" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')">' + contents[key].title + '</a>'));
-            }
+    // Client messages
+    let clientMsg = {};
+    let clientLanguage = 0;
+
+    function addClientMessage(code, msg) {
+        if (msg.en !== undefined && msg.ja !== undefined) {
+            clientMsg[code] = msg;
         }
     }
-}
 
-function addRsCommand(func, icon, enable)
-{
-    if (enable == true) {
-        $('#rsCommand').append('<div class="rscommand"><a href="#" onclick="' + func + '">&nbsp;<span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;</a></div>');
-    } else {
-        $('#rsCommand').append('<div class="rscommand">&nbsp;<span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;</div>');
+    function deleteClientMessage(code) {
+        delete clientMsg[code];
     }
-}
 
-function clearRsCommand()
-{
-    $('#rsCommand').empty();
-}
-
-function addDropDown(dropdownTitle) {
-    $('#rsCommand').append('<div class="nav-item dropdown rscommand"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  style="padding-left:0px;padding-right:0px;margin-left:-10px">' + dropdownTitle + '</a><div id="rsNavDropDown" class="dropdown-menu" aria-labelledby="navbarDropdown"/></div>');
-}
-
-function changeDropDownTitle(dropdownTitle) {
-    $('#navbarDropdown').text(dropdownTitle);
-}
-
-function getDropDownMenu(index) {
-    return $('#dropDownMenu_' + index).text();
-}
-
-function addDropDownMenu(index, menuTitle, func) {
-    $('#rsNavDropDown').append('<a id="dropDownMenu_' + index + '" class="dropdown-item" href="#" onclick="' + func + '">' + menuTitle + '</a>');
-}
-
-function addClientMessage(code, msg) {
-    if (msg.en !== undefined && msg.ja !== undefined) {
-        clientMsg[code] = msg;
-    }
-}
-
-function deleteClientMessage(code) {
-    delete clientMsg[code];
-}
-
-function getClientMessageEn(code) {
-    return clientMsg[code].en;
-}
-
-function getClientMessageJa(code) {
-    return clientMsg[code].ja;
-}
-
-function setClientLanguage(lang) {
-    clientLanguage = lang;
-}
-
-function getClientLanguage() {
-    return clientLanguage;
-}
-
-function getClientMessage(code) {
-    if (clientLanguage == 0) {
+    function getClientMessageEn(code) {
         return clientMsg[code].en;
     }
-    if (clientLanguage == 1) {
+
+    function getClientMessageJa(code) {
         return clientMsg[code].ja;
     }
-}
 
-function displayAlertSuccess(parent, msg) {
-    $(parent + ' .alert').remove();
-    $(parent).append('<div class="alert alert-success" role="alert">' + msg + '</div>');
-}
-
-function displayAlertDanger(parent, msg) {
-    $(parent + ' .alert').remove();
-    $(parent).append('<div class="alert alert-danger" role="alert">' + msg + '</div>');
-}
-
-function displayAlertWarning(parent, msg) {
-    $(parent + ' .alert').remove();
-    $(parent).append('<div class="alert alert-warning" role="alert">' + msg + '</div>');
-}
-
-function displayAlertInfo(parent, msg) {
-    $(parent + ' .alert').remove();
-    $(parent).append('<div class="alert alert-info" role="alert">' + msg + '</div>');
-}
-
-function apiCall(method, url, request, keystring, targetFunc) {
-    if (method != null && url != null && keystring !== '') {
-        sendRequestRecvResponse(method, url, request, keystring, true);
+    function setClientLanguage(lang) {
+        clientLanguage = lang;
     }
-    if (targetFunc != null) {
-        setTimeout(function() {waitForResponse(0, targetFunc);}, 1);
-    }
-}
 
-function MultiApiCall(contents, targetFunc) {
-    for (var key in contents) {
-        if (contents[key].method != null && contents[key].url != null && contents[key].keystring !== '') {
-            sendRequestRecvResponse(contents[key].method, contents[key].url, contents[key].request, contents[key].keystring, true);
+    function getClientLanguage() {
+        return clientLanguage;
+    }
+
+    function getClientMessage(code) {
+        if (clientLanguage == 0) {
+            return clientMsg[code].en;
+        }
+        if (clientLanguage == 1) {
+            return clientMsg[code].ja;
         }
     }
-    if (targetFunc != null) {
-        setTimeout(function() {waitForResponse(0, targetFunc);}, 1);
+}
+
+////////////////////////////////////////
+//
+//  Functions for notification
+//
+////////////////////////////////////////
+{
+    function displayAlertSuccess(parent, msg) {
+        $(parent + ' .alert').remove();
+        $(parent).append('<div class="alert alert-success" role="alert">' + msg + '</div>');
+    }
+
+    function displayAlertDanger(parent, msg) {
+        $(parent + ' .alert').remove();
+        $(parent).append('<div class="alert alert-danger" role="alert">' + msg + '</div>');
+    }
+
+    function displayAlertWarning(parent, msg) {
+        $(parent + ' .alert').remove();
+        $(parent).append('<div class="alert alert-warning" role="alert">' + msg + '</div>');
+    }
+
+    function displayAlertInfo(parent, msg) {
+        $(parent + ' .alert').remove();
+        $(parent).append('<div class="alert alert-info" role="alert">' + msg + '</div>');
     }
 }
 
-function waitForResponse(count, targetFunc) {
-    if (initLoadingModalFlag == false) {
-        initLoadingModalFlag = true;
-        initLoadingModal();
+////////////////////////////////////////
+//
+//  Functions for communication
+//
+////////////////////////////////////////
+{
+    // underComm = 0 : No communication state, >= 1 : Communication state
+    let underComm = 0;
+
+    // Init flag of loading modal
+    let initLoadingModalFlag = false;
+
+    // Timeout in milliseconds for API call
+    let timeout = 99000;
+
+    let initLoadingModal = function() {
+        var loadingModal = $('<div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
+        var modalDialog = $('<div class="modal-dialog modal-xl">');
+        var modalContent = $('<div class="modal-content">');
+        var modalHeader = $('<h5 class="modal-header">Now loading ...</h5>');
+        var modalBody = $('<div class="modal-body"><div style="height:20px"><div class="progress"><div class="progress-bar bg-primary progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%"> </div></div></div></div>');
+
+        modalContent.append(modalHeader);
+        modalContent.append(modalBody);
+        modalDialog.append(modalContent);
+        loadingModal.append(modalDialog);
+        $('body').append(loadingModal);
     }
-    if (targetFunc == null) {
-        return;
-    }
-    if (count < 10) {
+
+    let waitForResponse = function(count, targetFunc) {
+        if (initLoadingModalFlag == false) {
+            initLoadingModalFlag = true;
+            initLoadingModal();
+        }
+        if (targetFunc == null) {
+            return;
+        }
+        if (count < 10) {
+            if (underComm == 0) {
+                targetFunc();
+            } else {
+                setTimeout(function() {waitForResponse(count + 1, targetFunc);}, 50);
+            }
+            return;
+        }
         if (underComm == 0) {
+            $('#loading_Modal').modal('hide');
             targetFunc();
+            return;
+        }
+        $('#loading_Modal').modal('show');
+        setTimeout(function() {waitForResponse(count + 1, targetFunc);}, 500);
+    }
+
+    function sendRequestRecvResponse(method, url, request, keystring, asyncFlag) {
+        underComm++;
+        if (method === 'GET' || method === 'DELETE') {
+            $.ajax({
+                type: method,
+                dataType: 'json',
+                url: svrUrl + url,
+                data: request,
+                async: asyncFlag,
+                timeout: timeout,
+                crossDomain: true,
+                beforeSend: function( xhr, settings ) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + loginId + ' ' + loginPw);
+                },
+                success: function(msg, textStatus, xhr) {
+                    statusCode[keystring] = xhr.status;
+                    responseData[keystring] = {};
+                    $.extend(responseData[keystring], msg);
+                    underComm--;
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    if (textStatus === 'timeout') {
+                        statusCode[keystring] = -1;
+                        responseData[keystring] = {};
+                    } else {
+                        statusCode[keystring] = xhr.status;
+                        try {
+                            responseData[keystring] = {};
+                            $.extend(responseData[keystring], JSON.parse(xhr.responseText));
+                        } catch (e) {
+                            responseData[keystring] = {};
+                        }
+                    }
+                    underComm--;
+                }
+            });
         } else {
-            setTimeout(function() {waitForResponse(count + 1, targetFunc);}, 50);
+            $.ajax({
+                type: method,
+                dataType: 'json',
+                url: svrUrl + url,
+                data: JSON.stringify(request),
+                contentType: 'application/json',
+                async: asyncFlag,
+                timeout: timeout,
+                crossDomain: true,
+                beforeSend: function( xhr, settings ) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + loginId + ' ' + loginPw);
+                },
+                success: function(msg, textStatus, xhr) {
+                    statusCode[keystring] = xhr.status;
+                    responseData[keystring] = {};
+                    $.extend(responseData[keystring], msg);
+                    underComm--;
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    if (textStatus === 'timeout') {
+                        statusCode[keystring] = -1;
+                        responseData[keystring] = {};
+                    } else {
+                        statusCode[keystring] = xhr.status;
+                        try {
+                            responseData[keystring] = {};
+                            $.extend(responseData[keystring], JSON.parse(xhr.responseText));
+                        } catch (e) {
+                            responseData[keystring] = {};
+                        }
+                    }
+                    underComm--;
+                }
+            });
         }
         return;
     }
-    if (underComm == 0) {
-        $('#loading_Modal').modal('hide');
-        targetFunc();
-        return;
-    }
-    $('#loading_Modal').modal('show');
-    setTimeout(function() {waitForResponse(count + 1, targetFunc);}, 500);
-}
 
-function sendRequestRecvResponse(method, url, request, keystring, asyncFlag) {
-    underComm++;
-    if (method === 'GET' || method === 'DELETE') {
-        $.ajax({
-            type: method,
-            dataType: 'json',
-            url: svrUrl + url,
-            data: request,
-            async: asyncFlag,
-            timeout: timeout,
-            crossDomain: true,
-            beforeSend: function( xhr, settings ) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + loginId + ' ' + loginPw);
-            },
-            success: function(msg, textStatus, xhr) {
-                statusCode[keystring] = xhr.status;
-                responseData[keystring] = {};
-                $.extend(responseData[keystring], msg);
-                underComm--;
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                if (textStatus === 'timeout') {
-                    statusCode[keystring] = -1;
-                    responseData[keystring] = {};
-                } else {
-                    statusCode[keystring] = xhr.status;
-                    try {
-                        responseData[keystring] = {};
-                        $.extend(responseData[keystring], JSON.parse(xhr.responseText));
-                    } catch (e) {
-                        responseData[keystring] = {};
-                    }
-                }
-                underComm--;
-            }
-        });
-    } else {
-        $.ajax({
-            type: method,
-            dataType: 'json',
-            url: svrUrl + url,
-            data: JSON.stringify(request),
-            contentType: 'application/json',
-            async: asyncFlag,
-            timeout: timeout,
-            crossDomain: true,
-            beforeSend: function( xhr, settings ) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + loginId + ' ' + loginPw);
-            },
-            success: function(msg, textStatus, xhr) {
-                statusCode[keystring] = xhr.status;
-                responseData[keystring] = {};
-                $.extend(responseData[keystring], msg);
-                underComm--;
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                if (textStatus === 'timeout') {
-                    statusCode[keystring] = -1;
-                    responseData[keystring] = {};
-                } else {
-                    statusCode[keystring] = xhr.status;
-                    try {
-                        responseData[keystring] = {};
-                        $.extend(responseData[keystring], JSON.parse(xhr.responseText));
-                    } catch (e) {
-                        responseData[keystring] = {};
-                    }
-                }
-                underComm--;
-            }
-        });
+    function apiCall(method, url, request, keystring, targetFunc) {
+        if (method != null && url != null && keystring !== '') {
+            sendRequestRecvResponse(method, url, request, keystring, true);
+        }
+        if (targetFunc != null) {
+            setTimeout(function() {waitForResponse(0, targetFunc);}, 1);
+        }
     }
-    return;
+
+    function MultiApiCall(contents, targetFunc) {
+        for (var key in contents) {
+            if (contents[key].method != null && contents[key].url != null && contents[key].keystring !== '') {
+                sendRequestRecvResponse(contents[key].method, contents[key].url, contents[key].request, contents[key].keystring, true);
+            }
+        }
+        if (targetFunc != null) {
+            setTimeout(function() {waitForResponse(0, targetFunc);}, 1);
+        }
+    }
 }
