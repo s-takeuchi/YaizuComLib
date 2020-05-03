@@ -66,9 +66,10 @@ stkcommonの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.19">function displayAlertDanger(parent, msg)</a></td><td>Dangerメッセージを表示します。</td></tr>
 <tr><td><a href="#3.4.20">function displayAlertWarning(parent, msg)</a></td><td>Warningメッセージを表示します。</td></tr>
 <tr><td><a href="#3.4.21">function displayAlertInfo(parent, msg)</a></td><td>Infoメッセージを表示します。</td></tr>
-<tr><td><a href="#3.4.22">function apiCall(method, url, request, keystring, targetFunc)</a></td><td>REST APIを呼び出します。</td></tr>
-<tr><td><a href="#3.4.23">function MultiApiCall(contents, targetFunc)</a></td><td>複数のREST APIを同時に呼び出します。</td></tr>
-<tr><td><a href="#3.4.24">function changeLoginPassword(password)</a></td><td>ログインユーザーのパスワードを変更します。</td></tr>
+<tr><td><a href="#3.4.22">function apiCall(method, url, request, keystring, targetFunc)</a></td><td>REST APIを非同期で呼び出します。</td></tr>
+<tr><td><a href="#3.4.23">function MultiApiCall(contents, targetFunc)</a></td><td>複数のREST APIを非同期で同時に呼び出します。</td></tr>
+<tr><td><a href="#3.4.24">function apiCallSync(method, url, request, keystring)</a></td><td>REST APIを同期で呼び出します。</td></tr>
+<tr><td><a href="#3.4.25">function changeLoginPassword(password)</a></td><td>ログインユーザーのパスワードを変更します。</td></tr>
 </table>
 </div>
 
@@ -312,7 +313,7 @@ Infoメッセージを表示します。<br/>
 
 <H3 ID="3.4.22">3.4.22 function apiCall(method, url, request, keystring, targetFunc)</H3>
 <div class="topic">
-REST APIを呼び出します。<br/>
+REST APIを非同期で呼び出します。<br/>
 REST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
 リクエスト送信後，500ミリ秒経過してもREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
 レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
@@ -331,7 +332,7 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 
 <H3 ID="3.4.23">3.4.23 function MultiApiCall(contents, targetFunc)</H3>
 <div class="topic">
-複数のREST APIを同時に呼び出します。<br/>
+複数のREST APIを非同期で同時に呼び出します。<br/>REST APIを呼び出す順序は保証されていません。<br/>
 すべてのREST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
 リクエスト送信後，500ミリ秒経過してもすべてのREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
 レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
@@ -353,7 +354,23 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 
 
 
-<H3 ID="3.4.24">3.4.24 function changeLoginPassword(password)</H3>
+<H3 ID="3.4.24">3.4.24 function apiCallSync(method, url, request, keystring)</H3>
+<div class="topic">
+REST APIを同期で呼び出します。<br/>
+レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
+REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommonのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
+REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
+<table class="tblstyle">
+<tr><td>method[入力]</td><td>HTTPメソッド。'GET', 'POST', 'DELETE', etc</td></tr>
+<tr><td>url[入力]</td><td>URL</td></tr>
+<tr><td>request[入力]</td><td>リクエストデータ</td></tr>
+<tr><td>keystring[入力]</td><td>ステータスおよびレスポンスデータを識別するキー</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.25">3.4.25 function changeLoginPassword(password)</H3>
 <div class="topic">
 ログインユーザーのパスワードを変更します。<br/>
 <table class="tblstyle">

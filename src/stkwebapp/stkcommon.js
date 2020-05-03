@@ -338,7 +338,7 @@ var responseData = {};
         setTimeout(function() {waitForResponse(count + 1, targetFunc);}, 500);
     }
 
-    function sendRequestRecvResponse(method, url, request, keystring, asyncFlag) {
+    let sendRequestRecvResponse = function(method, url, request, keystring, asyncFlag) {
         underComm++;
         if (method === 'GET' || method === 'DELETE') {
             $.ajax({
@@ -411,6 +411,12 @@ var responseData = {};
             });
         }
         return;
+    }
+
+    function apiCallSync(method, url, request, keystring, targetFunc) {
+        if (method != null && url != null && keystring !== '') {
+            sendRequestRecvResponse(method, url, request, keystring, false);
+        }
     }
 
     function apiCall(method, url, request, keystring, targetFunc) {
