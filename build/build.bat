@@ -284,7 +284,6 @@ del ..\build\deployment\IcoMoon-Free.css
 if defined LOCALMACHINE (
   echo;
   %LCOUNTER% ..\src /subdir
-  %LCOUNTER% ..\src\stkwebapp\stkcommon.js
 )
 
 :buildexit
