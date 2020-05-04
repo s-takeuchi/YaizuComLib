@@ -68,7 +68,7 @@ stkcommonの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.21">function displayAlertInfo(parent, msg)</a></td><td>Infoメッセージを表示します。</td></tr>
 <tr><td><a href="#3.4.22">function apiCall(method, url, request, keystring, targetFunc)</a></td><td>REST APIを非同期で呼び出します。</td></tr>
 <tr><td><a href="#3.4.23">function MultiApiCall(contents, targetFunc)</a></td><td>複数のREST APIを非同期で同時に呼び出します。</td></tr>
-<tr><td><a href="#3.4.24">function apiCallSync(method, url, request, keystring)</a></td><td>REST APIを同期で呼び出します。</td></tr>
+<tr><td><a href="#3.4.24">function setLoginResult(result)</a></td><td>ユーザープログラムで行った認証結果をstkcommon.jsに通知する。</td></tr>
 <tr><td><a href="#3.4.25">function changeLoginPassword(password)</a></td><td>ログインユーザーのパスワードを変更します。</td></tr>
 </table>
 </div>
@@ -82,11 +82,11 @@ stkcommonの公開APIには下記のものがあります。<br/>
 ログインダイアログで設定したログインIDおよびパスワードは，stkcommonのグローバル変数loginId, loginPwに格納されます。<br/>
 loginId, loginPwは，cookieにも24時間記憶され，loginId，loginPwがcookieに存在する間は，本関数を呼び出してもログインダイアログが表示されません。<br/>
 REST API呼び出しにおいて，HTTPヘッダのAuthorizationに，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。<br/>
-認証のため，引数で指定された関数func()を呼び出します。<br/>
-func()関数内ではグローバル変数loginId, loginPwを評価する必要があります。func()がtrueを返却した場合，認証は成功。func()がfalseを返却した場合，認証は失敗となります。<br/>
-認証が成功すると，ログインダイアログは自動的に閉じます。<br/>
+認証のため，ログインボタン押下時に引数で指定された関数func()を呼び出します。<br/>
+func()の引数としてloginId, loginPwが渡されます。func()内でloginId, loginPwを評価する必要があります。<br/>
+評価結果は，setLoginResult()を呼び出すことによりstkcommon.jsに通知します。<br/>
 <table class="tblstyle">
-<tr><td>func[入力]</td><td>認証用関数。括弧および引数は指定できない。trueを返す場合，認証成功。falseを返す場合，認証失敗。</td></tr>
+<tr><td>func[入力]</td><td>認証用関数。引数としてloginId, loginPwが指定される。funcの戻り値は評価されない。</td></tr>
 </table>
 </div>
 
@@ -354,17 +354,12 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 
 
 
-<H3 ID="3.4.24">3.4.24 function apiCallSync(method, url, request, keystring)</H3>
+<H3 ID="3.4.24">3.4.24 setLoginResult(result)</H3>
 <div class="topic">
-REST APIを同期で呼び出します。<br/>
-レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
-REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommonのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
-REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
+ユーザープログラムで行った認証結果をstkcommon.jsに通知します。<br/>
+認証成功の場合，開いていたログインダイアログはクローズします。<br/>
 <table class="tblstyle">
-<tr><td>method[入力]</td><td>HTTPメソッド。'GET', 'POST', 'DELETE', etc</td></tr>
-<tr><td>url[入力]</td><td>URL</td></tr>
-<tr><td>request[入力]</td><td>リクエストデータ</td></tr>
-<tr><td>keystring[入力]</td><td>ステータスおよびレスポンスデータを識別するキー</td></tr>
+<tr><td>result[入力]</td><td>0:認証成功, 1:認証失敗, 2:接続エラー(APIの呼び出しに失敗)</td></tr>
 </table>
 </div>
 

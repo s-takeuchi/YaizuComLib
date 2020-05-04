@@ -89,7 +89,7 @@ var responseData = {};
     };
 
     let initLoginModal = function(func) {
-        var loginModal = $('<div id="login_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
+        var loginModal = $('<div id="login_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2005;">');
         var modalDialog = $('<div class="modal-dialog modal-xl">');
         var modalContent = $('<div class="modal-content">');
         var modalHeader = $('<h3 class="modal-header">Login</h3>');
@@ -173,7 +173,7 @@ var responseData = {};
     let initInputModalFlag = false;
 
     let initInputModal = function() {
-        var inputModal = $('<div id="inputDlgModal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
+        var inputModal = $('<div id="inputDlgModal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2005;">');
         var modalDialog = $('<div class="modal-dialog modal-xl">');
         var modalContent = $('<div class="modal-content">');
         var modalHeader = $('<h5 class="modal-header" id="inputDlgModalTitle"/>');
@@ -321,7 +321,7 @@ var responseData = {};
     let timeout = 99000;
 
     let initLoadingModal = function() {
-        var loadingModal = $('<div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">');
+        var loadingModal = $('<div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2010;">');
         var modalDialog = $('<div class="modal-dialog modal-xl">');
         var modalContent = $('<div class="modal-content">');
         var modalHeader = $('<h5 class="modal-header">Now loading ...</h5>');
