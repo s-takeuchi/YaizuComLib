@@ -8,10 +8,63 @@ var responseData = {};
 
 ////////////////////////////////////////
 //
+//  Functions for label and message
+//
+////////////////////////////////////////
+{
+    // Client messages
+    let clientMsg = {};
+    let clientLanguage = 0;
+
+    function addClientMessage(code, msg) {
+        if (msg.en !== undefined && msg.ja !== undefined) {
+            clientMsg[code] = msg;
+        }
+    }
+
+    function deleteClientMessage(code) {
+        delete clientMsg[code];
+    }
+
+    function getClientMessageEn(code) {
+        return clientMsg[code].en;
+    }
+
+    function getClientMessageJa(code) {
+        return clientMsg[code].ja;
+    }
+
+    function setClientLanguage(lang) {
+        clientLanguage = lang;
+    }
+
+    function getClientLanguage() {
+        return clientLanguage;
+    }
+
+    function getClientMessage(code) {
+        if (clientLanguage == 0) {
+            return clientMsg[code].en;
+        }
+        if (clientLanguage == 1) {
+            return clientMsg[code].ja;
+        }
+    }
+}
+
+////////////////////////////////////////
+//
 //  Functions for login and logout
 //
 ////////////////////////////////////////
 {
+    addClientMessage('STKCOMMON_INPUT_UNAME_AND_PW', {'en':'<p>Input user name and password.</p>', 'ja':'<p>ユーザー名とパスワードを入力してください。</p>'});
+    addClientMessage('STKCOMMON_USERNAME', {'en':'User name', 'ja':'ユーザー名'});
+    addClientMessage('STKCOMMON_PASSWORD', {'en':'Password', 'ja':'パスワード'});
+    addClientMessage('STKCOMMON_INCORRECT_UNPW', {'en':'<p>The user name or password is incorrect.</p>', 'ja':'<p>ユーザー名またはパスワードが不正です。</p>'});
+    addClientMessage('STKCOMMON_INVALID_USERNAME', {'en':'<p>The user name is empty or contains fobidden character(s).</p>', 'ja':'<p>ユーザー名が未指定か禁止文字が使われています。</p>'});
+    addClientMessage('STKCOMMON_INVALID_PASSWORD', {'en':'<p>The passwprd is empty or contains forbidden character(s).</p>', 'ja':'<p>パスワードが未指定か禁止文字が使われています。</p>'});
+
     // For login info
     let initLoginModalFlag = false;
     var loginId = "";
@@ -22,12 +75,12 @@ var responseData = {};
         loginPw = $("#loginPw").val();
         if (!loginId.match(/^([a-zA-Z0-9\._\-/@])+$/)) {
             $('#login_Modal_Body').empty();
-            $('#login_Modal_Body').append('<p>The user name is empty or contains fobidden character(s).</p>');
+            $('#login_Modal_Body').append(getClientMessage('STKCOMMON_INVALID_USERNAME'));
             return;
         }
         if (!loginPw.match(/^([a-zA-Z0-9!\?\.\+\-\$%#&\*/=@])+$/)) {
             $('#login_Modal_Body').empty();
-            $('#login_Modal_Body').append('<p>The passwprd is empty or contains forbidden character(s).</p>');
+            $('#login_Modal_Body').append(getClientMessage('STKCOMMON_INVALID_PASSWORD'));
             return;
         }
         if (func() == true) {
@@ -36,7 +89,7 @@ var responseData = {};
             document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw)) + ";max-age=86400;samesite=strict;secure";
         } else {
             $('#login_Modal_Body').empty();
-            $('#login_Modal_Body').append('<p>The user name or password is incorrect.</p>');
+            $('#login_Modal_Body').append(getClientMessage('STKCOMMON_INCORRECT_UNPW'));
         }
     };
 
@@ -45,14 +98,14 @@ var responseData = {};
         var modalDialog = $('<div class="modal-dialog modal-xl">');
         var modalContent = $('<div class="modal-content">');
         var modalHeader = $('<h3 class="modal-header">Login</h3>');
-        var modalBody = $('<div class="modal-body"><div"><div class="form-group"><input type="text" maxlength="31" class="form-control" id="loginId" placeholder="User name" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="Password" value="" /></div><div id="login_Modal_Body"></div><button id="loginButton" type="button" class="btn btn-dark">Login</button></div></div>');
+        var modalBody = $('<div class="modal-body"><div"><div class="form-group"><input type="text" maxlength="31" class="form-control" id="loginId" placeholder="' + getClientMessage('STKCOMMON_USERNAME') + '" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="' + getClientMessage('STKCOMMON_PASSWORD') + '" value="" /></div><div id="login_Modal_Body"></div><button id="loginButton" type="button" class="btn btn-dark">Login</button></div></div>');
 
         modalContent.append(modalHeader);
         modalContent.append(modalBody);
         modalDialog.append(modalContent);
         loginModal.append(modalDialog);
         $('body').append(loginModal);
-        $('#login_Modal_Body').append('<p>Input user name and password.</p>');
+        $('#login_Modal_Body').append(getClientMessage('STKCOMMON_INPUT_UNAME_AND_PW'));
         $('#loginButton').on('click', function() { tryLogin(func); });
     };
 
@@ -208,52 +261,6 @@ var responseData = {};
 
     function addDropDownMenu(index, menuTitle, func) {
         $('#rsNavDropDown').append('<a id="dropDownMenu_' + index + '" class="dropdown-item" href="#" onclick="' + func + '">' + menuTitle + '</a>');
-    }
-}
-
-////////////////////////////////////////
-//
-//  Functions for label and message
-//
-////////////////////////////////////////
-{
-    // Client messages
-    let clientMsg = {};
-    let clientLanguage = 0;
-
-    function addClientMessage(code, msg) {
-        if (msg.en !== undefined && msg.ja !== undefined) {
-            clientMsg[code] = msg;
-        }
-    }
-
-    function deleteClientMessage(code) {
-        delete clientMsg[code];
-    }
-
-    function getClientMessageEn(code) {
-        return clientMsg[code].en;
-    }
-
-    function getClientMessageJa(code) {
-        return clientMsg[code].ja;
-    }
-
-    function setClientLanguage(lang) {
-        clientLanguage = lang;
-    }
-
-    function getClientLanguage() {
-        return clientLanguage;
-    }
-
-    function getClientMessage(code) {
-        if (clientLanguage == 0) {
-            return clientMsg[code].en;
-        }
-        if (clientLanguage == 1) {
-            return clientMsg[code].ja;
-        }
     }
 }
 
