@@ -62,11 +62,13 @@ var responseData = {};
     addClientMessage('STKCOMMON_USERNAME', {'en':'User name', 'ja':'ユーザー名'});
     addClientMessage('STKCOMMON_PASSWORD', {'en':'Password', 'ja':'パスワード'});
     addClientMessage('STKCOMMON_INCORRECT_UNPW', {'en':'<p>The user name or password is incorrect.</p>', 'ja':'<p>ユーザー名またはパスワードが不正です。</p>'});
-    addClientMessage('STKCOMMON_INVALID_USERNAME', {'en':'<p>The user name is empty or contains fobidden character(s).</p>', 'ja':'<p>ユーザー名が未指定か禁止文字が使われています。</p>'});
-    addClientMessage('STKCOMMON_INVALID_PASSWORD', {'en':'<p>The passwprd is empty or contains forbidden character(s).</p>', 'ja':'<p>パスワードが未指定か禁止文字が使われています。</p>'});
+    addClientMessage('STKCOMMON_CONNECTION_ERROR', {'en':'<p>A connection error occurred.</p>', 'ja':'<p>接続エラーが発生しました。</p>'});
+    addClientMessage('STKCOMMON_INVALID_USERNAME', {'en':'<p>The user name is empty or contains fobidden character(s).</p>', 'ja':'<p>ユーザー名が未指定，または禁止文字が使われています。</p>'});
+    addClientMessage('STKCOMMON_INVALID_PASSWORD', {'en':'<p>The passwprd is empty or contains forbidden character(s).</p>', 'ja':'<p>パスワードが未指定，または禁止文字が使われています。</p>'});
 
     // For login info
     let initLoginModalFlag = false;
+
     var loginId = "";
     var loginPw = "";
 
@@ -83,14 +85,7 @@ var responseData = {};
             $('#login_Modal_Body').append(getClientMessage('STKCOMMON_INVALID_PASSWORD'));
             return;
         }
-        if (func() == true) {
-            $('#login_Modal').modal('hide');
-            document.cookie = "loginId=" + encodeURIComponent(window.btoa(loginId)) + ";max-age=86400;samesite=strict;secure";
-            document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw)) + ";max-age=86400;samesite=strict;secure";
-        } else {
-            $('#login_Modal_Body').empty();
-            $('#login_Modal_Body').append(getClientMessage('STKCOMMON_INCORRECT_UNPW'));
-        }
+        func(loginId, loginPw);
     };
 
     let initLoginModal = function(func) {
@@ -139,13 +134,32 @@ var responseData = {};
             }
         })
         if (loginId !== "" && loginPw !== "") {
-            if (func() == true) {
-                return;
-            } else {
-                $('#login_Modal').modal('show');
-            }
+            func(loginId, loginPw);
+            return;
         }
         $('#login_Modal').modal('show');
+    }
+
+    function setLoginResult(result) {
+        if (result == 0 && $('#login_Modal').is(':hidden')) {
+            return;
+        }
+        if (result == 0 && $('#login_Modal').is(':visible')) {
+            $('#login_Modal').modal('hide');
+            document.cookie = "loginId=" + encodeURIComponent(window.btoa(loginId)) + ";max-age=86400;samesite=strict;secure";
+            document.cookie = "loginPw=" + encodeURIComponent(window.btoa(loginPw)) + ";max-age=86400;samesite=strict;secure";
+        }
+        if (result != 0 && $('#login_Modal').is(':hidden')) {
+            $('#login_Modal').modal('show');
+        }
+        if (result != 0 && $('#login_Modal').is(':visible')) {
+            $('#login_Modal_Body').empty();
+            if (result == 1) {
+                $('#login_Modal_Body').append(getClientMessage('STKCOMMON_INCORRECT_UNPW'));
+            } else if (result == 2) {
+                $('#login_Modal_Body').append(getClientMessage('STKCOMMON_CONNECTION_ERROR'));
+            }
+        }
     }
 }
 
@@ -418,12 +432,6 @@ var responseData = {};
             });
         }
         return;
-    }
-
-    function apiCallSync(method, url, request, keystring, targetFunc) {
-        if (method != null && url != null && keystring !== '') {
-            sendRequestRecvResponse(method, url, request, keystring, false);
-        }
     }
 
     function apiCall(method, url, request, keystring, targetFunc) {
