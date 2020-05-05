@@ -70,6 +70,9 @@ stkcommonの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.23">function MultiApiCall(contents, targetFunc)</a></td><td>複数のREST APIを非同期で同時に呼び出します。</td></tr>
 <tr><td><a href="#3.4.24">function setLoginResult(result)</a></td><td>ユーザープログラムで行った認証結果をstkcommon.jsに通知する。</td></tr>
 <tr><td><a href="#3.4.25">function changeLoginPassword(password)</a></td><td>ログインユーザーのパスワードを変更します。</td></tr>
+<tr><td><a href="#3.4.26">function setAuthenticationToken(token)</a></td><td>認証用トークンを設定します。</td></tr>
+<tr><td><a href="#3.4.27">function getUserName()</a></td><td>ユーザー名を取得します。</td></tr>
+<tr><td><a href="#3.4.28">function isPasswordCorrect(password)</a></td><td>指定されたパスワードが正しいか判定します。</td></tr>
 </table>
 </div>
 
@@ -78,12 +81,10 @@ stkcommonの公開APIには下記のものがあります。<br/>
 <H2 ID="3.4">3.4 stkcommonのAPI詳細</H2>
 <H3 ID="3.4.1">3.4.1 function showLoginModal(func)</H3>
 <div class="topic">
-ログインダイアログを表示します。<br/>
-ログインダイアログで設定したログインIDおよびパスワードは，stkcommonのグローバル変数loginId, loginPwに格納されます。<br/>
-loginId, loginPwは，cookieにも24時間記憶され，loginId，loginPwがcookieに存在する間は，本関数を呼び出してもログインダイアログが表示されません。<br/>
-REST API呼び出しにおいて，HTTPヘッダのAuthorizationに，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。<br/>
+ログインダイアログを表示します。ログインダイアログでは，認証用ユーザー名およびパスワードを指定することができます。<br/>
+ログインダイアログで設定したユーザー名およびパスワードは，認証成功後，cookieに24時間記憶され，cookieに存在する間は，本関数を呼び出してもログインダイアログが表示されません。<br/>
 認証のため，ログインボタン押下時に引数で指定された関数func()を呼び出します。<br/>
-func()の引数としてloginId, loginPwが渡されます。func()内でloginId, loginPwを評価する必要があります。<br/>
+func()の引数として，ログインダイアログで指定したユーザー名，パスワードである，loginId, loginPwが渡されます。func()内でloginId, loginPwを評価する必要があります。<br/>
 評価結果は，setLoginResult()を呼び出すことによりstkcommon.jsに通知します。<br/>
 <table class="tblstyle">
 <tr><td>func[入力]</td><td>認証用関数。引数としてloginId, loginPwが指定される。funcの戻り値は評価されない。</td></tr>
@@ -372,6 +373,40 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 <tr><td>password[入力]</td><td>新しいパスワード</td></tr>
 </table>
 </div>
+
+
+
+<H3 ID="3.4.26">3.4.26 function setAuthenticationToken(token)</H3>
+<div class="topic">
+認証用トークンを設定します。<br/>
+この関数呼び出し後，REST API発行時に，HTTPヘッダのAuthorizationにBearerトークンが指定されます。<br/>
+<table class="tblstyle">
+<tr><td>token[入力]</td><td>REST APIの認証用トークン。</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.27">3.4.27 function getUserName()</H3>
+<div class="topic">
+ユーザー名を取得します。<br/>
+</div>
+
+
+
+<H3 ID="3.4.28">3.4.28 function isPasswordCorrect(password)</H3>
+<div class="topic">
+指定されたパスワードが正しいか判定します。<br/>
+true: 指定されたパスワードがログインダイアログで指定したパスワードと一致する<br/>
+false: 指定されたパスワードがログインダイアログで指定したパスワードと一致しない<br/>
+<table class="tblstyle">
+<tr><td>password[入力]</td><td>検証用のパスワード。</td></tr>
+</table>
+</div>
+
+
+
+<tr><td><a href="#3.4.28"></a></td><td></td></tr>
 
 
 

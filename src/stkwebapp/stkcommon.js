@@ -69,8 +69,9 @@ var responseData = {};
     // For login info
     let initLoginModalFlag = false;
 
-    var loginId = "";
-    var loginPw = "";
+    // Login ID and password
+    let loginId = "";
+    let loginPw = "";
 
     let tryLogin = function(func) {
         loginId = $("#loginId").val();
@@ -103,6 +104,10 @@ var responseData = {};
         $('#login_Modal_Body').append(getClientMessage('STKCOMMON_INPUT_UNAME_AND_PW'));
         $('#loginButton').on('click', function() { tryLogin(func); });
     };
+
+    function getUserName() {
+        return loginId;
+    }
 
     function changeLoginPassword(password) {
         loginPw = password;
@@ -159,6 +164,14 @@ var responseData = {};
             } else if (result == 2) {
                 $('#login_Modal_Body').append(getClientMessage('STKCOMMON_CONNECTION_ERROR'));
             }
+        }
+    }
+
+    function isPasswordCorrect(password) {
+        if (loginPw === password) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
@@ -219,7 +232,7 @@ var responseData = {};
                 }
             }
         }
-        var navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item dropdown"><a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">' + loginId + '</a><div id="rsUserMenu" class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" onclick="tryLogout()">Logout</a></div></li></u>')
+        var navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item dropdown"><a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">' + getUserName() + '</a><div id="rsUserMenu" class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" onclick="tryLogout()">Logout</a></div></li></u>')
         var navBarCollapse = $('<div class="collapse navbar-collapse justify-content-start" id="top-nav">');
         navBarCollapse.append(navBarNav);
         navBarCollapse.append(navBarNavRight);
@@ -320,6 +333,9 @@ var responseData = {};
     // Timeout in milliseconds for API call
     let timeout = 99000;
 
+    // Authentication token
+    let authToken = "";
+
     let initLoadingModal = function() {
         var loadingModal = $('<div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2010;">');
         var modalDialog = $('<div class="modal-dialog modal-xl">');
@@ -371,7 +387,7 @@ var responseData = {};
                 timeout: timeout,
                 crossDomain: true,
                 beforeSend: function( xhr, settings ) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + loginId + ' ' + loginPw);
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + authToken);
                 },
                 success: function(msg, textStatus, xhr) {
                     statusCode[keystring] = xhr.status;
@@ -406,7 +422,7 @@ var responseData = {};
                 timeout: timeout,
                 crossDomain: true,
                 beforeSend: function( xhr, settings ) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + loginId + ' ' + loginPw);
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + authToken);
                 },
                 success: function(msg, textStatus, xhr) {
                     statusCode[keystring] = xhr.status;
@@ -432,6 +448,10 @@ var responseData = {};
             });
         }
         return;
+    }
+
+    function setAuthenticationToken(tmpToken) {
+        authToken = tmpToken;
     }
 
     function apiCall(method, url, request, keystring, targetFunc) {
