@@ -781,7 +781,6 @@ StkObject::~StkObject()
 		pImpl->FirstElem = NULL;
 	}
 	if (pImpl->Name != NULL) {
-		int Len = StkPlWcsLen((wchar_t*)pImpl->Name) + 1;
 		delete [] pImpl->Name;
 		pImpl->Name = NULL;
 	}
@@ -791,7 +790,6 @@ StkObject::~StkObject()
 		} else if (pImpl->Type == StkObject::STKOBJECT_ATTR_FLOAT || pImpl->Type == StkObject::STKOBJECT_ELEM_FLOAT || pImpl->Type == StkObject::STKOBJECT_UNKW_FLOAT) {
 			delete (float*)pImpl->Value;
 		} else if (pImpl->Type == StkObject::STKOBJECT_ATTR_STRING || pImpl->Type == StkObject::STKOBJECT_ELEM_STRING || pImpl->Type == StkObject::STKOBJECT_UNKW_STRING) {
-			int Len = StkPlWcsLen((wchar_t*)pImpl->Value) + 1;
 			delete [] (wchar_t*)pImpl->Value;
 		} else {
 			// There is no case that process enters this line.
