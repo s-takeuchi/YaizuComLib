@@ -428,7 +428,7 @@ int StkSocketMgr::ConnectSocket(int Id)
 			setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_SNDBUF, (const char *)&Buffr, sizeof(int));
 
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
-				if (connect(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen) == STKSOCKET_ERROR) {
+				if (connect(SocketInfo[Loop].Sock, ResAddr->ai_addr, (int)ResAddr->ai_addrlen) == STKSOCKET_ERROR) {
 					PutLog(LOG_CONNERROR, Id, L"", L"", 0, STKSOCKET_ERRORCODE);
 					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
@@ -545,7 +545,7 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&Yes, sizeof(int));
 
 				// BINDに失敗したらソケットをクローズする
-				int RetBind = bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, ResAddr->ai_addrlen);
+				int RetBind = bind(SocketInfo[Loop].Sock, ResAddr->ai_addr, (int)ResAddr->ai_addrlen);
 				if (RetBind == STKSOCKET_ERROR) {
 					if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
 						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, STKSOCKET_ERRORCODE);
@@ -622,7 +622,7 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 	int FndSock = -1;
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == TargetId && SocketInfo[Loop].CopiedSocketFlag == false) {
-			FndSock = SocketInfo[Loop].Sock;
+			FndSock = (int)SocketInfo[Loop].Sock;
 		}
 	}
 
@@ -729,7 +729,7 @@ int StkSocketMgr::Accept(int Id)
 			FD_ZERO(&AccFds);
 			FD_SET(SocketInfo[Loop].Sock, &AccFds);
 			// 一定時間待ったあとSockに接続があるか確認する
-			select(SocketInfo[Loop].Sock + 1, &AccFds, NULL, NULL, &Timeout);
+			select((int)SocketInfo[Loop].Sock + 1, &AccFds, NULL, NULL, &Timeout);
 			if (!FD_ISSET(SocketInfo[Loop].Sock, &AccFds)) {
 				return -1;
 			}
@@ -834,7 +834,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			FD_ZERO(&RecFds);
 			FD_SET(TmpSock, &RecFds);
 			// 一定時間待ったあとAcceptedSockに接続があるか確認する
-			select(TmpSock + 1, &RecFds, NULL, NULL, &Timeout);
+			select((int)TmpSock + 1, &RecFds, NULL, NULL, &Timeout);
 			if (!FD_ISSET(TmpSock, &RecFds)) {
 				// Timeout occurrence and no data received
 				if (SocketInfo[Loop].ForceStop == true) {
@@ -938,7 +938,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 							ChunkEnd = true;
 						}
 						ChunkSize = TmpSize + 2;
-						int Diff = &Buffer[Offset] - TmpSizePtr;
+						int Diff = (int)(&Buffer[Offset] - TmpSizePtr);
 						Offset -= Diff;
 					}
 					GetChunkMode = true;
@@ -1037,7 +1037,7 @@ int StkSocketMgr::ReceiveUdp(int Id, int LogId, unsigned char* Buffer, int Buffe
 		FD_ZERO(&RecFds);
 		FD_SET(TmpSock, &RecFds);
 		// 一定時間待ったあとTmpSockに接続があるか確認する
-		select(TmpSock + 1, &RecFds, NULL, NULL, &Timeout);
+		select((int)TmpSock + 1, &RecFds, NULL, NULL, &Timeout);
 		if (!FD_ISSET(TmpSock, &RecFds)) {
 			// Timeout occurrence and no data received
 			return -2;
@@ -1183,7 +1183,7 @@ int StkSocketMgr::SendUdp(int Id, int LogId, const unsigned char* Buffer, int Bu
 #endif
 					return -1;
 				}
-				Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, ResAddr->ai_addr, ResAddr->ai_addrlen);
+				Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, ResAddr->ai_addr, (int)ResAddr->ai_addrlen);
 				freeaddrinfo(ResAddr);
 			} else {
 				memcpy(&Addr, &SocketInfo[Loop].LastAccessedAddr, sizeof(sockaddr_storage));

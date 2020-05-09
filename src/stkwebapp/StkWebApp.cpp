@@ -216,7 +216,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		delete DatWc;
 		return NULL;
 	}
-	int HttpHeaderLen = Req - DatWc + 1;
+	int HttpHeaderLen =(int)( Req - DatWc + 1);
 	wchar_t* HttpHeader = new wchar_t[HttpHeaderLen];
 	StkPlMemCpy(HttpHeader, DatWc, HttpHeaderLen * sizeof(wchar_t));
 	HttpHeader[HttpHeaderLen - 1] = L'\0';
@@ -298,18 +298,18 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 				wchar_t TmpBuf[1024] = L"";
 				ErrObj->ToJson(TmpBuf, 1024);
 				Dat = (unsigned char*)StkPlCreateUtf8FromWideChar(TmpBuf);
-				DatLength = StkPlStrLen((char*)Dat);
+				DatLength = (int)StkPlStrLen((char*)Dat);
 				delete XmlOrJson;
 			} else {
 				Dat = (unsigned char*)StkPlCreateUtf8FromWideChar(XmlOrJson);
-				DatLength = StkPlStrLen((char*)Dat);
+				DatLength = (int)StkPlStrLen((char*)Dat);
 				delete XmlOrJson;
 			}
 		}
 	}
 
 	unsigned char* HeaderDat = MakeHttpHeader(ResultCode, DatLength, XmlJsonType);
-	int HeaderDatLength = StkPlStrLen((char*)HeaderDat);
+	int HeaderDatLength = (int)StkPlStrLen((char*)HeaderDat);
 
 	int RespDatLength = DatLength + HeaderDatLength;
 	unsigned char* RespDat = new unsigned char[RespDatLength + 1];

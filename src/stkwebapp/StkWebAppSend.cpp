@@ -148,10 +148,10 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 		}
 	}
 	StkPlStrCat(HttpHeader, 1024, "\r\n");
-	int HeaderLength = StkPlStrLen(HttpHeader);
+	int HeaderLength = (int)StkPlStrLen(HttpHeader);
 
 	// Making request data and send
-	int ReqDatLength = DatLength + HeaderLength;
+	int ReqDatLength = (int)(DatLength + HeaderLength);
 	if (ReqDatLength >= SendBufSize) {
 		delete Dat;
 		return -1;

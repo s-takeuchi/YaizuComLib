@@ -60,7 +60,7 @@ void StkSocketIPv6::TestThreadForSend()
 	StkPlSleepMs(500);
 	StkSocket_Connect(201);
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Send(201, 201, (unsigned char*)Buf, StkPlStrLen(Buf));
+		StkSocket_Send(201, 201, (unsigned char*)Buf, (int)StkPlStrLen(Buf));
 		StkPlSleepMs(50);
 	}
 	StkSocket_Disconnect(201, 201, false);

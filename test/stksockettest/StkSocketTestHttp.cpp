@@ -31,7 +31,7 @@ void StkSocketTestHttp::TestRecvHttpTermination1()
 		StkPlStrCat((char*)Dat, 1024, "Content-Type: text/html\n");
 		StkPlStrCat((char*)Dat, 1024, "\n");
 		StkPlStrCat((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
-		int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
+		int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, (int)StkPlStrLen((char*)Dat) + 1);
 		if (RetS <= 0) {
 			StkPlPrintf("NG\n");
 			StkPlExit(0);
@@ -54,7 +54,7 @@ void StkSocketTestHttp::TestSendHttpTermination1()
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	StkSocket_Connect(101);
-	int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
+	int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, (int)StkPlStrLen((char*)Dat) + 1);
 	if (RetS <= 0) {
 		StkPlPrintf("NG\n");
 		StkPlExit(0);
@@ -137,7 +137,7 @@ void StkSocketTestHttp::TestRecvHttpTermination2()
 			StkPlStrCat((char*)Dat, 1024, "Content-Length: 51\n");
 			StkPlStrCat((char*)Dat, 1024, "\n");
 			StkPlStrCat((char*)Dat, 1024, "0123456789012345678901234567890123456789012345678z");
-			int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
+			int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, (int)StkPlStrLen((char*)Dat) + 1);
 			if (RetS <= 0) {
 				StkPlPrintf("NG (4)\r\n");
 				StkPlExit(0);
@@ -174,7 +174,7 @@ void StkSocketTestHttp::TestSendHttpTermination2()
 		while (StkSocket_Connect(101) == -1) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
-		int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, StkPlStrLen((char*)Dat) + 1);
+		int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, (int)StkPlStrLen((char*)Dat) + 1);
 		if (RetS <= 0) {
 			StkPlPrintf("NG\n");
 			StkPlExit(0);

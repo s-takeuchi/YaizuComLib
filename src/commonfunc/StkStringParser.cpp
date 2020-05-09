@@ -67,8 +67,8 @@ int StkStringParser::ParseInto4Params(const wchar_t* OriginStr, const wchar_t* F
 		Format == NULL || *Format == '\0') {
 		return -1;
 	}
-	int FormatLen = StkPlWcsLen(Format);
-	int OriginStrLen = StkPlWcsLen(OriginStr);
+	int FormatLen = (int)StkPlWcsLen(Format);
+	int OriginStrLen = (int)StkPlWcsLen(OriginStr);
 	if (FormatLen <= 0 || FormatLen > OriginStrLen) {
 		return -1;
 	}
@@ -160,7 +160,7 @@ int StkStringParser::ParseInto4Params(const wchar_t* OriginStr, const wchar_t* F
 			OutputEnd[Loop] = NULL;
 		}
 		if (Loop == 0 && OutStr1 != NULL && OutputBegin[0] != NULL && OutputEnd[0] != NULL) {
-			int TmpLen = OutputEnd[0] - OutputBegin[0] + 1;
+			int TmpLen = (int)(OutputEnd[0] - OutputBegin[0]) + 1;
 			if (OutStr1Len != -1 && OutStr1Len < TmpLen) {
 				TmpLen = OutStr1Len;
 			}
@@ -169,7 +169,7 @@ int StkStringParser::ParseInto4Params(const wchar_t* OriginStr, const wchar_t* F
 			NumberOfParamSet++;
 		}
 		if (Loop == 1 && OutStr2 != NULL && OutputBegin[1] != NULL && OutputEnd[1] != NULL) {
-			int TmpLen = OutputEnd[1] - OutputBegin[1] + 1;
+			int TmpLen = (int)(OutputEnd[1] - OutputBegin[1]) + 1;
 			if (OutStr2Len != -1 && OutStr2Len < TmpLen) {
 				TmpLen = OutStr2Len;
 			}
@@ -178,7 +178,7 @@ int StkStringParser::ParseInto4Params(const wchar_t* OriginStr, const wchar_t* F
 			NumberOfParamSet++;
 		}
 		if (Loop == 2 && OutStr3 != NULL && OutputBegin[2] != NULL && OutputEnd[2] != NULL) {
-			int TmpLen = OutputEnd[2] - OutputBegin[2] + 1;
+			int TmpLen = (int)(OutputEnd[2] - OutputBegin[2]) + 1;
 			if (OutStr3Len != -1 && OutStr3Len < TmpLen) {
 				TmpLen = OutStr3Len;
 			}
@@ -187,7 +187,7 @@ int StkStringParser::ParseInto4Params(const wchar_t* OriginStr, const wchar_t* F
 			NumberOfParamSet++;
 		}
 		if (Loop == 3 && OutStr4 != NULL && OutputBegin[3] != NULL && OutputEnd[3] != NULL) {
-			int TmpLen = OutputEnd[3] - OutputBegin[3] + 1;
+			int TmpLen = (int)(OutputEnd[3] - OutputBegin[3]) + 1;
 			if (OutStr4Len != -1 && OutStr4Len < TmpLen) {
 				TmpLen = OutStr4Len;
 			}

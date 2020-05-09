@@ -558,7 +558,7 @@ void TestThreadProc0()
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
 					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
 					const wchar_t* TmpDat = L"Reply Hello, world!!";
-					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
+					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (int)(StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
 					StkSocket_CloseAccept(0, 0, true);
 					break;
 				} else {
@@ -581,7 +581,7 @@ void TestThreadProc0()
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Dummy data!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
 					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
 					const wchar_t* TmpDat = L"Reply Dummy data!!";
-					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
+					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (int)(StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
 					StkSocket_CloseAccept(0, 0, true);
 					break;
 				} else {
@@ -617,8 +617,8 @@ void TestThreadProc1()
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 	Cs4Log.lock();
-	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
-	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
@@ -648,8 +648,8 @@ void TestThreadProc1()
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 	Cs4Log.lock();
-	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
-	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
@@ -746,7 +746,7 @@ void TestThreadProc3()
 		StkPlPrintf("{Re} ");
 	}
 	Cs4Log.lock();
-	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
@@ -826,7 +826,7 @@ void TestThreadProc4()
 	wchar_t Buf[10000];
 	for (int LoopSnd = 0; LoopSnd < 50; LoopSnd++) {
 		StkPlSwPrintf(Buf, 10000, L"Shinya Takeuchi %d", LoopSnd);
-		int Ret = StkSocket_SendUdp(0, 0, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+		int Ret = StkSocket_SendUdp(0, 0, (unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
@@ -865,7 +865,7 @@ void TestThreadProc5()
 	StkSocket_Connect(1);
 	for (int LoopSnd = 0; LoopSnd < 50; LoopSnd++) {
 		StkPlSwPrintf(Buf, 10000, L"Hello, world!! %d", LoopSnd);
-		StkSocket_SendUdp(1, 1, (unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+		StkSocket_SendUdp(1, 1, (unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
@@ -960,7 +960,7 @@ void TestThreadProc9()
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
 	StkSocket_Connect(1);
-	StkSocket_Send(1, 1, (const unsigned char*)Buf, (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	StkSocket_ForceStop(0);
 	StkSocket_Disconnect(1, 1, true);
@@ -1041,7 +1041,7 @@ void TestThreadProc11(int Command)
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		StkPlPrintf("*");
 	}
-	StkSocket_Send(1, 1, (const unsigned char*)Buf, StkPlStrLen(Buf));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)StkPlStrLen(Buf));
 	while (PeerCloseOkFlag == false) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
@@ -1135,7 +1135,7 @@ void TestThreadForAcceptSend1()
 		while (StkSocket_Connect(201) == -1 && FindFlagCounter < 3) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
-		StkSocket_Send(201, 201, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
+		StkSocket_Send(201, 201, (const unsigned char*)Buf, (int)StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(201, 201, false);
 		if (FindFlagCounter >= 3) {
 			break;
@@ -1152,7 +1152,7 @@ void TestThreadForAcceptSend2()
 		while (StkSocket_Connect(202) == -1 && FindFlagCounter < 3) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
-		StkSocket_Send(202, 202, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
+		StkSocket_Send(202, 202, (const unsigned char*)Buf, (int)StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(202, 202, false);
 		if (FindFlagCounter >= 3) {
 			break;
@@ -1169,7 +1169,7 @@ void TestThreadForAcceptSend3()
 		while (StkSocket_Connect(203) == -1 && FindFlagCounter < 3) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
-		StkSocket_Send(203, 203, (const unsigned char*)Buf, StkPlStrLen(Buf) + 1);
+		StkSocket_Send(203, 203, (const unsigned char*)Buf, (int)StkPlStrLen(Buf) + 1);
 		StkSocket_Disconnect(203, 203, false);
 		if (FindFlagCounter >= 3) {
 			break;

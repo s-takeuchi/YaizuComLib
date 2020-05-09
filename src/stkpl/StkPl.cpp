@@ -172,7 +172,7 @@ bool StkPlIsJapaneseLocaleFromEnv()
 {
 #ifdef WIN32
 	char* Locale;
-	unsigned int LocaleSize;
+	size_t LocaleSize;
 	if (_dupenv_s(&Locale, &LocaleSize, "HTTP_ACCEPT_LANGUAGE") == 0) {
 		if (Locale == 0 || LocaleSize == 0) {
 			return false;
@@ -634,7 +634,7 @@ size_t StkPlConvWideCharToUtf8(char* Utf8, size_t SizeInWord, const wchar_t* Wc)
 
 char32_t* StkPlCreateUtf32FromUtf16(const char16_t* Utf16)
 {
-	int Len = StkPlConvUtf16ToUtf32(NULL, 0, Utf16) + 1;
+	int Len = (int)StkPlConvUtf16ToUtf32(NULL, 0, Utf16) + 1;
 	char32_t* Utf32 = new char32_t[Len];
 	StkPlConvUtf16ToUtf32(Utf32, Len, Utf16);
 	return Utf32;
@@ -642,7 +642,7 @@ char32_t* StkPlCreateUtf32FromUtf16(const char16_t* Utf16)
 
 char16_t* StkPlCreateUtf16FromUtf32(const char32_t* Utf32)
 {
-	int Len = StkPlConvUtf32ToUtf16(NULL, 0, Utf32) + 1;
+	int Len = (int)StkPlConvUtf32ToUtf16(NULL, 0, Utf32) + 1;
 	char16_t* Utf16 = new char16_t[Len];
 	StkPlConvUtf32ToUtf16(Utf16, Len, Utf32);
 	return Utf16;
@@ -650,7 +650,7 @@ char16_t* StkPlCreateUtf16FromUtf32(const char32_t* Utf32)
 
 char32_t* StkPlCreateUtf32FromUtf8(const char* Utf8)
 {
-	int Len = StkPlConvUtf8ToUtf32(NULL, 0, Utf8) + 1;
+	int Len = (int)StkPlConvUtf8ToUtf32(NULL, 0, Utf8) + 1;
 	char32_t* Utf32 = new char32_t[Len];
 	StkPlConvUtf8ToUtf32(Utf32, Len, Utf8);
 	return Utf32;
@@ -658,7 +658,7 @@ char32_t* StkPlCreateUtf32FromUtf8(const char* Utf8)
 
 char* StkPlCreateUtf8FromUtf32(const char32_t* Utf32)
 {
-	int Len = StkPlConvUtf32ToUtf8(NULL, 0, Utf32) + 1;
+	int Len = (int)StkPlConvUtf32ToUtf8(NULL, 0, Utf32) + 1;
 	char* Utf8 = new char[Len];
 	StkPlConvUtf32ToUtf8(Utf8, Len, Utf32);
 	return Utf8;
@@ -666,7 +666,7 @@ char* StkPlCreateUtf8FromUtf32(const char32_t* Utf32)
 
 char16_t* StkPlCreateUtf16FromUtf8(const char* Utf8)
 {
-	int Len = StkPlConvUtf8ToUtf16(NULL, 0, Utf8) + 1;
+	int Len = (int)StkPlConvUtf8ToUtf16(NULL, 0, Utf8) + 1;
 	char16_t* Utf16 = new char16_t[Len];
 	StkPlConvUtf8ToUtf16(Utf16, Len, Utf8);
 	return Utf16;
@@ -674,7 +674,7 @@ char16_t* StkPlCreateUtf16FromUtf8(const char* Utf8)
 
 char* StkPlCreateUtf8FromUtf16(const char16_t* Utf16)
 {
-	int Len = StkPlConvUtf16ToUtf8(NULL, 0, Utf16) + 1;
+	int Len = (int)StkPlConvUtf16ToUtf8(NULL, 0, Utf16) + 1;
 	char* Utf8 = new char[Len];
 	StkPlConvUtf16ToUtf8(Utf8, Len, Utf16);
 	return Utf8;
@@ -683,7 +683,7 @@ char* StkPlCreateUtf8FromUtf16(const char16_t* Utf16)
 wchar_t* StkPlCreateWideCharFromUtf16(const char16_t* Utf16)
 {
 #ifdef WIN32
-	int Len = StkPlWcsLen((wchar_t*)Utf16) + 1;
+	int Len = (int)StkPlWcsLen((wchar_t*)Utf16) + 1;
 	wchar_t* Wc = new wchar_t[Len];
 	StkPlWcsCpy(Wc, Len, (wchar_t*)Utf16);
 	return Wc;
@@ -695,7 +695,7 @@ wchar_t* StkPlCreateWideCharFromUtf16(const char16_t* Utf16)
 char16_t* StkPlCreateUtf16FromWideChar(const wchar_t* Wc)
 {
 #ifdef WIN32
-	int Len = StkPlWcsLen((wchar_t*)Wc) + 1;
+	int Len = (int)StkPlWcsLen((wchar_t*)Wc) + 1;
 	char16_t* Utf16 = new char16_t[Len];
 	StkPlWcsCpy((wchar_t*)Utf16, Len, Wc);
 	return Utf16;
@@ -854,7 +854,7 @@ int StkPlGetUsedMemorySizeOfCurrentProcess()
 	long Size;
 	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
 		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
-			Size = pmc.WorkingSetSize;
+			Size = (long)pmc.WorkingSetSize;
 		}
 	}
 	CloseHandle(hProcess);
@@ -883,7 +883,7 @@ int StkPlGetUsedMemorySizeOfCurrentProcess()
 void StkPlGetHostName(wchar_t* HostName, size_t Size)
 {
 #ifdef WIN32
-	DWORD SizeTmp = Size;
+	DWORD SizeTmp = (DWORD)Size;
 	GetComputerName(HostName, &SizeTmp);
 #else
 	char HostNameTmp[1024];
@@ -1269,13 +1269,13 @@ int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fil
 	}
 
 	DWORD TmpSize = 0;
-	if (ReadFile(ReadFileHndl, (LPVOID)Buffer, FileSize, &TmpSize, NULL) == 0) {
+	if (ReadFile(ReadFileHndl, (LPVOID)Buffer, (DWORD)FileSize, &TmpSize, NULL) == 0) {
 		CloseHandle(ReadFileHndl);
 		return -1;
 	}
 
 	CloseHandle(ReadFileHndl);
-	return TmpSize;
+	return (int)TmpSize;
 #else
 	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
 	FILE *fp = fopen(FileNameUtf8, "r");
@@ -1299,7 +1299,7 @@ int StkPlWriteFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fi
 	}
 
 	DWORD TmpSize = 0;
-	if (WriteFile(WriteFileHndl, (LPVOID)Buffer, FileSize, &TmpSize, NULL) == 0) {
+	if (WriteFile(WriteFileHndl, (LPVOID)Buffer, (DWORD)FileSize, &TmpSize, NULL) == 0) {
 		CloseHandle(WriteFileHndl);
 		return -1;
 	}
@@ -1379,7 +1379,7 @@ int StkPlRead(void* FileHndl, char* Ptr, size_t Size, size_t* ActSize)
 {
 #ifdef WIN32
 	DWORD TmpSize = 0;
-	if (ReadFile(FileHndl, (LPVOID)Ptr, Size, &TmpSize, NULL) == 0) {
+	if (ReadFile(FileHndl, (LPVOID)Ptr, (DWORD)Size, &TmpSize, NULL) == 0) {
 		return 0;
 	}
 	*ActSize = TmpSize;
@@ -1395,7 +1395,7 @@ int StkPlWrite(void* FileHndl, char* Ptr, size_t Size, size_t* ActSize)
 {
 #ifdef WIN32
 	DWORD TmpSize = 0;
-	if (WriteFile(FileHndl, (LPVOID)Ptr, Size, &TmpSize, NULL) == 0) {
+	if (WriteFile(FileHndl, (LPVOID)Ptr, (DWORD)Size, &TmpSize, NULL) == 0) {
 		return 0;
 	}
 	*ActSize = TmpSize;
@@ -1413,7 +1413,7 @@ int StkPlWrite(void* FileHndl, char* Ptr, size_t Size, size_t* ActSize)
 void StkPlSeekFromBegin(void* FileHndl, size_t Offset)
 {
 #ifdef WIN32
-	SetFilePointer(FileHndl, Offset, 0, FILE_BEGIN);
+	SetFilePointer(FileHndl, (LONG)Offset, 0, FILE_BEGIN);
 #else
 	fseek((FILE*)FileHndl, Offset, SEEK_SET);
 #endif
@@ -1422,7 +1422,7 @@ void StkPlSeekFromBegin(void* FileHndl, size_t Offset)
 void StkPlSeekFromEnd(void* FileHndl, size_t Offset)
 {
 #ifdef WIN32
-	SetFilePointer(FileHndl, Offset, 0, FILE_END);
+	SetFilePointer(FileHndl, (LONG)Offset, 0, FILE_END);
 #else
 	fseek((FILE*)FileHndl, Offset, SEEK_END);
 #endif

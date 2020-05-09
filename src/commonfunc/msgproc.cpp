@@ -59,7 +59,7 @@ void MessageProc::Impl::Eng(int Id, const wchar_t* Msg)
 	if (StkMsg[Id][ENG] != NULL) {
 		delete StkMsg[Id][ENG];
 	}
-	int WcBufLen = StkPlWcsLen(Msg);
+	int WcBufLen = (int)StkPlWcsLen(Msg);
 	StkMsg[Id][ENG] = new wchar_t[WcBufLen + 1];
 	StkPlWcsNCpy(StkMsg[Id][ENG], WcBufLen + 1, Msg, WcBufLen);
 	StkMsg[Id][ENG][WcBufLen] = L'\0';
@@ -80,7 +80,7 @@ void MessageProc::Impl::Jpn(int Id, const wchar_t* Msg)
 	if (StkMsg[Id][JPN] != NULL) {
 		delete StkMsg[Id][JPN];
 	}
-	int WcBufLen = StkPlWcsLen(Msg);
+	int WcBufLen = (int)StkPlWcsLen(Msg);
 	StkMsg[Id][JPN] = new wchar_t[WcBufLen + 1];
 	StkPlWcsNCpy(StkMsg[Id][JPN], WcBufLen + 1, Msg, WcBufLen);
 	StkMsg[Id][JPN][WcBufLen] = L'\0';

@@ -1165,7 +1165,7 @@ int DataAcController::GetTableSize(const wchar_t* TableName)
 	if (TableId == -1) {
 		return -1;
 	}
-	return m_TableSize[TableId];
+	return (int)m_TableSize[TableId];
 }
 
 // Get table version

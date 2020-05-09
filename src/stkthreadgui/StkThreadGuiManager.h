@@ -5,11 +5,11 @@
 class StkThreadGuiManager
 {
 private:
-	static const int IDC_START = 3201;
-	static const int IDC_STOP = 3202;
-	static const int IDC_ALLCHECK = 3210;
-	static const int IDC_THREADLIST = 3211;
-	static const int IDC_TRACELOG = 3212;
+	static const INT64 IDC_START = 3201;
+	static const INT64 IDC_STOP = 3202;
+	static const INT64 IDC_ALLCHECK = 3210;
+	static const INT64 IDC_THREADLIST = 3211;
+	static const INT64 IDC_TRACELOG = 3212;
 
 	static const int MAX_NUM_OF_THREADS = 1000;
 

@@ -14,7 +14,7 @@
 
 #define THREADNUM 10
 
-bool SendTestDataFailed = false;
+int SendTestDataFailed = 0;
 int SendTestDataCount = 0;
 
 const wchar_t* FindNewLine(wchar_t* Dat)
@@ -84,10 +84,12 @@ StkObject* MakeLargeTestData(const wchar_t Name[64], int Width, int Height, int 
 	return Obj;
 }
 
-bool SendTestData(int Id, const char* Dat)
+int SendTestData(int Id, const char* Dat)
 {
 	unsigned char RecvDat[1000000];
-	StkSocket_Connect(Id);
+	for (int Loop = 0; Loop < 50 && StkSocket_Connect(Id) != 0; Loop++) {
+		StkPlSleepMs(100);
+	}
 
 	char TmpHeader[256];
 	char UrlPath[StkWebAppExec::URL_PATH_LENGTH];
@@ -100,11 +102,11 @@ bool SendTestData(int Id, const char* Dat)
 	}
 	StkPlSPrintf(TmpHeader, 256, "POST %s HTTP/1.1\nContent-Length: %d\nAccept-Language: ja-JP;q=0.5,en-US;q=0.3,en-GB;q=0.2\nContent-Type: application/json\n\n", UrlPath, StkPlStrLen(Dat) + 1);
 
-	if (StkSocket_Send(Id, Id, (unsigned char*)TmpHeader, StkPlStrLen((char*)TmpHeader)) <= 0) {
-		return false;
+	if (StkSocket_Send(Id, Id, (unsigned char*)TmpHeader, (int)StkPlStrLen((char*)TmpHeader)) <= 0) {
+		return -1;
 	}
-	if (StkSocket_Send(Id, Id, (unsigned char*)Dat, StkPlStrLen(Dat) + 1) <= 0) {
-		return false;
+	if (StkSocket_Send(Id, Id, (unsigned char*)Dat, (int)StkPlStrLen(Dat) + 1) <= 0) {
+		return -2;
 	}
 	int RetR;
 	while (true) {
@@ -120,15 +122,19 @@ bool SendTestData(int Id, const char* Dat)
 	}
 	StkSocket_Disconnect(Id, Id, true);
 	if (RetR < 0) {
-		return false;
+		return -3;
 	}
 	if (RetR == 0) {
-		return true;
+		return 1;
 	}
 	if (RetR > 0 && StkPlStrStr((char*)RecvDat, "200 OK") == 0) {
-		return false;
+		return -4;
 	} else {
-		return CompObjs((unsigned char*)Dat, (unsigned char*)RecvDat);
+		if (CompObjs((unsigned char*)Dat, (unsigned char*)RecvDat)) {
+			return 2;
+		} else {
+			return -5;
+		}
 	}
 }
 
@@ -148,7 +154,7 @@ int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, 
 	} else {
 		StkPlSPrintf(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, ContLen, ContType, Dat);
 	}
-	if ((RetS = StkSocket_Send(Id, Id, (unsigned char*)Tmp, StkPlStrLen((char*)Tmp))) <= 0) {
+	if ((RetS = StkSocket_Send(Id, Id, (unsigned char*)Tmp, (int)StkPlStrLen((char*)Tmp))) <= 0) {
 		return -1;
 	}
 	int RetR;
@@ -224,16 +230,16 @@ int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, 
 
 int ElemStkThreadMainSend(int Id)
 {
-	bool Ret;
 	if (Id % 3 == 0) {
-		Ret = SendTestData(Id, "\"aaa\" : {\"Hello\" : { \"FirstName\" : \"Shinya\", \"Middle\" : \"Tsunemi\", \"Last\" : \"Takeuchi\" }, \"Bye\" : \"Bye\"}");
+		SendTestDataFailed = SendTestData(Id, "\"aaa\" : {\"Hello\" : { \"FirstName\" : \"Shinya\", \"Middle\" : \"Tsunemi\", \"Last\" : \"Takeuchi\" }, \"Bye\" : \"Bye\"}");
 	} else if (Id % 3 == 1) {
-		Ret = SendTestData(Id, "\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}");
+		SendTestDataFailed = SendTestData(Id, "\"Yyy\" : {\"Xxx\" : [{\"Aaa\" : 123, \"Bbb\" : 456, \"Ccc\":789},{\"Aaa\" : [333, 222, 111]}]}");
 	} else if (Id % 3 == 2) {
-		Ret = SendTestData(Id, "\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 0.5 }}");
+		SendTestDataFailed = SendTestData(Id, "\"Xxx\" : { \"Aaa\" : { \"Bbb\" : \"This is a test.\", \"Ccc\" : 123, \"Ddd\" : { \"D1\" : 0, \"D2\" : {\"D3a\" : \"test\"}, \"D3\" : 2}, \"Eee\" : 0.5 }}");
 	}
-	if (Ret == false) {
-		SendTestDataFailed = true;
+	if (SendTestDataFailed < 0) {
+		StkPlPrintf("... NG(code=%d)\n", SendTestDataFailed);
+		StkPlExit(-1);
 	}
 	SendTestDataCount++;
 
@@ -528,19 +534,19 @@ int ElemStkThreadMainSend4(int Id)
 
 int ElemStkThreadMainSend5(int Id)
 {
-	bool Ret;
 	wchar_t TestObjWstr[1000000];
 	char TestObjStr[1000000];
 	StkObject* TestObj = MakeLargeTestData(L"testObject", 3, 3);
 	TestObj->ToJson(TestObjWstr, 1000000);
 	StkPlSPrintf(TestObjStr, 1000000, "%ls", TestObjWstr);
-	int l = StkPlStrLen(TestObjStr);
-	Ret = SendTestData(Id, TestObjStr);
+	int l = (int)StkPlStrLen(TestObjStr);
+	SendTestDataFailed = SendTestData(Id, TestObjStr);
+	if (SendTestDataFailed < 0) {
+		StkPlPrintf("... NG(code=%d)\n", SendTestDataFailed);
+		StkPlExit(-1);
+	}
 	SendTestDataCount++;
 	delete TestObj;
-	if (Ret == false) {
-		SendTestDataFailed = true;
-	}
 
 	return 0;
 }
@@ -592,11 +598,12 @@ void ReqResTest1(bool LargeFlag)
 	StopSpecifiedStkThreads(SendIds, THREADNUM);
 	int WaitingStopCnt = 0;
 	while (GetNumOfRunStkThread() != THREADNUM) {
-		if (WaitingStopCnt == 20) {
+		if (WaitingStopCnt == 50) {
 			StkPlPrintf("... NG(Time up for waiting threads stop)\n");
 			StkPlExit(-1);
 		}
-		StkPlSleepMs(100);
+		StkPlSleepMs(200);
+		WaitingStopCnt++;
 	}
 	////////// Main logic ends
 
@@ -611,11 +618,8 @@ void ReqResTest1(bool LargeFlag)
 		DeleteStkThread(SendIds[Loop]);
 	}
 
-	if (SendTestDataFailed == true) {
-		StkPlPrintf("... NG(1)\n");
-		StkPlExit(-1);
-	} else if (MemChk[0] < MemChk[1] && MemChk[1] < MemChk[2] && MemChk[2] < MemChk[3] &&
-				MemChk[3] < MemChk[4] && MemChk[4] < MemChk[5]) {
+	if (MemChk[0] < MemChk[1] && MemChk[1] < MemChk[2] && MemChk[2] < MemChk[3] &&
+		MemChk[3] < MemChk[4] && MemChk[4] < MemChk[5]) {
 		StkPlPrintf("... NG(2)\n");
 		StkPlExit(-1);
 	} else if (Add1 != 1 || Add2 != 2 || Add3 != 3 || Del1 != 2 || Del2 != 1 || Del3 != 0) {

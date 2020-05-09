@@ -69,7 +69,7 @@ void StkSocketTestMa::TestThreadForAccept2Send1()
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_Connect(201);
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Send(201, 201, (unsigned char*)Buf, StkPlStrLen(Buf) + 1);
+		StkSocket_Send(201, 201, (unsigned char*)Buf, (int)StkPlStrLen(Buf) + 1);
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	StkSocket_Disconnect(201, 201, false);
@@ -85,7 +85,7 @@ void StkSocketTestMa::TestThreadForAccept2Send2()
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_Connect(202);
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Send(202, 202, (unsigned char*)Buf, StkPlStrLen(Buf) + 1);
+		StkSocket_Send(202, 202, (unsigned char*)Buf, (int)StkPlStrLen(Buf) + 1);
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	StkSocket_Disconnect(202, 202, false);
@@ -101,7 +101,7 @@ void StkSocketTestMa::TestThreadForAccept2Send3()
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_Connect(203);
 	for (int Loop = 0; Loop < 50; Loop++) {
-		StkSocket_Send(203, 203, (unsigned char*)Buf, StkPlStrLen(Buf) + 1);
+		StkSocket_Send(203, 203, (unsigned char*)Buf, (int)StkPlStrLen(Buf) + 1);
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	StkSocket_Disconnect(203, 203, false);

@@ -705,20 +705,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			tbBitmap.hInst = HINST_COMMCTRL;
 			tbBitmap.nID = IDB_STD_SMALL_COLOR;
-			BmOffset = SendMessage(hwndToolbar, TB_ADDBITMAP, 0, (LPARAM)&tbBitmap);
+			BmOffset = (int)SendMessage(hwndToolbar, TB_ADDBITMAP, 0, (LPARAM)&tbBitmap);
 			tbButton[0].iBitmap += BmOffset;
 			tbButton[1].iBitmap += BmOffset;
 			tbButton[2].iBitmap += BmOffset;
 
 			tbBitmap.hInst = HINST_COMMCTRL;
 			tbBitmap.nID = IDB_VIEW_SMALL_COLOR;
-			BmOffset = SendMessage(hwndToolbar, TB_ADDBITMAP, 0, (LPARAM)&tbBitmap);
+			BmOffset = (int)SendMessage(hwndToolbar, TB_ADDBITMAP, 0, (LPARAM)&tbBitmap);
 			tbButton[4].iBitmap += BmOffset;
 			tbButton[5].iBitmap += BmOffset;
 
 			tbBitmap.hInst = HINST_COMMCTRL;
 			tbBitmap.nID = IDB_STD_SMALL_COLOR;
-			BmOffset = SendMessage(hwndToolbar, TB_ADDBITMAP, 0, (LPARAM)&tbBitmap);
+			BmOffset = (int)SendMessage(hwndToolbar, TB_ADDBITMAP, 0, (LPARAM)&tbBitmap);
 			tbButton[6].iBitmap += BmOffset;
 
 			SendMessage(hwndToolbar, TB_ADDBUTTONS, nCount, (LPARAM)&tbButton);
