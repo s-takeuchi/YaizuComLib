@@ -90,12 +90,13 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;Debug\commonfunc.lib;Debug\stkdata.lib;Debug\stkthread.lib;Debug\stksocket.lib;Debug\stkpl.lib;Debug\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -118,6 +119,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;x64\Debug\commonfunc.lib;x64\Debug\stkdata.lib;x64\Debug\stkthread.lib;x64\Debug\stksocket.lib;x64\Debug\stkpl.lib;x64\Debug\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -139,6 +141,7 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;Release\commonfunc.lib;Release\stkdata.lib;Release\stkthread.lib;Release\stksocket.lib;Release\stkpl.lib;Release\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -164,6 +167,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;shlwapi.lib;Psapi.lib;x64\Release\commonfunc.lib;x64\Release\stkdata.lib;x64\Release\stkthread.lib;x64\Release\stksocket.lib;x64\Release\stkpl.lib;x64\Release\stkwebapp.lib;%(AdditionalDependencies)</AdditionalDependencies>

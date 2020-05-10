@@ -133,8 +133,8 @@ void StopProcesses()
 		char SendDat[1024];
 		char Dat[256] = "{ \"Operation\" : \"Stop\" }";
 		unsigned char RecvDat[1024];
-		sprintf_s(SendDat, 1024, "POST /service/ HTTP/1.1\nContent-Length: %d\nContent-Type: application/json\n\n%s", strlen(Dat), Dat);
-		StkSocket_Send(1, 1, (unsigned char*)SendDat, strlen((char*)SendDat));
+		sprintf_s(SendDat, 1024, "POST /service/ HTTP/1.1\nContent-Length: %d\nContent-Type: application/json\n\n%s", (int)strlen(Dat), Dat);
+		StkSocket_Send(1, 1, (unsigned char*)SendDat, (int)strlen((char*)SendDat));
 		int RetR;
 		for (int Loop = 0; Loop < 10; Loop++) {
 			RetR = StkSocket_Receive(1, 1, RecvDat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 5000, NULL, -1);
@@ -524,10 +524,10 @@ int main(int argc, char* argv[])
 			char ConfStr4[4096];
 			sprintf_s(ConfStr4, 4096, "    location /api/ {\r\n      proxy_pass http://%S:%S;\r\n      proxy_read_timeout 1200;\r\n    }\r\n    error_page 500 502 503 504  /50x.html;\r\n    location = /50x.html {\r\n      root html;\r\n    }\r\n  }\r\n}\r\n", SrvHost, SrvPort);
 			DWORD NumOfByteWrite;
-			WriteFile(FileHndl, ConfStr1, strlen(ConfStr1), &NumOfByteWrite, NULL);
-			WriteFile(FileHndl, ConfStr2, strlen(ConfStr2), &NumOfByteWrite, NULL);
-			WriteFile(FileHndl, ConfStr3, strlen(ConfStr3), &NumOfByteWrite, NULL);
-			WriteFile(FileHndl, ConfStr4, strlen(ConfStr4), &NumOfByteWrite, NULL);
+			WriteFile(FileHndl, ConfStr1, (int)strlen(ConfStr1), &NumOfByteWrite, NULL);
+			WriteFile(FileHndl, ConfStr2, (int)strlen(ConfStr2), &NumOfByteWrite, NULL);
+			WriteFile(FileHndl, ConfStr3, (int)strlen(ConfStr3), &NumOfByteWrite, NULL);
+			WriteFile(FileHndl, ConfStr4, (int)strlen(ConfStr4), &NumOfByteWrite, NULL);
 			CloseHandle(FileHndl);
 		};
 
@@ -538,7 +538,7 @@ int main(int argc, char* argv[])
 			char ConfStr1[4096];
 			sprintf_s(ConfStr1, 4096, "serviceprogram=%S\r\n", SrvProgram);
 			DWORD NumOfByteWrite;
-			WriteFile(FileHndl, ConfStr1, strlen(ConfStr1), &NumOfByteWrite, NULL);
+			WriteFile(FileHndl, ConfStr1, (int)strlen(ConfStr1), &NumOfByteWrite, NULL);
 			CloseHandle(FileHndl);
 		};
 
@@ -549,7 +549,7 @@ int main(int argc, char* argv[])
 			char ConfStr1[4096];
 			sprintf_s(ConfStr1, 4096, "servicehost=%S\r\nserviceport=%S\r\n", SrvHost, SrvPort);
 			DWORD NumOfByteWrite;
-			WriteFile(FileHndl, ConfStr1, strlen(ConfStr1), &NumOfByteWrite, NULL);
+			WriteFile(FileHndl, ConfStr1, (int)strlen(ConfStr1), &NumOfByteWrite, NULL);
 			CloseHandle(FileHndl);
 		};
 	}
