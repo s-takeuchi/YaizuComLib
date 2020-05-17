@@ -539,8 +539,8 @@ RecordData* DataAcController::GetRecord(const wchar_t* TableName)
 	}
 
 	unsigned char* Addr = (unsigned char*)m_TableAddr[TableId];
-	ColumnData* ColDat;
-	RecordData* RecDat;
+	ColumnData* ColDat = NULL;
+	RecordData* RecDat = NULL;
 	RecordData* PrevRecDat = NULL;
 	RecordData* FrstRecDat = NULL;
 	int LoopRec;
@@ -775,7 +775,7 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 					if (PrevRecDatRes != NULL) {
 						PrevRecDatRes->SetNextRecord(RecDatRes);
 					}
-					ColumnData* NewColDat;
+					ColumnData* NewColDat = NULL;
 					for (LoopCol = 0; LoopCol < m_ColumnCount[TableId]; LoopCol++) {
 						wchar_t* ColNam = m_ColumnName[TableId][LoopCol];
 						if (m_ColumnType[TableId][LoopCol] == COLUMN_TYPE_INT) {

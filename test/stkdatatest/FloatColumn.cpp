@@ -221,9 +221,9 @@ int BasicFloatTest04()
 {
 	StkPlPrintf("Add 10 records (with Fcol00 - Fcol31 columns) to  \"Float-Test\" table simaltainiously.");
 	ColumnData *ColDat[32];
-	RecordData *RecDat;
-	RecordData *HeadRecDat;
-	RecordData *LastRecDat;
+	RecordData *RecDat = NULL;
+	RecordData *HeadRecDat = NULL;
+	RecordData *LastRecDat = NULL;
 	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < 32; i++) {
 			wchar_t Buf[32];
@@ -347,12 +347,12 @@ int BasicFloatTest04()
 int BasicFloatTest05()
 {
 	StkPlPrintf("Update 10 records (Fcol00 and Fcol01) in \"Float-Test\" table simultaneously.");
-	ColumnData *ColDat[1];
-	RecordData *RecDat;
-	RecordData *LastRecDat;
-	RecordData *HeadRecDat;
-	ColumnData *UpdColDat[2];
-	RecordData *UpdRecDat;
+	ColumnData *ColDat[1] = { NULL };
+	RecordData *RecDat = NULL;
+	RecordData *LastRecDat = NULL;
+	RecordData *HeadRecDat = NULL;
+	ColumnData *UpdColDat[2] = { NULL, NULL };
+	RecordData *UpdRecDat = NULL;
 	LockTable(L"Float-Test", LOCK_EXCLUSIVE);
 	for (int i = 0; i < 10; i++) {
 		ColDat[0] = new ColumnDataFloat(L"Fcol00", (float)(200.0 + 0.1 * i));

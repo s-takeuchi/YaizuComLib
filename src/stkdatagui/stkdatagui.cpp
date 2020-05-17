@@ -438,7 +438,7 @@ LRESULT CALLBACK CreateTableDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 
 		// Create table
 		TableDef* Tbl = new TableDef(TableName, TableSize);
-		ColumnDef* Clm;
+		ColumnDef* Clm = NULL;
 		for (int Loop = 0; Loop <= 32; Loop++) {
 			wchar_t Buf[16];
 			GetDlgItemText(hDlg, Loop + IDC_ED_ATTR1, Buf, 16);

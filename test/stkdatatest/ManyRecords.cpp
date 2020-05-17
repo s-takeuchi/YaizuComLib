@@ -192,10 +192,10 @@ int ManyRecords()
 
 	{
 		StkPlPrintf("10 records can be acquired from specified table. Connected records are specified.");
-		RecordData* RecDat;
-		RecordData* TopRecDat;
-		RecordData* PrvRecDat;
-		ColumnData* ColDat;
+		RecordData* RecDat = NULL;
+		RecordData* TopRecDat = NULL;
+		RecordData* PrvRecDat = NULL;
+		ColumnData* ColDat = NULL;
 		for (int i = 0; i < 10; i ++) {
 			wchar_t ColName[16];
 			wchar_t Val[256] = L"";

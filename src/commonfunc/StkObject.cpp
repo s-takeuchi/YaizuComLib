@@ -668,7 +668,7 @@ StkObject* StkObject::Impl::Contains(StkObject* Obj1, StkObject* Obj2, bool Pare
 			}
 		}
 		bool FndFlag = false;
-		StkObject* CldElm;
+		StkObject* CldElm = NULL;
 		for (StkObject* LoopObj = Obj1->GetFirstChildElement(); LoopObj != NULL; LoopObj = LoopObj->GetNext()) {
 			if (LoopObj->GetType() == StkObject::STKOBJECT_ELEMENT && (CldElm = Contains(LoopObj, Obj2, false)) != NULL) {
 				FndFlag = true;
@@ -801,7 +801,7 @@ StkObject::~StkObject()
 
 StkObject* StkObject::Clone()
 {
-	StkObject* NewObj;
+	StkObject* NewObj = NULL;
 	wchar_t* TmpName = GetName();
 	if (pImpl->Type == STKOBJECT_ATTR_INT) {
 		NewObj = new StkObject(TmpName, GetIntValue());

@@ -23,10 +23,10 @@ int Insert16383RecordsAtOneTime()
 
 
 	StkPlPrintf("16383 records can be added by one time invocation of InsertRecord for automobile table using 16383 connected records.");
-	ColumnData *ColDat[4];
-	RecordData *TopRecDat;
-	RecordData *PrvRecDat;
-	RecordData *CurRecDat;
+	ColumnData *ColDat[4] = { NULL, NULL, NULL, NULL };
+	RecordData *TopRecDat = NULL;
+	RecordData *PrvRecDat = NULL;
+	RecordData *CurRecDat = NULL;
 	for (int i = 0; i < 16383; i++) {
 		ColDat[0] = new ColumnDataInt(L"通し番号", i);
 		ColDat[1] = new ColumnDataWStr(L"車名", L"スーパーチャージャー付2400cc 2シーターオープンカー ドーロスター VS");
@@ -124,10 +124,10 @@ int Insert16383RecordsAtOneTime()
 
 	{
 		StkPlPrintf("Change values of records whose ids are odd number. Connected records are passed to UpdateRecord.");
-		ColumnData *ColDat[4];
-		RecordData *TopRecDat;
-		RecordData *PrvRecDat;
-		RecordData *CurRecDat;
+		ColumnData *ColDat[4] = { NULL, NULL, NULL, NULL };
+		RecordData *TopRecDat = NULL;
+		RecordData *PrvRecDat = NULL;
+		RecordData *CurRecDat = NULL;
 		ColDat[0] = new ColumnDataInt(L"通し番号", 100);
 		ColDat[1] = new ColumnDataWStr(L"車名", L"日本国内閣総理大臣専用クーペ");
 		ColDat[2] = new ColumnDataStr(L"型番", "So-Ri");

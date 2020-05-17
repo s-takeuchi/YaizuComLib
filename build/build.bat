@@ -176,24 +176,24 @@ echo Making libraries
 echo;
 
 echo Building stksocket.sln...
-%MSBUILD% "..\src\stksocket\stksocket.sln" /t:clean;build /p:Configuration=Release
+%MSBUILD% "..\src\stksocket\stksocket.sln" /t:clean;build /p:Configuration=Release /p:platform="x64"
 IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stksocket\stksocket.h" deployment
-copy "..\src\stksocket\Release\stksocket.lib" deployment
+copy "..\src\stksocket\x64\Release\stksocket.lib" deployment
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.lib
 %SEVENZIP% a ..\build\deployment\stksocket.zip ..\build\deployment\stksocket.h
 del ..\build\deployment\stksocket.lib
 del ..\build\deployment\stksocket.h
 
 echo Building commonfunc.sln...
-%MSBUILD% "..\src\commonfunc\commonfunc.sln" /t:clean;build /p:Configuration=Release
+%MSBUILD% "..\src\commonfunc\commonfunc.sln" /t:clean;build /p:Configuration=Release /p:platform="x64"
 IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\commonfunc\msgproc.h" deployment
 copy "..\src\commonfunc\StkGeneric.h" deployment
 copy "..\src\commonfunc\StkProperties.h" deployment
 copy "..\src\commonfunc\StkObject.h" deployment
 copy "..\src\commonfunc\StkStringParser.h" deployment
-copy "..\src\commonfunc\Release\commonfunc.lib" deployment
+copy "..\src\commonfunc\x64\Release\commonfunc.lib" deployment
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\commonfunc.lib
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\msgproc.h
 %SEVENZIP% a ..\build\deployment\commonfunc.zip ..\build\deployment\StkGeneric.h
@@ -208,29 +208,29 @@ del ..\build\deployment\StkObject.h
 del ..\build\deployment\StkStringParser.h
 
 echo Building stkthread.sln...
-%MSBUILD% "..\src\stkthread\stkthread.sln" /t:clean;build /p:Configuration=Release
+%MSBUILD% "..\src\stkthread\stkthread.sln" /t:clean;build /p:Configuration=Release /p:platform="x64"
 IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stkthread\stkthread.h" deployment
-copy "..\src\stkthread\Release\stkthread.lib" deployment
+copy "..\src\stkthread\x64\Release\stkthread.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.lib
 %SEVENZIP% a ..\build\deployment\stkthread.zip ..\build\deployment\stkthread.h
 del ..\build\deployment\stkthread.lib
 del ..\build\deployment\stkthread.h
 
 echo Building stkthreadgui.sln...
-%MSBUILD% "..\src\stkthreadgui\stkthreadgui.sln" /t:clean;build /p:Configuration=Release
+%MSBUILD% "..\src\stkthreadgui\stkthreadgui.sln" /t:clean;build /p:Configuration=Release /p:platform="x64"
 IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\stkthreadgui\stkthreadgui.h" deployment
-copy "..\src\stkthreadgui\Release\stkthreadgui.lib" deployment
+copy "..\src\stkthreadgui\x64\Release\stkthreadgui.lib" deployment
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.lib
 %SEVENZIP% a ..\build\deployment\stkthreadgui.zip ..\build\deployment\stkthreadgui.h
 del ..\build\deployment\stkthreadgui.lib
 del ..\build\deployment\stkthreadgui.h
 
 echo Building stkdata.sln...
-%MSBUILD% "..\src\stkdata\stkdata.sln" /t:clean;build /p:Configuration=Release
+%MSBUILD% "..\src\stkdata\stkdata.sln" /t:clean;build /p:Configuration=Release /p:platform="x64"
 IF %ERRORLEVEL% NEQ 0 goto buildexit
-copy "..\src\stkdata\Release\stkdata.lib" deployment
+copy "..\src\stkdata\x64\Release\stkdata.lib" deployment
 copy "..\src\stkdata\stkdata.h" deployment
 copy "..\src\stkdata\stkdataapi.h" deployment
 %SEVENZIP% a ..\build\deployment\stkdata.zip ..\build\deployment\stkdata.lib
@@ -241,19 +241,19 @@ del ..\build\deployment\stkdata.h
 del ..\build\deployment\stkdataapi.h
 
 echo Building stkdatagui.sln...
-%MSBUILD% "..\src\stkdatagui\stkdatagui.sln" /t:clean;build /p:Configuration=Release
+%MSBUILD% "..\src\stkdatagui\stkdatagui.sln" /t:clean;build /p:Configuration=Release /p:platform="x64"
 IF %ERRORLEVEL% NEQ 0 goto buildexit
-copy "..\src\stkdatagui\Release\stkdatagui.exe" deployment
+copy "..\src\stkdatagui\x64\Release\stkdatagui.exe" deployment
 %SEVENZIP% a ..\build\deployment\stkdatagui.zip ..\build\deployment\stkdatagui.exe
 del ..\build\deployment\stkdatagui.exe
 
 echo Building stkwebapp.sln and stkwebappcmd.sln...
-%MSBUILD% "..\src\stkwebapp\stkwebapp.sln" /t:clean;build /p:Configuration=Release
+%MSBUILD% "..\src\stkwebapp\stkwebapp.sln" /t:clean;build /p:Configuration=Release /p:platform="x64"
 IF %ERRORLEVEL% NEQ 0 goto buildexit
-copy "..\src\stkwebapp\Release\stkwebapp.lib" deployment
-%MSBUILD% "..\src\stkwebapp\stkwebappcmd.sln" /t:clean;build /p:Configuration=Release
+copy "..\src\stkwebapp\x64\Release\stkwebapp.lib" deployment
+%MSBUILD% "..\src\stkwebapp\stkwebappcmd.sln" /t:clean;build /p:Configuration=Release /p:platform="x64"
 IF %ERRORLEVEL% NEQ 0 goto buildexit
-copy "..\src\stkwebapp\Release\stkwebappcmd.exe" deployment
+copy "..\src\stkwebapp\x64\Release\stkwebappcmd.exe" deployment
 copy "..\src\stkwebapp\StkWebApp.h" deployment
 copy "..\src\stkwebapp\StkWebAppExec.h" deployment
 copy "..\src\stkwebapp\StkWebAppSend.h" deployment

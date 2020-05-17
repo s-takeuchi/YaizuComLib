@@ -35,10 +35,10 @@ int SmallTable()
 	// 最大レコード登録可能数=1のSmallTableに対して16383個の連結されたレコードをInsertRecordすると1レコードのみ追加される
 	{
 		StkPlPrintf("Only one record is added if 16383 connected records are passed to the table (max records = 1) by InsertRecord.");
-		ColumnData *ColDat[4];
-		RecordData *TopRecDat;
-		RecordData *PrvRecDat;
-		RecordData *CurRecDat;
+		ColumnData *ColDat[4] = { NULL, NULL, NULL, NULL };
+		RecordData *TopRecDat = NULL;
+		RecordData *PrvRecDat = NULL;
+		RecordData *CurRecDat = NULL;
 		for (int i = 0; i < 16383; i++) {
 			ColDat[0] = new ColumnDataInt(L"ID", i);
 			CurRecDat = new RecordData(L"SmallTable", ColDat, 1);
