@@ -64,7 +64,7 @@ if [ $? -ne 0 ]; then
 fi
 echo ---------------------------------------
 echo commonfunctest
-cp ./commonfunctest/Release/*.prop ./commonfunctest
+cp ./commonfunctest/x64/Release/*.prop ./commonfunctest
 ./commonfunctest/commonfunctest
 if [ $? -ne 0 ]; then
   exit $?
