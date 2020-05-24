@@ -22,3 +22,6 @@ jobs:
       run: |
         cd build
         ./test.bat
+        dir "C:\Program Files\OpenSSL"
+        dir "C:\Program Files\OpenSSL\lib"
+        dir "C:\Program Files\OpenSSL\include"
