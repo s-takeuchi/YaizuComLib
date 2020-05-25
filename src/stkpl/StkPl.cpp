@@ -1248,11 +1248,14 @@ size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
 	return (size_t)FileSize;
 #else
 	uintmax_t FileSize = 0;
+	char* FilePathUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
 	try {
-		FileSize = std::experimental::filesystem::file_size(FilePath);
+		FileSize = std::experimental::filesystem::file_size(FilePathUtf8);
 	} catch (std::experimental::filesystem::filesystem_error ex) {
+		delete FilePathUtf8;
 		return -1;
 	}
+	delete FilePathUtf8;
 	if (FileSize == 0) {
 		return 0;
 	}
