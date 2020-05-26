@@ -22,6 +22,6 @@ jobs:
       run: |
         cd build
         ./test.bat
-        dir "C:\Program Files\OpenSSL"
-        dir "C:\Program Files\OpenSSL\lib"
-        dir "C:\Program Files\OpenSSL\include"
+        curl -O https://slproweb.com/download/Win64OpenSSL-1_1_1g.msi
+        msiexec /i Win64OpenSSL-1_1_1g.msi /passive
+        dir "c:\program files"
