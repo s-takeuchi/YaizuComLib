@@ -14,8 +14,7 @@ jobs:
       env:
         GITHUBACTIONS: true
       run: |
-        curl -O https://slproweb.com/download/Win64OpenSSL-1_1_1g.msi
-        msiexec /i Win64OpenSSL-1_1_1g.msi /qn
+        choco install openssl
         dir "c:\program files"
         cd build
         ./build.bat
