@@ -18,7 +18,7 @@ jobs:
         ./config
         make
         sudo make install
-        cd build
+        cd ../build
         ./build.sh
     - name: exec test
       run: |
