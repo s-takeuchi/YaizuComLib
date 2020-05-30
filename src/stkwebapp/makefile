@@ -1,4 +1,7 @@
-﻿stkwebapp.a : StkWebApp.o StkWebAppSend.o
+﻿LDFLAGS = -L/usr/local/lib64 -L/usr/local/lib
+LIBS    = -lssl -lcrypto
+
+stkwebapp.a : StkWebApp.o StkWebAppSend.o
 	ar r stkwebapp.a StkWebApp.o StkWebAppSend.o
 
 stkwebappstop : stkwebappstop.o
@@ -8,7 +11,7 @@ stkwebappstop : stkwebappstop.o
 	cp ../../../YaizuComLib/src/commonfunc/commonfunc.a .
 	cd ../../../YaizuComLib/src/stksocket; make
 	cp ../../../YaizuComLib/src/stksocket/stksocket.a .
-	g++ -o stkwebappstop stkwebappstop.cpp stkpl.a stkwebapp.a commonfunc.a stksocket.a -std=c++1z -lstdc++fs -static-libgcc -static-libstdc++
+	g++ -o stkwebappstop stkwebappstop.cpp stkpl.a stkwebapp.a commonfunc.a stksocket.a -std=c++1z -lstdc++fs -static-libgcc -static-libstdc++ $(LDFLAGS) $(LIBS)
 
 StkWebApp.o : StkWebApp.cpp
 	g++ -c StkWebApp.cpp -std=c++1z
