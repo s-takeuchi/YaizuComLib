@@ -1,3 +1,6 @@
+LDFLAGS = -L/usr/local/lib64 -L/usr/local/lib
+LIBS    = -lssl -lcrypto
+
 stkwebapptest : stkwebapptest.o StkWebAppTest1.o StkWebAppTest2.o StkWebAppTest3.o StkWebAppTest4.o StkWebAppTest5.o
 	cd ../../src/stkwebapp; make
 	cp ../../src/stkwebapp/stkwebapp.a .
@@ -9,7 +12,7 @@ stkwebapptest : stkwebapptest.o StkWebAppTest1.o StkWebAppTest2.o StkWebAppTest3
 	cp ../../src/stkthread/stkthread.a .
 	cd ../../src/stkpl; make
 	cp ../../src/stkpl/stkpl.a .
-	g++ -o stkwebapptest stkwebapptest.o StkWebAppTest1.o StkWebAppTest2.o StkWebAppTest3.o StkWebAppTest4.o StkWebAppTest5.o stkwebapp.a commonfunc.a stksocket.a stkthread.a stkpl.a -std=c++1z -lstdc++fs -pthread -static-libstdc++
+	g++ -o stkwebapptest stkwebapptest.o StkWebAppTest1.o StkWebAppTest2.o StkWebAppTest3.o StkWebAppTest4.o StkWebAppTest5.o stkwebapp.a commonfunc.a stksocket.a stkthread.a stkpl.a -std=c++1z -lstdc++fs -pthread -static-libstdc++ $(LDFLAGS) $(LIBS)
 
 stkwebapptest.o : stkwebapptest.cpp
 	g++ -c stkwebapptest.cpp -std=c++1z
