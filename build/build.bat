@@ -35,6 +35,7 @@ echo 2. wkhtmltopdf 0.12.0.3
 echo 3. PDFtk Server 2.02
 echo 4. 7-Zip 9.20
 echo 5. Line Counter
+echo 6. OpenSSL 1.1.1g
 
 if not exist %MSBUILD% (
   exit

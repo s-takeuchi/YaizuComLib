@@ -1,9 +1,12 @@
+LDFLAGS = -L/usr/local/lib64 -L/usr/local/lib
+LIBS    = -lssl -lcrypto
+
 stksockettest : StkSocketIPv6.o StkSocketMemoryLeak.o StkSocketTest.o StkSocketTestGetSockInfo.o StkSocketTestHttp.o StkSocketTestMa.o
 	cd ../../src/stksocket; make
 	cp ../../src/stksocket/stksocket.a .
 	cd ../../src/stkpl; make
 	cp ../../src/stkpl/stkpl.a .
-	g++ -o stksockettest StkSocketIPv6.o StkSocketMemoryLeak.o StkSocketTest.o StkSocketTestGetSockInfo.o StkSocketTestHttp.o StkSocketTestMa.o stkpl.a stksocket.a -std=c++1z -lstdc++fs -pthread -static-libgcc -static-libstdc++
+	g++ -o stksockettest StkSocketIPv6.o StkSocketMemoryLeak.o StkSocketTest.o StkSocketTestGetSockInfo.o StkSocketTestHttp.o StkSocketTestMa.o stkpl.a stksocket.a -std=c++1z -lstdc++fs -pthread -static-libgcc -static-libstdc++ $(LDFLAGS) $(LIBS)
 
 StkSocketIPv6.o : StkSocketIPv6.cpp
 	g++ -c StkSocketIPv6.cpp -std=c++1z

@@ -20,6 +20,10 @@
 
 #endif
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/crypto.h>
+
 #include "../stkpl/StkPl.h"
 #include "StkSocketMgr.h"
 #include "StkSocketInfo.h"
@@ -509,6 +513,10 @@ int StkSocketMgr::OpenSocket(int TargetId)
 			}
 			// Receiverの場合
 			if (SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER) {
+
+				SSL_load_error_strings();
+				SSL_library_init();
+				OpenSSL_add_all_algorithms();
 
 				// Get address information
 				memset(&Hints, 0, sizeof(Hints));
