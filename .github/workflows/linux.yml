@@ -12,7 +12,11 @@ jobs:
     - uses: actions/checkout@v1
     - name: exec build
       run: |
-        ls -l /usr/lib64
+        ls -l /usr/lib
+        ls -l /usr/lib/x86_64-linux-gnu
+        ls -l /lib64
+        ls -l /usr/local/openssl
+        ls -l /usr/local/openssl/lib
         cd build
         ./build.sh
     - name: exec test

@@ -15,9 +15,6 @@ jobs:
         GITHUBACTIONS: true
       run: |
         choco install openssl
-        dir "c:\program files"
-        dir "c:\program files\OpenSSL-Win64"
-        dir "c:\program files\OpenSSL-Win64\lib"
         cd build
         ./build.bat
     - name: exec test
