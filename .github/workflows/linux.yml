@@ -12,12 +12,14 @@ jobs:
     - uses: actions/checkout@v1
     - name: exec build
       run: |
-        ls -l /usr/lib
-        ls -l /usr/lib/x86_64-linux-gnu
-        ls -l /lib64
-        ls -l /usr/local/openssl
-        ls -l /usr/local/openssl/lib
         cd build
+        wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz
+        tar -zxf openssl-1.1.1g.tar.gz
+        cd openssl-1.1.1g
+        ./config
+        make
+        make install
+        find / -name libssl* -print
         ./build.sh
     - name: exec test
       run: |
