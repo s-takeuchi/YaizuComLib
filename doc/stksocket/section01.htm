@@ -1,6 +1,9 @@
-﻿<HEAD>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="content-style-type" content="text/css">
+﻿<!doctype html>
+<html lang="ja">
+
+<HEAD>
+<title>stkcokect</title>
+<meta charset="utf-8">
 <link rel="stylesheet" href="./style.css" type="text/css">
 </HEAD>
 
@@ -308,7 +311,7 @@ int StkSocket_Accept(int Id)
 
 <H2 ID="1.9">1.9 StkSocket_CloseAccept</H2>
 <div class="topic">
-指定したACCEPTソケットをクローズします。</p>
+指定したACCEPTソケットをクローズします。
 <u>シグネチャ</u>
 <div class="topic">
 int StkSocket_CloseAccept(int Id, int LogId, bool WaitForPeerClose)
@@ -659,4 +662,68 @@ void StkSocket_ForceStop(int TargetId)
 
 
 
+<H2 ID="1.23">1.23 StkSocket_InitSecureSetting</H2>
+<div class="topic">
+SSL/TLS通信のための初期化を行います。<p>
+<u>シグネチャ</u>
+<div class="topic">
+void StkSocket_InitSecureSetting()
+</div><p>
+</div><p>
+
+
+
+<H2 ID="1.24">1.24 StkSocket_SecureForRecv</H2>
+<div class="topic">
+SSL/TLSによるデータ受信のための設定を行います。<p>
+<u>シグネチャ</u>
+<div class="topic">
+int StkSocket_SecureForRecv(int TargetId, const char* PrivateKey, const char* Certificate)
+</div><p>
+<u>引数の説明</u>
+<div class="topic">
+<table class="tblstyle">
+<tr><th>引数</th><th>入出力</th><th>説明</th></tr>
+<tr><td>TargetId</td><td>入力</td><td>SSL/TLS通信を有効にするソケット情報のID</td></tr>
+<tr><td>PrivateKey</td><td>入力</td><td>秘密鍵のファイル名(パスを含む)</td></tr>
+<tr><td>Certificate</td><td>入力</td><td>公開鍵証明書のファイル名(パスを含む)</td></tr>
+</table>
+</div><p>
+<u>戻り値</u>
+<div class="topic">
+正常終了した場合，0が返される。<br/>
+指定したIDと関連付くソケット情報が存在しない場合，-1が返される。<br/>
+</div><p>
+</div><p>
+
+
+
+<H2 ID="1.25">1.25 StkSocket_SecureForSend</H2>
+<div class="topic">
+SSL/TLSによるデータ送信のための設定を行います。<p>
+<u>シグネチャ</u>
+<div class="topic">
+int StkSocket_SecureForSend(int TargetId, const char* FileName, const char* Path)
+</div><p>
+<u>引数の説明</u>
+<div class="topic">
+<table class="tblstyle">
+<tr><th>引数</th><th>入出力</th><th>説明</th></tr>
+<tr><td>TargetId</td><td>入力</td><td>SSL/TLS通信を有効にするソケット情報のID</td></tr>
+<tr><td>FileName</td><td>入力</td><td>信頼するCAの証明書のファイル名</td></tr>
+<tr><td>Path</td><td>入力</td><td>信頼するCAの証明書を格納するフォルダへのパス</td></tr>
+</table>
+</div><p>
+<u>戻り値</u>
+<div class="topic">
+正常終了した場合，0が返される。<br/>
+指定したIDと関連付くソケット情報が存在しない場合，-1が返される。<br/>
+</div><p>
+</div><p>
+
+
+
+</div><p>
+
 </BODY>
+</html>
