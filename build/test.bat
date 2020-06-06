@@ -46,6 +46,10 @@ echo stkpltest.exe
 IF %ERRORLEVEL% NEQ 0 goto testexit
 echo ---------------------------------------
 echo stksockettest.exe
+copy ..\test\stksockettest\ca.crt .
+copy ..\test\stksockettest\ca.key .
+copy ..\test\stksockettest\server.crt .
+copy ..\test\stksockettest\server.key .
 ..\test\stksockettest\x64\release\\stksockettest.exe
 IF %ERRORLEVEL% NEQ 0 goto testexit
 echo ---------------------------------------

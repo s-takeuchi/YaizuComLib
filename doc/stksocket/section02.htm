@@ -90,5 +90,18 @@ STKSOCKET_LOG_UDPSOCKCLOSE     = 1020 <br/>
 </table></div><p>
 
 </div><p>
+
+<H2 ID="2.2">2.2 秘密鍵と公開鍵証明書の作成方法</H2>
+<div class="topic">
+<p>opensslコマンドを使用したpem形式の秘密鍵および公開鍵証明書の作成方法を記載する。</p>
+<ul>
+<li>秘密鍵の作成方法<br/>&gt; "\program files\OpenSSL-Win64\bin\openssl" genrsa -out private_key.pem</li>
+<li>CSRの作成方法<br/>&gt; "\program files\OpenSSL-Win64\bin\openssl" req -new -key private_key.pem -out server.csr</li>
+<li>公開鍵証明書作成方法<br/>&gt; "\program files\OpenSSL-Win64\bin\openssl" x509 -days 365 -req -signkey private_key.pem -in server.csr -out server.pem</li>
+</ul>
+
+</div><p>
+
+
 </div>
 </BODY>

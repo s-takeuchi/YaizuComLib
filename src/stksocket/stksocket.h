@@ -46,6 +46,9 @@ int StkSocket_DeleteInfo(int);
 int StkSocket_GetInfo(int, int*, int*, int*, wchar_t[256], int*, bool*);
 int StkSocket_GetInfo(int, int*, int*, wchar_t[256], int*, bool*);
 int StkSocket_CopyInfo(int, int);
+void StkSocket_InitSecureSetting();
+int StkSocket_SecureForRecv(int, const char*, const char*);
+int StkSocket_SecureForSend(int, const char*, const char*);
 int StkSocket_GetNumOfStkInfos();
 int StkSocket_GetStatus(int);
 

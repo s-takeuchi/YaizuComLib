@@ -11,6 +11,10 @@
 
 #endif
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/crypto.h>
+
 #include "StkSocketInfo.h"
 
 class StkSocketMgr
@@ -50,7 +54,7 @@ private:
 	void PutLog(int, int, const wchar_t*, const wchar_t*, int, int);
 
 	// Safe socket close
-	void CloseSocketWaitForPeerClose(STK_SOCKET);
+	void CloseSocketWaitForPeerClose(STK_SOCKET, SSL*);
 
 public:
 	static const int ACTIONTYPE_RECEIVER = 0;
@@ -106,6 +110,11 @@ public:
 	// Get socket information
 	int GetSocketInfo(int, int*, int*, int*, wchar_t[256], int*, bool*);
 	int GetSocketInfo(int, int*, int*, wchar_t[256], int*, bool*);
+	// Secure setting
+	void InitSecureSetting();
+	int SecureForRecv(int, const char*, const char*);
+	int SecureForSend(int, const char*, const char*);
+	int Unsecure(int);
 
 	// Socket open/close
 	int OpenSocket(int);

@@ -71,7 +71,9 @@ if [ $? -ne 0 ]; then
 fi
 echo ---------------------------------------
 echo stksockettest
-./stksockettest/stksockettest
+cd stksockettest
+./stksockettest
+cd ..
 if [ $? -ne 0 ]; then
   exit $?
 fi

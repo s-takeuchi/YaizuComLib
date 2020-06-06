@@ -25,6 +25,21 @@ int StkSocket_CopyInfo(int NewId, int ExistingId)
 	return StkSocketMgr::GetInstance()->CopySocketInfo(NewId, ExistingId);
 }
 
+void StkSocket_InitSecureSetting()
+{
+	return StkSocketMgr::GetInstance()->InitSecureSetting();
+}
+
+int StkSocket_SecureForRecv(int TargetId, const char* PrivateKey, const char* Certificate)
+{
+	return StkSocketMgr::GetInstance()->SecureForRecv(TargetId, PrivateKey, Certificate);
+}
+
+int StkSocket_SecureForSend(int TargetId, const char* FileName, const char* Path)
+{
+	return StkSocketMgr::GetInstance()->SecureForSend(TargetId, FileName, Path);
+}
+
 int StkSocket_Open(int TargetId)
 {
 	return StkSocketMgr::GetInstance()->OpenSocket(TargetId);

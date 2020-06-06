@@ -1051,6 +1051,45 @@ void TestThreadProc11(int Command)
 	return;
 }
 
+void TestThreadProc12()
+{
+	StkPlPrintf("[Recv/Send] : SSL connection ...");
+	StkSocket_InitSecureSetting();
+	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+	StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
+	StkSocket_Open(0);
+	unsigned char Buffer[10000];
+	unsigned char CondStr[1000];
+
+	while (true) {
+		if (StkSocket_Accept(0) == 0) {
+			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 0, CondStr, 1000);
+			if (Ret > 0) {
+				break;
+			}
+		}
+	}
+	StkSocket_Close(0, true);
+	StkSocket_DeleteInfo(0);
+	StkPlPrintf("OK\n");
+	return;
+}
+
+void TestThreadProc13()
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	StkSocket_SecureForSend(1, "./ca.crt", NULL);
+	wchar_t Buf[10000];
+
+	StkPlLStrCpy(Buf, L"Hello, world!!");
+	StkSocket_Connect(1);
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Disconnect(1, 1, true);
+	StkSocket_DeleteInfo(1);
+	return;
+}
+
 //
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1398,6 +1437,15 @@ int main(int Argc, char* Argv[])
 
 		std::thread *Receiver = new std::thread(TestThreadProc10, Loop);
 		std::thread *Sender = new std::thread(TestThreadProc11, Loop);
+		Receiver->join();
+		Sender->join();
+		delete Receiver;
+		delete Sender;
+	}
+
+	{
+		std::thread *Receiver = new std::thread(TestThreadProc12);
+		std::thread *Sender = new std::thread(TestThreadProc13);
 		Receiver->join();
 		Sender->join();
 		delete Receiver;

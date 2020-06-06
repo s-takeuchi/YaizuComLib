@@ -12,6 +12,9 @@
 
 #endif
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/crypto.h>
 
 struct StkSocketInfo
 {
@@ -54,4 +57,8 @@ struct StkSocketInfo
 
 	// Force stop flag
 	bool ForceStop;
+
+	// Secure setting
+	SSL_CTX* SecureCtx;
+	SSL* SecureSsl;
 };
