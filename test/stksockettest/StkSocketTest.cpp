@@ -722,6 +722,14 @@ void TestThreadProc2(bool SslMode)
 			}
 		}
 	}
+	StkSocket_DeleteInfo(0);
+	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0 || Msg == STKSOCKET_LOG_SOCKCLOSE && LogId == 1) {
+		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
+	} else {
+		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
+		exit(-1);
+	}
 }
 
 void TestThreadProc3(bool SslMode)
@@ -758,18 +766,10 @@ void TestThreadProc3(bool SslMode)
 
 	StkSocket_DeleteInfo(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg == STKSOCKET_LOG_SOCKCLOSE && LogId == 1) {
+	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0 || Msg == STKSOCKET_LOG_SOCKCLOSE && LogId == 1) {
 		StkPlPrintf("[Recv/Send2%s] : Sender socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
 	} else {
 		StkPlPrintf("[Recv/Send2%s] : Sender socket close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
-		exit(-1);
-	}
-	StkSocket_DeleteInfo(0);
-	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0) {
-		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
-	} else {
-		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
 		exit(-1);
 	}
 }
