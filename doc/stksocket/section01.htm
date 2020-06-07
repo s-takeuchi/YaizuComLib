@@ -684,7 +684,7 @@ int StkSocket_SecureForRecv(int TargetId, const char* PrivateKey, const char* Ce
 <div class="topic">
 <table class="tblstyle">
 <tr><th>引数</th><th>入出力</th><th>説明</th></tr>
-<tr><td>TargetId</td><td>入力</td><td>SSL/TLS通信を有効にするソケット情報のID</td></tr>
+<tr><td>TargetId</td><td>入力</td><td>データ受信のための設定を行うソケット情報のID</td></tr>
 <tr><td>PrivateKey</td><td>入力</td><td>秘密鍵のファイル名(パスを含む)</td></tr>
 <tr><td>Certificate</td><td>入力</td><td>公開鍵証明書のファイル名(パスを含む)</td></tr>
 </table>
@@ -709,9 +709,32 @@ int StkSocket_SecureForSend(int TargetId, const char* FileName, const char* Path
 <div class="topic">
 <table class="tblstyle">
 <tr><th>引数</th><th>入出力</th><th>説明</th></tr>
-<tr><td>TargetId</td><td>入力</td><td>SSL/TLS通信を有効にするソケット情報のID</td></tr>
+<tr><td>TargetId</td><td>入力</td><td>データ送信のための設定を行うソケット情報のID</td></tr>
 <tr><td>FileName</td><td>入力</td><td>信頼するCAの証明書のファイル名</td></tr>
 <tr><td>Path</td><td>入力</td><td>信頼するCAの証明書を格納するフォルダへのパス</td></tr>
+</table>
+</div><p>
+<u>戻り値</u>
+<div class="topic">
+正常終了した場合，0が返される。<br/>
+指定したIDと関連付くソケット情報が存在しない場合，-1が返される。<br/>
+</div><p>
+</div><p>
+
+
+
+<H2 ID="1.26">1.26 StkSocket_Unsecure</H2>
+<div class="topic">
+SSL/TLS通信のための設定を解除します。<p>
+<u>シグネチャ</u>
+<div class="topic">
+int StkSocket_Unsecure(int TargetId)
+</div><p>
+<u>引数の説明</u>
+<div class="topic">
+<table class="tblstyle">
+<tr><th>引数</th><th>入出力</th><th>説明</th></tr>
+<tr><td>TargetId</td><td>入力</td><td>設定を解除するソケット情報のID</td></tr>
 </table>
 </div><p>
 <u>戻り値</u>

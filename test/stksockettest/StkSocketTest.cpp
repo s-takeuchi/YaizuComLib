@@ -533,7 +533,7 @@ int TestAddDeleteSocketInfo()
 //
 //
 
-void TestThreadProc0()
+void TestThreadProc0(bool SslMode)
 {
 	int Msg;
 	int LogId;
@@ -543,6 +543,9 @@ void TestThreadProc0()
 	int ParamInt2;
 
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+	if (SslMode) {
+		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
+	}
 	StkSocket_Open(0);
 	unsigned char Buffer[10000]; 
 	unsigned char CondStr[1000];
@@ -554,7 +557,7 @@ void TestThreadProc0()
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			Cs4Log.unlock();
 			if (Ret > 0) {
-				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
+				StkPlPrintf("[Recv/Send%s] : Appropriate string has been received by receiver...", SslMode? "(SSL/TSL)" : "");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
 					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
 					const wchar_t* TmpDat = L"Reply Hello, world!!";
@@ -577,7 +580,7 @@ void TestThreadProc0()
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			Cs4Log.unlock();
 			if (Ret > 0) {
-				StkPlPrintf("[Recv/Send] : Appropriate string has been received by receiver...");
+				StkPlPrintf("[Recv/Send%s] : Appropriate string has been received by receiver...", SslMode ? "(SSL/TSL)" : "");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Dummy data!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
 					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
 					const wchar_t* TmpDat = L"Reply Dummy data!!";
@@ -597,8 +600,7 @@ void TestThreadProc0()
 	StkSocket_DeleteInfo(0);
 }
 
-
-void TestThreadProc1()
+void TestThreadProc1(bool SslMode)
 {
 	int Msg;
 	int LogId;
@@ -609,6 +611,9 @@ void TestThreadProc1()
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	if (SslMode) {
+		StkSocket_SecureForSend(1, "./ca.crt", NULL);
+	}
 	wchar_t Buf[10000];
 	int Ret;
 
@@ -622,7 +627,7 @@ void TestThreadProc1()
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
-		StkPlPrintf("[Recv/Send] : Send data ...");
+		StkPlPrintf("[Recv/Send%s] : Send data ...", SslMode ? "(SSL/TSL)" : "");
 		StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\n", Buf, LogId, Msg);
 		exit(-1);
 	}
@@ -631,7 +636,7 @@ void TestThreadProc1()
 	do {
 		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 100, NULL, 0);
 		if (Ret > 0) {
-			StkPlPrintf("[Recv/Send] : Sender received data...");
+			StkPlPrintf("[Recv/Send%s] : Sender received data...", SslMode ? "(SSL/TSL)" : "");
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsCmp((wchar_t*)Buf, L"Reply Hello, world!!") != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
 				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\n", Buf, LogId, Msg);
@@ -653,7 +658,7 @@ void TestThreadProc1()
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	Cs4Log.unlock();
 	if (Msg != STKSOCKET_LOG_CNCTSEND || ParamInt1 != (StkPlWcsLen(Buf) + 1) * sizeof(wchar_t)) {
-		StkPlPrintf("[Recv/Send] : Send data %ls...", Buf);
+		StkPlPrintf("[Recv/Send%s] : Send data %ls...", SslMode ? "(SSL/TSL)" : "", Buf);
 		StkPlPrintf("NG\n");
 		exit(-1);
 	}
@@ -662,7 +667,7 @@ void TestThreadProc1()
 	do {
 		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 100, NULL, 0);
 		if (Ret > 0) {
-			StkPlPrintf("[Recv/Send] : Sender received data...");
+			StkPlPrintf("[Recv/Send%s] : Sender received data...", SslMode ? "(SSL/TSL)" : "");
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			if (StkPlWcsCmp((wchar_t*)Buf, L"Reply Dummy data!!") != 0 || Msg != STKSOCKET_LOG_CNCTRECV) {
 				StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\n", Buf, LogId, Msg);
@@ -678,7 +683,7 @@ void TestThreadProc1()
 	StkSocket_DeleteInfo(1);
 }
 
-void TestThreadProc2()
+void TestThreadProc2(bool SslMode)
 {
 	int Msg;
 	int LogId;
@@ -688,9 +693,12 @@ void TestThreadProc2()
 	int ParamInt2;
 
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2020);
+	if (SslMode) {
+		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
+	}
 	if (StkSocket_Open(0) == -1) {
 		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-		StkPlPrintf("[Recv/Send2] : Appropriate string has been received by receiver... NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\n", Msg, ParamInt1, ParamInt2);
+		StkPlPrintf("[Recv/Send2%s] : Appropriate string has been received by receiver... NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\n", SslMode ? "(SSL/TSL)" : "", Msg, ParamInt1, ParamInt2);
 		exit(-1);
 	}
 	unsigned char Buffer[10000]; 
@@ -703,7 +711,7 @@ void TestThreadProc2()
 			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 			Cs4Log.unlock();
 			if (Ret > 0) {
-				StkPlPrintf("[Recv/Send2] : Appropriate string has been received by receiver...");
+				StkPlPrintf("[Recv/Send2%s] : Appropriate string has been received by receiver...", SslMode ? "(SSL/TSL)" : "");
 				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
 					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
 					break;
@@ -714,19 +722,18 @@ void TestThreadProc2()
 			}
 		}
 	}
-
 	StkSocket_DeleteInfo(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0) {
-		StkPlPrintf("[Recv/Send2] : Receiver socket close is called...OK\n");
+		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
 	} else {
-		StkPlPrintf("[Recv/Send2] : Receiver socket close is called...NG\n");
+		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...NG\n", SslMode ? "(SSL/TSL)" : "");
 		exit(-1);
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
-void TestThreadProc3()
+void TestThreadProc3(bool SslMode)
 {
 	int Msg;
 	int LogId;
@@ -737,9 +744,12 @@ void TestThreadProc3()
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2020);
+	if (SslMode) {
+		StkSocket_SecureForSend(1, "./ca.crt", NULL);
+	}
 	wchar_t Buf[10000];
 
-	StkPlPrintf("[Recv/Send2] : Sender sent data...");
+	StkPlPrintf("[Recv/Send2%s] : Sender sent data...", SslMode ? "(SSL/TSL)" : "");
 	StkPlLStrCpy(Buf, L"Hello, world!!");
 	while (StkSocket_Connect(1) == -1) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -758,9 +768,9 @@ void TestThreadProc3()
 	StkSocket_DeleteInfo(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_SOCKCLOSE && LogId == 1) {
-		StkPlPrintf("[Recv/Send2] : Sender socket close is called...OK\n");
+		StkPlPrintf("[Recv/Send2%s] : Sender socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
 	} else {
-		StkPlPrintf("[Recv/Send2] : Sender socket close is called...NG\n");
+		StkPlPrintf("[Recv/Send2%s] : Sender socket close is called...NG\n", SslMode ? "(SSL/TSL)" : "");
 		exit(-1);
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -1054,7 +1064,6 @@ void TestThreadProc11(int Command)
 void TestThreadProc12()
 {
 	StkPlPrintf("[Recv/Send] : SSL connection ...");
-	StkSocket_InitSecureSetting();
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
 	StkSocket_Open(0);
@@ -1366,6 +1375,8 @@ void TestMultiAccept1()
 
 int main(int Argc, char* Argv[])
 {
+	StkSocket_InitSecureSetting();
+
 	StkPlPrintf("Test started\n");
 
 	if (ConnectDisconnectTcpPort() != 0) {
@@ -1390,21 +1401,23 @@ int main(int Argc, char* Argv[])
 	StkSocketTestHttp TestHttpObj;
 	TestHttpObj.TestHttpTermination();
 
-	{
-		std::thread *Receiver = new std::thread(TestThreadProc0);
-		std::thread *Sender = new std::thread(TestThreadProc1);
-		Receiver->join();
-		Sender->join();
-		delete Receiver;
-		delete Sender;
-	}
-	{
-		std::thread *Receiver = new std::thread(TestThreadProc2);
-		std::thread *Sender = new std::thread(TestThreadProc3);
-		Receiver->join();
-		Sender->join();
-		delete Receiver;
-		delete Sender;
+	for (int Loop = 0; Loop < 2; Loop++) {
+		{
+			std::thread *Receiver = new std::thread(TestThreadProc0, (bool)Loop);
+			std::thread *Sender = new std::thread(TestThreadProc1, (bool)Loop);
+			Receiver->join();
+			Sender->join();
+			delete Receiver;
+			delete Sender;
+		}
+		{
+			std::thread *Receiver = new std::thread(TestThreadProc2, (bool)Loop);
+			std::thread *Sender = new std::thread(TestThreadProc3, (bool)Loop);
+			Receiver->join();
+			Sender->join();
+			delete Receiver;
+			delete Sender;
+		}
 	}
 	{
 		std::thread *Receiver = new std::thread(TestThreadProc4);

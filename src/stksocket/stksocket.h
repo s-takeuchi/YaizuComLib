@@ -49,6 +49,7 @@ int StkSocket_CopyInfo(int, int);
 void StkSocket_InitSecureSetting();
 int StkSocket_SecureForRecv(int, const char*, const char*);
 int StkSocket_SecureForSend(int, const char*, const char*);
+int StkSocket_Unsecure(int);
 int StkSocket_GetNumOfStkInfos();
 int StkSocket_GetStatus(int);
 

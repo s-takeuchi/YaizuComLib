@@ -40,6 +40,11 @@ int StkSocket_SecureForSend(int TargetId, const char* FileName, const char* Path
 	return StkSocketMgr::GetInstance()->SecureForSend(TargetId, FileName, Path);
 }
 
+int StkSocket_Unsecure(int TargetId)
+{
+	return StkSocketMgr::GetInstance()->Unsecure(TargetId);
+}
+
 int StkSocket_Open(int TargetId)
 {
 	return StkSocketMgr::GetInstance()->OpenSocket(TargetId);

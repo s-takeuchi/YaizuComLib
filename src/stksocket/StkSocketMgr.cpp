@@ -306,6 +306,12 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 	}
 
 	CloseSocket(TargetId, true);
+
+	if (SocketInfo[Loop].SecureCtx != NULL) {
+		SSL_CTX_free(SocketInfo[Loop].SecureCtx);
+		SocketInfo[Loop].SecureCtx = NULL;
+	}
+
 	if (NumOfSocketInfo >= 1) {
 		SocketInfo[Loop].SocketType = SocketInfo[NumOfSocketInfo - 1].SocketType;
 		SocketInfo[Loop].ActionType = SocketInfo[NumOfSocketInfo - 1].ActionType;
@@ -790,12 +796,20 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 			}
 			if (CondC3) {
-				// If the socket information is not copied, closesocke() is called.
+				// If the socket information is not copied, closesocket() is called.
+				if (WaitForPeerClose) {
+					CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
+				} else {
+					if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
+						SSL_free(SocketInfo[Loop].SecureSsl);
+					}
 #ifdef WIN32
-				closesocket(SocketInfo[Loop].Sock);
+					closesocket(SocketInfo[Loop].Sock);
 #else
-				close(SocketInfo[Loop].Sock);
+					close(SocketInfo[Loop].Sock);
 #endif
+				}
+				SocketInfo[Loop].SecureSsl = NULL;
 				SocketInfo[Loop].Sock = 0;
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 				if (AcceptSockFnd == false) {
