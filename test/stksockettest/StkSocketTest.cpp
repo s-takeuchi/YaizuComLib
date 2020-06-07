@@ -722,15 +722,6 @@ void TestThreadProc2(bool SslMode)
 			}
 		}
 	}
-	StkSocket_DeleteInfo(0);
-	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0) {
-		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
-	} else {
-		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...NG\n", SslMode ? "(SSL/TSL)" : "");
-		exit(-1);
-	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 void TestThreadProc3(bool SslMode)
@@ -770,10 +761,17 @@ void TestThreadProc3(bool SslMode)
 	if (Msg == STKSOCKET_LOG_SOCKCLOSE && LogId == 1) {
 		StkPlPrintf("[Recv/Send2%s] : Sender socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
 	} else {
-		StkPlPrintf("[Recv/Send2%s] : Sender socket close is called...NG\n", SslMode ? "(SSL/TSL)" : "");
+		StkPlPrintf("[Recv/Send2%s] : Sender socket close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
 		exit(-1);
 	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	StkSocket_DeleteInfo(0);
+	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0) {
+		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
+	} else {
+		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
+		exit(-1);
+	}
 }
 
 void TestThreadProc4()
@@ -911,11 +909,14 @@ void TestThreadProc5()
 	}
 }
 
-void TestThreadProc6()
+void TestThreadProc6(bool SslMode)
 {
-	StkPlPrintf("[Recv/Send] : Keep waiting for closure of sender ...");
+	StkPlPrintf("[Recv/Send%s] : Keep waiting for sender's finish ...", SslMode ? "(SSL/TSL)" : "");
 	FinishFlag = false;
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+	if (SslMode) {
+		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
+	}
 	StkSocket_Open(0);
 	unsigned char Buffer[10000];
 	unsigned char CondStr[1000];
@@ -934,16 +935,19 @@ void TestThreadProc6()
 	StkPlPrintf("OK\n");
 }
 
-void TestThreadProc7()
+void TestThreadProc7(bool SslMode)
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	FinishFlag = true;
 }
 
-void TestThreadProc8()
+void TestThreadProc8(bool SslMode)
 {
-	StkPlPrintf("[Recv/Send] : Receiver method out detected with timeout=0...");
+	StkPlPrintf("[Recv/Send%s] : Receiver method out detected with timeout=0...", SslMode ? "(SSL/TSL)" : "");
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+	if (SslMode) {
+		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
+	}
 	StkSocket_Open(0);
 	unsigned char Buffer[10000];
 	unsigned char CondStr[1000];
@@ -957,15 +961,17 @@ void TestThreadProc8()
 		}
 	}
 	StkSocket_Close(0, true);
-	StkSocket_DeleteInfo(0);
 	StkPlPrintf("OK\n");
 	return;
 }
 
-void TestThreadProc9()
+void TestThreadProc9(bool SslMode)
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	if (SslMode) {
+		StkSocket_SecureForSend(1, "./ca.crt", NULL);
+	}
 	wchar_t Buf[10000];
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
@@ -974,6 +980,10 @@ void TestThreadProc9()
 	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	StkSocket_ForceStop(0);
 	StkSocket_Disconnect(1, 1, true);
+	while (StkSocket_GetStatus(0) != STKSOCKET_STATUS_CLOSE && StkSocket_GetStatus(1) != STKSOCKET_STATUS_CLOSE) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+	StkSocket_DeleteInfo(0);
 	StkSocket_DeleteInfo(1);
 	return;
 }
@@ -1418,26 +1428,26 @@ int main(int Argc, char* Argv[])
 			delete Receiver;
 			delete Sender;
 		}
+		{
+			std::thread *Receiver = new std::thread(TestThreadProc6, (bool)Loop);
+			std::thread *Sender = new std::thread(TestThreadProc7, (bool)Loop);
+			Receiver->join();
+			Sender->join();
+			delete Receiver;
+			delete Sender;
+		}
+		{
+			std::thread *Receiver = new std::thread(TestThreadProc8, (bool)Loop);
+			std::thread *Sender = new std::thread(TestThreadProc9, (bool)Loop);
+			Receiver->join();
+			Sender->join();
+			delete Receiver;
+			delete Sender;
+		}
 	}
 	{
 		std::thread *Receiver = new std::thread(TestThreadProc4);
 		std::thread *Sender = new std::thread(TestThreadProc5);
-		Receiver->join();
-		Sender->join();
-		delete Receiver;
-		delete Sender;
-	}
-	{
-		std::thread *Receiver = new std::thread(TestThreadProc6);
-		std::thread *Sender = new std::thread(TestThreadProc7);
-		Receiver->join();
-		Sender->join();
-		delete Receiver;
-		delete Sender;
-	}
-	{
-		std::thread *Receiver = new std::thread(TestThreadProc8);
-		std::thread *Sender = new std::thread(TestThreadProc9);
 		Receiver->join();
 		Sender->join();
 		delete Receiver;
