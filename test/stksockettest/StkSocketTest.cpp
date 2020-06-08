@@ -685,6 +685,7 @@ void TestThreadProc1(bool SslMode)
 
 void TestThreadProc2(bool SslMode)
 {
+	FinishFlag = false;
 	int Msg;
 	int LogId;
 	wchar_t ParamStr1[256];
@@ -722,14 +723,15 @@ void TestThreadProc2(bool SslMode)
 			}
 		}
 	}
-	StkSocket_DeleteInfo(0);
+	StkSocket_Close(0, false);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0 || Msg == STKSOCKET_LOG_SOCKCLOSE && LogId == 1) {
-		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
+	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0) {
+		StkPlPrintf("[Recv/Send2%s] : Receiver socket force close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
 	} else {
-		StkPlPrintf("[Recv/Send2%s] : Receiver socket close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
+		StkPlPrintf("[Recv/Send2%s] : Receiver socket force close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
 		exit(-1);
 	}
+	FinishFlag = true;
 }
 
 void TestThreadProc3(bool SslMode)
@@ -764,14 +766,19 @@ void TestThreadProc3(bool SslMode)
 	}
 	StkPlPrintf("OK [%ls]\n", Buf);
 
-	StkSocket_DeleteInfo(1);
+	while (!FinishFlag) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+	StkSocket_Close(1, false);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
-	if (Msg == STKSOCKET_LOG_CLOSEACCLISNSOCK && LogId == 0 || Msg == STKSOCKET_LOG_SOCKCLOSE && LogId == 1) {
-		StkPlPrintf("[Recv/Send2%s] : Sender socket close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
+	if (Msg == STKSOCKET_LOG_SOCKCLOSE && LogId == 1) {
+		StkPlPrintf("[Recv/Send2%s] : Sender socket force close is called...OK\n", SslMode ? "(SSL/TSL)" : "");
 	} else {
-		StkPlPrintf("[Recv/Send2%s] : Sender socket close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
+		StkPlPrintf("[Recv/Send2%s] : Sender socket force close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
 		exit(-1);
 	}
+	StkSocket_DeleteInfo(0);
+	StkSocket_DeleteInfo(1);
 }
 
 void TestThreadProc4()
