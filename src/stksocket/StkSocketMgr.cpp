@@ -308,6 +308,7 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 	CloseSocket(TargetId, true);
 
 	if (SocketInfo[Loop].SecureCtx != NULL) {
+		StkPlPrintf("(ctx free)");
 		SSL_CTX_free(SocketInfo[Loop].SecureCtx);
 		SocketInfo[Loop].SecureCtx = NULL;
 	}
@@ -754,6 +755,7 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 
 			// Closure condition of ACCEPT socket. Cond1 || Cond2 || Cond3
 			if (Cond1 || Cond2 || Cond3) {
+				StkPlPrintf("%s", SocketInfo[Loop].SecureSsl ? "(at)" : "(af)");
 				if (WaitForPeerClose) {
 					CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl);
 				} else {
@@ -796,6 +798,7 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 			}
 			if (CondC3) {
+				StkPlPrintf("%s", SocketInfo[Loop].SecureSsl ? "(st)" : "(sf)");
 				// If the socket information is not copied, closesocket() is called.
 				if (WaitForPeerClose) {
 					CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
