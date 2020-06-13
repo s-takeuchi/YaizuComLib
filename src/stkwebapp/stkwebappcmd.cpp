@@ -120,15 +120,23 @@ void StopProcesses()
 	char IpAddrTmp[256] = "127.0.0.1";
 	wchar_t IpAddr[256] = L"127.0.0.1";
 	int Port = 8081;
+	char SecureMode[256] = "";
+	char TrustedCert[256] = "";
+
 	StkProperties *Prop = new StkProperties();
 	if (Prop->GetProperties(SrvProgramConf) == 0) {
 		Prop->GetPropertyStr("servicehost", IpAddrTmp);
 		wsprintf(IpAddr, L"%S", IpAddrTmp);
 		Prop->GetPropertyInt("serviceport", &Port);
+		Prop->GetPropertyStr("securemode", SecureMode);
+		Prop->GetPropertyStr("trustedcert", TrustedCert);
 	}
 	delete Prop;
 
 	StkSocket_AddInfo(1, SOCK_STREAM, STKSOCKET_ACTIONTYPE_SENDER, IpAddr, Port);
+	if (SecureMode != NULL && strcmp(SecureMode, "true") == 0) {
+		StkSocket_SecureForSend(1, TrustedCert, NULL);
+	}
 	if (StkSocket_Connect(1) == 0) {
 		char SendDat[1024];
 		char Dat[256] = "{ \"Operation\" : \"Stop\" }";
