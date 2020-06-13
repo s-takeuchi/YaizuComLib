@@ -511,7 +511,7 @@ StkWebApp* StkWebApp::GetStkWebAppByThreadId(int ThreadId)
 	return NULL;
 }
 
-StkWebApp::StkWebApp(int* TargetIds, int Count, const wchar_t* HostName, int TargetPort)
+StkWebApp::StkWebApp(int* TargetIds, int Count, const wchar_t* HostName, int TargetPort, const char* PrivateKey, const char* Certificate)
 {
 	pImpl = new Impl;
 	pImpl->WebThreadCount = 0;
@@ -551,7 +551,13 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, const wchar_t* HostName, int Tar
 
 	// Add and open socket
 	if (pImpl->WebThreadCount >= 1) {
+		if (PrivateKey != NULL && Certificate != NULL) {
+			StkSocket_InitSecureSetting();
+		}
 		StkSocket_AddInfo(pImpl->WebThreadIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, HostName, TargetPort);
+		if (PrivateKey != NULL && Certificate != NULL) {
+			StkSocket_SecureForRecv(pImpl->WebThreadIds[0], PrivateKey, Certificate);
+		}
 		for (int Loop = 1; Loop < pImpl->WebThreadCount; Loop++) {
 			StkSocket_CopyInfo(pImpl->WebThreadIds[Loop], pImpl->WebThreadIds[0]);
 		}

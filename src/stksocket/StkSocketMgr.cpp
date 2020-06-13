@@ -968,7 +968,11 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			FD_SET(TmpSock, &RecFds);
 			// 一定時間待ったあとAcceptedSockに接続があるか確認する
 			select((int)TmpSock + 1, &RecFds, NULL, NULL, &Timeout);
-			if (!FD_ISSET(TmpSock, &RecFds)) {
+			int SslPend = 0;
+			if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
+				SslPend = SSL_has_pending(SocketInfo[Loop].SecureSsl);
+			}
+			if (!FD_ISSET(TmpSock, &RecFds) && SslPend == 0) {
 				// Timeout occurrence and no data received
 				if (SocketInfo[Loop].ForceStop == true) {
 					// There was a stopping thread request.
@@ -1068,7 +1072,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 					ChunkSize = FetchSize - Ret;
 					continue;
 				}
-				if (GetChunkMode == false && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
+				if (GetChunkMode == false && Offset >= 2 && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
 					// After size acquisition
 					int TmpSize = 0;
 					if (TmpSizePtr != 0) {
@@ -1082,7 +1086,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 					}
 					GetChunkMode = true;
 					continue;
-				} else if (GetChunkMode == true && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
+				} else if (GetChunkMode == true && Offset >= 2 && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') {
 					// After data acquisition
 					ChunkSize = 1;
 					GetChunkMode = false;
@@ -1097,9 +1101,9 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			}
 			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
 				// if HTTP termination rule is selected...
-				if ((Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\n') ||
-					(Buffer[Offset - 4] == '\r' && Buffer[Offset - 3] == '\n' && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') ||
-					(Buffer[Offset - 4] == '\n' && Buffer[Offset - 3] == '\r' && Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\r')) {
+				if ((Offset >= 2 && Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\n') ||
+					(Offset >= 4 && Buffer[Offset - 4] == '\r' && Buffer[Offset - 3] == '\n' && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') ||
+					(Offset >= 4 && Buffer[Offset - 4] == '\n' && Buffer[Offset - 3] == '\r' && Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\r')) {
 					// If double new-line-code was detected...
 					Buffer[Offset] = '\0'; // '\0' will be overwritten by next fetch.
 					unsigned char* ContLenPtr = (unsigned char*)strstr((char*)Buffer, "Content-Length:");

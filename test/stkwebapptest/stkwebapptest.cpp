@@ -602,7 +602,7 @@ void ReqResTest1(bool LargeFlag)
 			StkPlPrintf("... NG(Time up for waiting threads stop)\n");
 			StkPlExit(-1);
 		}
-		StkPlSleepMs(200);
+		StkPlSleepMs(400);
 		WaitingStopCnt++;
 	}
 	////////// Main logic ends

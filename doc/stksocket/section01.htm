@@ -664,7 +664,9 @@ void StkSocket_ForceStop(int TargetId)
 
 <H2 ID="1.23">1.23 StkSocket_InitSecureSetting</H2>
 <div class="topic">
-SSL/TLS通信のための初期化を行います。<p>
+<p>
+SSL/TLS通信のための初期化を行います。StkSocket_SecureForRecv またはStkSocket_SecureForSendを呼び出す前に，本APIを呼び出す必要があります。
+</p>
 <u>シグネチャ</u>
 <div class="topic">
 void StkSocket_InitSecureSetting()
@@ -675,7 +677,10 @@ void StkSocket_InitSecureSetting()
 
 <H2 ID="1.24">1.24 StkSocket_SecureForRecv</H2>
 <div class="topic">
-SSL/TLSによるデータ受信のための設定を行います。<p>
+<p>
+SSL/TLSによるデータ送受信のための設定を行います。データ受信用ソケットに対してセキュアな通信を確立します。
+本APIは，StkSocket_AddInfoでソケット情報を登録した後に呼び出される必要があります。
+</p>
 <u>シグネチャ</u>
 <div class="topic">
 int StkSocket_SecureForRecv(int TargetId, const char* PrivateKey, const char* Certificate)
@@ -700,7 +705,10 @@ int StkSocket_SecureForRecv(int TargetId, const char* PrivateKey, const char* Ce
 
 <H2 ID="1.25">1.25 StkSocket_SecureForSend</H2>
 <div class="topic">
-SSL/TLSによるデータ送信のための設定を行います。<p>
+<p>
+SSL/TLSによるデータ送受信のための設定を行います。データ送信用ソケットに対してセキュアな通信を確立します。
+本APIは，StkSocket_AddInfoでソケット情報を登録した後に呼び出される必要があります。
+</p>
 <u>シグネチャ</u>
 <div class="topic">
 int StkSocket_SecureForSend(int TargetId, const char* FileName, const char* Path)

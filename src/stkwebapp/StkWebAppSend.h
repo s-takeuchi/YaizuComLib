@@ -17,7 +17,7 @@ public:
 	static const unsigned char STKWEBAPP_METHOD_OPTIONS   = 0x20;
 	static const unsigned char STKWEBAPP_METHOD_INVALID   = 0x40;
 
-	StkWebAppSend(int, const wchar_t*, int);
+	StkWebAppSend(int, const wchar_t*, int, const char* FileName = NULL, const char* Path = NULL);
 	virtual ~StkWebAppSend();
 
 	int GetSendBufSize();

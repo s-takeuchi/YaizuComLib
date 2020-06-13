@@ -168,7 +168,7 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 	return RetD;
 }
 
-StkWebAppSend::StkWebAppSend(int TargetId, const wchar_t* HostNameOrIpAddr, int PortNum)
+StkWebAppSend::StkWebAppSend(int TargetId, const wchar_t* HostNameOrIpAddr, int PortNum, const char* FileName, const char* Path)
 {
 	pImpl = new Impl;
 	pImpl->SendBufSize = 1000000;
@@ -176,7 +176,14 @@ StkWebAppSend::StkWebAppSend(int TargetId, const wchar_t* HostNameOrIpAddr, int 
 	pImpl->TimeoutInterval = 3000;
 	pImpl->MyId = TargetId;
 	pImpl->Auth = NULL;
+	if (FileName != NULL && Path != NULL) {
+		StkSocket_InitSecureSetting();
+	}
+
 	StkSocket_AddInfo(pImpl->MyId, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, HostNameOrIpAddr, PortNum);
+	if (FileName != NULL && Path != NULL) {
+		StkSocket_SecureForSend(pImpl->MyId, FileName, Path);
+	}
 }
 
 StkWebAppSend::~StkWebAppSend()
