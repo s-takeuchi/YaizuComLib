@@ -307,7 +307,7 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 
 	CloseSocket(TargetId, true);
 
-	if (SocketInfo[Loop].SecureCtx != NULL) {
+	if (SocketInfo[Loop].CopiedSocketFlag == false && SocketInfo[Loop].SecureCtx != NULL) {
 		SSL_CTX_free(SocketInfo[Loop].SecureCtx);
 		SocketInfo[Loop].SecureCtx = NULL;
 	}
