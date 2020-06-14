@@ -312,7 +312,7 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 		SocketInfo[Loop].SecureCtx = NULL;
 	}
 
-	if (NumOfSocketInfo > 1) {
+	if (Loop < NumOfSocketInfo - 1) {
 		SocketInfo[Loop].SocketType = SocketInfo[NumOfSocketInfo - 1].SocketType;
 		SocketInfo[Loop].ActionType = SocketInfo[NumOfSocketInfo - 1].ActionType;
 		SocketInfo[Loop].ElementId = SocketInfo[NumOfSocketInfo - 1].ElementId;
