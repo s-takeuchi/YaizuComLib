@@ -57,7 +57,7 @@ http://＜nginxのホスト名＞:＜nginxのポート番号＞/api/
 </p>
 <p>
 ユーザープログラム(REST API)は，xxxx.confに設定されたIPアドレス/ホスト名およびポート番号で，nginxからのリクエストを処理します。<br/>
-StkWebAppCmdがサービス停止に使用するxxxx.confのプロパティは以下の通り。<br/>
+StkWebAppCmdがサービス停止操作で使用するxxxx.confのプロパティは以下の通りです。<br/>
 </p>
 <ul>
 <li>servicehost<br/>ユーザープログラム(REST API)のIPアドレス/ホスト名</li>
@@ -121,6 +121,13 @@ Webアプリケーションの停止を行うLinux用CLIです。<br/>
 </ul>
 このプログラムは，最初にConfiguration File内のservicehost, serviceportに対して，{ "Operation" : "Stop" }をPOSTします。<br/>
 その後，Path to Execution Fileを実行ファイルとするプロセスの監視を行います。このプログラムは，対象のプロセスが停止するか20秒経過するまで，終了しません。<br/>
+StkWebAppStopがサービス停止操作で使用するConfiguration Fileのプロパティは以下の通りです。<br/>
+<ul>
+<li>servicehost<br/>ユーザープログラム(REST API)のIPアドレス/ホスト名</li>
+<li>serviceport<br/>ユーザープログラム(REST API)のLISTENポート番号</li>
+<li>securemode<br/>ユーザープログラム(REST API)とSSL/TLSで通信する場合trueを指定</li>
+<li>trustedcert<br/>信頼できるCAの証明書</li>
+</ul>
 </div><p>
 
 

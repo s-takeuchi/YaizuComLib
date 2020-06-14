@@ -9,12 +9,17 @@ void StopProcess(const wchar_t* ConfFileName)
 	char IpAddrTmp[256] = "";
 	wchar_t IpAddr[256] = L"";
 	int Port = 0;
+	char SecureMode[256] = "";
+	char TrustedCert[256] = "";
+
 	StkProperties *Prop = new StkProperties();
 	if (Prop->GetProperties(ConfFileName) == 0) {
 		Prop->GetPropertyStr("servicehost", IpAddrTmp);
 		StkPlConvUtf8ToWideChar(IpAddr, 256, IpAddrTmp);
 		Prop->GetPropertyInt("serviceport", &Port);
-		StkPlPrintf("servicehost=%s, serviceport=%d\r\n", IpAddrTmp, Port);
+		Prop->GetPropertyStr("securemode", SecureMode);
+		Prop->GetPropertyStr("trustedcert", TrustedCert);
+		StkPlPrintf("servicehost=%s, serviceport=%d, securemode=%s, trustedcert=%s\r\n", IpAddrTmp, Port, SecureMode, TrustedCert);
 	} else {
 		StkPlPrintf("Configuration file is not found.\r\n");
 		StkPlExit(-1);
@@ -22,6 +27,9 @@ void StopProcess(const wchar_t* ConfFileName)
 	delete Prop;
 
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, IpAddr, Port);
+	if (SecureMode != NULL && StkPlStrCmp(SecureMode, "true") == 0) {
+		StkSocket_SecureForSend(1, TrustedCert, NULL);
+	}
 	if (StkSocket_Connect(1) == 0) {
 		char SendDat[1024];
 		char Dat[256] = "{ \"Operation\" : \"Stop\" }";
