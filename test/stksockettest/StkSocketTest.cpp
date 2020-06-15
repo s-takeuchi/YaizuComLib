@@ -777,8 +777,8 @@ void TestThreadProc3(bool SslMode)
 		StkPlPrintf("[Recv/Send2%s] : Sender socket force close is called...NG(Msg=%d, LogId=%d)\n", SslMode ? "(SSL/TSL)" : "", Msg, LogId);
 		exit(-1);
 	}
-	StkSocket_DeleteInfo(0);
 	StkSocket_DeleteInfo(1);
+	StkSocket_DeleteInfo(0);
 }
 
 void TestThreadProc4()
