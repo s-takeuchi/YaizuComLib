@@ -326,7 +326,7 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 		SocketInfo[Loop].SecureCtx = SocketInfo[NumOfSocketInfo - 1].SecureCtx;
 		SocketInfo[Loop].SecureSsl = SocketInfo[NumOfSocketInfo - 1].SecureSsl;
 		StkPlWcsCpy(SocketInfo[Loop].HostOrIpAddr, 256, SocketInfo[NumOfSocketInfo - 1].HostOrIpAddr);
-		memcpy(&SocketInfo[Loop].LastAccessedAddr, &SocketInfo[NumOfSocketInfo - 1].LastAccessedAddr, sizeof(sockaddr_in));
+		memcpy(&SocketInfo[Loop].LastAccessedAddr, &SocketInfo[NumOfSocketInfo - 1].LastAccessedAddr, sizeof(sockaddr_storage));
 	}
 	NumOfSocketInfo--;
 
