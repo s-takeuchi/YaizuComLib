@@ -854,7 +854,6 @@ void TestThreadProc4()
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	StkSocket_Close(0, true);
-	StkSocket_DeleteInfo(0);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_UDPSOCKCLOSE && LogId == 0) {
 		StkPlPrintf("[Recv/Send for UDP] : Receiver socket close is called...OK\n");
@@ -862,6 +861,8 @@ void TestThreadProc4()
 		StkPlPrintf("[Recv/Send for UDP] : Receiver socket close is called...NG\n");
 		exit(-1);
 	}
+	StkSocket_DeleteInfo(0);
+	StkSocket_DeleteInfo(1);
 }
 
 void TestThreadProc5()
@@ -906,7 +907,6 @@ void TestThreadProc5()
 	}
 
 	StkSocket_Disconnect(1, 1, true);
-	StkSocket_DeleteInfo(1);
 	StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 	if (Msg == STKSOCKET_LOG_UDPSOCKCLOSE && LogId == 1) {
 		StkPlPrintf("[Recv/Send for UDP] : Sender socket close is called...OK\n");
@@ -1045,6 +1045,7 @@ void TestThreadProc10(int Command)
 	PeerCloseOkFlag = true;
 
 	StkSocket_Close(10, true);
+	StkSocket_DeleteInfo(1);
 	StkSocket_DeleteInfo(10);
 	return;
 }
@@ -1074,7 +1075,6 @@ void TestThreadProc11(int Command)
 	}
 	StkSocket_Disconnect(1, 1, true);
 
-	StkSocket_DeleteInfo(1);
 	return;
 }
 
@@ -1096,7 +1096,6 @@ void TestThreadProc12()
 		}
 	}
 	StkSocket_Close(0, true);
-	StkSocket_DeleteInfo(0);
 	StkPlPrintf("OK\n");
 	return;
 }
@@ -1112,6 +1111,7 @@ void TestThreadProc13()
 	StkSocket_Connect(1);
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_Disconnect(1, 1, true);
+	StkSocket_DeleteInfo(0);
 	StkSocket_DeleteInfo(1);
 	return;
 }
