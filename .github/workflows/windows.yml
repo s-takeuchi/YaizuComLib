@@ -22,7 +22,7 @@ jobs:
         GITHUBACTIONS: true
       run: |
         cd build
-        ./test.bat>outputlogs.txt
+        ./test.bat > outputlogs.txt
     - name: archive results
       uses: actions/upload-artifact@v1
       with:
