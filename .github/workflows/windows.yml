@@ -27,4 +27,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: logs
-        path: outputlogs.txt
+        path: build/outputlogs.txt
