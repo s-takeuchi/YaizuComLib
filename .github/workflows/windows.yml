@@ -20,6 +20,7 @@ jobs:
     - name: exec test
       env:
         GITHUBACTIONS: true
+      continue-on-error: true
       run: |
         cd build
         ./test.bat > outputlogs.txt
