@@ -543,11 +543,14 @@ void TestThreadProc0(bool SslMode)
 	int ParamInt2;
 
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	if (SslMode) {
 		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
 	}
 	StkSocket_Open(0);
-	unsigned char Buffer[10000]; 
+	StartFlag = true;
+
+	unsigned char Buffer[10000];
 	unsigned char CondStr[1000];
 
 	while (true) {
@@ -597,7 +600,6 @@ void TestThreadProc0(bool SslMode)
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	StkSocket_Close(0, true);
-	StkSocket_DeleteInfo(0);
 }
 
 void TestThreadProc1(bool SslMode)
@@ -609,8 +611,9 @@ void TestThreadProc1(bool SslMode)
 	int ParamInt1;
 	int ParamInt2;
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	while (!StartFlag) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
 	if (SslMode) {
 		StkSocket_SecureForSend(1, "./ca.crt", NULL);
 	}
@@ -680,6 +683,11 @@ void TestThreadProc1(bool SslMode)
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	StkSocket_Close(1, true);
+
+	while (StkSocket_GetStatus(0) != STKSOCKET_STATUS_CLOSE && StkSocket_GetStatus(1) != STKSOCKET_STATUS_CLOSE) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+	StkSocket_DeleteInfo(0);
 	StkSocket_DeleteInfo(1);
 }
 
@@ -985,6 +993,7 @@ void TestThreadProc8(bool SslMode)
 		}
 	}
 	StkSocket_Close(0, true);
+	FinishFlag = true;
 	StkPlPrintf("OK\n");
 	return;
 }
@@ -1000,12 +1009,15 @@ void TestThreadProc9(bool SslMode)
 	wchar_t Buf[10000];
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
-	StkSocket_Connect(1);
+	while (StkSocket_Connect(1) == -1) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		StkPlPrintf("{Re} ");
+	}
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	StkSocket_ForceStop(0);
 	StkSocket_Disconnect(1, 1, true);
-	while (StkSocket_GetStatus(0) != STKSOCKET_STATUS_CLOSE && StkSocket_GetStatus(1) != STKSOCKET_STATUS_CLOSE) {
+	while (!FinishFlag) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	StkSocket_DeleteInfo(0);
@@ -1119,6 +1131,7 @@ void TestThreadProc12()
 		}
 	}
 	StkSocket_Close(0, true);
+	FinishFlag = true;
 	StkPlPrintf("OK\n");
 	return;
 }
@@ -1133,11 +1146,14 @@ void TestThreadProc13()
 	wchar_t Buf[10000];
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
-	StkSocket_Connect(1);
+	while (StkSocket_Connect(1) == -1) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		StkPlPrintf("{Re} ");
+	}
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_Disconnect(1, 1, true);
 
-	while (StkSocket_GetStatus(0) != STKSOCKET_STATUS_CLOSE && StkSocket_GetStatus(1) != STKSOCKET_STATUS_CLOSE) {
+	while (!FinishFlag) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	StkSocket_DeleteInfo(0);
