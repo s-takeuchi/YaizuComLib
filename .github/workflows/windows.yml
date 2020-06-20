@@ -20,12 +20,6 @@ jobs:
     - name: exec test
       env:
         GITHUBACTIONS: true
-      continue-on-error: true
       run: |
         cd build
-        ./test.bat > outputlogs.txt
-    - name: archive results
-      uses: actions/upload-artifact@v1
-      with:
-        name: logs
-        path: build/outputlogs.txt
+        ./test.bat

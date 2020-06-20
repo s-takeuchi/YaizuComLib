@@ -586,12 +586,12 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, bool WaitForPeerClose)
 			}
 			SocketInfo[Loop].SecureSsl = NULL;
 			SocketInfo[Loop].Sock = 0;
-			SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_DGRAM) {
 				PutLog(LOG_UDPSOCKCLOSE, LogId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 			} else {
 				PutLog(LOG_SOCKCLOSE, LogId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 			}
+			SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 			break;
 		}
 	}
@@ -662,13 +662,13 @@ int StkSocketMgr::OpenSocket(int TargetId)
 					} else {
 						PutLog(LOG_BINDERR, TargetId, L"", L"", 0, STKSOCKET_ERRORCODE);
 					}
-					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
 					closesocket(SocketInfo[Loop].Sock);
 #else
 					close(SocketInfo[Loop].Sock);
 #endif
 					freeaddrinfo(ResAddr);
+					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					return -1;
 				}
 				if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM) {
@@ -676,13 +676,13 @@ int StkSocketMgr::OpenSocket(int TargetId)
 					int RetListen = listen(SocketInfo[Loop].Sock, 5);
 					if (RetListen == STKSOCKET_ERROR) {
 						PutLog(LOG_BINDLISTENERR, TargetId, L"", L"", 0, STKSOCKET_ERRORCODE);
-						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
 						closesocket(SocketInfo[Loop].Sock);
 #else
 						close(SocketInfo[Loop].Sock);
 #endif
 						freeaddrinfo(ResAddr);
+						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 						return -1;
 					}
 				}
@@ -811,12 +811,12 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 				}
 				SocketInfo[Loop].SecureSsl = NULL;
 				SocketInfo[Loop].Sock = 0;
-				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 				if (AcceptSockFnd == false) {
 					PutLog(LOG_SOCKCLOSE, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 				} else {
 					PutLog(LOG_CLOSEACCLISNSOCK, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 				}
+				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 			}
 		} else if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_DGRAM) {
 			if (SocketInfo[Loop].ElementId != TargetId) {
@@ -829,8 +829,8 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 				close(SocketInfo[Loop].Sock);
 #endif
 				SocketInfo[Loop].Sock = 0;
-				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 				PutLog(LOG_UDPSOCKCLOSE, TargetId, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
+				SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 			}
 		} else {
 			return -1;
@@ -1328,12 +1328,12 @@ int StkSocketMgr::SendUdp(int Id, int LogId, const unsigned char* Buffer, int Bu
 				int RetMethod = getaddrinfo(NodeName, ServName, &Hints, &ResAddr);
 				if (RetMethod != 0) {
 					PutLog(LOG_NAMESOLVEERR, Id, L"", L"", 0, STKSOCKET_ERRORCODE);
-					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
 					closesocket(SocketInfo[Loop].Sock);
 #else
 					close(SocketInfo[Loop].Sock);
 #endif
+					SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 					return -1;
 				}
 				Ret = sendto(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0, ResAddr->ai_addr, (int)ResAddr->ai_addrlen);

@@ -685,7 +685,6 @@ void TestThreadProc1(bool SslMode)
 
 void TestThreadProc2(bool SslMode)
 {
-	FinishFlag = false;
 	int Msg;
 	int LogId;
 	wchar_t ParamStr1[256];
@@ -694,6 +693,8 @@ void TestThreadProc2(bool SslMode)
 	int ParamInt2;
 
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2020);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2020);
+
 	if (SslMode) {
 		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
 	}
@@ -702,7 +703,9 @@ void TestThreadProc2(bool SslMode)
 		StkPlPrintf("[Recv/Send2%s] : Appropriate string has been received by receiver... NG [Msg=%d, ParamInt1=%d, ParamInt2=%d]\n", SslMode ? "(SSL/TSL)" : "", Msg, ParamInt1, ParamInt2);
 		exit(-1);
 	}
-	unsigned char Buffer[10000]; 
+	StartFlag = true;
+
+	unsigned char Buffer[10000];
 	unsigned char CondStr[1000];
 
 	while (true) {
@@ -743,8 +746,10 @@ void TestThreadProc3(bool SslMode)
 	int ParamInt1;
 	int ParamInt2;
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2020);
+	while (!StartFlag) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+
 	if (SslMode) {
 		StkSocket_SecureForSend(1, "./ca.crt", NULL);
 	}
@@ -793,7 +798,10 @@ void TestThreadProc4()
 	StkSocket_AddInfo(20, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2002);
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_AddInfo(30, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2003);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+
 	StkSocket_Open(0);
+	StartFlag = true;
 
 	if (StkSocket_GetNumOfStkInfos() < 3) {
 		StkPlPrintf("[Recv/Send for UDP] : Number of socket info is invalid...NG\n");
@@ -861,6 +869,10 @@ void TestThreadProc4()
 		StkPlPrintf("[Recv/Send for UDP] : Receiver socket close is called...NG\n");
 		exit(-1);
 	}
+
+	while (!FinishFlag) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
 	StkSocket_DeleteInfo(0);
 	StkSocket_DeleteInfo(1);
 }
@@ -874,8 +886,9 @@ void TestThreadProc5()
 	int ParamInt1;
 	int ParamInt2;
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_DGRAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	while (!StartFlag) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
 
 	wchar_t Buf[10000];
 	StkSocket_Connect(1);
@@ -914,6 +927,7 @@ void TestThreadProc5()
 		StkPlPrintf("[Recv/Send for UDP] : Sender socket close is called...NG\n");
 		exit(-1);
 	}
+	FinishFlag = true;
 }
 
 void TestThreadProc6(bool SslMode)
@@ -952,10 +966,13 @@ void TestThreadProc8(bool SslMode)
 {
 	StkPlPrintf("[Recv/Send%s] : Receiver method out detected with timeout=0...", SslMode ? "(SSL/TSL)" : "");
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	if (SslMode) {
 		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
 	}
 	StkSocket_Open(0);
+	StartFlag = true;
+
 	unsigned char Buffer[10000];
 	unsigned char CondStr[1000];
 
@@ -974,8 +991,9 @@ void TestThreadProc8(bool SslMode)
 
 void TestThreadProc9(bool SslMode)
 {
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	while (!StartFlag) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
 	if (SslMode) {
 		StkSocket_SecureForSend(1, "./ca.crt", NULL);
 	}
@@ -1018,6 +1036,7 @@ void TestThreadProc10(int Command)
 		Size = 156;
 	}
 
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2002);
 	StkSocket_AddInfo(10, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2002);
 	StkSocket_Open(10);
 	
@@ -1041,12 +1060,15 @@ void TestThreadProc10(int Command)
 			break;
 		}
 	}
-	StkPlPrintf("OK\n");
 	PeerCloseOkFlag = true;
 
 	StkSocket_Close(10, true);
+	while (StkSocket_GetStatus(10) != STKSOCKET_STATUS_CLOSE && StkSocket_GetStatus(1) != STKSOCKET_STATUS_CLOSE) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
 	StkSocket_DeleteInfo(1);
 	StkSocket_DeleteInfo(10);
+	StkPlPrintf("OK\n");
 	return;
 }
 
@@ -1060,10 +1082,8 @@ void TestThreadProc11(int Command)
 		StkPlStrCpy(Buf, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n");
 	}
 
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2002);
-
 	while (StartFlag == false) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	while (StkSocket_Connect(1) == -1) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -1082,8 +1102,11 @@ void TestThreadProc12()
 {
 	StkPlPrintf("[Recv/Send] : SSL connection ...");
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
+	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
 	StkSocket_Open(0);
+	StartFlag = true;
+
 	unsigned char Buffer[10000];
 	unsigned char CondStr[1000];
 
@@ -1102,8 +1125,10 @@ void TestThreadProc12()
 
 void TestThreadProc13()
 {
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
+	while (StartFlag == false) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+
 	StkSocket_SecureForSend(1, "./ca.crt", NULL);
 	wchar_t Buf[10000];
 
@@ -1111,6 +1136,10 @@ void TestThreadProc13()
 	StkSocket_Connect(1);
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_Disconnect(1, 1, true);
+
+	while (StkSocket_GetStatus(0) != STKSOCKET_STATUS_CLOSE && StkSocket_GetStatus(1) != STKSOCKET_STATUS_CLOSE) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
 	StkSocket_DeleteInfo(0);
 	StkSocket_DeleteInfo(1);
 	return;
@@ -1420,6 +1449,8 @@ int main(int Argc, char* Argv[])
 
 	for (int Loop = 0; Loop < 2; Loop++) {
 		{
+			StartFlag = false;
+			FinishFlag = false;
 			std::thread *Receiver = new std::thread(TestThreadProc0, (bool)Loop);
 			std::thread *Sender = new std::thread(TestThreadProc1, (bool)Loop);
 			Receiver->join();
@@ -1428,6 +1459,8 @@ int main(int Argc, char* Argv[])
 			delete Sender;
 		}
 		{
+			StartFlag = false;
+			FinishFlag = false;
 			std::thread *Receiver = new std::thread(TestThreadProc2, (bool)Loop);
 			std::thread *Sender = new std::thread(TestThreadProc3, (bool)Loop);
 			Receiver->join();
@@ -1436,6 +1469,8 @@ int main(int Argc, char* Argv[])
 			delete Sender;
 		}
 		{
+			StartFlag = false;
+			FinishFlag = false;
 			std::thread *Receiver = new std::thread(TestThreadProc6, (bool)Loop);
 			std::thread *Sender = new std::thread(TestThreadProc7, (bool)Loop);
 			Receiver->join();
@@ -1444,6 +1479,8 @@ int main(int Argc, char* Argv[])
 			delete Sender;
 		}
 		{
+			StartFlag = false;
+			FinishFlag = false;
 			std::thread *Receiver = new std::thread(TestThreadProc8, (bool)Loop);
 			std::thread *Sender = new std::thread(TestThreadProc9, (bool)Loop);
 			Receiver->join();
@@ -1453,6 +1490,8 @@ int main(int Argc, char* Argv[])
 		}
 	}
 	{
+		StartFlag = false;
+		FinishFlag = false;
 		std::thread *Receiver = new std::thread(TestThreadProc4);
 		std::thread *Sender = new std::thread(TestThreadProc5);
 		Receiver->join();
@@ -1464,7 +1503,6 @@ int main(int Argc, char* Argv[])
 	for (int Loop = 0; Loop <= 5; Loop++) {
 		StartFlag = false;
 		PeerCloseOkFlag = false;
-
 		std::thread *Receiver = new std::thread(TestThreadProc10, Loop);
 		std::thread *Sender = new std::thread(TestThreadProc11, Loop);
 		Receiver->join();
@@ -1474,6 +1512,8 @@ int main(int Argc, char* Argv[])
 	}
 
 	{
+		StartFlag = false;
+		FinishFlag = false;
 		std::thread *Receiver = new std::thread(TestThreadProc12);
 		std::thread *Sender = new std::thread(TestThreadProc13);
 		Receiver->join();
