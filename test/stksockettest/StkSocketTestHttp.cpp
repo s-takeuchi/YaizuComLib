@@ -18,11 +18,11 @@ void StkSocketTestHttp::TestRecvHttpTermination1()
 		Ret = StkSocket_Receive(100, 100, Dat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, -1);
 		if (Ret == -1 || Ret == -2) {
 			StkPlPrintf("NG\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		if (StkPlStrStr((char*)Dat, "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\0") == NULL) {
 			StkPlPrintf("NG\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 
 		StkPlStrCpy((char*)Dat, 1024, "");
@@ -34,7 +34,7 @@ void StkSocketTestHttp::TestRecvHttpTermination1()
 		int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, (int)StkPlStrLen((char*)Dat) + 1);
 		if (RetS <= 0) {
 			StkPlPrintf("NG\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		StkSocket_CloseAccept(100, 100, true);
 		break;
@@ -57,7 +57,7 @@ void StkSocketTestHttp::TestSendHttpTermination1()
 	int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, (int)StkPlStrLen((char*)Dat) + 1);
 	if (RetS <= 0) {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	int RetR;
 	for (int Loop = 0; Loop < 10; Loop++) {
@@ -70,11 +70,11 @@ void StkSocketTestHttp::TestSendHttpTermination1()
 	StkSocket_Disconnect(101, 101, true);
 	if (RetR <= 0) {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 	if (StkPlStrStr((char*)Dat, "0123456789012345678901234567890123456789012345678z\0") == NULL) {
 		StkPlPrintf("NG\n");
-		StkPlExit(0);
+		StkPlExit(-1);
 	}
 }
 
@@ -108,12 +108,12 @@ void StkSocketTestHttp::TestRecvHttpTermination2()
 			Ret = StkSocket_Receive(100, 100, Dat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, -1);
 			if (Ret == -1 || Ret == -2) {
 				StkPlPrintf("NG (1)\r\n");
-				StkPlExit(0);
+				StkPlExit(-1);
 			}
 			Dat[Ret] = '\0';
 			if (StkPlStrCmp((char*)Dat, (char*)TestData[Loop]) != 0) {
 				StkPlPrintf("NG (2)\r\n");
-				StkPlExit(0);
+				StkPlExit(-1);
 			}
 			long long TcE = StkPlGetTickCount();
 			int Tc = int(TcE - TcB) / 1000;
@@ -124,7 +124,7 @@ void StkSocketTestHttp::TestRecvHttpTermination2()
 				(Loop == 9 && Tc != 0) || (Loop == 10 && Tc != 3) || (Loop == 11 && Tc != 0) ||
 				(Loop == 12 && Tc != 0)) {
 				StkPlPrintf("NG (3)\r\n");
-				StkPlExit(0);
+				StkPlExit(-1);
 			}
 			if (Loop == 12) {
 				StkSocket_CloseAccept(100, 100, true);
@@ -140,7 +140,7 @@ void StkSocketTestHttp::TestRecvHttpTermination2()
 			int RetS = StkSocket_Send(100, 100, (unsigned char*)Dat, (int)StkPlStrLen((char*)Dat) + 1);
 			if (RetS <= 0) {
 				StkPlPrintf("NG (4)\r\n");
-				StkPlExit(0);
+				StkPlExit(-1);
 			}
 			StkSocket_CloseAccept(100, 100, true);
 			break;
@@ -177,7 +177,7 @@ void StkSocketTestHttp::TestSendHttpTermination2()
 		int RetS = StkSocket_Send(101, 101, (unsigned char*)Dat, (int)StkPlStrLen((char*)Dat) + 1);
 		if (RetS <= 0) {
 			StkPlPrintf("NG\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		if (Loop == 12) {
 			StkSocket_Disconnect(101, 101, true);
@@ -195,11 +195,11 @@ void StkSocketTestHttp::TestSendHttpTermination2()
 		StkSocket_Disconnect(101, 101, true);
 		if (RetR <= 0) {
 			StkPlPrintf("NG\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 		if (StkPlStrStr((char*)Dat, "0123456789012345678901234567890123456789012345678z\0") == NULL) {
 			StkPlPrintf("NG\n");
-			StkPlExit(0);
+			StkPlExit(-1);
 		}
 	}
 }

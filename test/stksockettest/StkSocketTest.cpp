@@ -1086,6 +1086,9 @@ void TestThreadProc10(int Command)
 	while (StkSocket_GetStatus(10) != STKSOCKET_STATUS_CLOSE && StkSocket_GetStatus(1) != STKSOCKET_STATUS_CLOSE) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
+	while (!FinishFlag) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
 	StkSocket_DeleteInfo(1);
 	StkSocket_DeleteInfo(10);
 	StkPlPrintf("OK\n");
@@ -1114,6 +1117,7 @@ void TestThreadProc11(int Command)
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	StkSocket_Disconnect(1, 1, true);
+	FinishFlag = true;
 
 	return;
 }
@@ -1526,6 +1530,7 @@ int main(int Argc, char* Argv[])
 
 	for (int Loop = 0; Loop <= 5; Loop++) {
 		StartFlag = false;
+		FinishFlag = false;
 		PeerCloseOkFlag = false;
 		std::thread *Receiver = new std::thread(TestThreadProc10, Loop);
 		std::thread *Sender = new std::thread(TestThreadProc11, Loop);
