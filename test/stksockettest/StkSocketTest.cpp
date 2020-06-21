@@ -554,46 +554,54 @@ void TestThreadProc0(bool SslMode)
 	unsigned char CondStr[1000];
 
 	while (true) {
-		if (StkSocket_Accept(0) == 0) {
-			Cs4Log.lock();
-			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
-			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		Cs4Log.lock();
+		int AccRet = StkSocket_Accept(0);
+		if (AccRet != 0) {
 			Cs4Log.unlock();
-			if (Ret > 0) {
-				StkPlPrintf("[Recv/Send%s] : Appropriate string has been received by receiver...", SslMode? "(SSL/TSL)" : "");
-				if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
-					const wchar_t* TmpDat = L"Reply Hello, world!!";
-					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (int)(StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
-					StkSocket_CloseAccept(0, 0, true);
-					break;
-				} else {
-					StkPlPrintf("NG\n");
-					exit(-1);
-				}
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			continue;
+		}
+		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
+		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		Cs4Log.unlock();
+		if (Ret > 0) {
+			StkPlPrintf("[Recv/Send%s] : Appropriate string has been received by receiver...", SslMode ? "(SSL/TSL)" : "");
+			if (StkPlWcsCmp((wchar_t*)Buffer, L"Hello, world!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
+				StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
+				const wchar_t* TmpDat = L"Reply Hello, world!!";
+				StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (int)(StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
+				StkSocket_CloseAccept(0, 0, true);
+				break;
+			} else {
+				StkPlPrintf("NG\n");
+				exit(-1);
 			}
 		}
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	while (true) {
-		if (StkSocket_Accept(0) == 0) {
-			Cs4Log.lock();
-			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
-			StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		Cs4Log.lock();
+		int AccRet = StkSocket_Accept(0);
+		if (AccRet != 0) {
 			Cs4Log.unlock();
-			if (Ret > 0) {
-				StkPlPrintf("[Recv/Send%s] : Appropriate string has been received by receiver...", SslMode ? "(SSL/TSL)" : "");
-				if (StkPlWcsCmp((wchar_t*)Buffer, L"Dummy data!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
-					StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
-					const wchar_t* TmpDat = L"Reply Dummy data!!";
-					StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (int)(StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
-					StkSocket_CloseAccept(0, 0, true);
-					break;
-				} else {
-					StkPlPrintf("NG\n");
-					exit(-1);
-				}
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			continue;
+		}
+		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
+		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		Cs4Log.unlock();
+		if (Ret > 0) {
+			StkPlPrintf("[Recv/Send%s] : Appropriate string has been received by receiver...", SslMode ? "(SSL/TSL)" : "");
+			if (StkPlWcsCmp((wchar_t*)Buffer, L"Dummy data!!") == 0 && Msg == STKSOCKET_LOG_ACPTRECV) {
+				StkPlPrintf("OK [%ls]\n", (wchar_t*)Buffer);
+				const wchar_t* TmpDat = L"Reply Dummy data!!";
+				StkSocket_Send(0, 0, (const unsigned char*)TmpDat, (int)(StkPlWcsLen(TmpDat) + 1) * sizeof(wchar_t));
+				StkSocket_CloseAccept(0, 0, true);
+				break;
+			} else {
+				StkPlPrintf("NG\n");
+				exit(-1);
 			}
 		}
 	}
