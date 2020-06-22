@@ -14,6 +14,7 @@
 bool StartFlag = false;
 bool PeerCloseOkFlag = false;
 bool FinishFlag = false;
+bool SslFlag = false;
 int FindFlagCounter = 0;
 std::mutex Cs4Log;
 
@@ -560,7 +561,14 @@ void TestThreadProc0(bool SslMode)
 			Cs4Log.unlock();
 			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			continue;
+		} else {
+			Cs4Log.unlock();
+			break;
 		}
+	}
+	while (true) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		Cs4Log.lock();
 		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 		Cs4Log.unlock();
@@ -578,7 +586,7 @@ void TestThreadProc0(bool SslMode)
 			}
 		}
 	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	while (true) {
 		Cs4Log.lock();
@@ -587,7 +595,14 @@ void TestThreadProc0(bool SslMode)
 			Cs4Log.unlock();
 			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			continue;
+		} else {
+			Cs4Log.unlock();
+			break;
 		}
+	}
+	while (true) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		Cs4Log.lock();
 		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 		Cs4Log.unlock();
@@ -605,7 +620,7 @@ void TestThreadProc0(bool SslMode)
 			}
 		}
 	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	StkSocket_Close(0, true);
 }
@@ -630,7 +645,7 @@ void TestThreadProc1(bool SslMode)
 
 	StkPlLStrCpy(Buf, L"Hello, world!!");
 	while (StkSocket_Connect(1) == -1) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	Cs4Log.lock();
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
@@ -642,7 +657,7 @@ void TestThreadProc1(bool SslMode)
 		StkPlPrintf("NG [Buf=%ls, ID=%d, Msg=%d]\n", Buf, LogId, Msg);
 		exit(-1);
 	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	Ret = 0;
 	do {
 		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 100, NULL, 0);
@@ -657,11 +672,11 @@ void TestThreadProc1(bool SslMode)
 		}
 	} while (Ret <= 0);
 	StkSocket_Disconnect(1, 1, true);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	StkPlLStrCpy(Buf, L"Dummy data!!");
 	while (StkSocket_Connect(1) == -1) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	Cs4Log.lock();
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
@@ -673,7 +688,7 @@ void TestThreadProc1(bool SslMode)
 		StkPlPrintf("NG\n");
 		exit(-1);
 	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	Ret = 0;
 	do {
 		Ret = StkSocket_Receive(1, 1, (unsigned char*)Buf, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 100, NULL, 0);
@@ -688,7 +703,7 @@ void TestThreadProc1(bool SslMode)
 		}
 	} while (Ret <= 0);
 	StkSocket_Disconnect(1, 1, true);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	StkSocket_Close(1, true);
 
@@ -740,6 +755,7 @@ void TestThreadProc2(bool SslMode)
 					exit(-1);
 				}
 			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		}
 	}
 	StkSocket_Close(0, false);
@@ -1058,9 +1074,13 @@ void TestThreadProc10(int Command)
 
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2002);
 	StkSocket_AddInfo(10, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2002);
+	if (SslFlag) {
+		StkSocket_SecureForSend(1, "./ca.crt", NULL);
+		StkSocket_SecureForRecv(10, "./server.key", "./server.crt");
+	}
 	StkSocket_Open(10);
 	
-	StkPlPrintf("[Recv/Send] : Receiver's buffer overflow occurrence (Command=%d) ...", RecvType);
+	StkPlPrintf("[Recv/Send%s] : Receiver's buffer overflow occurrence (Command=%d) ...", SslFlag? "(SSL/TLS)" : "", RecvType);
 	StartFlag = true;
 	while (true) {
 		if (StkSocket_Accept(10) == 0) {
@@ -1528,16 +1548,23 @@ int main(int Argc, char* Argv[])
 		delete Sender;
 	}
 
-	for (int Loop = 0; Loop <= 5; Loop++) {
-		StartFlag = false;
-		FinishFlag = false;
-		PeerCloseOkFlag = false;
-		std::thread *Receiver = new std::thread(TestThreadProc10, Loop);
-		std::thread *Sender = new std::thread(TestThreadProc11, Loop);
-		Receiver->join();
-		Sender->join();
-		delete Receiver;
-		delete Sender;
+	for (int LoopSsl = 0; LoopSsl < 2; LoopSsl++) {
+		if (LoopSsl == 0) {
+			SslFlag = false;
+		} else {
+			SslFlag = true;
+		}
+		for (int Loop = 0; Loop <= 5; Loop++) {
+			StartFlag = false;
+			FinishFlag = false;
+			PeerCloseOkFlag = false;
+			std::thread *Receiver = new std::thread(TestThreadProc10, Loop);
+			std::thread *Sender = new std::thread(TestThreadProc11, Loop);
+			Receiver->join();
+			Sender->join();
+			delete Receiver;
+			delete Sender;
+		}
 	}
 
 	{
