@@ -556,6 +556,12 @@ void ReqResTest1(bool LargeFlag)
 	StkPlPrintf("StkWebAppTest1:one minute performance ");
 	LargeFlag == true ? StkPlPrintf("Large ") : StkPlPrintf("Small ");
 
+	bool SslMode = false;
+	if (StkPlGetFileSize(L"./ca.crt") != size_t(-1) && StkPlGetFileSize(L"./server.crt") != size_t(-1) && StkPlGetFileSize(L"./server.key") != size_t(-1)) {
+		StkPlPrintf("(SSL/TLS) ");
+		SslMode = true;
+	}
+
 	int Ids[10] = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 	int SendIds[10] = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40};
 	wchar_t Name[MAX_LENGTH_OF_STKTHREAD_NAME];
@@ -570,9 +576,17 @@ void ReqResTest1(bool LargeFlag)
 			AddStkThread(SendIds[Loop], Name, Desc, NULL, NULL, ElemStkThreadMainSend, NULL, NULL);
 		}
 		StkSocket_AddInfo(SendIds[Loop], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 2080);
+		if (SslMode) {
+			StkSocket_SecureForSend(SendIds[Loop], "./ca.crt", NULL);
+		}
 	}
 
-	StkWebApp* Soc = new StkWebApp(Ids, THREADNUM, L"localhost", 2080);
+	StkWebApp* Soc = NULL;
+	if (SslMode) {
+		Soc = new StkWebApp(Ids, THREADNUM, L"localhost", 2080, "./server.key", "./server.crt");
+	} else {
+		Soc = new StkWebApp(Ids, THREADNUM, L"localhost", 2080);
+	}
 
 	StkWebAppTest1* Test1Hndl = new StkWebAppTest1();
 	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, L"/aaa/bbb/", (StkWebAppExec*)Test1Hndl);
@@ -987,6 +1001,8 @@ void StkWebAppSendTest1()
 
 int main(int Argc, char* Argv[])
 {
+	StkSocket_InitSecureSetting();
+
 	StkWebAppSendTest1();
 	AddDeleteStkWebAppTest();
 	AddDeleteReqHandlerTest();

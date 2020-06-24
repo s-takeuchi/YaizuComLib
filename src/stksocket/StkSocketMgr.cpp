@@ -535,11 +535,13 @@ int StkSocketMgr::ConnectSocket(int Id)
 						SocketInfo[Loop].SecureSsl = NULL;
 						return -1;
 					}
-					if (SSL_get_peer_certificate(SocketInfo[Loop].SecureSsl) == NULL) {
+					X509* PeerCert = SSL_get_peer_certificate(SocketInfo[Loop].SecureSsl);
+					if (PeerCert == NULL) {
 						SSL_free(SocketInfo[Loop].SecureSsl);
 						SocketInfo[Loop].SecureSsl = NULL;
 						return -1;
 					}
+					X509_free(PeerCert);
 					if (SSL_get_verify_result(SocketInfo[Loop].SecureSsl) != 0) {
 						SSL_free(SocketInfo[Loop].SecureSsl);
 						SocketInfo[Loop].SecureSsl = NULL;
