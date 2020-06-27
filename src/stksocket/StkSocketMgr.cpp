@@ -1034,6 +1034,12 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			int Ret = 0;
 			if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
 				Ret = SSL_read(SocketInfo[Loop].SecureSsl, (char*)Buffer + Offset, FetchSize);
+				if (Ret < 0) {
+					int Err = SSL_get_error(SocketInfo[Loop].SecureSsl, Ret);
+					if (Err == SSL_ERROR_WANT_READ || Err == SSL_ERROR_SYSCALL) {
+						continue;
+					}
+				}
 			} else {
 				Ret = recv(TmpSock, (char*)Buffer + Offset, FetchSize, 0);
 			}

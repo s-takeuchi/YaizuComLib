@@ -170,18 +170,20 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 
 StkWebAppSend::StkWebAppSend(int TargetId, const wchar_t* HostNameOrIpAddr, int PortNum, const char* FileName, const char* Path)
 {
+	static int FirstFlag = true;
 	pImpl = new Impl;
 	pImpl->SendBufSize = 1000000;
 	pImpl->RecvBufSize = 1000000;
 	pImpl->TimeoutInterval = 3000;
 	pImpl->MyId = TargetId;
 	pImpl->Auth = NULL;
-	if (FileName != NULL && Path != NULL) {
+	if (FirstFlag && (FileName != NULL || Path != NULL)) {
 		StkSocket_InitSecureSetting();
+		FirstFlag = false;
 	}
 
 	StkSocket_AddInfo(pImpl->MyId, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, HostNameOrIpAddr, PortNum);
-	if (FileName != NULL && Path != NULL) {
+	if (FileName != NULL || Path != NULL) {
 		StkSocket_SecureForSend(pImpl->MyId, FileName, Path);
 	}
 }
