@@ -1086,13 +1086,19 @@ void TestThreadProc10(int Command)
 		CheckSize = 84;
 		Option2 = 0b00000001;
 	}
-
 	if (Command == 7) {
 		RecvType = -3;
 		StkPlStrCpy((char*)TestStr, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n");
 		Size = 1024;
 		CheckSize = 90;
 		Option2 = 0b00000011;
+	}
+	if (Command == 8) {
+		RecvType = -3;
+		StkPlStrCpy((char*)TestStr, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n");
+		Size = 1024;
+		CheckSize = 200;
+		Option2 = 0b00000010;
 	}
 
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2002);
@@ -1103,7 +1109,11 @@ void TestThreadProc10(int Command)
 	}
 	StkSocket_Open(10);
 	
-	StkPlPrintf("[Recv/Send%s] : Receiver's buffer overflow occurrence (Command=%d) ...", SslFlag? "(SSL/TLS)" : "", RecvType);
+	if (Command <= 4) {
+		StkPlPrintf("[Recv/Send%s] : Receiver's buffer overflow occurrence (Command=%d) ...", SslFlag ? "(SSL/TLS)" : "", RecvType);
+	} else {
+		StkPlPrintf("[Recv/Send%s] : Transfer-Encoding: chunked (Option2=%d) ...", SslFlag ? "(SSL/TLS)" : "", Option2);
+	}
 	StartFlag = true;
 	while (true) {
 		if (StkSocket_Accept(10) == 0) {
@@ -1577,7 +1587,7 @@ int main(int Argc, char* Argv[])
 		} else {
 			SslFlag = true;
 		}
-		for (int Loop = 0; Loop <= 7; Loop++) {
+		for (int Loop = 0; Loop <= 8; Loop++) {
 			StartFlag = false;
 			FinishFlag = false;
 			PeerCloseOkFlag = false;
