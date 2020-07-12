@@ -105,7 +105,7 @@ void StkSocketTestHttp::TestRecvHttpTermination2()
 			if (Ret == -1) {
 				continue;
 			}
-			Ret = StkSocket_Receive(100, 100, Dat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, -1);
+			Ret = StkSocket_Receive(100, 100, Dat, 1024, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 3000, NULL, 0);
 			if (Ret == -1 || Ret == -2) {
 				StkPlPrintf("NG (1)\r\n");
 				StkPlExit(-1);

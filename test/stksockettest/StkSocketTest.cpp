@@ -1055,21 +1055,44 @@ void TestThreadProc10(int Command)
 	unsigned char TestStr[65536] = "";
 	int RecvType = 0;
 	int Size = 0;
+	int CheckSize = 0;
+	int Option2 = 0;
 
 	if (Command == 0) {
 		RecvType = 256;
 		StkPlStrCpy((char*)TestStr, 65536, "012345678901234567890123456789");
 		Size = 30;
+		CheckSize = 30;
+		Option2 = 0;
 	}
 	if (Command >= 1 && Command <= 4) {
 		RecvType = Command * -1;
 		StkPlStrCpy((char*)TestStr, 65536, "01234567890123456789012345678901234567890123456789");
 		Size = 50;
+		CheckSize = 50;
+		Option2 = 0;
 	}
 	if (Command == 5) {
 		RecvType = -3;
 		StkPlStrCpy((char*)TestStr, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTestHello!!!0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
-		Size = 156;
+		Size = 1024;
+		CheckSize = 156;
+		Option2 = 0;
+	}
+	if (Command == 6) {
+		RecvType = -3;
+		StkPlStrCpy((char*)TestStr, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\nTestTestTest");
+		Size = 1024;
+		CheckSize = 84;
+		Option2 = 0b00000001;
+	}
+
+	if (Command == 7) {
+		RecvType = -3;
+		StkPlStrCpy((char*)TestStr, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n");
+		Size = 1024;
+		CheckSize = 90;
+		Option2 = 0b00000011;
 	}
 
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2002);
@@ -1085,8 +1108,8 @@ void TestThreadProc10(int Command)
 	while (true) {
 		if (StkSocket_Accept(10) == 0) {
 			memset(Buffer, '\0', 512);
-			int Ret = StkSocket_Receive(10, 10, Buffer, Size, RecvType, 0, NULL, 0);
-			if (Ret != Size || StkPlStrNCmp((char*)Buffer, (char*)TestStr, Size) != 0) {
+			int Ret = StkSocket_Receive(10, 10, Buffer, Size, RecvType, 0, NULL, Option2);
+			if (Ret != CheckSize || StkPlStrNCmp((char*)Buffer, (char*)TestStr, CheckSize) != 0) {
 				int TmpLog;
 				int TmpLogId;
 				wchar_t TmpLogParamStr1[256];
@@ -1121,7 +1144,7 @@ void TestThreadProc11(int Command)
 	if (Command >= 0 && Command <= 4) {
 		StkPlStrCpy(Buf, 65536, "012345678901234567890123456789012345678901234567890123456789");
 	}
-	if (Command == 5) {
+	if (Command >= 5) {
 		StkPlStrCpy(Buf, 65536, "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n");
 	}
 
@@ -1554,7 +1577,7 @@ int main(int Argc, char* Argv[])
 		} else {
 			SslFlag = true;
 		}
-		for (int Loop = 0; Loop <= 5; Loop++) {
+		for (int Loop = 0; Loop <= 7; Loop++) {
 			StartFlag = false;
 			FinishFlag = false;
 			PeerCloseOkFlag = false;

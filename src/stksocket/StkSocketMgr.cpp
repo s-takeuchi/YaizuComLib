@@ -927,9 +927,9 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 // FinishCondition =  0 : Exit method after receiving data
 // FinishCondition = -1 : Exit method if the specified string appears in the received data
 // FinishCondition = -2 : Exit method if closure by peer detected
-// FinishCondition = -3 : Exit method after receiving data the size meets with Content-Length in HTTP header
+// FinishCondition = -3 : Exit method according to "Content-Length" or "Transfer-Encoding: chunked" in HTTP header
 // FinishCondition = -4 : Exit method if timeout is detected
-int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, unsigned char* VarDat, int VarDatSize)
+int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSize, int FinishCondition, int FinishCondTimeout, unsigned char* Opt1, int Opt2)
 {
 	// Select用FDS作成
 	long long CurrWaitTime = StkPlGetTickCount();
@@ -1059,8 +1059,8 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 				return Offset;
 			}
-			if (FinishCondition == RECV_FINISHCOND_STRING && Offset >= VarDatSize && VarDat != NULL) {
-				if (memcmp(Buffer + Offset - VarDatSize, VarDat, VarDatSize) == 0) {
+			if (FinishCondition == RECV_FINISHCOND_STRING && Offset >= Opt2 && Opt1 != NULL) {
+				if (memcmp(Buffer + Offset - Opt2, Opt1, Opt2) == 0) {
 					PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 					return Offset;
 				}
@@ -1089,8 +1089,10 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 							ChunkEnd = true;
 						}
 						ChunkSize = TmpSize + 2;
-						int Diff = (int)(&Buffer[Offset] - TmpSizePtr);
-						Offset -= Diff;
+						if (!(Opt2 & 0b00000010)) {
+							int Diff = (int)(&Buffer[Offset] - TmpSizePtr);
+							Offset -= Diff;
+						}
 					}
 					GetChunkMode = true;
 					continue;
@@ -1098,9 +1100,11 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 					// After data acquisition
 					ChunkSize = 1;
 					GetChunkMode = false;
-					Offset -= 2;
+					if (!(Opt2 & 0b00000010)) {
+						Offset -= 2;
+					}
 					TmpSizePtr = &Buffer[Offset];
-					if (ChunkEnd == true) {
+					if (ChunkEnd == true || Opt2 & 0b00000001) {
 						PutLog(RecvLog, LogId, L"", L"", Offset, 0);
 						return Offset;
 					}
