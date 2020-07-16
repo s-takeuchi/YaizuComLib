@@ -28,6 +28,8 @@
 #include "StkSocketMgr.h"
 #include "StkSocketInfo.h"
 
+#define OPT_TIMEOUT 20
+
 StkSocketMgr* StkSocketMgr::ThisInstance;
 
 // Get this instance
@@ -424,8 +426,10 @@ void StkSocketMgr::CloseSocketWaitForPeerClose(STK_SOCKET Target, SSL* SSLTarget
 #else
 	shutdown(Target, SHUT_WR);
 #endif
-	int Timeo = 10000;
-	setsockopt(Target, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Timeo, sizeof(int));
+	struct timeval Tv;
+	Tv.tv_sec = OPT_TIMEOUT;
+	Tv.tv_usec = 0;
+	setsockopt(Target, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Tv, sizeof(Tv));
 	while (true) {
 		char Buf[10000];
 		if (SSLTarget != NULL) {
@@ -506,9 +510,11 @@ int StkSocketMgr::ConnectSocket(int Id)
 			Sol.l_linger = 10;
 			setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_LINGER, (const char *)&Sol, sizeof(Sol));
 			// Timeout setting
-			int Timeo = 10000;
-			setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Timeo, sizeof(int));
-			setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_SNDTIMEO, (const char *)&Timeo, sizeof(int));
+			struct timeval Tv;
+			Tv.tv_sec = OPT_TIMEOUT;
+			Tv.tv_usec = 0;
+			setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Tv, sizeof(Tv));
+			setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_SNDTIMEO, (const char *)&Tv, sizeof(Tv));
 			// Buffer setting
 			int Buffr = 1000000;
 			setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_RCVBUF, (const char *)&Buffr, sizeof(int));
@@ -701,9 +707,11 @@ int StkSocketMgr::OpenSocket(int TargetId)
 				}
 
 				// Timeout setting
-				int Timeo = 10000;
-				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Timeo, sizeof(int));
-				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_SNDTIMEO, (const char *)&Timeo, sizeof(int));
+				struct timeval Tv;
+				Tv.tv_sec = OPT_TIMEOUT;
+				Tv.tv_usec = 0;
+				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Tv, sizeof(Tv));
+				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_SNDTIMEO, (const char *)&Tv, sizeof(Tv));
 				// Buffer setting
 				int Buffr = 1000000;
 				setsockopt(SocketInfo[Loop].Sock, SOL_SOCKET, SO_RCVBUF, (const char *)&Buffr, sizeof(int));
@@ -882,9 +890,11 @@ int StkSocketMgr::Accept(int Id)
 			Sol.l_linger = 10;
 			setsockopt(SocketInfo[Loop].AcceptedSock, SOL_SOCKET, SO_LINGER, (const char *)&Sol, sizeof(Sol));
 			// Timeout setting
-			int Timeo = 10000;
-			setsockopt(SocketInfo[Loop].AcceptedSock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Timeo, sizeof(int));
-			setsockopt(SocketInfo[Loop].AcceptedSock, SOL_SOCKET, SO_SNDTIMEO, (const char *)&Timeo, sizeof(int));
+			struct timeval Tv;
+			Tv.tv_sec = OPT_TIMEOUT;
+			Tv.tv_usec = 0;
+			setsockopt(SocketInfo[Loop].AcceptedSock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Tv, sizeof(Tv));
+			setsockopt(SocketInfo[Loop].AcceptedSock, SOL_SOCKET, SO_SNDTIMEO, (const char *)&Tv, sizeof(Tv));
 			// Buffer setting
 			int Buffr = 1000000;
 			setsockopt(SocketInfo[Loop].AcceptedSock, SOL_SOCKET, SO_RCVBUF, (const char *)&Buffr, sizeof(int));
