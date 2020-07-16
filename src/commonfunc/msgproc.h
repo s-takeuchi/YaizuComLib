@@ -15,6 +15,11 @@ public:
 	static const int LOCALE_MODE_ENGLISH = 10;
 	static const int LOCALE_MODE_JAPANESE = 11;
 
+	static const int LOG_TYPE_FATAL = 0;
+	static const int LOG_TYPE_ERROR = 1;
+	static const int LOG_TYPE_WARN = 2;
+	static const int LOG_TYPE_INFO = 3;
+
 	static void SetLocaleMode(int);
 
 	static wchar_t* GetMsg(int);
@@ -33,4 +38,8 @@ public:
 	static void DelJpn(int);
 
 	static void ClearAllMsg();
+
+	static int StartLogging(wchar_t*);
+	static void AddLog(char*, int);
+	static int StopLogging();
 };

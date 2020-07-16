@@ -123,5 +123,22 @@ void MsgProcTest()
 	MessageProc::DelEng(102);
 	StkPlPrintf("Japanese locale check ... OK case\n");
 	
+	// Logging test begin
+	MessageProc::StartLogging(L"log.txt");
+	MessageProc::AddLog("hello, world!!", MessageProc::LOG_TYPE_INFO);
+	StkPlSleepMs(500);
+	MessageProc::AddLog("test!teset!test!", MessageProc::LOG_TYPE_FATAL);
+	StkPlSleepMs(500);
+	MessageProc::AddLog("done!", MessageProc::LOG_TYPE_WARN);
+	MessageProc::StopLogging();
+	size_t LogSize = 0;
+	if ((LogSize = StkPlGetFileSize(L"log.txt")) < 100) {
+		StkPlPrintf("Logging ... NG case\n");
+		StkPlExit(-1);
+	}
+	StkPlPrintf("Logging ... OK case(size=%d)\n", LogSize);
+	// Logging test end
+
 	StkPlPrintf("MsgProcTest completed.\n\n\n");
+
 }
