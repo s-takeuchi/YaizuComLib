@@ -21,6 +21,7 @@ MessageProcは，主に以下の機能をクライアントプログラムに提
 <li>メッセージリソースおよびラベルリソースの保持（最大10,000件）
 <li>ロケールに応じたメッセージリソースおよびラベルリソースの取得（英語ロケール，日本語ロケールに対応）
 <li>指定したエンコード種別に応じたメッセージリソースおよびラベルリソースの取得（UTF-16, UTF-8, S-JISに対応）
+<li>ログファイルへのログの出力
 </ul>
 </div><p>
 
@@ -58,6 +59,9 @@ MessageProcクラスが提供するAPI一覧を以下に示します。<p>
 <tr><td>static void DelEng(int)</td><td>指定した英語メッセージまたは英語ラベルを削除します。</td></tr>
 <tr><td>static void DelJpn(int)</td><td>指定した日本語メッセージまたは日本語ラベルを削除します。</td></tr>
 <tr><td>static void ClearAllMsg()</td><td>すべてのメッセージを削除します。</td></tr>
+<tr><td>static int StartLogging(wchar_t*)</td><td>ログファイルへのログの出力を開始します。</td></tr>
+<tr><td>static void AddLog(char*, int)</td><td>ログを出力します。</td></tr>
+<tr><td>static int StopLogging()</td><td>ログファイルへのログの出力を終了します。</td></tr>
 </table><p>
 </div><p>
 
@@ -229,6 +233,38 @@ UTF-8エンコーディングした日本語メッセージまたは日本語ラ
 <H2 ID="2.18">2.18 void ClearAllMsg()</H2>
 <div class="topic">
 すべてのメッセージを削除します。<br>
+</div><p>
+
+
+
+<H2 ID="2.19">2.19 int StartLogging(wchar_t* FilePath)</H2>
+<div class="topic">
+ログファイルへのログの出力を開始します。<br>
+<table class="tblstyle">
+<tr><td>FilePath[入力]</td><td>ログファイルへのパス</td></tr>
+<tr><td>[戻り値]</td><td>0:成功, -1:失敗</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="2.20">2.20 void AddLog(char* Msg, int LogType)</H2>
+<div class="topic">
+ログを出力します。<br>
+<table class="tblstyle">
+<tr><td>Msg[入力]</td><td>出力するメッセージ</td></tr>
+<tr><td>LogType[入力]</td><td>ログの種別。0:FATAL, 1:ERROR, 2:WARN, 3:INFO</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="2.21">2.21 int StopLogging()</H2>
+<div class="topic">
+ログファイルへのログの出力を終了します。<br>
+<table class="tblstyle">
+<tr><td>[戻り値]</td><td>常に0を返す。</td></tr>
+</table>
 </div><p>
 
 
