@@ -1163,7 +1163,6 @@ void TestThreadProc11(int Command)
 	}
 	while (StkSocket_Connect(1) == -1) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		StkPlPrintf("*");
 	}
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)StkPlStrLen(Buf));
 	while (PeerCloseOkFlag == false) {

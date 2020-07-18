@@ -28,7 +28,7 @@
 #include "StkSocketMgr.h"
 #include "StkSocketInfo.h"
 
-#define OPT_TIMEOUT 20
+#define OPT_TIMEOUT 0
 
 StkSocketMgr* StkSocketMgr::ThisInstance;
 
@@ -419,41 +419,38 @@ int StkSocketMgr::GetSocketInfo(int TargetId, int* SockType, int* ActionType, wc
 void StkSocketMgr::CloseSocketWaitForPeerClose(STK_SOCKET Target, SSL* SSLTarget)
 {
 	if (SSLTarget != NULL) {
-		SSL_shutdown(SSLTarget);
+		int RetShutdown = SSL_shutdown(SSLTarget);
+		if (!RetShutdown) {
+			SSL_shutdown(SSLTarget);
+		}
+		SSL_free(SSLTarget);
+#ifdef WIN32
+		closesocket(Target);
+#else
+		close(Target);
+#endif
+		return;
 	}
+
+
 #ifdef WIN32
 	shutdown(Target, SD_SEND);
 #else
 	shutdown(Target, SHUT_WR);
 #endif
-	struct timeval Tv;
-	Tv.tv_sec = OPT_TIMEOUT;
-	Tv.tv_usec = 0;
-	setsockopt(Target, SOL_SOCKET, SO_RCVTIMEO, (const char *)&Tv, sizeof(Tv));
 	while (true) {
 		char Buf[10000];
-		if (SSLTarget != NULL) {
-			if (SSL_read(SSLTarget, Buf, sizeof(10000)) <= 0) {
-				break;
-			}
-		} else {
-			int Ret = recv(Target, Buf, 10000, 0);
-			if (Ret == 0 || Ret == STKSOCKET_ERROR) {
-				break;
-			}
+		int Ret = recv(Target, Buf, 10000, 0);
+		if (Ret == 0 || Ret == STKSOCKET_ERROR) {
+			break;
 		}
-	}
-	if (SSLTarget != NULL) {
-		SSL_shutdown(SSLTarget);
 	}
 #ifdef WIN32
 	shutdown(Target, SD_BOTH);
 #else
 	shutdown(Target, SHUT_RDWR);
 #endif
-	if (SSLTarget != NULL) {
-		SSL_free(SSLTarget);
-	}
+
 #ifdef WIN32
 	closesocket(Target);
 #else
@@ -532,29 +529,53 @@ int StkSocketMgr::ConnectSocket(int Id)
 					freeaddrinfo(ResAddr);
 					return -1;
 				}
-				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 				if (SocketInfo[Loop].SecureCtx != NULL) {
 					SocketInfo[Loop].SecureSsl = SSL_new(SocketInfo[Loop].SecureCtx);
 					SSL_set_fd(SocketInfo[Loop].SecureSsl, (int)SocketInfo[Loop].Sock);
 					if (SSL_connect(SocketInfo[Loop].SecureSsl) <= 0) {
 						SSL_free(SocketInfo[Loop].SecureSsl);
 						SocketInfo[Loop].SecureSsl = NULL;
+						PutLog(LOG_CONNERROR, Id, L"", L"", 0, 0);
+						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
+#ifdef WIN32
+						closesocket(SocketInfo[Loop].Sock);
+#else
+						close(SocketInfo[Loop].Sock);
+#endif
+						freeaddrinfo(ResAddr);
 						return -1;
 					}
 					X509* PeerCert = SSL_get_peer_certificate(SocketInfo[Loop].SecureSsl);
 					if (PeerCert == NULL) {
 						SSL_free(SocketInfo[Loop].SecureSsl);
 						SocketInfo[Loop].SecureSsl = NULL;
+						PutLog(LOG_CONNERROR, Id, L"", L"", 0, 0);
+						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
+#ifdef WIN32
+						closesocket(SocketInfo[Loop].Sock);
+#else
+						close(SocketInfo[Loop].Sock);
+#endif
+						freeaddrinfo(ResAddr);
 						return -1;
 					}
 					X509_free(PeerCert);
 					if (SSL_get_verify_result(SocketInfo[Loop].SecureSsl) != 0) {
 						SSL_free(SocketInfo[Loop].SecureSsl);
 						SocketInfo[Loop].SecureSsl = NULL;
+						PutLog(LOG_CONNERROR, Id, L"", L"", 0, 0);
+						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
+#ifdef WIN32
+						closesocket(SocketInfo[Loop].Sock);
+#else
+						close(SocketInfo[Loop].Sock);
+#endif
+						freeaddrinfo(ResAddr);
 						return -1;
 					}
 				}
 
+				SocketInfo[Loop].Status = StkSocketInfo::STATUS_OPEN;
 				PutLog(LOG_SUCCESSCSC, Id, SocketInfo[Loop].HostOrIpAddr, L"", SocketInfo[Loop].Port, 0);
 				freeaddrinfo(ResAddr);
 				break;
@@ -862,6 +883,7 @@ int StkSocketMgr::Accept(int Id)
 			FD_SET(SocketInfo[Loop].Sock, &AccFds);
 			// 一定時間待ったあとSockに接続があるか確認する
 			select((int)SocketInfo[Loop].Sock + 1, &AccFds, NULL, NULL, &Timeout);
+
 			if (!FD_ISSET(SocketInfo[Loop].Sock, &AccFds)) {
 				return -1;
 			}
@@ -879,6 +901,13 @@ int StkSocketMgr::Accept(int Id)
 				SocketInfo[Loop].SecureSsl = SSL_new(SocketInfo[Loop].SecureCtx);
 				SSL_set_fd(SocketInfo[Loop].SecureSsl, (int)SocketInfo[Loop].AcceptedSock);
 				if (SSL_accept(SocketInfo[Loop].SecureSsl) <= 0) {
+					SSL_free(SocketInfo[Loop].SecureSsl);
+					SocketInfo[Loop].SecureSsl = NULL;
+#ifdef WIN32
+					closesocket(SocketInfo[Loop].AcceptedSock);
+#else
+					close(SocketInfo[Loop].AcceptedSock);
+#endif
 					return -1;
 				}
 			}
