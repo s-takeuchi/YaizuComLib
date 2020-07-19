@@ -1151,6 +1151,21 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				}
 			}
 			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
+				if (Offset >= 2 && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n' && (Opt2 & 0b00000001)) {
+					StkPlSScanf((const char*)Buffer, "%x", &ChunkSize);
+					if (ChunkSize != 0) {
+						FinishCondition = RECV_FINISHCOND_CHUNK;
+						GetChunkMode = true;
+						ChunkSize += 2;
+						if (!(Opt2 & 0b00000010)) {
+							int Diff = (int)(&Buffer[Offset] - Buffer);
+							Offset -= Diff;
+						}
+						continue;
+					}
+				}
+			}
+			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
 				// if HTTP termination rule is selected...
 				if ((Offset >= 2 && Buffer[Offset - 2] == '\n' && Buffer[Offset - 1] == '\n') ||
 					(Offset >= 4 && Buffer[Offset - 4] == '\r' && Buffer[Offset - 3] == '\n' && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n') ||

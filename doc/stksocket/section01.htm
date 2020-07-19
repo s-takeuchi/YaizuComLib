@@ -429,9 +429,9 @@ HTTPヘッダに"Transfer-Encoding: chunked"が指定されている場合: Chun
 <tr><td>Opt2</td><td>入力</td><td>
     <ul>
         <li>FinishConditionが-1の場合，メソッドアウトの条件となるバイト列のサイズを指定。</li>
-        <li>FinishCondiationが-3で且つ"Transfer-Encoding: chunked"が指定されている場合，下記のように振る舞いを制御。<br/>
+        <li>FinishCondiationが-3で且つ"Transfer-Encoding: chunked"が指定されている場合，下記のように振る舞いを制御(AND演算した値を指定)。<br/>
             0b0001: 1 Chunk毎メソッドアウトする。<br/>
-            0b0010: Chunkに関する制御コードを除去しない。<br/>
+            0b0010: Chunkに関する制御コードを残す。<br/>
         </li>
     </ul>
 </td></tr>

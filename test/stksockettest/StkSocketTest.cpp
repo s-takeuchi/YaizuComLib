@@ -1176,20 +1176,34 @@ void TestThreadProc11(int Command)
 
 void TestThreadProc12()
 {
-	StkPlPrintf("[Recv/Send] : SSL connection ...");
+	StkPlPrintf("[Recv/Send] : SSL connection with chunk ...");
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
 	StkSocket_Open(0);
 	StartFlag = true;
 
-	unsigned char Buffer[10000];
-	unsigned char CondStr[1000];
+	unsigned char Buffer1[1000];
+	unsigned char Buffer2[1000];
+	unsigned char Buffer3[1000];
+	unsigned char Buffer4[1000];
+	unsigned char Buffer5[1000];
 
 	while (true) {
 		if (StkSocket_Accept(0) == 0) {
-			int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_PEERCLOSURE, 0, CondStr, 1000);
-			if (Ret > 0) {
+			int Ret1 = StkSocket_Receive(0, 0, Buffer1, 1000, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 0, NULL, 0b00000001);
+			Buffer1[Ret1] = '\0';
+			int Ret2 = StkSocket_Receive(0, 0, Buffer2, 1000, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 0, NULL, 0b00000011);
+			Buffer2[Ret2] = '\0';
+			int Ret3 = StkSocket_Receive(0, 0, Buffer3, 1000, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 0, NULL, 0b00000001);
+			Buffer3[Ret3] = '\0';
+			int Ret4 = StkSocket_Receive(0, 0, Buffer4, 1000, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 0, NULL, 0b00000011);
+			Buffer4[Ret4] = '\0';
+			int Ret5 = StkSocket_Receive(0, 0, Buffer5, 1000, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, 0, NULL, 0b00000001);
+			Buffer5[Ret5] = '\0';
+			int RetS = StkSocket_Send(0, 0, (unsigned char*)"test ok", 7);
+
+			if (Ret1 > 0) {
 				break;
 			}
 		}
@@ -1207,14 +1221,13 @@ void TestThreadProc13()
 	}
 
 	StkSocket_SecureForSend(1, "./ca.crt", NULL);
-	wchar_t Buf[10000];
+	char Buf[1000] = "POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\nContent-Type: text/html\r\n\r\n0c\r\nTestTestTest\r\n0008\r\nHello!!!\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00000020\r\n0123456789abcdef0123456789abcdef\r\n00\r\n\r\n";
 
-	StkPlLStrCpy(Buf, L"Hello, world!!");
 	while (StkSocket_Connect(1) == -1) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		StkPlPrintf("{Re} ");
 	}
-	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlWcsLen(Buf) + 1) * sizeof(wchar_t));
+	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlStrLen(Buf) + 1) * sizeof(wchar_t));
 	StkSocket_Disconnect(1, 1, true);
 
 	while (!FinishFlag) {
