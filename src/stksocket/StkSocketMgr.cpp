@@ -1151,6 +1151,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 				}
 			}
 			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
+				// In case 1 chunk reception and new line detection
 				if (Offset >= 2 && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n' && (Opt2 & 0b00000001)) {
 					StkPlSScanf((const char*)Buffer, "%x", &ChunkSize);
 					if (ChunkSize != 0) {
@@ -1162,6 +1163,23 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 							Offset -= Diff;
 						}
 						continue;
+					} else {
+						if (!(Opt2 & 0b00000010)) {
+							// For last chunk
+							if (StkPlMemCmp((const void*)Buffer, "0\r\n\r\n", 5) == 0) {
+								Offset -= 5;
+								PutLog(RecvLog, LogId, L"", L"", Offset, 0);
+								return Offset;
+							} else if (StkPlMemCmp((const void*)Buffer, "00\r\n\r\n", 6) == 0) {
+								Offset -= 6;
+								PutLog(RecvLog, LogId, L"", L"", Offset, 0);
+								return Offset;
+							} else if (StkPlMemCmp((const void*)Buffer, "0000\r\n\r\n", 8) == 0) {
+								Offset -= 8;
+								PutLog(RecvLog, LogId, L"", L"", Offset, 0);
+								return Offset;
+							}
+						}
 					}
 				}
 			}
