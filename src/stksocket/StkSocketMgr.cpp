@@ -1148,6 +1148,9 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 						return Offset;
 					}
 					continue;
+				} else {
+					ChunkSize = 1;
+					continue;
 				}
 			}
 			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
