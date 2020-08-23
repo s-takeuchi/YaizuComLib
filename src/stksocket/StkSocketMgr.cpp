@@ -603,15 +603,18 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, bool WaitForPeerClose)
 			}
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM && WaitForPeerClose) {
 				CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
+				SocketInfo[Loop].SecureSsl = NULL;
 			} else {
 				if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-					SSL_free(SocketInfo[Loop].SecureSsl);
-				}
+					CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
+					SocketInfo[Loop].SecureSsl = NULL;
+				} else {
 #ifdef WIN32
-				closesocket(SocketInfo[Loop].Sock);
+					closesocket(SocketInfo[Loop].Sock);
 #else
-				close(SocketInfo[Loop].Sock);
+					close(SocketInfo[Loop].Sock);
 #endif
+				}
 			}
 			SocketInfo[Loop].SecureSsl = NULL;
 			SocketInfo[Loop].Sock = 0;
@@ -787,15 +790,18 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 			if (Cond1 || Cond2 || Cond3) {
 				if (WaitForPeerClose) {
 					CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl);
+					SocketInfo[Loop].SecureSsl = NULL;
 				} else {
 					if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-						SSL_free(SocketInfo[Loop].SecureSsl);
-					}
+						CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl);
+						SocketInfo[Loop].SecureSsl = NULL;
+					} else {
 #ifdef WIN32
-					closesocket(SocketInfo[Loop].AcceptedSock);
+						closesocket(SocketInfo[Loop].AcceptedSock);
 #else
-					close(SocketInfo[Loop].AcceptedSock);
+						close(SocketInfo[Loop].AcceptedSock);
 #endif
+					}
 				}
 				SocketInfo[Loop].SecureSsl = NULL;
 				SocketInfo[Loop].AcceptedSock = 0;
@@ -830,15 +836,18 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 				// If the socket information is not copied, closesocket() is called.
 				if (WaitForPeerClose) {
 					CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
+					SocketInfo[Loop].SecureSsl = NULL;
 				} else {
 					if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-						SSL_free(SocketInfo[Loop].SecureSsl);
-					}
+						CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
+						SocketInfo[Loop].SecureSsl = NULL;
+					} else {
 #ifdef WIN32
-					closesocket(SocketInfo[Loop].Sock);
+						closesocket(SocketInfo[Loop].Sock);
 #else
-					close(SocketInfo[Loop].Sock);
+						close(SocketInfo[Loop].Sock);
 #endif
+					}
 				}
 				SocketInfo[Loop].SecureSsl = NULL;
 				SocketInfo[Loop].Sock = 0;
@@ -942,15 +951,18 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 		if (SocketInfo[Loop].ElementId == Id && SocketInfo[Loop].Status == StkSocketInfo::STATUS_ACCEPT) {
 			if (WaitForPeerClose) {
 				CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl);
+				SocketInfo[Loop].SecureSsl = NULL;
 			} else {
 				if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-					SSL_free(SocketInfo[Loop].SecureSsl);
-				}
+					CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl);
+					SocketInfo[Loop].SecureSsl = NULL;
+				} else {
 #ifdef WIN32
-				closesocket(SocketInfo[Loop].AcceptedSock);
+					closesocket(SocketInfo[Loop].AcceptedSock);
 #else
-				close(SocketInfo[Loop].AcceptedSock);
+					close(SocketInfo[Loop].AcceptedSock);
 #endif
+				}
 			}
 			SocketInfo[Loop].SecureSsl = NULL;
 			SocketInfo[Loop].AcceptedSock = 0;
