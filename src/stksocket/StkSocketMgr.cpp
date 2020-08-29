@@ -606,7 +606,8 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, bool WaitForPeerClose)
 				SocketInfo[Loop].SecureSsl = NULL;
 			} else {
 				if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-					CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
+					SSL_set_shutdown(SocketInfo[Loop].SecureSsl, SSL_SENT_SHUTDOWN & SSL_RECEIVED_SHUTDOWN);
+					SSL_free(SocketInfo[Loop].SecureSsl);
 					SocketInfo[Loop].SecureSsl = NULL;
 				} else {
 #ifdef WIN32
@@ -793,7 +794,8 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 					SocketInfo[Loop].SecureSsl = NULL;
 				} else {
 					if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-						CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl);
+						SSL_set_shutdown(SocketInfo[Loop].SecureSsl, SSL_SENT_SHUTDOWN & SSL_RECEIVED_SHUTDOWN);
+						SSL_free(SocketInfo[Loop].SecureSsl);
 						SocketInfo[Loop].SecureSsl = NULL;
 					} else {
 #ifdef WIN32
@@ -839,7 +841,8 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 					SocketInfo[Loop].SecureSsl = NULL;
 				} else {
 					if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-						CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
+						SSL_set_shutdown(SocketInfo[Loop].SecureSsl, SSL_SENT_SHUTDOWN & SSL_RECEIVED_SHUTDOWN);
+						SSL_free(SocketInfo[Loop].SecureSsl);
 						SocketInfo[Loop].SecureSsl = NULL;
 					} else {
 #ifdef WIN32
@@ -954,7 +957,8 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 				SocketInfo[Loop].SecureSsl = NULL;
 			} else {
 				if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-					CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl);
+					SSL_set_shutdown(SocketInfo[Loop].SecureSsl, SSL_SENT_SHUTDOWN & SSL_RECEIVED_SHUTDOWN);
+					SSL_free(SocketInfo[Loop].SecureSsl);
 					SocketInfo[Loop].SecureSsl = NULL;
 				} else {
 #ifdef WIN32
