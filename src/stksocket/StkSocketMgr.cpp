@@ -416,12 +416,35 @@ int StkSocketMgr::GetSocketInfo(int TargetId, int* SockType, int* ActionType, wc
 	return -1;
 }
 
-void StkSocketMgr::CloseSocketWaitForPeerClose(STK_SOCKET Target, SSL* SSLTarget)
+void StkSocketMgr::CloseSocketWaitForPeerClose(STK_SOCKET Target, SSL* SSLTarget, bool* ForceStop)
 {
 	if (SSLTarget != NULL) {
-		int RetShutdown = SSL_shutdown(SSLTarget);
+		int RetShutdown = 0;
+		while (true) {
+			RetShutdown = SSL_shutdown(SSLTarget);
+			int ErrCode = SSL_get_error(SSLTarget, RetShutdown);
+			if (ErrCode == SSL_ERROR_WANT_READ || ErrCode == SSL_ERROR_WANT_WRITE) {
+				if (*ForceStop == true) {
+					break;
+				}
+				continue;
+			} else {
+				break;
+			}
+		}
 		if (!RetShutdown) {
-			SSL_shutdown(SSLTarget);
+			while (true) {
+				RetShutdown = SSL_shutdown(SSLTarget);
+				int ErrCode = SSL_get_error(SSLTarget, RetShutdown);
+				if (ErrCode == SSL_ERROR_WANT_READ || ErrCode == SSL_ERROR_WANT_WRITE) {
+					if (*ForceStop == true) {
+						break;
+					}
+					continue;
+				} else {
+					break;
+				}
+			}
 		}
 		SSL_free(SSLTarget);
 #ifdef WIN32
@@ -531,19 +554,39 @@ int StkSocketMgr::ConnectSocket(int Id)
 				}
 				if (SocketInfo[Loop].SecureCtx != NULL) {
 					SocketInfo[Loop].SecureSsl = SSL_new(SocketInfo[Loop].SecureCtx);
+					
+					u_long val = 1;
+					ioctlsocket(SocketInfo[Loop].Sock, FIONBIO, &val);
 					SSL_set_fd(SocketInfo[Loop].SecureSsl, (int)SocketInfo[Loop].Sock);
-					if (SSL_connect(SocketInfo[Loop].SecureSsl) <= 0) {
-						SSL_free(SocketInfo[Loop].SecureSsl);
-						SocketInfo[Loop].SecureSsl = NULL;
-						PutLog(LOG_CONNERROR, Id, L"", L"", 0, 0);
-						SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
+
+					SSL_set_mode(SocketInfo[Loop].SecureSsl, SSL_MODE_AUTO_RETRY);
+					BIO* BioSock = BIO_new_socket((int)SocketInfo[Loop].Sock, BIO_NOCLOSE);
+					SSL_set_bio(SocketInfo[Loop].SecureSsl, BioSock, BioSock);
+
+					while (true) {
+						int RetCodeSslConnect = 0;
+						if ((RetCodeSslConnect = SSL_connect(SocketInfo[Loop].SecureSsl)) <= 0) {
+							int ErrCode = SSL_get_error(SocketInfo[Loop].SecureSsl, RetCodeSslConnect);
+							if (ErrCode == SSL_ERROR_WANT_READ || ErrCode == SSL_ERROR_WANT_WRITE) {
+								if (SocketInfo[Loop].ForceStop == true) {
+									break;
+								}
+								continue;
+							}
+							SSL_free(SocketInfo[Loop].SecureSsl);
+							SocketInfo[Loop].SecureSsl = NULL;
+							PutLog(LOG_CONNERROR, Id, L"", L"", 0, 0);
+							SocketInfo[Loop].Status = StkSocketInfo::STATUS_CLOSE;
 #ifdef WIN32
-						closesocket(SocketInfo[Loop].Sock);
+							closesocket(SocketInfo[Loop].Sock);
 #else
-						close(SocketInfo[Loop].Sock);
+							close(SocketInfo[Loop].Sock);
 #endif
-						freeaddrinfo(ResAddr);
-						return -1;
+							freeaddrinfo(ResAddr);
+							return -1;
+						} else {
+							break;
+						}
 					}
 					X509* PeerCert = SSL_get_peer_certificate(SocketInfo[Loop].SecureSsl);
 					if (PeerCert == NULL) {
@@ -602,7 +645,7 @@ int StkSocketMgr::DisconnectSocket(int Id, int LogId, bool WaitForPeerClose)
 				return -1;
 			}
 			if (SocketInfo[Loop].SocketType == StkSocketMgr::SOCKTYPE_STREAM && WaitForPeerClose) {
-				CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
+				CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl, &SocketInfo[Loop].ForceStop);
 				SocketInfo[Loop].SecureSsl = NULL;
 			} else {
 				if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
@@ -790,7 +833,7 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 			// Closure condition of ACCEPT socket. Cond1 || Cond2 || Cond3
 			if (Cond1 || Cond2 || Cond3) {
 				if (WaitForPeerClose) {
-					CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl);
+					CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl, &SocketInfo[Loop].ForceStop);
 					SocketInfo[Loop].SecureSsl = NULL;
 				} else {
 					if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
@@ -837,7 +880,7 @@ int StkSocketMgr::CloseSocket(int TargetId, bool WaitForPeerClose)
 			if (CondC3) {
 				// If the socket information is not copied, closesocket() is called.
 				if (WaitForPeerClose) {
-					CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl);
+					CloseSocketWaitForPeerClose(SocketInfo[Loop].Sock, SocketInfo[Loop].SecureSsl, &SocketInfo[Loop].ForceStop);
 					SocketInfo[Loop].SecureSsl = NULL;
 				} else {
 					if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
@@ -911,16 +954,37 @@ int StkSocketMgr::Accept(int Id)
 #endif
 			if (SocketInfo[Loop].SecureCtx != NULL) {
 				SocketInfo[Loop].SecureSsl = SSL_new(SocketInfo[Loop].SecureCtx);
+
+				u_long val = 1;
+				ioctlsocket(SocketInfo[Loop].AcceptedSock, FIONBIO, &val);
 				SSL_set_fd(SocketInfo[Loop].SecureSsl, (int)SocketInfo[Loop].AcceptedSock);
-				if (SSL_accept(SocketInfo[Loop].SecureSsl) <= 0) {
-					SSL_free(SocketInfo[Loop].SecureSsl);
-					SocketInfo[Loop].SecureSsl = NULL;
+
+				SSL_set_mode(SocketInfo[Loop].SecureSsl, SSL_MODE_AUTO_RETRY);
+				BIO* BioSock = BIO_new_socket((int)SocketInfo[Loop].AcceptedSock, BIO_NOCLOSE);
+				SSL_set_bio(SocketInfo[Loop].SecureSsl, BioSock, BioSock);
+
+				while (true) {
+					int Ret = 0;
+					if ((Ret = SSL_accept(SocketInfo[Loop].SecureSsl)) <= 0) {
+						int ErrCode = SSL_get_error(SocketInfo[Loop].SecureSsl, Ret);
+						if (ErrCode == SSL_ERROR_WANT_READ || ErrCode == SSL_ERROR_WANT_WRITE) {
+							if (SocketInfo[Loop].ForceStop == true) {
+								break;
+							}
+							continue;
+						}
+
+						SSL_free(SocketInfo[Loop].SecureSsl);
+						SocketInfo[Loop].SecureSsl = NULL;
 #ifdef WIN32
-					closesocket(SocketInfo[Loop].AcceptedSock);
+						closesocket(SocketInfo[Loop].AcceptedSock);
 #else
-					close(SocketInfo[Loop].AcceptedSock);
+						close(SocketInfo[Loop].AcceptedSock);
 #endif
-					return -1;
+						return -1;
+					} else {
+						break;
+					}
 				}
 			}
 			SocketInfo[Loop].Status = StkSocketInfo::STATUS_ACCEPT;
@@ -953,7 +1017,7 @@ int StkSocketMgr::CloseAccept(int Id, int LogId, bool WaitForPeerClose)
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
 		if (SocketInfo[Loop].ElementId == Id && SocketInfo[Loop].Status == StkSocketInfo::STATUS_ACCEPT) {
 			if (WaitForPeerClose) {
-				CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl);
+				CloseSocketWaitForPeerClose(SocketInfo[Loop].AcceptedSock, SocketInfo[Loop].SecureSsl, &SocketInfo[Loop].ForceStop);
 				SocketInfo[Loop].SecureSsl = NULL;
 			} else {
 				if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
@@ -1088,11 +1152,20 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 
 			int Ret = 0;
 			if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-				Ret = SSL_read(SocketInfo[Loop].SecureSsl, (char*)Buffer + Offset, FetchSize);
-				if (Ret < 0) {
-					int Err = SSL_get_error(SocketInfo[Loop].SecureSsl, Ret);
-					if (Err == SSL_ERROR_WANT_READ || Err == SSL_ERROR_SYSCALL) {
-						continue;
+				while (true) {
+					Ret = SSL_read(SocketInfo[Loop].SecureSsl, (char*)Buffer + Offset, FetchSize);
+					if (Ret < 0) {
+						int ErrCode = SSL_get_error(SocketInfo[Loop].SecureSsl, Ret);
+						if (ErrCode == SSL_ERROR_WANT_READ || ErrCode == SSL_ERROR_WANT_WRITE) {
+							if (SocketInfo[Loop].ForceStop == true) {
+								break;
+							}
+							continue;
+						} else {
+							break;
+						}
+					} else {
+						break;
 					}
 				}
 			} else {
@@ -1369,7 +1442,18 @@ int StkSocketMgr::Send(int Id, int LogId, const unsigned char* Buffer, int Buffe
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_RECEIVER) {
 			int Ret = 0;
 			if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-				Ret = SSL_write(SocketInfo[Loop].SecureSsl, (char*)Buffer, BufferSize);
+				while (true) {
+					Ret = SSL_write(SocketInfo[Loop].SecureSsl, (char*)Buffer, BufferSize);
+					int ErrCode = SSL_get_error(SocketInfo[Loop].SecureSsl, Ret);
+					if (ErrCode == SSL_ERROR_WANT_READ || ErrCode == SSL_ERROR_WANT_WRITE) {
+						if (SocketInfo[Loop].ForceStop == true) {
+							break;
+						}
+						continue;
+					} else {
+						break;
+					}
+				}
 			} else {
 				Ret = send(SocketInfo[Loop].AcceptedSock, (char*)Buffer, BufferSize, 0);
 			}
@@ -1385,7 +1469,18 @@ int StkSocketMgr::Send(int Id, int LogId, const unsigned char* Buffer, int Buffe
 			SocketInfo[Loop].ActionType == StkSocketMgr::ACTIONTYPE_SENDER) {
 			int Ret = 0;
 			if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
-				Ret = SSL_write(SocketInfo[Loop].SecureSsl, (char*)Buffer, BufferSize);
+				while (true) {
+					Ret = SSL_write(SocketInfo[Loop].SecureSsl, (char*)Buffer, BufferSize);
+					int ErrCode = SSL_get_error(SocketInfo[Loop].SecureSsl, Ret);
+					if (ErrCode == SSL_ERROR_WANT_READ || ErrCode == SSL_ERROR_WANT_WRITE) {
+						if (SocketInfo[Loop].ForceStop == true) {
+							break;
+						}
+						continue;
+					} else {
+						break;
+					}
+				}
 			} else {
 				Ret = send(SocketInfo[Loop].Sock, (char*)Buffer, BufferSize, 0);
 			}

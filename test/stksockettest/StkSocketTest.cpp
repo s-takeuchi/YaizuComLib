@@ -1228,11 +1228,11 @@ void TestThreadProc13()
 		StkPlPrintf("{Re} ");
 	}
 	StkSocket_Send(1, 1, (const unsigned char*)Buf, (int)(StkPlStrLen(Buf) + 1) * sizeof(wchar_t));
-	StkSocket_Disconnect(1, 1, true);
 
 	while (!FinishFlag) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
+	StkSocket_Disconnect(1, 1, true);
 	StkSocket_DeleteInfo(0);
 	StkSocket_DeleteInfo(1);
 	return;

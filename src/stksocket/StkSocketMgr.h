@@ -54,7 +54,7 @@ private:
 	void PutLog(int, int, const wchar_t*, const wchar_t*, int, int);
 
 	// Safe socket close
-	void CloseSocketWaitForPeerClose(STK_SOCKET, SSL*);
+	void CloseSocketWaitForPeerClose(STK_SOCKET, SSL*, bool*);
 
 public:
 	static const int ACTIONTYPE_RECEIVER = 0;
