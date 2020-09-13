@@ -12,6 +12,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <netinet/in.h>
@@ -556,7 +557,11 @@ int StkSocketMgr::ConnectSocket(int Id)
 					SocketInfo[Loop].SecureSsl = SSL_new(SocketInfo[Loop].SecureCtx);
 					
 					u_long val = 1;
+#ifdef WIN32
 					ioctlsocket(SocketInfo[Loop].Sock, FIONBIO, &val);
+#else
+					ioctl(SocketInfo[Loop].Sock, FIONBIO, &val);
+#endif
 					SSL_set_fd(SocketInfo[Loop].SecureSsl, (int)SocketInfo[Loop].Sock);
 
 					SSL_set_mode(SocketInfo[Loop].SecureSsl, SSL_MODE_AUTO_RETRY);
@@ -956,7 +961,12 @@ int StkSocketMgr::Accept(int Id)
 				SocketInfo[Loop].SecureSsl = SSL_new(SocketInfo[Loop].SecureCtx);
 
 				u_long val = 1;
+
+#ifdef WIN32
 				ioctlsocket(SocketInfo[Loop].AcceptedSock, FIONBIO, &val);
+#else
+				ioctl(SocketInfo[Loop].AcceptedSock, FIONBIO, &val);
+#endif
 				SSL_set_fd(SocketInfo[Loop].SecureSsl, (int)SocketInfo[Loop].AcceptedSock);
 
 				SSL_set_mode(SocketInfo[Loop].SecureSsl, SSL_MODE_AUTO_RETRY);
