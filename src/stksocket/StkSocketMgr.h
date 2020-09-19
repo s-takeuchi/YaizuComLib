@@ -84,6 +84,9 @@ public:
 	static const int LOG_UDPSEND          = 1018;
 	static const int LOG_SUCCESSCS        = 1019; // Success Create-Socket
 	static const int LOG_UDPSOCKCLOSE     = 1020;
+	static const int LOG_PRIVATEKEY       = 1021;
+	static const int LOG_SERVERCERT       = 1022;
+	static const int LOG_CACERT           = 1023;
 
 	static const int RECV_FINISHCOND_UNCONDITIONAL =  0;
 	static const int RECV_FINISHCOND_STRING        = -1;

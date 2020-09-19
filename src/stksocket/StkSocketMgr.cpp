@@ -350,6 +350,25 @@ int StkSocketMgr::SecureForRecv(int TargetId, const char* PrivateKey, const char
 			SocketInfo[Loop].SecureCtx = SSL_CTX_new(SSLv23_server_method());
 			SSL_CTX_use_certificate_file(SocketInfo[Loop].SecureCtx, Certificate, SSL_FILETYPE_PEM);
 			SSL_CTX_use_PrivateKey_file(SocketInfo[Loop].SecureCtx, PrivateKey, SSL_FILETYPE_PEM);
+
+			// Check existence of private key file
+			wchar_t WcPrivateKey[FILENAME_MAX] = L"";
+			StkPlConvUtf8ToWideChar(WcPrivateKey, FILENAME_MAX, PrivateKey);
+			if (StkPlGetFileSize(WcPrivateKey) == -1) {
+				PutLog(LOG_PRIVATEKEY, TargetId, WcPrivateKey, L"", 1, 0);
+			} else {
+				PutLog(LOG_PRIVATEKEY, TargetId, WcPrivateKey, L"", 0, 0);
+			}
+
+			// Check existence of server certificate file
+			wchar_t WcServerCert[FILENAME_MAX] = L"";
+			StkPlConvUtf8ToWideChar(WcServerCert, FILENAME_MAX, Certificate);
+			if (StkPlGetFileSize(WcServerCert) == -1) {
+				PutLog(LOG_SERVERCERT, TargetId, WcServerCert, L"", 1, 0);
+			} else {
+				PutLog(LOG_SERVERCERT, TargetId, WcServerCert, L"", 0, 0);
+			}
+
 			return 0;
 		}
 	}
@@ -363,6 +382,16 @@ int StkSocketMgr::SecureForSend(int TargetId, const char* FileName, const char* 
 			SocketInfo[Loop].SecureCtx = SSL_CTX_new(SSLv23_client_method());
 			if (FileName != NULL || Path != NULL) {
 				SSL_CTX_load_verify_locations(SocketInfo[Loop].SecureCtx, FileName, Path);
+			}
+			if (FileName != NULL) {
+				// Check existence of CA certificate file
+				wchar_t WcCACert[FILENAME_MAX] = L"";
+				StkPlConvUtf8ToWideChar(WcCACert, FILENAME_MAX, FileName);
+				if (StkPlGetFileSize(WcCACert) == -1) {
+					PutLog(LOG_CACERT, TargetId, WcCACert, L"", 1, 0);
+				} else {
+					PutLog(LOG_CACERT, TargetId, WcCACert, L"", 0, 0);
+				}
 			}
 			return 0;
 		}

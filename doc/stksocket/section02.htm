@@ -37,6 +37,9 @@ STKSOCKET_LOG_UDPRECV          = 1017 <br/>
 STKSOCKET_LOG_UDPSEND          = 1018 <br/>
 STKSOCKET_LOG_SUCCESSCS        = 1019 <br/>
 STKSOCKET_LOG_UDPSOCKCLOSE     = 1020 <br/>
+STKSOCKET_LOG_PRIVATEKEY       = 1021 <br/>
+STKSOCKET_LOG_SERVERCERT       = 1022 <br/>
+STKSOCKET_LOG_CACERT           = 1023 <br/>
 </div><p>
 
 (2) ログ出力仕様-パラメータ<br>
@@ -63,6 +66,9 @@ STKSOCKET_LOG_UDPSOCKCLOSE     = 1020 <br/>
 <tr><td>STKSOCKET_LOG_UDPSEND</td><td>空文字</td><td>空文字</td><td>送信サイズ</td><td>0</td></tr>
 <tr><td>STKSOCKET_LOG_SUCCESSCS</td><td>ホスト名/IPアドレス</td><td>空文字</td><td>ポート番号</td><td>0</td></tr>
 <tr><td>STKSOCKET_LOG_UDPSOCKCLOSE</td><td>ホスト名/IPアドレス</td><td>空文字</td><td>ポート番号</td><td>0</td></tr>
+<tr><td>STKSOCKET_LOG_PRIVATEKEY</td><td>Private keyファイルへのパス</td><td>空文字</td><td>検証結果(0:成功, 1:対象ファイル存在しない)</td><td>0</td></tr>
+<tr><td>STKSOCKET_LOG_SERVERCERT</td><td>サーバー証明書へのパス</td><td>空文字</td><td>検証結果(0:成功, 1:対象ファイル存在しない)</td><td>0</td></tr>
+<tr><td>STKSOCKET_LOG_CACERT</td><td>CA証明書へのパス</td><td>空文字</td><td>検証結果(0:成功, 1:対象ファイル存在しない)</td><td>0</td></tr>
 </table></div><p>
 
 (3) ログ出力仕様-出力箇所<br>
@@ -90,6 +96,9 @@ STKSOCKET_LOG_UDPSOCKCLOSE     = 1020 <br/>
 <tr><td>STKSOCKET_LOG_UDPSEND</td><td>SendUdp</td></tr>
 <tr><td>STKSOCKET_LOG_SUCCESSCS</td><td>ConnectSocket</td></tr>
 <tr><td>STKSOCKET_LOG_UDPSOCKCLOSE</td><td>DisconnectSocket, CloseSocket</td></tr>
+<tr><td>STKSOCKET_LOG_PRIVATEKEY</td><td>StkSocket_SecureForRecv</td></tr>
+<tr><td>STKSOCKET_LOG_SERVERCERT</td><td>StkSocket_SecureForRecv</td></tr>
+<tr><td>STKSOCKET_LOG_CACERT</td><td>StkSocket_SecureForSend</td></tr>
 </table></div><p>
 
 </div><p>

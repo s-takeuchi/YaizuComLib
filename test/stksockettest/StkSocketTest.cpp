@@ -546,7 +546,30 @@ void TestThreadProc0(bool SslMode)
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	if (SslMode) {
+		StkSocket_SecureForRecv(0, "./error.key", "./error.crt");
+		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		if (Msg != STKSOCKET_LOG_SERVERCERT || ParamInt1 != 1 || StkPlWcsCmp(ParamStr1, L"./error.crt") != 0) {
+			StkPlPrintf("[Recv/Send(SSL/TSL)] : Appropriate string has been received by receiver...NG\n");
+			exit(-1);
+		}
+		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		if (Msg != STKSOCKET_LOG_PRIVATEKEY || ParamInt1 != 1 || StkPlWcsCmp(ParamStr1, L"./error.key") != 0) {
+			StkPlPrintf("[Recv/Send(SSL/TSL)] : Appropriate string has been received by receiver...NG\n");
+			exit(-1);
+		}
+		StkSocket_Unsecure(0);
+
 		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
+		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		if (Msg != STKSOCKET_LOG_SERVERCERT || ParamInt1 != 0 || StkPlWcsCmp(ParamStr1, L"./server.crt") != 0) {
+			StkPlPrintf("[Recv/Send(SSL/TSL)] : Appropriate string has been received by receiver...NG (Server cert does not exist)\n");
+			exit(-1);
+		}
+		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		if (Msg != STKSOCKET_LOG_PRIVATEKEY || ParamInt1 != 0 || StkPlWcsCmp(ParamStr1, L"./server.key") != 0) {
+			StkPlPrintf("[Recv/Send(SSL/TSL)] : Appropriate string has been received by receiver...NG (Private key does not exist)\n");
+			exit(-1);
+		}
 	}
 	StkSocket_Open(0);
 	StartFlag = true;
@@ -639,6 +662,11 @@ void TestThreadProc1(bool SslMode)
 	}
 	if (SslMode) {
 		StkSocket_SecureForSend(1, "./ca.crt", NULL);
+		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
+		if (Msg != STKSOCKET_LOG_CACERT || ParamInt1 != 0 || StkPlWcsCmp(ParamStr1, L"./ca.crt") != 0) {
+			StkPlPrintf("[Recv/Send(SSL/TLS)] : Send data ...NG\n");
+			exit(-1);
+		}
 	}
 	wchar_t Buf[10000];
 	int Ret;
