@@ -311,14 +311,7 @@ int StkSocketMgr::DeleteSocketInfo(int TargetId)
 	CloseSocket(TargetId, true);
 
 	if (SocketInfo[Loop].SecureCtx != NULL) {
-		SSL_CTX* TmpSecureCtx = SocketInfo[Loop].SecureCtx;
-		SSL_CTX_free(SocketInfo[Loop].SecureCtx);
-		SocketInfo[Loop].SecureCtx = NULL;
-		for (int LoopFlush = 0; LoopFlush < NumOfSocketInfo; LoopFlush++) {
-			if (SocketInfo[LoopFlush].SecureCtx == TmpSecureCtx) {
-				SocketInfo[LoopFlush].SecureCtx = NULL;
-			}
-		}
+		Unsecure(TargetId);
 	}
 
 	if (Loop < NumOfSocketInfo - 1) {
@@ -414,12 +407,16 @@ int StkSocketMgr::Unsecure(int TargetId)
 				SocketInfo[Loop].SecureSsl = NULL;
 			}
 			if (SocketInfo[Loop].SecureCtx != NULL) {
-				SSL_CTX* TmpSecureCtx = SocketInfo[Loop].SecureCtx;
-				SSL_CTX_free(SocketInfo[Loop].SecureCtx);
-				SocketInfo[Loop].SecureCtx = NULL;
-				for (int LoopFlush = 0; LoopFlush < NumOfSocketInfo; LoopFlush++) {
-					if (SocketInfo[LoopFlush].SecureCtx == TmpSecureCtx) {
-						SocketInfo[LoopFlush].SecureCtx = NULL;
+				if (SocketInfo[Loop].CopiedSocketFlag) {
+					SocketInfo[Loop].SecureCtx = NULL;
+				} else {
+					SSL_CTX* TmpSecureCtx = SocketInfo[Loop].SecureCtx;
+					SSL_CTX_free(SocketInfo[Loop].SecureCtx);
+					SocketInfo[Loop].SecureCtx = NULL;
+					for (int LoopFlush = 0; LoopFlush < NumOfSocketInfo; LoopFlush++) {
+						if (SocketInfo[LoopFlush].SecureCtx == TmpSecureCtx) {
+							SocketInfo[LoopFlush].SecureCtx = NULL;
+						}
 					}
 				}
 			}

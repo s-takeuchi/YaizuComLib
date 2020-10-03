@@ -57,8 +57,11 @@ STKSOCKET_ACTIONTYPE_SENDER：データ送信用ソケット
 
 <H2 ID="1.2">1.2 StkSocket_DeleteInfo</H2>
 <div class="topic">
-ソケット情報を削除します。<br>
-このAPIはスレッドセーフではありません。StkSocketの他のAPIと同時に呼び出したときの動作は保証されていません。<p>
+<p>
+ソケット情報を削除します。<br/>
+内部的に，StkSocket_CloseおよびStkSocket_Unsecureを呼び出します。<br/>
+このAPIはスレッドセーフではありません。StkSocketの他のAPIと同時に呼び出したときの動作は保証されていません。<br/>
+</p>
 <u>シグネチャ</u>
 <div class="topic">
 int StkSocket_DeleteInfo(int TargetId)
@@ -745,7 +748,11 @@ int StkSocket_SecureForSend(int TargetId, const char* FileName, const char* Path
 
 <H2 ID="1.26">1.26 StkSocket_Unsecure</H2>
 <div class="topic">
-SSL/TLS通信のための設定を解除します。<p>
+<p>
+SSL/TLS通信のための設定を解除します。<br/>
+対象がStkSocket_AddInfoで生成したソケット情報の場合，当該ソケットと関連するStkSocket_CopyInfoで生成した ソケット情報についても，SSL/TLS通信のための設定を解除します。<br/>
+対象がStkSocket_CopyInfoでコピーしたソケット情報の場合，当該ソケットのみ，SSL/TLS通信のための設定を解除します。<br/>
+</p>
 <u>シグネチャ</u>
 <div class="topic">
 int StkSocket_Unsecure(int TargetId)
