@@ -773,6 +773,29 @@ int StkSocket_Unsecure(int TargetId)
 
 
 
+<H2 ID="1.27">1.27 StkSocket_GetSecureStatus</H2>
+<div class="topic">
+<p>
+SSL/TLS通信の状態を返します。<br/>
+</p>
+<u>引数の説明</u>
+<div class="topic">
+<table class="tblstyle">
+<tr><th>引数</th><th>入出力</th><th>説明</th></tr>
+<tr><td>TargetId</td><td>入力</td><td>状態を取得するソケット情報のID</td></tr>
+</table>
+</div><p>
+<u>戻り値</u>
+<div class="topic">
+-1: 指定したソケット情報が見つからない<br/>
+0: SSL/TLS接続が確立されていない<br/>
+1: Contextが設定されているがSSL/TLS接続が確立されていない<br/>
+2: SSL/TLS接続が確立されている<br/>
+</div><p>
+</div><p>
+
+
+
 </div><p>
 
 </BODY>

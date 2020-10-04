@@ -546,7 +546,15 @@ void TestThreadProc0(bool SslMode)
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	StkSocket_AddInfo(1, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"127.0.0.1", 2001);
 	if (SslMode) {
+		if (StkSocket_GetSecureStatus(0) != 0) {
+			StkPlPrintf("[Recv/Send(SSL/TSL)] : Status in correct...NG\n");
+			exit(-1);
+		}
 		StkSocket_SecureForRecv(0, "./error.key", "./error.crt");
+		if (StkSocket_GetSecureStatus(0) != 1) {
+			StkPlPrintf("[Recv/Send(SSL/TSL)] : Status in correct...NG\n");
+			exit(-1);
+		}
 		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);
 		if (Msg != STKSOCKET_LOG_SERVERCERT || ParamInt1 != 1 || StkPlWcsCmp(ParamStr1, L"./error.crt") != 0) {
 			StkPlPrintf("[Recv/Send(SSL/TSL)] : Appropriate string has been received by receiver...NG\n");
@@ -558,6 +566,10 @@ void TestThreadProc0(bool SslMode)
 			exit(-1);
 		}
 		StkSocket_Unsecure(0);
+		if (StkSocket_GetSecureStatus(0) != 0) {
+			StkPlPrintf("[Recv/Send(SSL/TSL)] : Status in correct...NG\n");
+			exit(-1);
+		}
 
 		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
 		StkSocket_TakeLastLog(&Msg, &LogId, ParamStr1, ParamStr2, &ParamInt1, &ParamInt2);

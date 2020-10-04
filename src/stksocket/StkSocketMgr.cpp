@@ -398,6 +398,29 @@ int StkSocketMgr::SecureForSend(int TargetId, const char* FileName, const char* 
 	return -1;
 }
 
+// Get status of secure connection
+// TargetId [in] : Target ID
+// Return : Result code 
+//   -1: Target ID does not exist
+//    0: No secure connection established
+//    1: Context is configured
+//    2: Secure connection established)
+int StkSocketMgr::GetSecureStatus(int TargetId)
+{
+	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
+		if (SocketInfo[Loop].ElementId == TargetId) {
+			if (SocketInfo[Loop].SecureSsl != NULL) {
+				return 2;
+			}
+			if (SocketInfo[Loop].SecureCtx != NULL) {
+				return 1;
+			}
+			return 0;
+		}
+	}
+	return -1;
+}
+
 int StkSocketMgr::Unsecure(int TargetId)
 {
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {

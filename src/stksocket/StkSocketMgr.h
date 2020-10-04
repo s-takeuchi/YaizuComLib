@@ -117,6 +117,7 @@ public:
 	void InitSecureSetting();
 	int SecureForRecv(int, const char*, const char*);
 	int SecureForSend(int, const char*, const char*);
+	int GetSecureStatus(int);
 	int Unsecure(int);
 
 	// Socket open/close
