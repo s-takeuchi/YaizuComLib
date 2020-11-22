@@ -1485,6 +1485,20 @@ int StkSocketMgr::ForceStop(int Id)
 	return -1;
 }
 
+// Clear force stop flag
+// Id [in] : Target ID
+// Return : 0:ID found, -1:ID not found
+int StkSocketMgr::ClearForceStop(int Id)
+{
+	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {
+		if (SocketInfo[Loop].ElementId == Id) {
+			SocketInfo[Loop].ForceStop = false;
+			return 0;
+		}
+	}
+	return -1;
+}
+
 int StkSocketMgr::GetStatus(int TargetId)
 {
 	for (int Loop = 0; Loop < NumOfSocketInfo; Loop++) {

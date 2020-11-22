@@ -110,6 +110,11 @@ int StkSocket_ForceStop(int Id)
 	return StkSocketMgr::GetInstance()->ForceStop(Id);
 }
 
+int StkSocket_ClearForceStop(int Id) {
+	return StkSocketMgr::GetInstance()->ClearForceStop(Id);
+}
+
+
 int StkSocket_GetNumOfStkInfos()
 {
 	return StkSocketMgr::GetInstance()->GetNumOfStkInfos();

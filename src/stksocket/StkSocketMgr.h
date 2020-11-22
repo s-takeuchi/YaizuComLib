@@ -146,7 +146,9 @@ public:
 	// Acquire UDP max message size
 	int GetUdpMaxMessageSize(int);
 
+	// Force stop
 	int ForceStop(int);
+	int ClearForceStop(int);
 
 	// Get number of stkthreads
 	int GetNumOfStkInfos();
