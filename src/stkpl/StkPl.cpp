@@ -252,6 +252,88 @@ wchar_t* StkPlSjisToWideChar(const char* Txt)
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+// APIs for URL encoding / decoding
+
+void DecodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutSize)
+{
+	char* TmpUrlBc = new char[UrlInSize];
+	char* TmpUrlAc = new char[UrlOutSize];
+	StkPlConvWideCharToUtf8(TmpUrlBc, UrlInSize, UrlIn);
+	int TmpUrlBcLen = (int)StkPlStrLen(TmpUrlBc);
+	int AcIndex = 0;
+	for (int BcIndex = 0; BcIndex < TmpUrlBcLen; BcIndex++) {
+		if (TmpUrlBc[BcIndex] == '%' && BcIndex + 2 < TmpUrlBcLen) {
+			char Val = 0;
+			if (TmpUrlBc[BcIndex + 1] >= '0' && TmpUrlBc[BcIndex + 1] <= '9') {
+				Val += (TmpUrlBc[BcIndex + 1] - '0') * 16;
+			}
+			if (TmpUrlBc[BcIndex + 1] >= 'a' && TmpUrlBc[BcIndex + 1] <= 'f') {
+				Val += (TmpUrlBc[BcIndex + 1] - 'a' + 10) * 16;
+			}
+			if (TmpUrlBc[BcIndex + 1] >= 'A' && TmpUrlBc[BcIndex + 1] <= 'F') {
+				Val += (TmpUrlBc[BcIndex + 1] - 'A' + 10) * 16;
+			}
+			if (TmpUrlBc[BcIndex + 2] >= '0' && TmpUrlBc[BcIndex + 2] <= '9') {
+				Val += (TmpUrlBc[BcIndex + 2] - '0');
+			}
+			if (TmpUrlBc[BcIndex + 2] >= 'a' && TmpUrlBc[BcIndex + 2] <= 'f') {
+				Val += (TmpUrlBc[BcIndex + 2] - 'a' + 10);
+			}
+			if (TmpUrlBc[BcIndex + 2] >= 'A' && TmpUrlBc[BcIndex + 2] <= 'F') {
+				Val += (TmpUrlBc[BcIndex + 2] - 'A' + 10);
+			}
+			TmpUrlAc[AcIndex] = Val;
+			BcIndex += 2;
+		} else if (TmpUrlBc[BcIndex] == '+') {
+			TmpUrlAc[AcIndex] = ' ';
+		} else {
+			TmpUrlAc[AcIndex] = TmpUrlBc[BcIndex];
+		}
+		AcIndex++;
+	}
+	TmpUrlAc[AcIndex] = '\0';
+	StkPlConvUtf8ToWideChar(UrlOut, UrlOutSize, TmpUrlAc);
+	delete TmpUrlBc;
+	delete TmpUrlAc;
+	return;
+}
+
+void EncodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutSize)
+{
+	char* TmpUrlBc = new char[UrlInSize];
+	char* TmpUrlAc = new char[UrlOutSize];
+	StkPlConvWideCharToUtf8(TmpUrlBc, UrlInSize, UrlIn);
+	int TmpUrlBcLen = (int)StkPlStrLen(TmpUrlBc);
+	int AcIndex = 0;
+	for (int BcIndex = 0; BcIndex < TmpUrlBcLen; BcIndex++) {
+		if ((TmpUrlBc[BcIndex] >= '0' && TmpUrlBc[BcIndex] <= '9') ||
+			(TmpUrlBc[BcIndex] >= 'a' && TmpUrlBc[BcIndex] <= 'z') ||
+			(TmpUrlBc[BcIndex] >= 'A' && TmpUrlBc[BcIndex] <= 'Z') ||
+			TmpUrlBc[BcIndex] == '-' ||
+			TmpUrlBc[BcIndex] == '_') {
+			TmpUrlAc[AcIndex] = TmpUrlBc[BcIndex];
+			if (AcIndex + 1 >= UrlOutSize) {
+				break;
+			}
+			AcIndex++;
+		} else {
+			if (AcIndex + 3 >= UrlOutSize) {
+				break;
+			}
+			TmpUrlAc[AcIndex] = '%';
+			TmpUrlAc[AcIndex + 1] = TmpUrlBc[BcIndex] / 16;
+			TmpUrlAc[AcIndex + 1] = TmpUrlBc[BcIndex] % 16;
+			AcIndex += 3;
+		}
+	}
+	TmpUrlAc[AcIndex] = '\0';
+	StkPlConvUtf8ToWideChar(UrlOut, UrlOutSize, TmpUrlAc);
+	delete TmpUrlBc;
+	delete TmpUrlAc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 // APIs for UTF conversion
 
 size_t StkPlConvUtf16ToUtf32(char32_t* Utf32, size_t SizeInWord, const char16_t* Utf16)
