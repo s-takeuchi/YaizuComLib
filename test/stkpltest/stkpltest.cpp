@@ -258,9 +258,42 @@ void TestHostName()
 	StkPlPrintf("OK case\n");
 }
 
+void TestUrlEncodeDecode()
+{
+	{
+		StkPlPrintf("Test URL encoding/decoding (1) ... ");
+		wchar_t InDat1[100] = L"abc!def!!ghi!!!jklあいうえおmno";
+		wchar_t OutDat1[100] = L"";
+		wchar_t InDat2[100] = L"";
+		wchar_t OutDat2[100] = L"";
+		EncodeURL(InDat1, 100, OutDat1, 100);
+		DecodeURL(OutDat1, 100, OutDat2, 100);
+		if (StkPlWcsCmp(InDat1, OutDat2) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		StkPlPrintf("OK case\n");
+	}
+	{
+		StkPlPrintf("Test URL encoding/decoding (2) ... ");
+		wchar_t InDat1[100] = L"𠮷野家";
+		wchar_t OutDat1[100] = L"";
+		wchar_t InDat2[100] = L"";
+		wchar_t OutDat2[100] = L"";
+		EncodeURL(InDat1, 10, OutDat1, 31);
+		DecodeURL(OutDat1, 31, OutDat2, 10);
+		if (StkPlWcsCmp(InDat1, OutDat2) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		StkPlPrintf("OK case\n");
+	}
+}
+
 int main(int Argc, char* Argv[])
 {
 	StkPlPrintf("stkpltest started.\n");
+	TestUrlEncodeDecode();
 	Test_Time();
 	{
 		Test_Conv_Utf16_Utf32(u"abcdexyz-0123456789あいうえおかきくけこさしすせそたちつてと", 1);

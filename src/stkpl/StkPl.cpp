@@ -300,9 +300,10 @@ void DecodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutS
 
 void EncodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutSize)
 {
-	char* TmpUrlBc = new char[UrlInSize];
-	char* TmpUrlAc = new char[UrlOutSize];
-	StkPlConvWideCharToUtf8(TmpUrlBc, UrlInSize, UrlIn);
+	char Map[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+	char* TmpUrlBc = new char[UrlInSize * 4];
+	char* TmpUrlAc = new char[UrlOutSize * 3];
+	StkPlConvWideCharToUtf8(TmpUrlBc, UrlInSize * 4, UrlIn);
 	int TmpUrlBcLen = (int)StkPlStrLen(TmpUrlBc);
 	int AcIndex = 0;
 	for (int BcIndex = 0; BcIndex < TmpUrlBcLen; BcIndex++) {
@@ -321,8 +322,8 @@ void EncodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutS
 				break;
 			}
 			TmpUrlAc[AcIndex] = '%';
-			TmpUrlAc[AcIndex + 1] = TmpUrlBc[BcIndex] / 16;
-			TmpUrlAc[AcIndex + 1] = TmpUrlBc[BcIndex] % 16;
+			TmpUrlAc[AcIndex + 1] = Map[(unsigned char)TmpUrlBc[BcIndex] / 16];
+			TmpUrlAc[AcIndex + 2] = Map[(unsigned char)TmpUrlBc[BcIndex] % 16];
 			AcIndex += 3;
 		}
 	}
