@@ -256,8 +256,12 @@ wchar_t* StkPlSjisToWideChar(const char* Txt)
 
 void DecodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutSize)
 {
+	*UrlOut = '\0';
+	if (UrlInSize <= 0 || UrlOutSize <= 0) {
+		return;
+	}
 	char* TmpUrlBc = new char[UrlInSize];
-	char* TmpUrlAc = new char[UrlOutSize];
+	char* TmpUrlAc = new char[UrlInSize];
 	StkPlConvWideCharToUtf8(TmpUrlBc, UrlInSize, UrlIn);
 	int TmpUrlBcLen = (int)StkPlStrLen(TmpUrlBc);
 	int AcIndex = 0;
@@ -284,7 +288,7 @@ void DecodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutS
 			}
 			TmpUrlAc[AcIndex] = Val;
 			BcIndex += 2;
-		} else if (TmpUrlBc[BcIndex] == '+') {
+		} else if (TmpUrlBc[BcIndex] == '+') { // space can be converted to '+'.
 			TmpUrlAc[AcIndex] = ' ';
 		} else {
 			TmpUrlAc[AcIndex] = TmpUrlBc[BcIndex];
@@ -295,15 +299,20 @@ void DecodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutS
 	StkPlConvUtf8ToWideChar(UrlOut, UrlOutSize, TmpUrlAc);
 	delete TmpUrlBc;
 	delete TmpUrlAc;
-	return;
 }
 
 void EncodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutSize)
 {
+	*UrlOut = '\0';
+	if (UrlInSize <= 0 || UrlOutSize <= 0) {
+		return;
+	}
+	wchar_t* WkUrlIn = new wchar_t[UrlInSize];
+	StkPlWcsNCpy(WkUrlIn, UrlInSize, UrlIn, UrlInSize - 1);
 	char Map[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 	char* TmpUrlBc = new char[UrlInSize * 4];
 	char* TmpUrlAc = new char[UrlOutSize * 3];
-	StkPlConvWideCharToUtf8(TmpUrlBc, UrlInSize * 4, UrlIn);
+	StkPlConvWideCharToUtf8(TmpUrlBc, UrlInSize * 4, WkUrlIn);
 	int TmpUrlBcLen = (int)StkPlStrLen(TmpUrlBc);
 	int AcIndex = 0;
 	for (int BcIndex = 0; BcIndex < TmpUrlBcLen; BcIndex++) {
@@ -329,6 +338,7 @@ void EncodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutS
 	}
 	TmpUrlAc[AcIndex] = '\0';
 	StkPlConvUtf8ToWideChar(UrlOut, UrlOutSize, TmpUrlAc);
+	delete WkUrlIn;
 	delete TmpUrlBc;
 	delete TmpUrlAc;
 }

@@ -278,11 +278,59 @@ void TestUrlEncodeDecode()
 		StkPlPrintf("Test URL encoding/decoding (2) ... ");
 		wchar_t InDat1[100] = L"𠮷野家";
 		wchar_t OutDat1[100] = L"";
-		wchar_t InDat2[100] = L"";
 		wchar_t OutDat2[100] = L"";
+
 		EncodeURL(InDat1, 10, OutDat1, 31);
 		DecodeURL(OutDat1, 31, OutDat2, 10);
 		if (StkPlWcsCmp(InDat1, OutDat2) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		EncodeURL(InDat1, 4, OutDat1, 31);
+		DecodeURL(OutDat1, 31, OutDat2, 4);
+		if (StkPlWcsCmp(L"𠮷野", OutDat2) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		EncodeURL(InDat1, 0, OutDat1, 31);
+		DecodeURL(OutDat1, 31, OutDat2, 0);
+		if (*OutDat1 != '\0' || *OutDat2 != '\0') {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		EncodeURL(InDat1, 1, OutDat1, 31);
+		DecodeURL(OutDat1, 31, OutDat2, 1);
+		if (*OutDat1 != '\0' || *OutDat2 != '\0') {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		EncodeURL(InDat1, 10, OutDat1, 13);
+		DecodeURL(OutDat1, 13, OutDat2, 10);
+		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		EncodeURL(InDat1, 10, OutDat1, 14);
+		DecodeURL(OutDat1, 14, OutDat2, 10);
+		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		EncodeURL(InDat1, 10, OutDat1, 15);
+		DecodeURL(OutDat1, 15, OutDat2, 10);
+		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		EncodeURL(InDat1, 10, OutDat1, 16);
+		DecodeURL(OutDat1, 16, OutDat2, 10);
+		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		EncodeURL(InDat1, 10, OutDat1, 0);
+		DecodeURL(OutDat1, 0, OutDat2, 10);
+		if (*OutDat1 != '\0' || *OutDat2 != '\0') {
 			StkPlPrintf("NG case\n");
 			StkPlExit(-1);
 		}
