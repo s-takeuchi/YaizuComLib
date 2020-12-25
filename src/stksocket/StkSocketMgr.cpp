@@ -1308,7 +1308,18 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			if (FinishCondition == RECV_FINISHCOND_CONTENTLENGTH) {
 				// In case 1 chunk reception and new line detection
 				if (Offset >= 2 && Buffer[Offset - 2] == '\r' && Buffer[Offset - 1] == '\n' && (Opt2 & 0b00000001)) {
-					StkPlSScanf((const char*)Buffer, "%x", &ChunkSize);
+					bool HexFlag = true;
+					for (int HexLoop = 0; HexLoop < Offset - 3; HexLoop++) {
+						if ((Buffer[HexLoop] >= '0' && Buffer[HexLoop] <= '9') || (Buffer[HexLoop] >= 'a' && Buffer[HexLoop] <= 'f') || (Buffer[HexLoop] >= 'A' && Buffer[HexLoop] <= 'F')) {
+							// nothing to do
+						} else {
+							HexFlag = false;
+							break;
+						}
+					}
+					if (HexFlag == true) {
+						StkPlSScanf((const char*)Buffer, "%x", &ChunkSize);
+					}
 					if (ChunkSize != 0) {
 						FinishCondition = RECV_FINISHCOND_CHUNK;
 						GetChunkMode = true;
