@@ -283,55 +283,55 @@ void TestUrlEncodeDecode()
 		EncodeURL(InDat1, 10, OutDat1, 31);
 		DecodeURL(OutDat1, 31, OutDat2, 10);
 		if (StkPlWcsCmp(InDat1, OutDat2) != 0) {
-			StkPlPrintf("NG case\n");
+			StkPlPrintf("NG case (1)\n");
 			StkPlExit(-1);
 		}
 		EncodeURL(InDat1, 4, OutDat1, 31);
 		DecodeURL(OutDat1, 31, OutDat2, 4);
 		if (StkPlWcsCmp(L"𠮷野", OutDat2) != 0) {
-			StkPlPrintf("NG case\n");
+			StkPlPrintf("NG case (2)\n");
 			StkPlExit(-1);
 		}
 		EncodeURL(InDat1, 0, OutDat1, 31);
 		DecodeURL(OutDat1, 31, OutDat2, 0);
 		if (*OutDat1 != '\0' || *OutDat2 != '\0') {
-			StkPlPrintf("NG case\n");
+			StkPlPrintf("NG case (3)\n");
 			StkPlExit(-1);
 		}
 		EncodeURL(InDat1, 1, OutDat1, 31);
 		DecodeURL(OutDat1, 31, OutDat2, 1);
 		if (*OutDat1 != '\0' || *OutDat2 != '\0') {
-			StkPlPrintf("NG case\n");
+			StkPlPrintf("NG case (4)\n");
 			StkPlExit(-1);
 		}
 		EncodeURL(InDat1, 10, OutDat1, 13);
 		DecodeURL(OutDat1, 13, OutDat2, 10);
 		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
-			StkPlPrintf("NG case\n");
+			StkPlPrintf("NG case (5)\n");
 			StkPlExit(-1);
 		}
 		EncodeURL(InDat1, 10, OutDat1, 14);
 		DecodeURL(OutDat1, 14, OutDat2, 10);
 		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
-			StkPlPrintf("NG case\n");
+			StkPlPrintf("NG case (6)\n");
 			StkPlExit(-1);
 		}
 		EncodeURL(InDat1, 10, OutDat1, 15);
 		DecodeURL(OutDat1, 15, OutDat2, 10);
 		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
-			StkPlPrintf("NG case\n");
+			StkPlPrintf("NG case (7)\n");
 			StkPlExit(-1);
 		}
 		EncodeURL(InDat1, 10, OutDat1, 16);
 		DecodeURL(OutDat1, 16, OutDat2, 10);
 		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
-			StkPlPrintf("NG case\n");
+			StkPlPrintf("NG case (8)\n");
 			StkPlExit(-1);
 		}
 		EncodeURL(InDat1, 10, OutDat1, 0);
 		DecodeURL(OutDat1, 0, OutDat2, 10);
 		if (*OutDat1 != '\0' || *OutDat2 != '\0') {
-			StkPlPrintf("NG case\n");
+			StkPlPrintf("NG case (9)\n");
 			StkPlExit(-1);
 		}
 		StkPlPrintf("OK case\n");
