@@ -276,55 +276,55 @@ void TestUrlEncodeDecode()
 	}
 	{
 		StkPlPrintf("Test URL encoding/decoding (2) ... ");
-		wchar_t InDat1[100] = L"𠮷野家";
+		wchar_t InDat1[100] = L"松竹梅";
 		wchar_t OutDat1[100] = L"";
 		wchar_t OutDat2[100] = L"";
 
-		EncodeURL(InDat1, 10, OutDat1, 31);
-		DecodeURL(OutDat1, 31, OutDat2, 10);
+		EncodeURL(InDat1, 10, OutDat1, 28);
+		DecodeURL(OutDat1, 28, OutDat2, 10);
 		if (StkPlWcsCmp(InDat1, OutDat2) != 0) {
 			StkPlPrintf("NG case (1)\n");
 			StkPlExit(-1);
 		}
-		EncodeURL(InDat1, 4, OutDat1, 31);
-		DecodeURL(OutDat1, 31, OutDat2, 4);
-		if (StkPlWcsCmp(L"𠮷野", OutDat2) != 0) {
+		EncodeURL(InDat1, 3, OutDat1, 28);
+		DecodeURL(OutDat1, 28, OutDat2, 3);
+		if (StkPlWcsCmp(L"松竹", OutDat2) != 0) {
 			StkPlPrintf("NG case (2)\n");
 			StkPlExit(-1);
 		}
-		EncodeURL(InDat1, 0, OutDat1, 31);
-		DecodeURL(OutDat1, 31, OutDat2, 0);
+		EncodeURL(InDat1, 0, OutDat1, 28);
+		DecodeURL(OutDat1, 28, OutDat2, 0);
 		if (*OutDat1 != '\0' || *OutDat2 != '\0') {
 			StkPlPrintf("NG case (3)\n");
 			StkPlExit(-1);
 		}
-		EncodeURL(InDat1, 1, OutDat1, 31);
-		DecodeURL(OutDat1, 31, OutDat2, 1);
+		EncodeURL(InDat1, 1, OutDat1, 28);
+		DecodeURL(OutDat1, 28, OutDat2, 1);
 		if (*OutDat1 != '\0' || *OutDat2 != '\0') {
 			StkPlPrintf("NG case (4)\n");
 			StkPlExit(-1);
 		}
-		EncodeURL(InDat1, 10, OutDat1, 13);
-		DecodeURL(OutDat1, 13, OutDat2, 10);
-		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
+		EncodeURL(InDat1, 10, OutDat1, 10);
+		DecodeURL(OutDat1, 10, OutDat2, 10);
+		if (StkPlWcsCmp(L"松", OutDat2) != 0) {
 			StkPlPrintf("NG case (5)\n");
 			StkPlExit(-1);
 		}
-		EncodeURL(InDat1, 10, OutDat1, 14);
-		DecodeURL(OutDat1, 14, OutDat2, 10);
-		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
+		EncodeURL(InDat1, 10, OutDat1, 11);
+		DecodeURL(OutDat1, 11, OutDat2, 10);
+		if (StkPlWcsCmp(L"松", OutDat2) != 0) {
 			StkPlPrintf("NG case (6)\n");
 			StkPlExit(-1);
 		}
-		EncodeURL(InDat1, 10, OutDat1, 15);
-		DecodeURL(OutDat1, 15, OutDat2, 10);
-		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
+		EncodeURL(InDat1, 10, OutDat1, 12);
+		DecodeURL(OutDat1, 12, OutDat2, 10);
+		if (StkPlWcsCmp(L"松", OutDat2) != 0) {
 			StkPlPrintf("NG case (7)\n");
 			StkPlExit(-1);
 		}
-		EncodeURL(InDat1, 10, OutDat1, 16);
-		DecodeURL(OutDat1, 16, OutDat2, 10);
-		if (StkPlWcsCmp(L"𠮷", OutDat2) != 0) {
+		EncodeURL(InDat1, 10, OutDat1, 13);
+		DecodeURL(OutDat1, 13, OutDat2, 10);
+		if (StkPlWcsCmp(L"松", OutDat2) != 0) {
 			StkPlPrintf("NG case (8)\n");
 			StkPlExit(-1);
 		}
