@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../stkwebapp\StkWebApp.h"
+
 class UserManagement
 {
 public:
@@ -26,4 +28,7 @@ public:
 	static char* GetMsgSjis(int);
 	static wchar_t* GetMsgJpn(int);
 	static wchar_t* GetMsgEng(int);
+
+	static void RegisterApi(StkWebApp*);
+	static void UnregisterApi(StkWebApp*);
 };

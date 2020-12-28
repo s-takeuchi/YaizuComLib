@@ -1,5 +1,10 @@
 #include "../commonfunc/msgproc.h"
+#include "../stkwebapp\StkWebApp.h"
 #include "UserManagement.h"
+#include "ApiLogging.h"
+#include "ApiGetUser.h"
+#include "ApiPostUser.h"
+#include "ApiDeleteUser.h"
 
 void UserManagement::AddMsg()
 {
@@ -87,4 +92,27 @@ wchar_t* UserManagement::GetMsgJpn(int Id)
 wchar_t* UserManagement::GetMsgEng(int Id)
 {
 	return MessageProc::GetMsgEng(Id);
+}
+
+void UserManagement::RegisterApi(StkWebApp* Swa)
+{
+	ApiLogging* ApiLoggingObj = new ApiLogging();
+	Swa->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/api/logs/", (StkWebAppExec*)ApiLoggingObj);
+
+	ApiGetUser* ApiGetUserObj = new ApiGetUser();
+	Swa->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/api/user$", (StkWebAppExec*)ApiGetUserObj);
+
+	ApiPostUser* ApiPostUserObj = new ApiPostUser();
+	Swa->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, L"/api/user/", (StkWebAppExec*)ApiPostUserObj);
+
+	ApiDeleteUser* ApiDeleteUserObj = new ApiDeleteUser();
+	Swa->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_DELETE, L"/api/user$", (StkWebAppExec*)ApiDeleteUserObj);
+}
+
+void UserManagement::UnregisterApi(StkWebApp* Swa)
+{
+	Swa->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/api/logs/");
+	Swa->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/api/user$");
+	Swa->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, L"/api/user/");
+	Swa->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_DELETE, L"/api/user$");
 }

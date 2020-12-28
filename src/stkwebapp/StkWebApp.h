@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "../stkpl/StkPl.h"
 #include "StkWebAppExec.h"
 
 class StkWebApp

@@ -128,6 +128,7 @@
     <ClCompile Include="ApiBase .cpp" />
     <ClCompile Include="ApiDeleteUser.cpp" />
     <ClCompile Include="ApiGetUser.cpp" />
+    <ClCompile Include="ApiLogging.cpp" />
     <ClCompile Include="ApiPostUser.cpp" />
     <ClCompile Include="DataAccessUm.cpp" />
     <ClCompile Include="UserManagement.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="ApiBase.h" />
     <ClInclude Include="ApiDeleteUser.h" />
     <ClInclude Include="ApiGetUser.h" />
+    <ClInclude Include="ApiLogging.h" />
     <ClInclude Include="ApiPostUser.h" />
     <ClInclude Include="DataAccessUm.h" />
     <ClInclude Include="stkwebapp_um.h" />
