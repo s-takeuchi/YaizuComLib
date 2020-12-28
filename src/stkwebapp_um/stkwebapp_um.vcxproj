@@ -131,6 +131,7 @@
     <ClCompile Include="ApiLogging.cpp" />
     <ClCompile Include="ApiPostUser.cpp" />
     <ClCompile Include="DataAccessUm.cpp" />
+    <ClCompile Include="stkwebapp_um.cpp" />
     <ClCompile Include="UserManagement.cpp" />
   </ItemGroup>
   <ItemGroup>

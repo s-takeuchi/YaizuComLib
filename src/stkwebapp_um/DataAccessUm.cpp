@@ -1,6 +1,6 @@
 ﻿#include "DataAccessUm.h"
 #include "../stkpl/StkPl.h"
-#include "stkwebapp_um.h"
+#include "UserManagement.h"
 #include "../stkdata/stkdata.h"
 #include "../stkdata/stkdataapi.h"
 
@@ -29,7 +29,7 @@ DataAccessUm* DataAccessUm::GetInstance()
 // LogMsgEn [in] : Message in English which you want to insert
 // LogMsgJa [in] : Message in Japanese which you want to insert
 // Return : always zero returned.
-int DataAccessUm::AddLogMsg(wchar_t LogMsgEn[MAXLEN_OF_LOGMSG], wchar_t LogMsgJa[MAXLEN_OF_LOGMSG])
+int DataAccessUm::AddLogMsg(wchar_t LogMsgEn[UserManagement::MAXLEN_OF_LOGMSG], wchar_t LogMsgJa[UserManagement::MAXLEN_OF_LOGMSG])
 {
 	static int MaxLogId = 0;
 	if (MaxLogId == 0) {
@@ -108,9 +108,9 @@ int DataAccessUm::GetNumOfLogs()
 // LogMsgEn [out] : Acquired log message in English
 // LogMsgJa [out] : Acquired log message in Japan
 // Return : Number of acquired log messages
-int DataAccessUm::GetLogs(wchar_t LogMsgTime[MAXNUM_OF_LOGRECORDS][MAXLEN_OF_LOGTIME],
-	wchar_t LogMsgEn[MAXNUM_OF_LOGRECORDS][MAXLEN_OF_LOGMSG],
-	wchar_t LogMsgJa[MAXNUM_OF_LOGRECORDS][MAXLEN_OF_LOGMSG])
+int DataAccessUm::GetLogs(wchar_t LogMsgTime[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGTIME],
+	wchar_t LogMsgEn[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG],
+	wchar_t LogMsgJa[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG])
 {
 	LockTable(L"Log", LOCK_EXCLUSIVE);
 	AzSortRecord(L"Log", L"Id");
@@ -124,19 +124,19 @@ int DataAccessUm::GetLogs(wchar_t LogMsgTime[MAXNUM_OF_LOGRECORDS][MAXLEN_OF_LOG
 		ColumnDataWStr* ColDatMsgEn = (ColumnDataWStr*)CurrRecDat->GetColumn(2);
 		ColumnDataWStr* ColDatMsgJa = (ColumnDataWStr*)CurrRecDat->GetColumn(3);
 		if (ColDatTime != NULL && ColDatTime->GetValue() != NULL) {
-			StkPlWcsCpy(LogMsgTime[NumOfRec], MAXLEN_OF_LOGTIME, ColDatTime->GetValue());
+			StkPlWcsCpy(LogMsgTime[NumOfRec], UserManagement::MAXLEN_OF_LOGTIME, ColDatTime->GetValue());
 		} else {
-			StkPlWcsCpy(LogMsgTime[NumOfRec], MAXLEN_OF_LOGTIME, L"");
+			StkPlWcsCpy(LogMsgTime[NumOfRec], UserManagement::MAXLEN_OF_LOGTIME, L"");
 		}
 		if (ColDatMsgEn != NULL && ColDatMsgEn->GetValue() != NULL) {
-			StkPlWcsCpy(LogMsgEn[NumOfRec], MAXLEN_OF_LOGMSG, ColDatMsgEn->GetValue());
+			StkPlWcsCpy(LogMsgEn[NumOfRec], UserManagement::MAXLEN_OF_LOGMSG, ColDatMsgEn->GetValue());
 		} else {
-			StkPlWcsCpy(LogMsgEn[NumOfRec], MAXLEN_OF_LOGMSG, L"");
+			StkPlWcsCpy(LogMsgEn[NumOfRec], UserManagement::MAXLEN_OF_LOGMSG, L"");
 		}
 		if (ColDatMsgJa != NULL && ColDatMsgJa->GetValue() != NULL) {
-			StkPlWcsCpy(LogMsgJa[NumOfRec], MAXLEN_OF_LOGMSG, ColDatMsgJa->GetValue());
+			StkPlWcsCpy(LogMsgJa[NumOfRec], UserManagement::MAXLEN_OF_LOGMSG, ColDatMsgJa->GetValue());
 		} else {
-			StkPlWcsCpy(LogMsgJa[NumOfRec], MAXLEN_OF_LOGMSG, L"");
+			StkPlWcsCpy(LogMsgJa[NumOfRec], UserManagement::MAXLEN_OF_LOGMSG, L"");
 		}
 		NumOfRec++;
 		CurrRecDat = CurrRecDat->GetNextRecord();
@@ -177,7 +177,7 @@ int DataAccessUm::DeleteOldLogs()
 	return 0;
 }
 
-bool DataAccessUm::GetTargetUserByName(wchar_t Name[MAXLEN_OF_USERNAME], int* Id, wchar_t Password[MAXLEN_OF_PASSWORD], int* Role)
+bool DataAccessUm::GetTargetUserByName(wchar_t Name[UserManagement::MAXLEN_OF_USERNAME], int* Id, wchar_t Password[UserManagement::MAXLEN_OF_PASSWORD], int* Role)
 {
 	ColumnData* ColDat[1];
 	ColDat[0] = new ColumnDataWStr(L"Name", Name);
@@ -192,7 +192,7 @@ bool DataAccessUm::GetTargetUserByName(wchar_t Name[MAXLEN_OF_USERNAME], int* Id
 		ColumnDataInt* ColDatRole = (ColumnDataInt*)RecDatUser->GetColumn(3);
 		if (ColDatId != NULL && ColDatPw != NULL && ColDatRole != NULL) {
 			*Id = ColDatId->GetValue();
-			StkPlWcsCpy(Password, MAXLEN_OF_PASSWORD, ColDatPw->GetValue());
+			StkPlWcsCpy(Password, UserManagement::MAXLEN_OF_PASSWORD, ColDatPw->GetValue());
 			*Role = ColDatRole->GetValue();
 		}
 	} else {
@@ -202,7 +202,7 @@ bool DataAccessUm::GetTargetUserByName(wchar_t Name[MAXLEN_OF_USERNAME], int* Id
 	return true;
 }
 
-bool DataAccessUm::GetTargetUserById(int Id, wchar_t Name[MAXLEN_OF_USERNAME], wchar_t Password[MAXLEN_OF_PASSWORD], int* Role)
+bool DataAccessUm::GetTargetUserById(int Id, wchar_t Name[UserManagement::MAXLEN_OF_USERNAME], wchar_t Password[UserManagement::MAXLEN_OF_PASSWORD], int* Role)
 {
 	ColumnData* ColDat[1];
 	ColDat[0] = new ColumnDataInt(L"Id", Id);
@@ -216,8 +216,8 @@ bool DataAccessUm::GetTargetUserById(int Id, wchar_t Name[MAXLEN_OF_USERNAME], w
 		ColumnDataWStr* ColDatPw = (ColumnDataWStr*)RecDatUser->GetColumn(2);
 		ColumnDataInt* ColDatRole = (ColumnDataInt*)RecDatUser->GetColumn(3);
 		if (ColDatName != NULL && ColDatPw != NULL && ColDatRole != NULL) {
-			StkPlWcsCpy(Name, MAXLEN_OF_USERNAME, ColDatName->GetValue());
-			StkPlWcsCpy(Password, MAXLEN_OF_PASSWORD, ColDatPw->GetValue());
+			StkPlWcsCpy(Name, UserManagement::MAXLEN_OF_USERNAME, ColDatName->GetValue());
+			StkPlWcsCpy(Password, UserManagement::MAXLEN_OF_PASSWORD, ColDatPw->GetValue());
 			*Role = ColDatRole->GetValue();
 		}
 	} else {
@@ -227,10 +227,10 @@ bool DataAccessUm::GetTargetUserById(int Id, wchar_t Name[MAXLEN_OF_USERNAME], w
 	return true;
 }
 
-int DataAccessUm::GetTargetUsers(int Id[MAXNUM_OF_USERRECORDS],
-	wchar_t Name[MAXNUM_OF_USERRECORDS][MAXLEN_OF_USERNAME],
-	wchar_t Password[MAXNUM_OF_USERRECORDS][MAXLEN_OF_PASSWORD],
-	int Role[MAXNUM_OF_USERRECORDS])
+int DataAccessUm::GetTargetUsers(int Id[UserManagement::MAXNUM_OF_USERRECORDS],
+	wchar_t Name[UserManagement::MAXNUM_OF_USERRECORDS][UserManagement::MAXLEN_OF_USERNAME],
+	wchar_t Password[UserManagement::MAXNUM_OF_USERRECORDS][UserManagement::MAXLEN_OF_PASSWORD],
+	int Role[UserManagement::MAXNUM_OF_USERRECORDS])
 {
 	LockTable(L"User", LOCK_SHARE);
 	RecordData* RecDatUser = GetRecord(L"User");
@@ -247,8 +247,8 @@ int DataAccessUm::GetTargetUsers(int Id[MAXNUM_OF_USERRECORDS],
 		ColumnDataInt* ColDatRole = (ColumnDataInt*)CurRecDatUser->GetColumn(3);
 		if (ColDatId != NULL && ColDatName != NULL && ColDatPw != NULL && ColDatRole != NULL) {
 			Id[Loop] = ColDatId->GetValue();
-			StkPlWcsCpy(Name[Loop], MAXLEN_OF_USERNAME, ColDatName->GetValue());
-			StkPlWcsCpy(Password[Loop], MAXLEN_OF_PASSWORD, ColDatPw->GetValue());
+			StkPlWcsCpy(Name[Loop], UserManagement::MAXLEN_OF_USERNAME, ColDatName->GetValue());
+			StkPlWcsCpy(Password[Loop], UserManagement::MAXLEN_OF_PASSWORD, ColDatPw->GetValue());
 			Role[Loop] = ColDatRole->GetValue();
 		}
 		CurRecDatUser = CurRecDatUser->GetNextRecord();
@@ -262,7 +262,7 @@ int DataAccessUm::GetNumberOfUsers()
 	return GetNumOfRecords(L"User");
 }
 
-bool DataAccessUm::AddUser(wchar_t Name[MAXLEN_OF_USERNAME], int Role, wchar_t Password[MAXLEN_OF_PASSWORD])
+bool DataAccessUm::AddUser(wchar_t Name[UserManagement::MAXLEN_OF_USERNAME], int Role, wchar_t Password[UserManagement::MAXLEN_OF_PASSWORD])
 {
 	LockTable(L"User", LOCK_EXCLUSIVE);
 
@@ -294,7 +294,7 @@ bool DataAccessUm::AddUser(wchar_t Name[MAXLEN_OF_USERNAME], int Role, wchar_t P
 	return true;
 }
 
-bool DataAccessUm::UpdateUser(int Id, wchar_t Name[MAXLEN_OF_USERNAME], int Role, wchar_t Password[MAXLEN_OF_PASSWORD])
+bool DataAccessUm::UpdateUser(int Id, wchar_t Name[UserManagement::MAXLEN_OF_USERNAME], int Role, wchar_t Password[UserManagement::MAXLEN_OF_PASSWORD])
 {
 	int ColLen = 0;
 	ColumnData* ColDatUpdUser[4];
@@ -344,10 +344,10 @@ int DataAccessUm::CreateUserTable()
 {
 	// User table
 	ColumnDefInt ColDefUserId(L"Id");
-	ColumnDefWStr ColDefUserName(L"Name", MAXLEN_OF_USERNAME);
-	ColumnDefWStr ColDefUserPassword(L"Password", MAXLEN_OF_PASSWORD);
+	ColumnDefWStr ColDefUserName(L"Name", UserManagement::MAXLEN_OF_USERNAME);
+	ColumnDefWStr ColDefUserPassword(L"Password", UserManagement::MAXLEN_OF_PASSWORD);
 	ColumnDefInt ColDefUserRole(L"Role");
-	TableDef TabDefUser(L"User", MAXNUM_OF_USERRECORDS);
+	TableDef TabDefUser(L"User", UserManagement::MAXNUM_OF_USERRECORDS);
 	TabDefUser.AddColumnDef(&ColDefUserId);
 	TabDefUser.AddColumnDef(&ColDefUserName);
 	TabDefUser.AddColumnDef(&ColDefUserPassword);
@@ -359,10 +359,10 @@ int DataAccessUm::CreateUserTable()
 
 	// Log table
 	ColumnDefInt ColDefLogId(L"Id");
-	ColumnDefWStr ColDefLogTime(L"Time", MAXLEN_OF_LOGTIME);
-	ColumnDefWStr ColDefLogMsgEn(L"MessageEn", MAXLEN_OF_LOGMSG);
-	ColumnDefWStr ColDefLogMsgJa(L"MessageJa", MAXLEN_OF_LOGMSG);
-	TableDef TabDefLog(L"Log", MAXNUM_OF_LOGRECORDS);
+	ColumnDefWStr ColDefLogTime(L"Time", UserManagement::MAXLEN_OF_LOGTIME);
+	ColumnDefWStr ColDefLogMsgEn(L"MessageEn", UserManagement::MAXLEN_OF_LOGMSG);
+	ColumnDefWStr ColDefLogMsgJa(L"MessageJa", UserManagement::MAXLEN_OF_LOGMSG);
+	TableDef TabDefLog(L"Log", UserManagement::MAXNUM_OF_LOGRECORDS);
 	TabDefLog.AddColumnDef(&ColDefLogId);
 	TabDefLog.AddColumnDef(&ColDefLogTime);
 	TabDefLog.AddColumnDef(&ColDefLogMsgEn);

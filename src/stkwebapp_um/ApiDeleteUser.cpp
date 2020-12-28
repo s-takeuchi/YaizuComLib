@@ -2,14 +2,13 @@
 #include "UserManagement.h"
 #include "ApiDeleteUser.h"
 #include "DataAccessUm.h"
-#include "stkwebapp_um.h"
 #include "../commonfunc/StkStringParser.h"
 
 StkObject* ApiDeleteUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, wchar_t Locale[3], wchar_t* Token)
 {
 	StkObject* ResObj = new StkObject(L"");
 
-	wchar_t YourName[MAXLEN_OF_USERNAME] = L"";
+	wchar_t YourName[UserManagement::MAXLEN_OF_USERNAME] = L"";
 	if (!CheckCredentials(Token, YourName)) {
 		AddCodeAndMsg(ResObj, UserManagement::UM_AUTH_ERROR, UserManagement::GetMsgEng(UserManagement::UM_AUTH_ERROR), UserManagement::GetMsgJpn(UserManagement::UM_AUTH_ERROR));
 		*ResultCode = 401;
@@ -34,8 +33,8 @@ StkObject* ApiDeleteUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t Url
 	}
 	int UserId = StkPlWcsToL(UserIdStr);
 
-	wchar_t TmpName[MAXLEN_OF_USERNAME] = L"";
-	wchar_t TmpPassword[MAXLEN_OF_PASSWORD] = L"";
+	wchar_t TmpName[UserManagement::MAXLEN_OF_USERNAME] = L"";
+	wchar_t TmpPassword[UserManagement::MAXLEN_OF_PASSWORD] = L"";
 	int TmpRole = -1;
 	if (DataAccessUm::GetInstance()->GetTargetUserById(UserId, TmpName, TmpPassword, &TmpRole) == false) {
 		AddCodeAndMsg(ResObj, UserManagement::UM_USER_DOES_NOT_EXIST, UserManagement::GetMsgEng(UserManagement::UM_USER_DOES_NOT_EXIST), UserManagement::GetMsgJpn(UserManagement::UM_USER_DOES_NOT_EXIST));

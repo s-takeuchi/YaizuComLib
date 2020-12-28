@@ -2,13 +2,12 @@
 #include "UserManagement.h"
 #include "ApiGetUser.h"
 #include "DataAccessUm.h"
-#include "stkwebapp_um.h"
 
 StkObject* ApiGetUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, wchar_t Locale[3], wchar_t* Token)
 {
 	int UserId = 0;
-	wchar_t UserName[MAXLEN_OF_USERNAME] = L"";
-	wchar_t UserPassword[MAXLEN_OF_PASSWORD] = L"";
+	wchar_t UserName[UserManagement::MAXLEN_OF_USERNAME] = L"";
+	wchar_t UserPassword[UserManagement::MAXLEN_OF_PASSWORD] = L"";
 	int Role = 0;
 	StkObject* TmpObj = new StkObject(L"");
 	if (!CheckCredentials(Token, UserName)) {
@@ -23,10 +22,10 @@ StkObject* ApiGetUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPat
 			*ResultCode = 403;
 			return TmpObj;
 		}
-		int AryUserId[MAXNUM_OF_USERRECORDS];
-		wchar_t AryUserName[MAXNUM_OF_USERRECORDS][MAXLEN_OF_USERNAME];
-		wchar_t AryUserPassword[MAXNUM_OF_USERRECORDS][MAXLEN_OF_PASSWORD];
-		int AryRole[MAXNUM_OF_USERRECORDS];
+		int AryUserId[UserManagement::MAXNUM_OF_USERRECORDS];
+		wchar_t AryUserName[UserManagement::MAXNUM_OF_USERRECORDS][UserManagement::MAXLEN_OF_USERNAME];
+		wchar_t AryUserPassword[UserManagement::MAXNUM_OF_USERRECORDS][UserManagement::MAXLEN_OF_PASSWORD];
+		int AryRole[UserManagement::MAXNUM_OF_USERRECORDS];
 		int Cnt = DataAccessUm::GetInstance()->GetTargetUsers(AryUserId, AryUserName, AryUserPassword, AryRole);
 		StkObject* TmpObjD = new StkObject(L"Data");
 		for (int Loop = 0; Loop < Cnt; Loop++) {

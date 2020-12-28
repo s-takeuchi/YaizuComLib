@@ -1,8 +1,6 @@
+#pragma once
 
-#define MAXLEN_OF_USERNAME 32
-#define MAXLEN_OF_PASSWORD 32
-#define MAXNUM_OF_USERRECORDS 64
+#include "../stkwebapp\StkWebApp.h"
 
-#define MAXLEN_OF_LOGTIME 32
-#define MAXLEN_OF_LOGMSG 100
-#define MAXNUM_OF_LOGRECORDS 111
+void StkWebAppUm_RegisterApi(StkWebApp*);
+void StkWebAppUm_UnregisterApi(StkWebApp*);

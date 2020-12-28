@@ -5,6 +5,14 @@
 class UserManagement
 {
 public:
+
+	static const int UserManagement::MAXLEN_OF_USERNAME = 32;
+	static const int UserManagement::MAXLEN_OF_PASSWORD = 32;
+	static const int UserManagement::MAXNUM_OF_USERRECORDS = 64;
+	static const int UserManagement::MAXLEN_OF_LOGTIME = 32;
+	static const int UserManagement::MAXLEN_OF_LOGMSG = 100;
+	static const int UserManagement::MAXNUM_OF_LOGRECORDS = 111;
+
 	static const int UM_AUTH_ERROR = 2001;
 	static const int UM_ACCESS_RIGHT_ERROR = 2002;
 	static const int UM_USER_DOES_NOT_EXIST = 2003;

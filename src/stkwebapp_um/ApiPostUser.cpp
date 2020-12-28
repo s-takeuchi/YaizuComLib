@@ -2,13 +2,12 @@
 #include "UserManagement.h"
 #include "ApiPostUser.h"
 #include "DataAccessUm.h"
-#include "stkwebapp_um.h"
 
 StkObject* ApiPostUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, wchar_t Locale[3], wchar_t* Token)
 {
 	StkObject* ResObj = new StkObject(L"");
 
-	wchar_t YourName[MAXLEN_OF_USERNAME] = L"";
+	wchar_t YourName[UserManagement::MAXLEN_OF_USERNAME] = L"";
 	if (!CheckCredentials(Token, YourName)) {
 		AddCodeAndMsg(ResObj, UserManagement::UM_AUTH_ERROR, UserManagement::GetMsgEng(UserManagement::UM_AUTH_ERROR), UserManagement::GetMsgJpn(UserManagement::UM_AUTH_ERROR));
 		*ResultCode = 401;
@@ -21,8 +20,8 @@ StkObject* ApiPostUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPa
 		return ResObj;
 	}
 	int Id = -1;
-	wchar_t Name[MAXLEN_OF_USERNAME] = L"";
-	wchar_t Password[MAXLEN_OF_PASSWORD] = L"";
+	wchar_t Name[UserManagement::MAXLEN_OF_USERNAME] = L"";
+	wchar_t Password[UserManagement::MAXLEN_OF_PASSWORD] = L"";
 	int Role = -1;
 	StkObject* CurObj = ReqObj->GetFirstChildElement();
 	if (CurObj == NULL) {
@@ -34,12 +33,12 @@ StkObject* ApiPostUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPa
 		if (StkPlWcsCmp(CurObj->GetName(), L"Id") == 0) {
 			Id = CurObj->GetIntValue();
 		} else if (StkPlWcsCmp(CurObj->GetName(), L"Name") == 0) {
-			if (StkPlWcsLen(CurObj->GetStringValue()) >= MAXLEN_OF_USERNAME) {
+			if (StkPlWcsLen(CurObj->GetStringValue()) >= UserManagement::MAXLEN_OF_USERNAME) {
 				AddCodeAndMsg(ResObj, UserManagement::UM_PARAM_LENGTH_TOO_LONG, UserManagement::GetMsgEng(UserManagement::UM_PARAM_LENGTH_TOO_LONG), UserManagement::GetMsgJpn(UserManagement::UM_PARAM_LENGTH_TOO_LONG));
 				*ResultCode = 400;
 				return ResObj;
 			}
-			StkPlWcsCpy(Name, MAXLEN_OF_USERNAME, CurObj->GetStringValue());
+			StkPlWcsCpy(Name, UserManagement::MAXLEN_OF_USERNAME, CurObj->GetStringValue());
 
 			if (StkPlWcsLen(Name) <= 3) {
 				AddCodeAndMsg(ResObj, UserManagement::UM_INVALID_LEN_OF_USER_NAME, UserManagement::GetMsgEng(UserManagement::UM_INVALID_LEN_OF_USER_NAME), UserManagement::GetMsgJpn(UserManagement::UM_INVALID_LEN_OF_USER_NAME));
@@ -58,12 +57,12 @@ StkObject* ApiPostUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPa
 				PtrName++;
 			}
 		} else if (StkPlWcsCmp(CurObj->GetName(), L"Password") == 0) {
-			if (StkPlWcsLen(CurObj->GetStringValue()) >= MAXLEN_OF_PASSWORD) {
+			if (StkPlWcsLen(CurObj->GetStringValue()) >= UserManagement::MAXLEN_OF_PASSWORD) {
 				AddCodeAndMsg(ResObj, UserManagement::UM_PARAM_LENGTH_TOO_LONG, UserManagement::GetMsgEng(UserManagement::UM_PARAM_LENGTH_TOO_LONG), UserManagement::GetMsgJpn(UserManagement::UM_PARAM_LENGTH_TOO_LONG));
 				*ResultCode = 400;
 				return ResObj;
 			}
-			StkPlWcsCpy(Password, MAXLEN_OF_PASSWORD, CurObj->GetStringValue());
+			StkPlWcsCpy(Password, UserManagement::MAXLEN_OF_PASSWORD, CurObj->GetStringValue());
 
 			if (StkPlWcsLen(Password) <= 3) {
 				AddCodeAndMsg(ResObj, UserManagement::UM_INVALID_LEN_OF_PASSWORD, UserManagement::GetMsgEng(UserManagement::UM_INVALID_LEN_OF_PASSWORD), UserManagement::GetMsgJpn(UserManagement::UM_INVALID_LEN_OF_PASSWORD));
@@ -95,11 +94,11 @@ StkObject* ApiPostUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPa
 	}
 
 	int TmpId = -1;
-	wchar_t TmpName[MAXLEN_OF_USERNAME] = L"";
-	wchar_t TmpPassword[MAXLEN_OF_PASSWORD] = L"";
+	wchar_t TmpName[UserManagement::MAXLEN_OF_USERNAME] = L"";
+	wchar_t TmpPassword[UserManagement::MAXLEN_OF_PASSWORD] = L"";
 	int TmpRole = -1;
 	// In case number of users exceeds the maximum.
-	if (Id == -1 && DataAccessUm::GetInstance()->GetNumberOfUsers() + 1 > MAXNUM_OF_USERRECORDS) {
+	if (Id == -1 && DataAccessUm::GetInstance()->GetNumberOfUsers() + 1 > UserManagement::MAXNUM_OF_USERRECORDS) {
 		AddCodeAndMsg(ResObj, UserManagement::UM_EXCEEDED_MAX_NUM_OF_USER, UserManagement::GetMsgEng(UserManagement::UM_EXCEEDED_MAX_NUM_OF_USER), UserManagement::GetMsgJpn(UserManagement::UM_EXCEEDED_MAX_NUM_OF_USER));
 		*ResultCode = 400;
 		return ResObj;
@@ -157,7 +156,7 @@ StkObject* ApiPostUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPa
 
 	{
 		int RetId = -1;
-		wchar_t RetPassword[MAXLEN_OF_PASSWORD] = L"";
+		wchar_t RetPassword[UserManagement::MAXLEN_OF_PASSWORD] = L"";
 		int RetRole = -1;
 
 		DataAccessUm::GetInstance()->GetTargetUserByName(Name, &RetId, RetPassword, &RetRole);

@@ -55,15 +55,15 @@ bool ApiBase::CheckCredentials(wchar_t* Token, wchar_t* Name)
 		return false;
 	}
 
-	wchar_t TmpName[MAXLEN_OF_USERNAME] = L"";
-	wchar_t TmpPassword[MAXLEN_OF_PASSWORD] = L"";
-	StkStringParser::ParseInto2Params(Token, L"# #", L'#', TmpName, MAXLEN_OF_USERNAME, TmpPassword, MAXLEN_OF_PASSWORD);
+	wchar_t TmpName[UserManagement::MAXLEN_OF_USERNAME] = L"";
+	wchar_t TmpPassword[UserManagement::MAXLEN_OF_PASSWORD] = L"";
+	StkStringParser::ParseInto2Params(Token, L"# #", L'#', TmpName, UserManagement::MAXLEN_OF_USERNAME, TmpPassword, UserManagement::MAXLEN_OF_PASSWORD);
 	if (TmpName == NULL || TmpPassword == NULL || *TmpName == L'\0' || *TmpPassword == L'\0') {
 		return false;
 	}
 
 	int Id = 0;
-	wchar_t Password[MAXLEN_OF_PASSWORD];
+	wchar_t Password[UserManagement::MAXLEN_OF_PASSWORD];
 	int Role = 0;
 	bool Ret = DataAccessUm::GetInstance()->GetTargetUserByName(TmpName, &Id, Password, &Role);
 	if (Ret == false) {
@@ -72,7 +72,7 @@ bool ApiBase::CheckCredentials(wchar_t* Token, wchar_t* Name)
 
 	if (StkPlWcsCmp(TmpPassword, Password) == 0) {
 		if (Name != NULL) {
-			StkPlWcsCpy(Name, MAXLEN_OF_USERNAME, TmpName);
+			StkPlWcsCpy(Name, UserManagement::MAXLEN_OF_USERNAME, TmpName);
 		}
 		return true;
 	} else {
@@ -83,8 +83,8 @@ bool ApiBase::CheckCredentials(wchar_t* Token, wchar_t* Name)
 bool ApiBase::IsAdminUser(wchar_t* Token)
 {
 	int UserId = 0;
-	wchar_t UserName[MAXLEN_OF_USERNAME] = L"";
-	wchar_t UserPassword[MAXLEN_OF_PASSWORD] = L"";
+	wchar_t UserName[UserManagement::MAXLEN_OF_USERNAME] = L"";
+	wchar_t UserPassword[UserManagement::MAXLEN_OF_PASSWORD] = L"";
 	int Role = 0;
 	if (!CheckCredentials(Token, UserName)) {
 		return false;
