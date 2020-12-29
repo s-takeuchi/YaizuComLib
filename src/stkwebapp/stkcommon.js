@@ -8,6 +8,36 @@ var responseData = {};
 
 ////////////////////////////////////////
 //
+//  Functions for general purpose
+//
+////////////////////////////////////////
+{
+    function getArray(targetObject) {
+        if (targetObject === undefined) {
+            return null;
+        }
+        var targetArray = [];
+        if (targetObject instanceof Array) {
+            return targetObject;
+        } else {
+            targetArray.push(targetObject);
+            return targetArray;
+        }
+    }
+
+    function escapeString(tmpStr) {
+        var csReplaced = tmpStr;
+        csReplaced = csReplaced.replace(/&/g, "&amp;");
+        csReplaced = csReplaced.replace(/</g, "&lt;");
+        csReplaced = csReplaced.replace(/>/g, "&gt;");
+        csReplaced = csReplaced.replace(/\"/g, "&quot;");
+        csReplaced = csReplaced.replace(/\'/g, "&#39;");
+        return csReplaced;
+    }
+}
+
+////////////////////////////////////////
+//
 //  Functions for label and message
 //
 ////////////////////////////////////////
@@ -15,6 +45,15 @@ var responseData = {};
     // Client messages
     let clientMsg = {};
     let clientLanguage = 0;
+
+    addClientMessage('STKCOMMON_INPUT_UNAME_AND_PW', {'en':'<p>Input user name and password.</p>', 'ja':'<p>ユーザー名とパスワードを入力してください。</p>'});
+    addClientMessage('STKCOMMON_USERNAME', {'en':'User name', 'ja':'ユーザー名'});
+    addClientMessage('STKCOMMON_PASSWORD', {'en':'Password', 'ja':'パスワード'});
+    addClientMessage('STKCOMMON_INCORRECT_UNPW', {'en':'<p>The user name or password is incorrect.</p>', 'ja':'<p>ユーザー名またはパスワードが不正です。</p>'});
+    addClientMessage('STKCOMMON_CONNECTION_ERROR', {'en':'<p>A connection error occurred.</p>', 'ja':'<p>接続エラーが発生しました。</p>'});
+    addClientMessage('STKCOMMON_INVALID_USERNAME', {'en':'<p>The user name is empty or contains fobidden character(s).</p>', 'ja':'<p>ユーザー名が未指定，または禁止文字が使われています。</p>'});
+    addClientMessage('STKCOMMON_INVALID_PASSWORD', {'en':'<p>The passwprd is empty or contains forbidden character(s).</p>', 'ja':'<p>パスワードが未指定，または禁止文字が使われています。</p>'});
+    addClientMessage('STKCOMMON_SERVER_ERROR', {'en':'An error occurred at server side.', 'ja':'サーバ側でエラーが発生しました。'});
 
     function addClientMessage(code, msg) {
         if (msg.en !== undefined && msg.ja !== undefined) {
@@ -50,6 +89,14 @@ var responseData = {};
             return clientMsg[code].ja;
         }
     }
+
+    function getSvrMsg(respDat) {
+        if (getClientLanguage() == 1) {
+            return getClientMessage('STKCOMMON_SERVER_ERROR') + '<br/>' + respDat.MsgJpn;
+        } else {
+            return getClientMessage('STKCOMMON_SERVER_ERROR') + '<br/>' + respDat.MsgEng;
+        }
+    }
 }
 
 ////////////////////////////////////////
@@ -58,14 +105,6 @@ var responseData = {};
 //
 ////////////////////////////////////////
 {
-    addClientMessage('STKCOMMON_INPUT_UNAME_AND_PW', {'en':'<p>Input user name and password.</p>', 'ja':'<p>ユーザー名とパスワードを入力してください。</p>'});
-    addClientMessage('STKCOMMON_USERNAME', {'en':'User name', 'ja':'ユーザー名'});
-    addClientMessage('STKCOMMON_PASSWORD', {'en':'Password', 'ja':'パスワード'});
-    addClientMessage('STKCOMMON_INCORRECT_UNPW', {'en':'<p>The user name or password is incorrect.</p>', 'ja':'<p>ユーザー名またはパスワードが不正です。</p>'});
-    addClientMessage('STKCOMMON_CONNECTION_ERROR', {'en':'<p>A connection error occurred.</p>', 'ja':'<p>接続エラーが発生しました。</p>'});
-    addClientMessage('STKCOMMON_INVALID_USERNAME', {'en':'<p>The user name is empty or contains fobidden character(s).</p>', 'ja':'<p>ユーザー名が未指定，または禁止文字が使われています。</p>'});
-    addClientMessage('STKCOMMON_INVALID_PASSWORD', {'en':'<p>The passwprd is empty or contains forbidden character(s).</p>', 'ja':'<p>パスワードが未指定，または禁止文字が使われています。</p>'});
-
     // For login info
     let initLoginModalFlag = false;
 

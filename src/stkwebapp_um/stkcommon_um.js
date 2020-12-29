@@ -24,39 +24,6 @@ function initClientMessage4Um() {
     addClientMessage('USER_CHG_PW_CONFIRM', {'en':'Confirm New Password', 'ja':'新しいパスワード(確認用)'});
     addClientMessage('USER_PW_WRONG', {'en':'The specified password is not correct.', 'ja':'指定されたパスワードが不正です。'});
     addClientMessage('USER_NEWPW_WRONG', {'en':'The specified "New Password" and "Confirm New Password" are not matched.', 'ja':'"新しいパスワード"と"新しいパスワード(確認用)"が不一致です。'});
-
-    addClientMessage('SERVER_ERROR', {'en':'An error occurred at server side.', 'ja':'サーバ側でエラーが発生しました。'});
-}
-
-function getSvrMsg(respDat) {
-    if (getClientLanguage() == 1) {
-        return getClientMessage('SERVER_ERROR') + '<br/>' + respDat.MsgJpn;
-    } else {
-        return getClientMessage('SERVER_ERROR') + '<br/>' + respDat.MsgEng;
-    }
-}
-
-function getArray(targetObject) {
-    if (targetObject === undefined) {
-        return null;
-    }
-    var targetArray = [];
-    if (targetObject instanceof Array) {
-        return targetObject;
-    } else {
-        targetArray.push(targetObject);
-        return targetArray;
-    }
-}
-
-function escapeString(tmpStr) {
-    var csReplaced = tmpStr;
-    csReplaced = csReplaced.replace(/&/g, "&amp;");
-    csReplaced = csReplaced.replace(/</g, "&lt;");
-    csReplaced = csReplaced.replace(/>/g, "&gt;");
-    csReplaced = csReplaced.replace(/\"/g, "&quot;");
-    csReplaced = csReplaced.replace(/\'/g, "&#39;");
-    return csReplaced;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
