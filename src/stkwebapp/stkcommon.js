@@ -16,7 +16,7 @@ var responseData = {};
         if (targetObject === undefined) {
             return null;
         }
-        var targetArray = [];
+        let targetArray = [];
         if (targetObject instanceof Array) {
             return targetObject;
         } else {
@@ -26,7 +26,7 @@ var responseData = {};
     }
 
     function escapeString(tmpStr) {
-        var csReplaced = tmpStr;
+        let csReplaced = tmpStr;
         csReplaced = csReplaced.replace(/&/g, "&amp;");
         csReplaced = csReplaced.replace(/</g, "&lt;");
         csReplaced = csReplaced.replace(/>/g, "&gt;");
@@ -129,11 +129,11 @@ var responseData = {};
     };
 
     let initLoginModal = function(func) {
-        var loginModal = $('<div id="login_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2005;">');
-        var modalDialog = $('<div class="modal-dialog modal-xl">');
-        var modalContent = $('<div class="modal-content">');
-        var modalHeader = $('<h3 class="modal-header">Login</h3>');
-        var modalBody = $('<div class="modal-body"><div"><div class="form-group"><input type="text" maxlength="31" class="form-control" id="loginId" placeholder="' + getClientMessage('STKCOMMON_USERNAME') + '" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="' + getClientMessage('STKCOMMON_PASSWORD') + '" value="" /></div><div id="login_Modal_Body"></div><button id="loginButton" type="button" class="btn btn-dark">Login</button></div></div>');
+        let loginModal = $('<div id="login_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2005;">');
+        let modalDialog = $('<div class="modal-dialog modal-xl">');
+        let modalContent = $('<div class="modal-content">');
+        let modalHeader = $('<h3 class="modal-header">Login</h3>');
+        let modalBody = $('<div class="modal-body"><div"><div class="form-group"><input type="text" maxlength="31" class="form-control" id="loginId" placeholder="' + getClientMessage('STKCOMMON_USERNAME') + '" value="" /></div><div class="form-group"><input type="password" maxlength="31" class="form-control" id="loginPw" placeholder="' + getClientMessage('STKCOMMON_PASSWORD') + '" value="" /></div><div id="login_Modal_Body"></div><button id="loginButton" type="button" class="btn btn-dark">Login</button></div></div>');
 
         modalContent.append(modalHeader);
         modalContent.append(modalBody);
@@ -167,9 +167,9 @@ var responseData = {};
             initLoginModalFlag = true;
             initLoginModal(func);
         }
-        var myCookies = document.cookie.split(';');
+        let myCookies = document.cookie.split(';');
         myCookies.forEach(function(value) {
-            var content = value.split('=');
+            let content = value.split('=');
             if (content.length == 2 && content[0].trim() === 'loginId') {
                 loginId = window.atob(decodeURIComponent(content[1]));
             }
@@ -225,11 +225,11 @@ var responseData = {};
     let initInputModalFlag = false;
 
     let initInputModal = function() {
-        var inputModal = $('<div id="inputDlgModal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2005;">');
-        var modalDialog = $('<div class="modal-dialog modal-xl">');
-        var modalContent = $('<div class="modal-content">');
-        var modalHeader = $('<h5 class="modal-header" id="inputDlgModalTitle"/>');
-        var modalBody = $('<div class="modal-body" id="inputDlgModalBody"/>');
+        let inputModal = $('<div id="inputDlgModal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2005;">');
+        let modalDialog = $('<div class="modal-dialog modal-xl">');
+        let modalContent = $('<div class="modal-content">');
+        let modalHeader = $('<h5 class="modal-header" id="inputDlgModalTitle"/>');
+        let modalBody = $('<div class="modal-body" id="inputDlgModalBody"/>');
 
         modalContent.append(modalHeader);
         modalContent.append(modalBody);
@@ -262,25 +262,25 @@ var responseData = {};
 ////////////////////////////////////////
 {
     function initMainPage(title, iconname, contents) {
-        var navBarHeader = $('<div class="d-none d-sm-block rscommand"><a class="navbar-brand" href=""><img src="' + iconname + '" width=22 height=22/><small>' + title + '</small></a></div> <div id="rsCommand"/> <div class="d-none d-lg-block" style="width:40px;"/><div class="d-none d-xl-block" style="width:40px;"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
-        var navBarNav = $('<ul class="navbar-nav  mr-auto">');
+        let navBarHeader = $('<div class="d-none d-sm-block rscommand"><a class="navbar-brand" href=""><img src="' + iconname + '" width=22 height=22/><small>' + title + '</small></a></div> <div id="rsCommand"/> <div class="d-none d-lg-block" style="width:40px;"/><div class="d-none d-xl-block" style="width:40px;"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
+        let navBarNav = $('<ul class="navbar-nav  mr-auto">');
         if (contents instanceof Array) {
-            for (var key in contents) {
+            for (let key in contents) {
                 if (contents[key].actApiName != null && contents[key].title != null) {
                     navBarNav.append($('<li class="nav-item" id="menu-' + contents[key].id + '" style="display:none"><a class="nav-link" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"> ' + contents[key].title + '</a></li>'));
                 }
             }
         }
-        var navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item dropdown"><a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">' + getUserName() + '</a><div id="rsUserMenu" class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" onclick="tryLogout()">Logout</a></div></li></u>')
-        var navBarCollapse = $('<div class="collapse navbar-collapse justify-content-start" id="top-nav">');
+        let navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item dropdown"><a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">' + getUserName() + '</a><div id="rsUserMenu" class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" onclick="tryLogout()">Logout</a></div></li></u>')
+        let navBarCollapse = $('<div class="collapse navbar-collapse justify-content-start" id="top-nav">');
         navBarCollapse.append(navBarNav);
         navBarCollapse.append(navBarNavRight);
-        var navBarDefault = $('<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">');
+        let navBarDefault = $('<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">');
         navBarDefault.append(navBarHeader);
         navBarDefault.append(navBarCollapse);
-        var containerFluidWorkSpace = $('<div class="container">');
+        let containerFluidWorkSpace = $('<div class="container">');
         if (contents instanceof Array) {
-            for (var key in contents) {
+            for (let key in contents) {
                 containerFluidWorkSpace.append('<div><div id="' + contents[key].id + '" class="row col-xs-12" style="display:none"></div></div>');
             }
         }
@@ -291,7 +291,7 @@ var responseData = {};
     function addRsUserMenu(contents)
     {
         if (contents instanceof Array) {
-            for (var key in contents) {
+            for (let key in contents) {
                 if (contents[key].actApiName != null && contents[key].title != null) {
                     $('#rsUserMenu').prepend($('<a class="dropdown-item" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')">' + contents[key].title + '</a>'));
                 }
@@ -376,11 +376,11 @@ var responseData = {};
     let authToken = "";
 
     let initLoadingModal = function() {
-        var loadingModal = $('<div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2010;">');
-        var modalDialog = $('<div class="modal-dialog modal-xl">');
-        var modalContent = $('<div class="modal-content">');
-        var modalHeader = $('<h5 class="modal-header">Now loading ...</h5>');
-        var modalBody = $('<div class="modal-body"><div style="height:20px"><div class="progress"><div class="progress-bar bg-primary progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%"> </div></div></div></div>');
+        let loadingModal = $('<div id="loading_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 2010;">');
+        let modalDialog = $('<div class="modal-dialog modal-xl">');
+        let modalContent = $('<div class="modal-content">');
+        let modalHeader = $('<h5 class="modal-header">Now loading ...</h5>');
+        let modalBody = $('<div class="modal-body"><div style="height:20px"><div class="progress"><div class="progress-bar bg-primary progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%"> </div></div></div></div>');
 
         modalContent.append(modalHeader);
         modalContent.append(modalBody);
@@ -503,7 +503,7 @@ var responseData = {};
     }
 
     function MultiApiCall(contents, targetFunc) {
-        for (var key in contents) {
+        for (let key in contents) {
             if (contents[key].method != null && contents[key].url != null && contents[key].keystring !== '') {
                 sendRequestRecvResponse(contents[key].method, contents[key].url, contents[key].request, contents[key].keystring, true);
             }
