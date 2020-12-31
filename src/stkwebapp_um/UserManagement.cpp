@@ -5,71 +5,76 @@
 #include "ApiGetUser.h"
 #include "ApiPostUser.h"
 #include "ApiDeleteUser.h"
+#include "ApiGetLanguage.h"
 
 void UserManagement::AddMsg()
 {
-	//(š)
-	MessageProc::AddJpn(UM_AUTH_ERROR, L"”FØƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B");
+	//(â˜…)
+	MessageProc::AddJpn(UM_AUTH_ERROR, L"èªè¨¼ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚");
 	MessageProc::AddEng(UM_AUTH_ERROR, L"Authentication error occurred.");
 
-	//(š)
-	MessageProc::AddJpn(UM_ACCESS_RIGHT_ERROR, L"ƒAƒNƒZƒXŒ ŒÀƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B");
+	//(â˜…)
+	MessageProc::AddJpn(UM_ACCESS_RIGHT_ERROR, L"ã‚¢ã‚¯ã‚»ã‚¹æ¨©é™ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚");
 	MessageProc::AddEng(UM_ACCESS_RIGHT_ERROR, L"Access right error occurred.");
 
-	//(š)
-	MessageProc::AddJpn(UM_USER_DOES_NOT_EXIST, L"Žw’è‚µ‚½ƒ†[ƒU[‚Í‘¶Ý‚µ‚Ü‚¹‚ñB");
+	//(â˜…)
+	MessageProc::AddJpn(UM_USER_DOES_NOT_EXIST, L"æŒ‡å®šã—ãŸãƒ¦ãƒ¼ã‚¶ãƒ¼ã¯å­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 	MessageProc::AddEng(UM_USER_DOES_NOT_EXIST, L"The specified user does not exist.");
 
-	//(š)
-	MessageProc::AddJpn(UM_CANNOT_MODIFY_YOUR_INFO, L"Ž©•ªŽ©g‚Ìƒ†[ƒU[î•ñ‚ð•ÏX‚·‚é‚±‚Æ‚Í‚Å‚«‚Ü‚¹‚ñB");
+	//(â˜…)
+	MessageProc::AddJpn(UM_CANNOT_MODIFY_YOUR_INFO, L"è‡ªåˆ†è‡ªèº«ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã‚’å¤‰æ›´ã™ã‚‹ã“ã¨ã¯ã§ãã¾ã›ã‚“ã€‚");
 	MessageProc::AddEng(UM_CANNOT_MODIFY_YOUR_INFO, L"You cannot modify user information yourself.");
 
-	//(š)
-	MessageProc::AddJpn(UM_REQ_NOT_SUFFICIENT, L"•K—v‚Èƒpƒ‰ƒ[ƒ^‚ªƒŠƒNƒGƒXƒg‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+	//(â˜…)
+	MessageProc::AddJpn(UM_REQ_NOT_SUFFICIENT, L"å¿…è¦ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãŒãƒªã‚¯ã‚¨ã‚¹ãƒˆã«å«ã¾ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
 	MessageProc::AddEng(UM_REQ_NOT_SUFFICIENT, L"The necessary parameter(s) is/are not contained in the request.");
 
-	//(š)
-	MessageProc::AddJpn(UM_PARAM_LENGTH_TOO_LONG, L"Žw’è‚³‚ê‚½ƒpƒ‰ƒ[ƒ^‚ÍCŽw’è‰Â”\‚È’·‚³‚ÌÅ‘å‚ð’´‚¦‚Ä‚¢‚Ü‚·B");
+	//(â˜…)
+	MessageProc::AddJpn(UM_PARAM_LENGTH_TOO_LONG, L"æŒ‡å®šã•ã‚ŒãŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã¯ï¼ŒæŒ‡å®šå¯èƒ½ãªé•·ã•ã®æœ€å¤§ã‚’è¶…ãˆã¦ã„ã¾ã™ã€‚");
 	MessageProc::AddEng(UM_PARAM_LENGTH_TOO_LONG, L"The specified parameter exceeds the maximum length.");
 
-	//(š)
-	MessageProc::AddJpn(UM_INVALID_LEN_OF_USER_NAME, L"ƒ†[ƒU[–¼‚Í4•¶ŽšˆÈã‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·B");
+	//(â˜…)
+	MessageProc::AddJpn(UM_INVALID_LEN_OF_USER_NAME, L"ãƒ¦ãƒ¼ã‚¶ãƒ¼åã¯4æ–‡å­—ä»¥ä¸Šã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚");
 	MessageProc::AddEng(UM_INVALID_LEN_OF_USER_NAME, L"The user name needs to contain at least 4 characters.");
 
-	//(š)
-	MessageProc::AddJpn(UM_INVALID_LEN_OF_PASSWORD, L"ƒpƒXƒ[ƒh‚Í4•¶ŽšˆÈã‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·B");
+	//(â˜…)
+	MessageProc::AddJpn(UM_INVALID_LEN_OF_PASSWORD, L"ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯4æ–‡å­—ä»¥ä¸Šã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚");
 	MessageProc::AddEng(UM_INVALID_LEN_OF_PASSWORD, L"The password needs to contain at least 4 characters.");
 
-	//(š)
-	MessageProc::AddJpn(UM_INVALID_USER_NAME, L"Žw’è‚³‚ê‚½ƒ†[ƒU[–¼‚ÉŽg—p‹ÖŽ~•¶Žš‚ªŠÜ‚Ü‚ê‚Ä‚¢‚Ü‚·B");
+	//(â˜…)
+	MessageProc::AddJpn(UM_INVALID_USER_NAME, L"æŒ‡å®šã•ã‚ŒãŸãƒ¦ãƒ¼ã‚¶ãƒ¼åã«ä½¿ç”¨ç¦æ­¢æ–‡å­—ãŒå«ã¾ã‚Œã¦ã„ã¾ã™ã€‚");
 	MessageProc::AddEng(UM_INVALID_USER_NAME, L"The specified user name contains prohibited character(s).");
 
-	//(š)
-	MessageProc::AddJpn(UM_INVALID_PASSWORD, L"Žw’è‚³‚ê‚½ƒpƒXƒ[ƒh‚ÉŽg—p‹ÖŽ~•¶Žš‚ªŠÜ‚Ü‚ê‚Ä‚¢‚Ü‚·B");
+	//(â˜…)
+	MessageProc::AddJpn(UM_INVALID_PASSWORD, L"æŒ‡å®šã•ã‚ŒãŸãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã«ä½¿ç”¨ç¦æ­¢æ–‡å­—ãŒå«ã¾ã‚Œã¦ã„ã¾ã™ã€‚");
 	MessageProc::AddEng(UM_INVALID_PASSWORD, L"The specified password contains prohibited character(s).");
 
-	//(š)
-	MessageProc::AddJpn(UM_EXCEEDED_MAX_NUM_OF_USER, L"“o˜^‰Â”\‚Èƒ†[ƒU[‚ÌÅ‘å”‚ð’´‚¦‚Ü‚µ‚½B");
+	//(â˜…)
+	MessageProc::AddJpn(UM_EXCEEDED_MAX_NUM_OF_USER, L"ç™»éŒ²å¯èƒ½ãªãƒ¦ãƒ¼ã‚¶ãƒ¼ã®æœ€å¤§æ•°ã‚’è¶…ãˆã¾ã—ãŸã€‚");
 	MessageProc::AddEng(UM_EXCEEDED_MAX_NUM_OF_USER, L"The number of users has been exceeded the maximum.");
 
-	//(š)
-	MessageProc::AddJpn(UM_SAME_USER_NAME_EXIST, L"‚·‚Å‚É“¯–¼‚Ìƒ†[ƒU[‚ª‘¶Ý‚·‚é‚½‚ßCƒ†[ƒU[î•ñ‚ð’Ç‰Á‚Ü‚½‚Í•ÏX‚Å‚«‚Ü‚¹‚ñB");
+	//(â˜…)
+	MessageProc::AddJpn(UM_SAME_USER_NAME_EXIST, L"ã™ã§ã«åŒåã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒå­˜åœ¨ã™ã‚‹ãŸã‚ï¼Œãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã‚’è¿½åŠ ã¾ãŸã¯å¤‰æ›´ã§ãã¾ã›ã‚“ã€‚");
 	MessageProc::AddEng(UM_SAME_USER_NAME_EXIST, L"You cannot add / modify user information because the user who has the same name you specified exists.");
 
-	//(š)
-	MessageProc::AddJpn(UM_PASSWORD_REQUIRED_FOR_ADD, L"ƒ†[ƒU[‚ð’Ç‰Á‚·‚éê‡CƒpƒXƒ[ƒh‚ðŽw’è‚·‚é•K—v‚ª‚ ‚è‚Ü‚·B");
+	//(â˜…)
+	MessageProc::AddJpn(UM_PASSWORD_REQUIRED_FOR_ADD, L"ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚’è¿½åŠ ã™ã‚‹å ´åˆï¼Œãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’æŒ‡å®šã™ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚");
 	MessageProc::AddEng(UM_PASSWORD_REQUIRED_FOR_ADD, L"In case user addition, a password needs to be specified.");
 
-	//(š)
-	MessageProc::AddJpn(UM_USER_ADD, L"V‹K‚Éƒ†[ƒU[‚ð’Ç‰Á‚µ‚Ü‚µ‚½B [%ls]");
+	//(â˜…)
+	MessageProc::AddJpn(UM_NO_CLIENTLOCALE, L"ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã®ãƒ­ã‚±ãƒ¼ãƒ«ã‚’æ¤œçŸ¥ã§ãã¾ã›ã‚“ã€‚");
+	MessageProc::AddEng(UM_NO_CLIENTLOCALE, L"Client locale cannot be detected.");
+
+	//(â˜…)
+	MessageProc::AddJpn(UM_USER_ADD, L"æ–°è¦ã«ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚’è¿½åŠ ã—ã¾ã—ãŸã€‚ [%ls]");
 	MessageProc::AddEng(UM_USER_ADD, L"New user has been added. [%ls]");
 
-	//(š)
-	MessageProc::AddJpn(UM_USER_DELETE, L"ƒ†[ƒU[‚ðíœ‚µ‚Ü‚µ‚½B [%ls]");
+	//(â˜…)
+	MessageProc::AddJpn(UM_USER_DELETE, L"ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚’å‰Šé™¤ã—ã¾ã—ãŸã€‚ [%ls]");
 	MessageProc::AddEng(UM_USER_DELETE, L"A user has been deleted. [%ls]");
 
-	//(š)
-	MessageProc::AddJpn(UM_USER_EDIT, L"ƒ†[ƒU[î•ñ‚ð•ÏX‚µ‚Ü‚µ‚½B [%ls]");
+	//(â˜…)
+	MessageProc::AddJpn(UM_USER_EDIT, L"ãƒ¦ãƒ¼ã‚¶ãƒ¼æƒ…å ±ã‚’å¤‰æ›´ã—ã¾ã—ãŸã€‚ [%ls]");
 	MessageProc::AddEng(UM_USER_EDIT, L"A user information has been modified. [%ls]");
 
 }
@@ -107,6 +112,9 @@ void UserManagement::RegisterApi(StkWebApp* Swa)
 
 	ApiDeleteUser* ApiDeleteUserObj = new ApiDeleteUser();
 	Swa->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_DELETE, L"/api/user$", (StkWebAppExec*)ApiDeleteUserObj);
+
+	ApiGetLanguage* ApiGetLanguageObj = new ApiGetLanguage();
+	Swa->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/api/language/", (StkWebAppExec*)ApiGetLanguageObj);
 }
 
 void UserManagement::UnregisterApi(StkWebApp* Swa)
@@ -115,4 +123,5 @@ void UserManagement::UnregisterApi(StkWebApp* Swa)
 	Swa->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/api/user$");
 	Swa->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, L"/api/user/");
 	Swa->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_DELETE, L"/api/user$");
+	Swa->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/api/language/");
 }

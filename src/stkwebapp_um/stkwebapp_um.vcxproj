@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClCompile Include="ApiBase .cpp" />
     <ClCompile Include="ApiDeleteUser.cpp" />
+    <ClCompile Include="ApiGetLanguage.cpp" />
     <ClCompile Include="ApiGetUser.cpp" />
     <ClCompile Include="ApiLogging.cpp" />
     <ClCompile Include="ApiPostUser.cpp" />
@@ -137,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="ApiBase.h" />
     <ClInclude Include="ApiDeleteUser.h" />
+    <ClInclude Include="ApiGetLanguage.h" />
     <ClInclude Include="ApiGetUser.h" />
     <ClInclude Include="ApiLogging.h" />
     <ClInclude Include="ApiPostUser.h" />

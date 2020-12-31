@@ -26,6 +26,7 @@ public:
 	static const int UM_EXCEEDED_MAX_NUM_OF_USER = 2011;
 	static const int UM_SAME_USER_NAME_EXIST = 2012;
 	static const int UM_PASSWORD_REQUIRED_FOR_ADD = 2013;
+	static const int UM_NO_CLIENTLOCALE = 2014;
 
 	static const int UM_USER_ADD = 2301;
 	static const int UM_USER_DELETE = 2302;
