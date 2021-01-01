@@ -1,4 +1,4 @@
-﻿#include "..\..\..\YaizuComLib\src\stkpl\StkPl.h"
+﻿#include "../stkpl/StkPl.h"
 #include "UserManagement.h"
 #include "ApiGetLanguage.h"
 
