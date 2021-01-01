@@ -125,7 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ApiBase .cpp" />
+    <ClCompile Include="ApiBase.cpp" />
     <ClCompile Include="ApiDeleteUser.cpp" />
     <ClCompile Include="ApiGetLanguage.cpp" />
     <ClCompile Include="ApiGetUser.cpp" />

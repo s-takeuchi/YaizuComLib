@@ -1,5 +1,5 @@
-﻿stkwebapp.a : ApiBase.o ApiGetUser.o ApiPostUser.o ApiDeleteUser.o ApiGetLanguage.o ApiLogging.o DataAccessUm.o UserManagement.o stkwebapp_um.o
-	ar r stkwebapp_ui.a ApiBase.o ApiGetUser.o ApiPostUser.o ApiDeleteUser.o ApiGetLanguage.o ApiLogging.o DataAccessUm.o UserManagement.o stkwebapp_um.o
+﻿stkwebapp_um.a : ApiBase.o ApiGetUser.o ApiPostUser.o ApiDeleteUser.o ApiGetLanguage.o ApiLogging.o DataAccessUm.o UserManagement.o stkwebapp_um.o
+	ar r stkwebapp_um.a ApiBase.o ApiGetUser.o ApiPostUser.o ApiDeleteUser.o ApiGetLanguage.o ApiLogging.o DataAccessUm.o UserManagement.o stkwebapp_um.o
 
 ApiBase.o : ApiBase.cpp
 	g++ -c ApiBase.cpp -std=c++1z
@@ -31,4 +31,4 @@ stkwebapp_um.o : stkwebapp_um.cpp
 clean :
 	rm -f *.o *.a
 
-all : clean stkwebapp.a
+all : clean stkwebapp_um.a
