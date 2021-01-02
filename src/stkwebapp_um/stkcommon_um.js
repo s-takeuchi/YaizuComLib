@@ -18,6 +18,15 @@
     addClientMessage('STKCOMMONUG_USER_CHG_PW_CONFIRM', {'en':'Confirm New Password', 'ja':'新しいパスワード(確認用)'});
     addClientMessage('STKCOMMONUG_USER_PW_WRONG', {'en':'The specified password is not correct.', 'ja':'指定されたパスワードが不正です。'});
     addClientMessage('STKCOMMONUG_USER_NEWPW_WRONG', {'en':'The specified "New Password" and "Confirm New Password" are not matched.', 'ja':'"新しいパスワード"と"新しいパスワード(確認用)"が不一致です。'});
+
+    addClientMessage('STKCOMMONUG_CONNERR', {
+        'en':'Connection with REST API service failed. This may be caused by one of the following issues:<br>(1) REST API service cannot be started.<br>(2) REST API service is not registered as a firewall exception.<br>(3) The host name and/or port number you specified are/is invalid.<br>(4) A timeout has occurred when waiting for data from REST API server.<br>',
+        'ja':'REST APIサービスとの通信が失敗しました。次の要因が考えられます。<br>(1) REST APIサービスが開始されていない。<br>(2) REST APIサービスがファイアウォールに例外登録されていない。<br>(3) 指定した接続先ホスト名およびポート番号が不正。<br>(4) REST APIサーバからのデータ取得中にタイムアウトが発生した。<br>'
+    });
+    addClientMessage('STKCOMMONUG_DLG_CLOSE', {'en':'Close', 'ja':'閉じる'});
+    addClientMessage('STKCOMMONUG_COMADD', {'en':'Add', 'ja':'追加'});
+    addClientMessage('STKCOMMONUG_COMUPDATE', {'en':'Update', 'ja':'更新'});
+    addClientMessage('STKCOMMONUG_COMDELETE', {'en':'Delete', 'ja':'削除'});
 }
 
 {
@@ -43,12 +52,12 @@
         showInputModal(getClientMessage('STKCOMMONUG_USERMGMT'), userMgmt);
 
         if (statusCode['API_GET_USERS'] == -1 || statusCode['API_GET_USERS'] == 0) {
-            displayAlertDanger('#usermgmt', getClientMessage('CONNERR'));
-            $('#usermgmt').append('<p><button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('DLG_CLOSE') + '</button></p>');
+            displayAlertDanger('#usermgmt', getClientMessage('STKCOMMONUG_CONNERR'));
+            $('#usermgmt').append('<p><button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('STKCOMMONUG_DLG_CLOSE') + '</button></p>');
             return;
         } else if (statusCode['API_GET_USERS'] != 200) {
             displayAlertDanger('#usermgmt', getSvrMsg(responseData['API_GET_USERS']));
-            $('#usermgmt').append('<p><button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('DLG_CLOSE') + '</button></p>');
+            $('#usermgmt').append('<p><button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('STKCOMMONUG_DLG_CLOSE') + '</button></p>');
             return;
         }
         let userList = getArray(responseData['API_GET_USERS'].Data.User);
@@ -94,10 +103,10 @@
         } else {
             displayAlertDanger('#usermgt_msg', getSvrMsg(responseData['API_OPE_USER']));
         }
-        $('#usermgmt').append('<button type="button" id="userBtnAdd" class="btn btn-dark" onclick="updateUser(false)">' + getClientMessage('COMADD') + '</button> ');
-        $('#usermgmt').append('<button type="button" id="userBtnUpdate" class="btn btn-dark disabled">' + getClientMessage('COMUPDATE') + '</button> ');
-        $('#usermgmt').append('<button type="button" id="userBtnDelete" class="btn btn-dark disabled">' + getClientMessage('COMDELETE') + '</button> ');
-        $('#usermgmt').append('<button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('DLG_CLOSE') + '</button>');
+        $('#usermgmt').append('<button type="button" id="userBtnAdd" class="btn btn-dark" onclick="updateUser(false)">' + getClientMessage('STKCOMMONUG_COMADD') + '</button> ');
+        $('#usermgmt').append('<button type="button" id="userBtnUpdate" class="btn btn-dark disabled">' + getClientMessage('STKCOMMONUG_COMUPDATE') + '</button> ');
+        $('#usermgmt').append('<button type="button" id="userBtnDelete" class="btn btn-dark disabled">' + getClientMessage('STKCOMMONUG_COMDELETE') + '</button> ');
+        $('#usermgmt').append('<button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('STKCOMMONUG_DLG_CLOSE') + '</button>');
         $('#usermgmt').append('<p></p>');
         $('td').css('vertical-align', 'middle');
     }
@@ -191,12 +200,12 @@
         showInputModal(getClientMessage('STKCOMMONUG_USER_CHG_PW'), userMgmt);
 
         if (statusCode['API_GET_USER'] == -1 || statusCode['API_GET_USER'] == 0) {
-            displayAlertDanger('#chgpassword', getClientMessage('CONNERR'));
-            userMgmt.append('<p><button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('DLG_CLOSE') + '</button></p>');
+            displayAlertDanger('#chgpassword', getClientMessage('STKCOMMONUG_CONNERR'));
+            userMgmt.append('<p><button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('STKCOMMONUG_DLG_CLOSE') + '</button></p>');
             return;
         } else if (statusCode['API_GET_USER'] != 200) {
             displayAlertDanger('#chgpassword', getSvrMsg(responseData['API_GET_USER']));
-            userMgmt.append('<p><button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('DLG_CLOSE') + '</button></p>');
+            userMgmt.append('<p><button type="button" id="closeOdbcConfig" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('STKCOMMONUG_DLG_CLOSE') + '</button></p>');
             return;
         }
 
@@ -207,8 +216,8 @@
         userMgmt.append('<br/>');
         userMgmt.append('<div id="chgpassword_msg"/>');
 
-        userMgmt.append('<button type="button" id="chgpassword_update" class="btn btn-dark" onclick="chgPwUpdate()">' + getClientMessage('COMUPDATE') + '</button> ');
-        userMgmt.append('<button type="button" id="chgpassword_cancel" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('DLG_CLOSE') + '</button>');
+        userMgmt.append('<button type="button" id="chgpassword_update" class="btn btn-dark" onclick="chgPwUpdate()">' + getClientMessage('STKCOMMONUG_COMUPDATE') + '</button> ');
+        userMgmt.append('<button type="button" id="chgpassword_cancel" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('STKCOMMONUG_DLG_CLOSE') + '</button>');
     }
 
     function chgPwUpdate() {
