@@ -4,7 +4,7 @@
 class ApiBase : public StkWebAppExec
 {
 protected:
-	void AddCodeAndMsg(StkObject*, int, wchar_t*, wchar_t*);
+	void AddCodeAndMsg(StkObject*, int, const wchar_t*, const wchar_t*);
 	void PrintRequest(unsigned int, int, wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
 	void PrintResponse(unsigned int, int);
 	void DebugObject(StkObject*);

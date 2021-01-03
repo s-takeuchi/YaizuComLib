@@ -4,7 +4,7 @@
 #include "DataAccessUm.h"
 #include "ApiBase.h"
 
-void ApiBase::AddCodeAndMsg(StkObject* StkObj, int Code, wchar_t* MsgEng, wchar_t* MsgJpn)
+void ApiBase::AddCodeAndMsg(StkObject* StkObj, int Code, const wchar_t* MsgEng, const wchar_t* MsgJpn)
 {
 	StkObj->AppendChildElement(new StkObject(L"Code", Code));
 	StkObj->AppendChildElement(new StkObject(L"MsgEng", MsgEng));
