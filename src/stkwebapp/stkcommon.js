@@ -271,7 +271,7 @@ var responseData = {};
                 }
             }
         }
-        let navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item dropdown"><a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">' + getUserName() + '</a><div id="rsUserMenu" class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" onclick="tryLogout()">Logout</a></div></li></u>')
+        let navBarNavRight = $('<ul class="navbar-nav"><li class="nav-item dropdown"><a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">' + getUserName() + '</a><div id="rsUserMenu" class="dropdown-menu dropdown-menu-right"></div></li></u>')
         let navBarCollapse = $('<div class="collapse navbar-collapse justify-content-start" id="top-nav">');
         navBarCollapse.append(navBarNav);
         navBarCollapse.append(navBarNavRight);
@@ -286,6 +286,7 @@ var responseData = {};
         }
         $('body').append(navBarDefault);
         $('body').append(containerFluidWorkSpace);
+        clearRsUserMenu();
     }
 
     function addRsUserMenu(contents)
@@ -293,10 +294,16 @@ var responseData = {};
         if (contents instanceof Array) {
             for (let key in contents) {
                 if (contents[key].actApiName != null && contents[key].title != null) {
-                    $('#rsUserMenu').prepend($('<a class="dropdown-item" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')">' + contents[key].title + '</a>'));
+                    $('#rsUserMenu').prepend($('<a class="dropdown-item" onclick="' + contents[key].actApiName + '">' + contents[key].title + '</a>'));
                 }
             }
         }
+    }
+
+    function clearRsUserMenu()
+    {
+        $('#rsUserMenu').empty();
+        $('#rsUserMenu').append('<a class="dropdown-item" onclick="tryLogout()">Logout</a>');
     }
 
     function addRsCommand(func, icon, enable)

@@ -51,28 +51,30 @@ stkcommonの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.4">function initMainPage(title, iconname, contents)</a></td><td>メインページを初期化します。</td></tr>
 <tr><td><a href="#3.4.5">function addRsCommand(func, icon, enable)</a></td><td>ナビゲーションバーにコマンドアイコンを追加します。</td></tr>
 <tr><td><a href="#3.4.6">function clearRsCommand()</a></td><td>ナビゲーションバーのコマンドアイコンおよびドロップダウンメニューをクリアします。</td></tr>
-<tr><td><a href="#3.4.7">function addDropDown(dropdownTitle)</a></td><td>ナビゲーションバーにドロップダウンメニューを追加します。</td></tr>
-<tr><td><a href="#3.4.8">function changeDropDownTitle(dropdownTitle)</a></td><td>ナビゲーションバーのドロップダウンメニューのタイトルを変更します。</td></tr>
-<tr><td><a href="#3.4.9">function getDropDownMenu(index)</a></td><td>ナビゲーションバーのドロップダウンメニューの要素名を取得します。</td></tr>
-<tr><td><a href="#3.4.10">function addDropDownMenu(index, menuTitle, func)</a></td><td>ナビゲーションバーのドロップダウンメニューに要素を追加します。</td></tr>
-<tr><td><a href="#3.4.11">function addClientMessage(code, msg)</a></td><td>クライアントメッセージを追加します。</td></tr>
-<tr><td><a href="#3.4.12">function deleteClientMessage(code)</a></td><td>クライアントメッセージを削除します。</td></tr>
-<tr><td><a href="#3.4.13">function getClientMessageEn(code)</a></td><td>クライアントメッセージ(英語)を取得します。</td></tr>
-<tr><td><a href="#3.4.14">function getClientMessageJa(code)</a></td><td>クライアントメッセージ(日本語)を取得します。</td></tr>
-<tr><td><a href="#3.4.15">function setClientLanguage(lang)</a></td><td>クライアントメッセージの言語を指定します。</td></tr>
-<tr><td><a href="#3.4.16">function getClientLanguage()</a></td><td>クライアントメッセージの言語を取得します。</td></tr>
-<tr><td><a href="#3.4.17">function getClientMessage(code)</a></td><td>クライアントメッセージを指定した言語で取得します。</td></tr>
-<tr><td><a href="#3.4.18">function displayAlertSuccess(parent, msg)</a></td><td>Successメッセージを表示します。</td></tr>
-<tr><td><a href="#3.4.19">function displayAlertDanger(parent, msg)</a></td><td>Dangerメッセージを表示します。</td></tr>
-<tr><td><a href="#3.4.20">function displayAlertWarning(parent, msg)</a></td><td>Warningメッセージを表示します。</td></tr>
-<tr><td><a href="#3.4.21">function displayAlertInfo(parent, msg)</a></td><td>Infoメッセージを表示します。</td></tr>
-<tr><td><a href="#3.4.22">function apiCall(method, url, request, keystring, targetFunc)</a></td><td>REST APIを非同期で呼び出します。</td></tr>
-<tr><td><a href="#3.4.23">function MultiApiCall(contents, targetFunc)</a></td><td>複数のREST APIを非同期で同時に呼び出します。</td></tr>
-<tr><td><a href="#3.4.24">function setLoginResult(result)</a></td><td>ユーザープログラムで行った認証結果をstkcommon.jsに通知する。</td></tr>
-<tr><td><a href="#3.4.25">function changeLoginPassword(password)</a></td><td>ログインユーザーのパスワードを変更します。</td></tr>
-<tr><td><a href="#3.4.26">function setAuthenticationToken(token)</a></td><td>認証用トークンを設定します。</td></tr>
-<tr><td><a href="#3.4.27">function getUserName()</a></td><td>ユーザー名を取得します。</td></tr>
-<tr><td><a href="#3.4.28">function isPasswordCorrect(password)</a></td><td>指定されたパスワードが正しいか判定します。</td></tr>
+<tr><td><a href="#3.4.7">function addRsUserMenu(contents)</a></td><td>ユーザーメニューに要素を追加します。</td></tr>
+<tr><td><a href="#3.4.8">function clearRsUserMenu()</a></td><td>ユーザーメニューをクリアします。</td></tr>
+<tr><td><a href="#3.4.9">function addDropDown(dropdownTitle)</a></td><td>ナビゲーションバーにドロップダウンメニューを追加します。</td></tr>
+<tr><td><a href="#3.4.10">function changeDropDownTitle(dropdownTitle)</a></td><td>ナビゲーションバーのドロップダウンメニューのタイトルを変更します。</td></tr>
+<tr><td><a href="#3.4.11">function getDropDownMenu(index)</a></td><td>ナビゲーションバーのドロップダウンメニューの要素名を取得します。</td></tr>
+<tr><td><a href="#3.4.12">function addDropDownMenu(index, menuTitle, func)</a></td><td>ナビゲーションバーのドロップダウンメニューに要素を追加します。</td></tr>
+<tr><td><a href="#3.4.13">function addClientMessage(code, msg)</a></td><td>クライアントメッセージを追加します。</td></tr>
+<tr><td><a href="#3.4.14">function deleteClientMessage(code)</a></td><td>クライアントメッセージを削除します。</td></tr>
+<tr><td><a href="#3.4.15">function getClientMessageEn(code)</a></td><td>クライアントメッセージ(英語)を取得します。</td></tr>
+<tr><td><a href="#3.4.16">function getClientMessageJa(code)</a></td><td>クライアントメッセージ(日本語)を取得します。</td></tr>
+<tr><td><a href="#3.4.17">function setClientLanguage(lang)</a></td><td>クライアントメッセージの言語を指定します。</td></tr>
+<tr><td><a href="#3.4.18">function getClientLanguage()</a></td><td>クライアントメッセージの言語を取得します。</td></tr>
+<tr><td><a href="#3.4.19">function getClientMessage(code)</a></td><td>クライアントメッセージを指定した言語で取得します。</td></tr>
+<tr><td><a href="#3.4.20">function displayAlertSuccess(parent, msg)</a></td><td>Successメッセージを表示します。</td></tr>
+<tr><td><a href="#3.4.21">function displayAlertDanger(parent, msg)</a></td><td>Dangerメッセージを表示します。</td></tr>
+<tr><td><a href="#3.4.22">function displayAlertWarning(parent, msg)</a></td><td>Warningメッセージを表示します。</td></tr>
+<tr><td><a href="#3.4.23">function displayAlertInfo(parent, msg)</a></td><td>Infoメッセージを表示します。</td></tr>
+<tr><td><a href="#3.4.24">function apiCall(method, url, request, keystring, targetFunc)</a></td><td>REST APIを非同期で呼び出します。</td></tr>
+<tr><td><a href="#3.4.25">function MultiApiCall(contents, targetFunc)</a></td><td>複数のREST APIを非同期で同時に呼び出します。</td></tr>
+<tr><td><a href="#3.4.26">function setLoginResult(result)</a></td><td>ユーザープログラムで行った認証結果をstkcommon.jsに通知する。</td></tr>
+<tr><td><a href="#3.4.27">function changeLoginPassword(password)</a></td><td>ログインユーザーのパスワードを変更します。</td></tr>
+<tr><td><a href="#3.4.28">function setAuthenticationToken(token)</a></td><td>認証用トークンを設定します。</td></tr>
+<tr><td><a href="#3.4.29">function getUserName()</a></td><td>ユーザー名を取得します。</td></tr>
+<tr><td><a href="#3.4.30">function isPasswordCorrect(password)</a></td><td>指定されたパスワードが正しいか判定します。</td></tr>
 </table>
 </div>
 
@@ -152,7 +154,31 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.7">3.4.7 function addDropDown(dropdownTitle)</H3>
+<H3 ID="3.4.7">3.4.7 function addRsUserMenu(contents)</H3>
+<div class="topic">
+ユーザーメニューに要素を追加します。<br/>
+contents配列に格納されている最後の要素から逆順にメニュー項目を追加します。
+<table class="tblstyle">
+<tr><td>contents[入力]</td><td>
+  ユーザーメニューを構成する情報。次の要素を含むJavaScriptオブジェクトの配列を指定。<br/>
+  <ul>
+  <li>actApiName<br/>メニューを押下したときに呼ぶ括弧付きの関数名。</li>
+  <li>title<br/>表示するメニューの名称</li>
+  </ul>
+</td></tr>
+</table>
+</div>
+
+
+
+<H3 ID="3.4.8">3.4.8 function clearRsUserMenu()</H3>
+<div class="topic">
+ユーザーメニューをクリアします。<br/>
+</div>
+
+
+
+<H3 ID="3.4.9">3.4.9 function addDropDown(dropdownTitle)</H3>
 <div class="topic">
 ナビゲーションバーにドロップダウンメニューを追加します。<br/>
 <table class="tblstyle">
@@ -162,7 +188,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.8">3.4.8 function changeDropDownTitle(dropdownTitle)</H3>
+<H3 ID="3.4.10">3.4.10 function changeDropDownTitle(dropdownTitle)</H3>
 <div class="topic">
 ナビゲーションバーのドロップダウンメニューのタイトルを変更します。<br/>
 <table class="tblstyle">
@@ -172,7 +198,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.9">3.4.9 function getDropDownMenu(index)</H3>
+<H3 ID="3.4.11">3.4.11 function getDropDownMenu(index)</H3>
 <div class="topic">
 ナビゲーションバーのドロップダウンメニューの要素名を取得します。<br/>
 <table class="tblstyle">
@@ -182,7 +208,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.10">3.4.10 function addDropDownMenu(index, menuTitle, func)</H3>
+<H3 ID="3.4.12">3.4.12 function addDropDownMenu(index, menuTitle, func)</H3>
 <div class="topic">
 ナビゲーションバーのドロップダウンメニューに要素を追加します。<br/>
 <table class="tblstyle">
@@ -194,7 +220,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.11">3.4.11 function addClientMessage(code, msg)</H3>
+<H3 ID="3.4.13">3.4.13 function addClientMessage(code, msg)</H3>
 <div class="topic">
 クライアントメッセージを追加します。<br/>
 <table class="tblstyle">
@@ -211,7 +237,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.12">3.4.12 deleteClientMessage(code)</H3>
+<H3 ID="3.4.14">3.4.14 deleteClientMessage(code)</H3>
 <div class="topic">
 クライアントメッセージを削除します。<br/>
 <table class="tblstyle">
@@ -221,7 +247,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.13">3.4.13 function getClientMessageEn(code)</H3>
+<H3 ID="3.4.15">3.4.15 function getClientMessageEn(code)</H3>
 <div class="topic">
 クライアントメッセージ(英語)を取得します。<br/>
 <table class="tblstyle">
@@ -231,7 +257,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.14">3.4.14 function getClientMessageJa(code)</H3>
+<H3 ID="3.4.16">3.4.16 function getClientMessageJa(code)</H3>
 <div class="topic">
 クライアントメッセージ(日本語)を取得します。<br/>
 <table class="tblstyle">
@@ -241,7 +267,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.15">3.4.15 function setClientLanguage(lang)</H3>
+<H3 ID="3.4.17">3.4.17 function setClientLanguage(lang)</H3>
 <div class="topic">
 クライアントメッセージの言語を指定します。<br/>
 getClientMessage()で取得するメッセージがここで指定した言語に切り替わります。
@@ -252,7 +278,7 @@ getClientMessage()で取得するメッセージがここで指定した言語�
 
 
 
-<H3 ID="3.4.16">3.4.16 function getClientLanguage()</H3>
+<H3 ID="3.4.18">3.4.18 function getClientLanguage()</H3>
 <div class="topic">
 クライアントメッセージの言語を取得します。<br/>
 0:英語, 1:日本語
@@ -260,15 +286,18 @@ getClientMessage()で取得するメッセージがここで指定した言語�
 
 
 
-<H3 ID="3.4.17">3.4.17 function getClientLanguage()</H3>
+<H3 ID="3.4.19">3.4.19 function getClientMessage(code)</H3>
 <div class="topic">
 クライアントメッセージを指定した言語で取得します。<br/>
-言語の指定は，setClientLanguage(lang)で行います。
+言語の指定は，setClientLanguage(lang)で行います。<br/>
+<table class="tblstyle">
+<tr><td>code[入力]</td><td>取得するメッセージのキー</td></tr>
+</table>
 </div>
 
 
 
-<H3 ID="3.4.18">3.4.18 function displayAlertSuccess(parent, msg)</H3>
+<H3 ID="3.4.20">3.4.20 function displayAlertSuccess(parent, msg)</H3>
 <div class="topic">
 Successメッセージを表示します。<br/>
 <table class="tblstyle">
@@ -279,7 +308,7 @@ Successメッセージを表示します。<br/>
 
 
 
-<H3 ID="3.4.19">3.4.19 function displayAlertDanger(parent, msg)</H3>
+<H3 ID="3.4.21">3.4.21 function displayAlertDanger(parent, msg)</H3>
 <div class="topic">
 Dangerメッセージを表示します。<br/>
 <table class="tblstyle">
@@ -290,7 +319,7 @@ Dangerメッセージを表示します。<br/>
 
 
 
-<H3 ID="3.4.20">3.4.20 function displayAlertWarning(parent, msg)</H3>
+<H3 ID="3.4.22">3.4.22 function displayAlertWarning(parent, msg)</H3>
 <div class="topic">
 Warningメッセージを表示します。<br/>
 <table class="tblstyle">
@@ -301,7 +330,7 @@ Warningメッセージを表示します。<br/>
 
 
 
-<H3 ID="3.4.21">3.4.21 function displayAlertInfo(parent, msg)</H3>
+<H3 ID="3.4.23">3.4.23 function displayAlertInfo(parent, msg)</H3>
 <div class="topic">
 Infoメッセージを表示します。<br/>
 <table class="tblstyle">
@@ -312,7 +341,7 @@ Infoメッセージを表示します。<br/>
 
 
 
-<H3 ID="3.4.22">3.4.22 function apiCall(method, url, request, keystring, targetFunc)</H3>
+<H3 ID="3.4.24">3.4.24 function apiCall(method, url, request, keystring, targetFunc)</H3>
 <div class="topic">
 REST APIを非同期で呼び出します。<br/>
 REST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
@@ -331,7 +360,7 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 
 
 
-<H3 ID="3.4.23">3.4.23 function MultiApiCall(contents, targetFunc)</H3>
+<H3 ID="3.4.25">3.4.25 function MultiApiCall(contents, targetFunc)</H3>
 <div class="topic">
 複数のREST APIを非同期で同時に呼び出します。<br/>REST APIを呼び出す順序は保証されていません。<br/>
 すべてのREST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
@@ -355,7 +384,7 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 
 
 
-<H3 ID="3.4.24">3.4.24 setLoginResult(result)</H3>
+<H3 ID="3.4.26">3.4.26 setLoginResult(result)</H3>
 <div class="topic">
 ユーザープログラムで行った認証結果をstkcommon.jsに通知します。<br/>
 認証成功の場合，開いていたログインダイアログはクローズします。<br/>
@@ -366,7 +395,7 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 
 
 
-<H3 ID="3.4.25">3.4.25 function changeLoginPassword(password)</H3>
+<H3 ID="3.4.27">3.4.27 function changeLoginPassword(password)</H3>
 <div class="topic">
 ログインユーザーのパスワードを変更します。<br/>
 <table class="tblstyle">
@@ -376,7 +405,7 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 
 
 
-<H3 ID="3.4.26">3.4.26 function setAuthenticationToken(token)</H3>
+<H3 ID="3.4.28">3.4.28 function setAuthenticationToken(token)</H3>
 <div class="topic">
 認証用トークンを設定します。<br/>
 この関数呼び出し後，REST API発行時に，HTTPヘッダのAuthorizationにBearerトークンが指定されます。<br/>
@@ -387,14 +416,14 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 
 
 
-<H3 ID="3.4.27">3.4.27 function getUserName()</H3>
+<H3 ID="3.4.29">3.4.29 function getUserName()</H3>
 <div class="topic">
 ユーザー名を取得します。<br/>
 </div>
 
 
 
-<H3 ID="3.4.28">3.4.28 function isPasswordCorrect(password)</H3>
+<H3 ID="3.4.30">3.4.30 function isPasswordCorrect(password)</H3>
 <div class="topic">
 指定されたパスワードが正しいか判定します。<br/>
 true: 指定されたパスワードがログインダイアログで指定したパスワードと一致する<br/>
