@@ -16,13 +16,13 @@
 <p>
 StkWebApp_Umは，StkWebAppを前提としたユーザー管理機能，ログ管理機能を実現するライブラリおよびJavaScriptの集合である。<br/>
 StkWebApp_Umは，以下のファイルから構成される。<br/>
+</p>
 <ul>
 <li>stkwebapp_um.lib<br/>StkWebApp_Umのサーバ(API提供)を実現するためのライブラリ。</li>
 <li>stkwebapp_um.h<br/>StkWebApp_Umが提供するサーバ側のAPIを定義したヘッダファイル。</li>
 <li>ApiBase.h<br/>StkWebAppExecを継承するAPIの抽象クラス。</li>
 <li>stkcommon_um.js><br/>StkWebApp_UmのWEBクライアントを実現するためのJavaScript。</li>
 </ul>
-</p>
 </div><p>
 
 <H2 ID="1.2">1.2 サーバAPI</H2>
@@ -70,12 +70,11 @@ APIのエントリ(URL)を削除する。
 int StkWebAppUm_CreateTable()<br/>
 StkWebApp_Umが使用するテーブルを作成する。<br/>
 本APIを呼び出すことによりデータベース内に下記のテーブルが作成される。<br/>
+</p>
 <ul>
 <li>User (Id:Int, Name:WStr, Password:WStr, Role:Int)</li>
 <li>Log (Id:Int, Time:WStr, MessageEn:WStr, MessageJa:WStr)</li>
 </ul>
-
-</p>
 <table class="tblstyle">
 <tr><td>戻り値</td><td>成功:0, 失敗:-1</td></tr>
 </table><p>
@@ -107,12 +106,12 @@ int AddLogMsg(wchar_t* MsgEn, wchar_t* MsgJa)<br/>
 <p>
 ApiBaseは，StkWebAppExecを継承するAPIの抽象クラスです。<br/>
 ApiBaseを使用することにより，利用者側は次のメリットを得ることができます。<br/>
+</p>
 <ul>
 <li>ユーザー認証や権限チェックを行うための機能を呼び出すことができる。</li>
 <li>ブラウザで有効な言語情報を取得することができる。</li>
 <li>各種デバッグ用出力機能を呼び出すことができる。</li>
 </ul>
-</p>
 </div><p>
 
 <H3 ID="1.3.1">1.3.1 StkObject* ExecuteImpl(StkObject*, int, wchar_t[StkWebAppExec::URL_PATH_LENGTH], int*, wchar_t[3], wchar_t*)</H3>
