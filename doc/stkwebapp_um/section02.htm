@@ -1,0 +1,293 @@
+﻿<!DOCTYPE html>
+
+<html lang="ja">
+
+<HEAD>
+<title>StkWebApp_Um</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="./style.css" type="text/css">
+</HEAD>
+
+<BODY>
+<div id="container">
+<H1>2. 内部処理</H1>
+
+<H2 ID="2.1">2.1 REST API仕様</H2>
+<div class="topic">
+StkWebApp_UmIは，以下の一覧に示すAPIをクライアント提供します。
+<table class="tblstyle">
+<tr><td>GET /api/language/</td><td>クライアント（ブラウザ）の最優先の言語を取得する。</td></tr>
+<tr><td>GET /api/logs/</td><td>イベントログを取得する。</td></tr>
+<tr><td>GET /api/user/</td><td>ユーザー情報を取得する。</td></tr>
+<tr><td>POST /api/user/</td><td>ユーザー情報を設定する。</td></tr>
+<tr><td>DELETE /api/user/</td><td>ユーザー情報を削除する。</td></tr>
+</table>
+</div><p>
+
+
+<H2 ID="2.2">2.2 共通エラー</H2>
+<div class="topic">
+特定のAPIに依存せず共通で発生し得るエラーは以下の3種類です。<br/>
+<table class="tblstyle">
+<tr><th>ステータスコード</th><th>レスポンスコード</th><th>説明</th></tr>
+<tr><td>404</td><td>1001</td><td>クライアントからのリクエストに対応するAPIが定義されていない。</td></tr>
+<tr><td>400</td><td>1002</td><td>リクエストがJSONではないデータを含んでいるかHTTPヘッダのContent-Typeがapplication/jsonではない。</td></tr>
+<tr><td>400</td><td>1005</td><td>リクエストが壊れている。</td></tr>
+</table><p>
+上記のエラーは以下のレスポンスで返却されます。<br/>
+
+<ul>
+<li>レスポンス
+<pre>
+{
+  "Code" : 1234,
+  "MsgEng" : "abc",
+  "MsgJpn" : "あいう",
+}
+</pre>
+<table class="tblstyle">
+<tr><td>Code</td><td>Integer</td><td>結果コード。1001(HTTPステータスコード=404)，1002(HTTPステータスコード=400)，1005(HTTPステータスコード=400)。</td></tr>
+<tr><td>MsgEng</td><td>String</td><td>英文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>MsgJpn</td><td>String</td><td>和文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+</table><br/>
+</li>
+</ul>
+</div><p>
+
+
+<H2 ID="2.3">2.3 Get /api/language/</H2>
+<div class="topic">
+クライアント（ブラウザ）の最優先の言語を取得します。<br/>
+具体的には，クライアント・リクエストのHTTPヘッダのAccept-Languageに指定した言語のうち，先頭に指定した言語（2文字）を取得します。<br/>
+Code要素が0ではないとき，Data要素は返されません。
+<ul>
+<li>リクエスト
+<p>なし</p>
+</li>
+<li>レスポンス
+<pre>
+{
+  "Code" : 1234,
+  "MsgEng" : "abc",
+  "MsgJpn" : "あいう",
+  "Data" : {
+    "ClientLanguage" : "ja",
+  }
+}
+</pre>
+<table class="tblstyle">
+<tr><td>Code</td><td>Integer</td><td>結果コード。0:成功(HTTPステータスコード=200), 3120:クライアントのロケールを検知できなかった(HTTPステータスコード=406)。</td></tr>
+<tr><td>MsgEng</td><td>String</td><td>英文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>MsgJpn</td><td>String</td><td>和文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>Data</td><td>Element</td><td>結果コードが0でないとき，この要素は返却されない。</td></tr>
+<tr><td>ClientLanguage</td><td>String</td><td>クライアント（ブラウザ）の最優先の言語(2文字; 日本語="ja"，英語="en")。</td></tr>
+</table><br/>
+</li>
+</ul>
+</div><p>
+
+
+<H2 ID="2.4">2.4 Get /api/logs/</H2>
+<div class="topic">
+イベントログを取得します。<br/>
+イベントログが複数あるときは配列形式のデータが返却されます。イベントログがひとつしかないときはオブジェクトが返却されます。
+<ul>
+<li>リクエスト
+<p>なし</p>
+</li>
+<li>レスポンス
+<pre>
+{
+  "Code" : 1234,
+  "MsgEng" : "abc",
+  "MsgJpn" : "あいう",
+  "Data" : {
+    "Log" : [
+      {
+        "Time" : "2019-04-07T22:22:18+09:00",
+        "MsgEn" : "CmdFreak service has stopped.",
+        "MsgJa" : "CmdFreakサービスを停止しました。"
+      },
+      {
+        "Time" : "2019-04-07T22:27:01+09:00",
+        "MsgEn" : "CmdFreak service has started.",
+        "MsgJa" : "CmdFreakサービスを開始しました。"
+      }
+    ]
+  }
+}
+</pre>
+<table class="tblstyle">
+<tr><td>Code</td><td>Integer</td><td>結果コード。0:成功(HTTPステータスコード=200)，3124:認証エラー(HTTPステータスコード=401)。</td></tr>
+<tr><td>MsgEng</td><td>String</td><td>英文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>MsgJpn</td><td>String</td><td>和文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>Data</td><td>Element</td><td>結果コードが0でないとき，この要素は返却されない。</td></tr>
+<tr><td>Log</td><td>Element</td><td></td></tr>
+<tr><td>Time</td><td>String</td><td>イベントログが登録された時刻。ISO 8601形式で返却される。</td></tr>
+<tr><td>MsgEn</td><td>String</td><td>イベントログの英語メッセージ。</td></tr>
+<tr><td>MsgJa</td><td>String</td><td>イベントログの日本語メッセージ。</td></tr>
+</table><br/>
+</li>
+</ul>
+</div><p>
+
+
+<H2 ID="2.5">2.5 Get /api/user/</H2>
+<div class="topic">
+ユーザー情報を取得します。<br/>
+?target=allは，管理者のみ指定可能。<br/>
+<ul>
+<li>リクエスト
+<pre>
+<b><u>&lt;すべてのユーザー情報を取得する場合(管理者のみ指定可能)&gt;</u></b>
+&target=all
+</pre>
+<pre>
+<b><u>&lt;ログインユーザーの情報のみを取得する&gt;</u></b>
+なし
+</pre>
+<table class="tblstyle">
+<tr><td>target</td><td>String</td><td>allのみ指定可能。</td></tr>
+</table><br/>
+<li>レスポンス
+<pre>
+{
+  "Code" : 1234,
+  "MsgEng" : "abc",
+  "MsgJpn" : "あいう",
+  "Data" : {
+    "User" : [
+      {
+        "Id" : 1,
+        "Name" : "aaa",
+        "Role" : 0
+      },
+      {
+        "Id" : 2,
+        "Name" : "bbb",
+        "Role" : 1
+      },
+    ]
+  }
+}
+</pre>
+<table class="tblstyle">
+<tr><td>Code</td><td>Integer</td><td>結果コード。0:成功(HTTPステータスコード=200)，3124:認証エラー(HTTPステータスコード=401)，3125:権限エラー(HTTPステータスコード=403)。</td></tr>
+<tr><td>MsgEng</td><td>String</td><td>英文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>MsgJpn</td><td>String</td><td>和文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>Data</td><td>Element</td><td>結果コードが0でないとき，この要素は返却されない。</td></tr>
+<tr><td>User</td><td>Element</td><td></td></tr>
+<tr><td>Id</td><td>Integer</td><td>ユーザーID</td></tr>
+<tr><td>Name</td><td>String</td><td>ユーザー名</td></tr>
+<tr><td>Role</td><td>Integer</td><td>ユーザー種別 (0:管理者, 1:一般ユーザー)</td></tr>
+</table><br/>
+</li>
+</ul>
+</div><p>
+
+
+<H2 ID="2.6">2.6 Post /api/user/</H2>
+<div class="topic">
+ユーザー情報を設定します。<br/>
+管理者のみ本APIを呼び出すことができます。<br/>
+<ul>
+<li>リクエスト
+<pre>
+{
+  "Id" : 0,
+  "Name" : "aaa",
+  "Password" : "xxx",
+  "Role" : 0,
+}
+</pre>
+<table class="tblstyle">
+<tr><td>Id</td><td>Integer</td><td>ユーザーID。既存のユーザー情報を変更する場合は指定。新規ユーザーを作成する場合は指定しない。既存ユーザー情報を変更する場合のみ指定する。</td></tr>
+<tr><td>Name</td><td>String</td><td>ユーザー名。最大31文字。新規ユーザーを作成する場合は必須。指定可能文字: a-z, A-Z, 0-9, @, .(ピリオド), -, _, /</td></tr>
+<tr><td>Password</td><td>String</td><td>パスワード。最大31文字。新規ユーザーを作成する場合は必須。指定可能文字: a-z, A-Z, 0-9, !, ?, .(ピリオド), +, -, $, %, #, &, *, /, =, @</td></tr>
+<tr><td>Role</td><td>Integer</td><td>ユーザー種別 (0:管理者, 1:一般ユーザー)。新規ユーザーを作成する場合は必須。</td></tr>
+</table><br/>
+<li>レスポンス
+<pre>
+{
+  "Code" : 1234,
+  "MsgEng" : "abc",
+  "MsgJpn" : "あいう",
+  "Data" : {
+    "User" : [
+      {
+        "Id" : 1,
+        "Name" : "aaa",
+        "Role" : 0
+      }
+  }
+}
+</pre>
+<table class="tblstyle">
+<tr><td>Code</td><td>Integer</td><td>
+  結果コード。
+  0:成功(HTTPステータスコード=200)，
+  3121:リクエストデータ不十分(HTTPステータスコード=400)，
+  3123:ユーザー名またはパスワードが指定可能な長さの最大値を超えた(HTTPステータスコード=400)，
+  3124:認証エラー(HTTPステータスコード=401)，
+  3125:権限エラー(HTTPステータスコード=403)，
+  3126:自分自身の情報の変更を試みた(HTTPステータスコード=400)，
+  3127:変更を試みたユーザー名はすでに使用されている(HTTPステータスコード=400)，
+  3128:指定したユーザーが存在しない(HTTPステータスコード=400)，
+  3134:登録可能ユーザー数の最大値超え(HTTPステータスコード=400)，
+  31XX:その他各種エラー(HTTPステータスコード=400)。
+</td></tr>
+<tr><td>MsgEng</td><td>String</td><td>英文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>MsgJpn</td><td>String</td><td>和文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>Data</td><td>Element</td><td>結果コードが0でないとき，この要素は返却されない。</td></tr>
+<tr><td>User</td><td>Element</td><td>追加したユーザーの情報</td></tr>
+<tr><td>Id</td><td>Integer</td><td>ユーザーID</td></tr>
+<tr><td>Name</td><td>String</td><td>ユーザー名</td></tr>
+<tr><td>Role</td><td>Integer</td><td>ユーザー種別 (0:管理者, 1:一般ユーザー)</td></tr>
+</table><br/>
+</li>
+</ul>
+</div><p>
+
+
+<H2 ID="2.7">2.7 Delete /api/user/</H2>
+<div class="topic">
+ユーザー情報を削除します。<br/>
+管理者のみ本APIを呼び出すことができます。<br/>
+<ul>
+<li>リクエスト
+<pre>
+/api/user/n/</pre>
+<table class="tblstyle">
+<tr><td>n</td><td>Integer</td><td>削除対象のユーザーID</td></tr>
+</table><br/>
+<li>レスポンス
+<pre>
+{
+  "Code" : 1234,
+  "MsgEng" : "abc",
+  "MsgJpn" : "あいう",
+}
+</pre>
+<table class="tblstyle">
+<tr><td>Code</td><td>Integer</td><td>
+  結果コード。
+  0:成功(HTTPステータスコード=200)，
+  3121:ユーザーID未指定(HTTPステータスコード=400)，
+  3124:認証エラー(HTTPステータスコード=401)，
+  3125:権限エラー(HTTPステータスコード=403)，
+  3126:自分自身の削除を試みた(HTTPステータスコード=400)，
+  3128:指定したユーザーが存在しない(HTTPステータスコード=400)。
+</td></tr>
+<tr><td>MsgEng</td><td>String</td><td>英文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+<tr><td>MsgJpn</td><td>String</td><td>和文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
+</table><br/>
+</li>
+</ul>
+</div><p>
+
+
+</div>
+</BODY>
+
+</html>
+

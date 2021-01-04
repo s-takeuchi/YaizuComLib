@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+
+<html lang="ja">
+<HEAD>
+<title>StkWebApp_Um</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="./style.css" type="text/css">
+</HEAD>
+
+<BODY>
+<div id="container">
+<H1>1. 概要</H1>
+
+<H2 ID="1.1">1.1 StkWebApp_Um概要</H2>
+<div class="topic">
+<p>
+StkWebApp_Umは，StkWebAppを前提としたユーザー管理機能，ログ管理機能を実現するライブラリおよびJavaScriptの集合である。<br/>
+StkWebApp_Umは，以下のファイルから構成される。<br/>
+<ul>
+<li>stkwebapp_um.lib<br/>StkWebApp_Umのサーバ(API提供)を実現するためのライブラリ。</li>
+<li>stkwebapp_um.h<br/>StkWebApp_Umが提供するサーバ側のAPIを定義したヘッダファイル。</li>
+<li>ApiBase.h<br/>StkWebAppExecを継承するAPIの抽象クラス。</li>
+<li>stkcommon_um.js><br/>StkWebApp_UmのWEBクライアントを実現するためのJavaScript。</li>
+</ul>
+</p>
+</div><p>
+
+<H2 ID="1.2">1.2 サーバAPI</H2>
+<div class="topic">
+<p>
+StkWebAppUmが提供するサーバ側のAPIを以下に示す。<br/>
+</p>
+<table class="tblstyle">
+<tr><th>AIP</th><th>詳細説明</th></tr>
+<tr><td>void StkWebAppUm_RegisterApi(StkWebApp*)</td><td>APIのエントリ(URL)を登録する。</td></tr>
+<tr><td>void StkWebAppUm_UnregisterApi(StkWebApp*)</td><td>APIのエントリ(URL)を削除する。</td></tr>
+<tr><td>int StkWebAppUm_CreateTable()</td><td>StkWebApp_Umが使用するテーブルを作成する。</td></tr>
+<tr><td>void StkWebAppUm_Init()</td><td>StkWebApp_Umを初期化する。他のサーバAPIの呼び出し前に，本APIを呼び出しておく必要がある。</td></tr>
+<tr><td>int AddLogMsg(wchar_t*, wchar_t*)</td><td>ログを追加する。</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.2.1">1.2.1 void StkWebAppUm_RegisterApi(StkWebApp*)</H3>
+<div class="topic">
+<p>
+void StkWebAppUm_RegisterApi(StkWebApp* Obj)<br/>
+APIのエントリ(URL)を登録する。
+</p>
+<table class="tblstyle">
+<tr><td>Obj(入力)</td><td>StkWebAppオブジェクトのポインタを指定する。</td></tr>
+<tr><td>戻り値</td><td>なし</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.2.2">1.2.2 void StkWebAppUm_UnregisterApi(StkWebApp*)</H3>
+<div class="topic">
+<p>
+void StkWebAppUm_UnregisterApi(StkWebApp* Obj)<br/>
+APIのエントリ(URL)を削除する。
+</p>
+<table class="tblstyle">
+<tr><td>Obj(入力)</td><td>StkWebAppオブジェクトのポインタを指定する。</td></tr>
+<tr><td>戻り値</td><td>なし</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.2.3">1.2.3 int StkWebAppUm_CreateTable()</H3>
+<div class="topic">
+<p>
+int StkWebAppUm_CreateTable()<br/>
+StkWebApp_Umが使用するテーブルを作成する。<br/>
+本APIを呼び出すことによりデータベース内に下記のテーブルが作成される。<br/>
+<ul>
+<li>User (Id:Int, Name:WStr, Password:WStr, Role:Int)</li>
+<li>Log (Id:Int, Time:WStr, MessageEn:WStr, MessageJa:WStr)</li>
+</ul>
+
+</p>
+<table class="tblstyle">
+<tr><td>戻り値</td><td>成功:0, 失敗:-1</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.2.4">1.2.4 void StkWebAppUm_Init()</H3>
+<div class="topic">
+<p>
+void StkWebAppUm_Init()<br/>
+StkWebApp_Umを初期化する。他のサーバAPIの呼び出し前に，本APIを呼び出しておく必要がある。
+</p>
+</div><p>
+
+<H3 ID="1.2.5">1.2.5 int AddLogMsg(wchar_t*, wchar_t*)</H3>
+<div class="topic">
+<p>
+int AddLogMsg(wchar_t* MsgEn, wchar_t* MsgJa)<br/>
+ログを追加する。
+</p>
+<table class="tblstyle">
+<tr><td>MsgEn(入力)</td><td>英語メッセージ。</td></tr>
+<tr><td>MsgJa(入力)</td><td>日本語メッセージ。</td></tr>
+<tr><td>戻り値</td><td>常に0。</td></tr>
+</table><p>
+</div><p>
+
+<H2 ID="1.3">1.3 ApiBase</H2>
+<div class="topic">
+<p>
+ApiBaseは，StkWebAppExecを継承するAPIの抽象クラスです。<br/>
+ApiBaseを使用することにより，利用者側は次のメリットを得ることができます。<br/>
+<ul>
+<li>ユーザー認証や権限チェックを行うための機能を呼び出すことができる。</li>
+<li>ブラウザで有効な言語情報を取得することができる。</li>
+<li>各種デバッグ用出力機能を呼び出すことができる。</li>
+</ul>
+</p>
+</div><p>
+
+<H3 ID="1.3.1">1.3.1 StkObject* ExecuteImpl(StkObject*, int, wchar_t[StkWebAppExec::URL_PATH_LENGTH], int*, wchar_t[3], wchar_t*)</H3>
+<div class="topic">
+<p>
+StkObject* ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], int* ResultCode, wchar_t Locale[3], wchar_t* Token)<br/>
+ApiBaseの継承先クラスで実装するAPI。
+</p>
+<table class="tblstyle">
+<tr><td>ReqObj(入力)</td><td>APIのリクエスト。</td></tr>
+<tr><td>Method(入力)</td><td>対象メソッド。以下の何れか。<br/>
+StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED<br/>
+StkWebAppExec::STKWEBAPP_METHOD_GET<br/>
+StkWebAppExec::STKWEBAPP_METHOD_HEAD<br/>
+StkWebAppExec::STKWEBAPP_METHOD_POST<br/>
+StkWebAppExec::STKWEBAPP_METHOD_PUT<br/>
+StkWebAppExec::STKWEBAPP_METHOD_DELETE<br/>
+</td></tr>
+<tr><td>UrlPath(入力)</td><td>対象のURL。</td></tr>
+<tr><td>ResultCode(出力)</td><td>結果を格納するintのポインタ。</td></tr>
+<tr><td>Locale(入力)</td><td>HTTPヘッダのAccept-Language: に指定された最初の2文字分を格納する。</td></tr>
+<tr><td>Token(入力)</td><td>HTTPヘッダのAuthorization: Bearer以降で指定された文字列を格納する。</td></tr>
+<tr><td>戻り値</td><td>APIのレスポンス。</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.3.2">1.3.2 bool CheckCredentials(wchar_t*, wchar_t*)</H3>
+<div class="topic">
+<p>
+bool CheckCredentials(wchar_t* Token, wchar_t* Name)<br/>
+ユーザー認証を行う。
+</p>
+<table class="tblstyle">
+<tr><td>Token(入力)</td><td>ExecuteImpl APIの引数として取得したTokenを指定する。</td></tr>
+<tr><td>Name(出力)</td><td>認証が成功した場合，Tokenから取得したユーザー名を返す。</td></tr>
+<tr><td>戻り値</td><td>認証成功: true, 認証失敗: false</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.3.3">1.3.3 bool IsAdminUser(wchar_t*)</H3>
+<div class="topic">
+<p>
+bool IsAdminUser(wchar_t* Token)<br/>
+ユーザーが管理者権限を持つか判定する。
+</p>
+<table class="tblstyle">
+<tr><td>Token(入力)</td><td>ExecuteImpl APIの引数として取得したTokenを指定する。</td></tr>
+<tr><td>戻り値</td><td>ユーザーは管理者権限を持つ: true, ユーザーは管理者権限を持たない: false</td></tr>
+</table><p>
+</div><p>
+
+</div>
+</BODY>
+</html>
