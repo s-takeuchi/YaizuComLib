@@ -267,7 +267,7 @@ var responseData = {};
         if (contents instanceof Array) {
             for (let key in contents) {
                 if (contents[key].actApiName != null && contents[key].title != null) {
-                    navBarNav.append($('<li class="nav-item" id="menu-' + contents[key].id + '"><a class="nav-link" onclick="' + contents[key].actApiName + '"> ' + contents[key].title + '</a></li>'));
+                    navBarNav.append($('<li class="nav-item"><a class="nav-link" onclick="' + contents[key].actApiName + '"> ' + contents[key].title + '</a></li>'));
                 }
             }
         }
@@ -279,18 +279,26 @@ var responseData = {};
         navBarDefault.append(navBarHeader);
         navBarDefault.append(navBarCollapse);
         let containerFluidWorkSpace = $('<div class="container">');
-        if (contents instanceof Array) {
-            for (let key in contents) {
-                containerFluidWorkSpace.append('<div><div id="' + contents[key].id + '" class="row col-xs-12" style="display:none"></div></div>');
-            }
-        }
         $('body').append(navBarDefault);
         $('body').append(containerFluidWorkSpace);
         clearRsUserMenu();
     }
 
-    function addRsUserMenu(contents)
-    {
+    function drowContainer(contents) {
+        $('.container').remove();
+        $('.container-fluid').remove();
+        $('body').append('<div class="container">');
+        $('.container').append(contents);
+    }
+
+    function drowContainerFluid(contents) {
+        $('.container').remove();
+        $('.container-fluid').remove();
+        $('body').append('<div class="container-fluid" style="margin:0px;padding:0px">');
+        $('.container-fluid').append(contents);
+    }
+
+    function addRsUserMenu(contents) {
         if (contents instanceof Array) {
             for (let key in contents) {
                 if (contents[key].actApiName != null && contents[key].title != null) {
@@ -300,14 +308,12 @@ var responseData = {};
         }
     }
 
-    function clearRsUserMenu()
-    {
+    function clearRsUserMenu() {
         $('#rsUserMenu').empty();
         $('#rsUserMenu').append('<a class="dropdown-item" onclick="tryLogout()">Logout</a>');
     }
 
-    function addRsCommand(func, icon, enable)
-    {
+    function addRsCommand(func, icon, enable) {
         if (enable == true) {
             $('#rsCommand').append('<div class="rscommand"><a href="#" onclick="' + func + '">&nbsp;<span class="icon ' + icon + '" style="font-size:30px;"></span>&nbsp;</a></div>');
         } else {
@@ -315,8 +321,7 @@ var responseData = {};
         }
     }
 
-    function clearRsCommand()
-    {
+    function clearRsCommand() {
         $('#rsCommand').empty();
     }
 
