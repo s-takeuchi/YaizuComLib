@@ -267,7 +267,7 @@ var responseData = {};
         if (contents instanceof Array) {
             for (let key in contents) {
                 if (contents[key].actApiName != null && contents[key].title != null) {
-                    navBarNav.append($('<li class="nav-item" id="menu-' + contents[key].id + '" style="display:none"><a class="nav-link" onclick="' + contents[key].actApiName + '(\'' + contents[key].id + '\')"> ' + contents[key].title + '</a></li>'));
+                    navBarNav.append($('<li class="nav-item" id="menu-' + contents[key].id + '"><a class="nav-link" onclick="' + contents[key].actApiName + '"> ' + contents[key].title + '</a></li>'));
                 }
             }
         }
