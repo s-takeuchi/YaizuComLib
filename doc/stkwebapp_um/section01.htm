@@ -21,7 +21,7 @@ StkWebApp_Umは，以下のファイルから構成される。<br/>
 <li>stkwebapp_um.lib<br/>StkWebApp_Umのサーバ(API提供)を実現するためのライブラリ。</li>
 <li>stkwebapp_um.h<br/>StkWebApp_Umが提供するサーバ側のAPIを定義したヘッダファイル。</li>
 <li>ApiBase.h<br/>StkWebAppExecを継承するAPIの抽象クラス。</li>
-<li>stkcommon_um.js><br/>StkWebApp_UmのWEBクライアントを実現するためのJavaScript。</li>
+<li>stkcommon_um.js<br/>StkWebApp_UmのWEBクライアントを実現するためのJavaScript。</li>
 </ul>
 </div><p>
 
@@ -161,6 +161,17 @@ bool IsAdminUser(wchar_t* Token)<br/>
 <tr><td>Token(入力)</td><td>ExecuteImpl APIの引数として取得したTokenを指定する。</td></tr>
 <tr><td>戻り値</td><td>ユーザーは管理者権限を持つ: true, ユーザーは管理者権限を持たない: false</td></tr>
 </table><p>
+</div><p>
+
+<H2 ID="1.4">1.4 WEBクライアントAPI</H2>
+<div class="topic">
+<p>
+stkcommon_um.jsは，以下に示すAPIを提供する。<br/>
+</p>
+<ul>
+<li>transDisplayUser()<br/>ユーザー管理ダイアログを表示する。</li>
+<li>transDisplayChgPassword()<br/>パスワード変更ダイアログを表示する。</li>
+</ul>
 </div><p>
 
 </div>
