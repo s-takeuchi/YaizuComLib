@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <shlwapi.h>
+#include "..\stkpl\StkPl.h"
 #include "..\commonfunc\StkProperties.h"
 #include "..\commonfunc\StkStringParser.h"
 #include "..\stksocket\stksocket.h"
@@ -348,6 +349,7 @@ int main(int argc, char* argv[])
 	if (strcmp(argv[1], "help") != 0 &&
 		strcmp(argv[1], "modperm") != 0 &&
 		strcmp(argv[1], "modconfig") != 0 &&
+		strcmp(argv[1], "datadir") != 0 &&
 		strcmp(argv[1], "fwadd") != 0 &&
 		strcmp(argv[1], "fwdel") != 0 &&
 		strcmp(argv[1], "srvadd") != 0 &&
@@ -405,13 +407,14 @@ int main(int argc, char* argv[])
 		printf("  help      : Display help.\r\n");
 		printf("  modperm   : Modify permission of configuration and data files. SrvProgram option is required.\r\n");
 		printf("  modconfig : Modify configuration files. ProductName, SrvHost, SrvPort, SrvProgram, WebHost and WebPort options are required.\r\n");
+		printf("  datadir   : Create data folder. SrvProgram option is required.\r\n");
 		printf("  fwadd     : Add exception to the firewall. ProductName option is required.\r\n");
 		printf("  fwdel     : Delete exception from the firewall. ProductName option is required.\r\n");
 		printf("  srvadd    : Add service to the system. ProductName option is required.\r\n");
 		printf("  srvdel    : Delete service from the system. ProductName option is required.\r\n");
 		printf("  start     : Start the service. ProductName option is required.\r\n");
 		printf("  stop      : Stop the service. ProductName option is required.\r\n");
-		printf("  inst      : Execute modperm, modconfig, fwadd, srvadd and start sequencially. \r\n");
+		printf("  inst      : Execute modperm, modconfig, datadir, fwadd, srvadd and start sequencially. \r\n");
 		printf("  uninst    : Execute fwdel, srvdel and stop sequencially.\r\n");
 		printf("\r\nOptions\r\n");
 		printf("  ProductName : Product name\r\n");
@@ -560,6 +563,44 @@ int main(int argc, char* argv[])
 			WriteFile(FileHndl, ConfStr1, (int)strlen(ConfStr1), &NumOfByteWrite, NULL);
 			CloseHandle(FileHndl);
 		};
+	}
+	if (strcmp(argv[1], "datadir") == 0 || InstFlag == true) {
+		// Create string which is written in config file.
+		char WorkDirPath[2048] = "";
+		char* WorkPathUtf8 = StkPlCreateUtf8FromWideChar(WorkPath);
+		StkPlSPrintf(WorkDirPath, 2048, "workdir=%s\\work\r\n", WorkPathUtf8);
+		delete WorkPathUtf8;
+
+		// Write data folder path to config file
+		wchar_t SrvProgramConfPath[MAX_PATH];
+		swprintf(SrvProgramConfPath, MAX_PATH, L"%s\\%s.conf", WorkPath, SrvProgram);
+		void* FileHndl = StkPlOpenFileForWrite(SrvProgramConfPath, true);
+		StkPlSeekFromEnd(FileHndl, 0);
+		size_t ActSize = 0;
+		StkPlWrite(FileHndl, WorkDirPath, StkPlStrLen(WorkDirPath), &ActSize);
+		StkPlCloseFile(FileHndl);
+
+		// Create folder
+		wchar_t WorkPathMkdr[2048] = L"";
+		StkPlSwPrintf(WorkPathMkdr, 2048, L"%ls\\work", WorkPath);
+		if (PathFileExists(WorkPath) == TRUE && PathIsDirectory(WorkPath) == TRUE) {
+			StkPlPrintf("%ls; Directory already exists.\r\n", WorkPathMkdr);
+		} else {
+			StkPlPrintf("Create %ls\r\n", WorkPathMkdr);
+			CreateDirectory(WorkPathMkdr, NULL);
+		}
+
+		// Change permission
+		wchar_t SystemDir[MAX_PATH];
+		GetSystemDirectory(SystemDir, MAX_PATH);
+		wchar_t CmdLine[512];
+		StkPlSwPrintf(CmdLine, 512, L"\"%ls\\icacls.exe\" \"%ls\\work\" /grant Users:(OI)(CI)M /T", SystemDir, WorkPath);
+		StkPlPrintf("%ls\r\n", CmdLine);
+		ZeroMemory(&si, sizeof(si));
+		si.cb = sizeof(si);
+		CreateProcess(NULL, CmdLine, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
 	}
 	if (strcmp(argv[1], "fwadd") == 0 || InstFlag == true) {
 		// Add firewall exception
