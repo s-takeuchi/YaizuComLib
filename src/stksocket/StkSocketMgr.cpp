@@ -1146,7 +1146,7 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 		while (true) {
 			timeval Timeout;
 			Timeout.tv_sec = 0;
-			Timeout.tv_usec = 0;
+			Timeout.tv_usec = 1;
 			fd_set RecFds;
 			FD_ZERO(&RecFds);
 			FD_SET(TmpSock, &RecFds);
