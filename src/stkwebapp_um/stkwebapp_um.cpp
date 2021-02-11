@@ -22,7 +22,27 @@ void StkWebAppUm_Init()
 	UserManagement::AddMsg();
 }
 
-int StkWebAppUm_AddLogMsg(wchar_t* MsgEn, wchar_t* MsgJa)
+int StkWebAppUm_AddLogMsg(wchar_t MsgEn[STKWEBAPPUM_MAXLEN_OF_LOGMSG], wchar_t MsgJa[STKWEBAPPUM_MAXLEN_OF_LOGMSG])
 {
 	return DataAccessUm::GetInstance()->AddLogMsg(MsgEn, MsgJa);
+}
+
+void StkWebAppUm_SetPropertyValueInt(const wchar_t* Name, const int Value)
+{
+	DataAccessUm::GetInstance()->SetPropertyValueInt(Name, Value);
+}
+
+void StkWebAppUm_SetPropertyValueWStr(const wchar_t* Name, const wchar_t Value[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])
+{
+	DataAccessUm::GetInstance()->SetPropertyValueWStr(Name, Value);
+}
+
+int StkWebAppUm_GetPropertyValueInt(const wchar_t* Name)
+{
+	return DataAccessUm::GetInstance()->GetPropertyValueInt(Name);
+}
+
+void StkWebAppUm_GetPropertyValueWStr(const wchar_t* Name, wchar_t Value[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])
+{
+	DataAccessUm::GetInstance()->GetPropertyValueWStr(Name, Value);
 }

@@ -36,7 +36,11 @@ StkWebAppUmが提供するサーバ側のAPIを以下に示す。<br/>
 <tr><td>void StkWebAppUm_UnregisterApi(StkWebApp*)</td><td>APIのエントリ(URL)を削除する。</td></tr>
 <tr><td>int StkWebAppUm_CreateTable()</td><td>StkWebApp_Umが使用するテーブルを作成する。</td></tr>
 <tr><td>void StkWebAppUm_Init()</td><td>StkWebApp_Umを初期化する。他のサーバAPIの呼び出し前に，本APIを呼び出しておく必要がある。</td></tr>
-<tr><td>int AddLogMsg(wchar_t*, wchar_t*)</td><td>ログを追加する。</td></tr>
+<tr><td>int StkWebAppUm_AddLogMsg(wchar_t[STKWEBAPPUM_MAXLEN_OF_LOGMSG], wchar_t[STKWEBAPPUM_MAXLEN_OF_LOGMSG])</td><td>ログを追加する。</td></tr>
+<tr><td>void StkWebAppUm_SetPropertyValueInt(const wchar_t*, const int)</td><td>Int型プロパティを設定する。</td></tr>
+<tr><td>void StkWebAppUm_SetPropertyValueWStr(const wchar_t*, const wchar_t[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])</td><td>WString型プロパティを設定する。</td></tr>
+<tr><td>int StkWebAppUm_GetPropertyValueInt(const wchar_t*)</td><td>Int型プロパティの値を取得する。</td></tr>
+<tr><td>void StkWebAppUm_GetPropertyValueWStr(const wchar_t*, wchar_t[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])</td><td>WString型プロパティの値を取得する。</td></tr>
 </table><p>
 </div><p>
 
@@ -88,16 +92,67 @@ StkWebApp_Umを初期化する。他のサーバAPIの呼び出し前に，本AP
 </p>
 </div><p>
 
-<H3 ID="1.2.5">1.2.5 int AddLogMsg(wchar_t*, wchar_t*)</H3>
+<H3 ID="1.2.5">1.2.5 int StkWebAppUm_AddLogMsg(wchar_t[STKWEBAPPUM_MAXLEN_OF_LOGMSG], wchar_t[STKWEBAPPUM_MAXLEN_OF_LOGMSG])</H3>
 <div class="topic">
 <p>
-int AddLogMsg(wchar_t* MsgEn, wchar_t* MsgJa)<br/>
+int StkWebAppUm_AddLogMsg(wchar_t MsgEn[STKWEBAPPUM_MAXLEN_OF_LOGMSG], wchar_t MsgJa[STKWEBAPPUM_MAXLEN_OF_LOGMSG])<br/>
 ログを追加する。
 </p>
 <table class="tblstyle">
 <tr><td>MsgEn(入力)</td><td>英語メッセージ。</td></tr>
 <tr><td>MsgJa(入力)</td><td>日本語メッセージ。</td></tr>
 <tr><td>戻り値</td><td>常に0。</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.2.6">1.2.6 void StkWebAppUm_SetPropertyValueInt(const wchar_t*, const int)</H3>
+<div class="topic">
+void StkWebAppUm_SetPropertyValueInt(const wchar_t* Name, const int Value)<br/>
+<p>
+Int型プロパティを設定する。同名のプロパティが存在する場合その値を更新する。そうでなければプロパティを追加する。
+</p>
+<table class="tblstyle">
+<tr><td>Name(入力)</td><td>プロパティ名</td></tr>
+<tr><td>Value(入力)</td><td>プロパティ値</td></tr>
+<tr><td>戻り値</td><td>なし</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.2.7">1.2.7 void StkWebAppUm_SetPropertyValueWStr(const wchar_t*, const wchar_t[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])</H3>
+<div class="topic">
+<p>
+void StkWebAppUm_SetPropertyValueWStr(const wchar_t* Name, const wchar_t Value[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])<br/>
+WString型プロパティを設定する。同名のプロパティが存在する場合その値を更新する。そうでなければプロパティを追加する。
+</p>
+<table class="tblstyle">
+<tr><td>Name(入力)</td><td>プロパティ名</td></tr>
+<tr><td>Value(入力)</td><td>プロパティ値</td></tr>
+<tr><td>戻り値</td><td>なし</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.2.8">1.2.8 int StkWebAppUm_GetPropertyValueInt(const wchar_t*)</H3>
+<div class="topic">
+<p>
+int StkWebAppUm_GetPropertyValueInt(const wchar_t* Name)<br/>
+Int型プロパティの値を取得する。
+</p>
+<table class="tblstyle">
+<tr><td>Name(入力)</td><td>プロパティ名</td></tr>
+<tr><td>戻り値</td><td>プロパティ値</td></tr>
+</table><p>
+</div><p>
+
+<H3 ID="1.2.9">1.2.9 void StkWebAppUm_GetPropertyValueWStr(const wchar_t*, wchar_t[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])</H3>
+<div class="topic">
+<p>
+void StkWebAppUm_GetPropertyValueWStr(const wchar_t* Name, wchar_t Value[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])<br/>
+WString型プロパティの値を取得する。
+</p>
+<table class="tblstyle">
+<tr><td>Name(入力)</td><td>プロパティ名</td></tr>
+<tr><td>Value(出力)</td><td>プロパティ値</td></tr>
+<tr><td>戻り値</td><td>なし</td></tr>
 </table><p>
 </div><p>
 
