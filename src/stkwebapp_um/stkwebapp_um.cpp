@@ -22,7 +22,7 @@ void StkWebAppUm_Init()
 	UserManagement::AddMsg();
 }
 
-int AddLogMsg(wchar_t* MsgEn, wchar_t* MsgJa)
+int StkWebAppUm_AddLogMsg(wchar_t* MsgEn, wchar_t* MsgJa)
 {
 	return DataAccessUm::GetInstance()->AddLogMsg(MsgEn, MsgJa);
 }

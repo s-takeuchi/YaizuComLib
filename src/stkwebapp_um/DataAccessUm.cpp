@@ -338,6 +338,98 @@ bool DataAccessUm::DeleteUser(int Id)
 	return true;
 }
 
+void DataAccessUm::SetPropertyValueInt(const wchar_t* Name, const int Value)
+{
+	LockTable(L"Property", LOCK_EXCLUSIVE);
+	ColumnData* ColDatSearch[1];
+	ColDatSearch[0] = new ColumnDataWStr(L"Name", Name);
+	RecordData* RecDatSearch = new RecordData(L"Property", ColDatSearch, 1);
+	RecordData* RecDatFound = GetRecord(RecDatSearch);
+
+	if (RecDatFound != NULL) {
+		// Update
+		ColumnData* ColDatUpd[1];
+		ColDatUpd[0] = new ColumnDataInt(L"ValueInt", Value);
+		RecordData* RecDatUpd = new RecordData(L"Property", ColDatUpd, 1);
+		UpdateRecord(RecDatSearch, RecDatUpd);
+		delete RecDatUpd;
+	} else {
+		// Insert
+		ColumnData* ColDatInsert[3];
+		ColDatInsert[0] = new ColumnDataWStr(L"Name", Name);
+		ColDatInsert[1] = new ColumnDataInt(L"ValueInt", Value);
+		ColDatInsert[2] = new ColumnDataWStr(L"ValueWStr", L"");
+		RecordData* RecDatInsert = new RecordData(L"Property", ColDatInsert, 3);
+		InsertRecord(RecDatInsert);
+		delete RecDatInsert;
+	}
+	UnlockTable(L"Property");
+	delete RecDatSearch;
+	delete RecDatFound;
+}
+
+void DataAccessUm::SetPropertyValueWStr(const wchar_t* Name, const wchar_t Value[UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR])
+{
+	LockTable(L"Property", LOCK_EXCLUSIVE);
+	ColumnData* ColDatSearch[1];
+	ColDatSearch[0] = new ColumnDataWStr(L"Name", Name);
+	RecordData* RecDatSearch = new RecordData(L"Property", ColDatSearch, 1);
+	RecordData* RecDatFound = GetRecord(RecDatSearch);
+
+	if (RecDatFound != NULL) {
+		// Update
+		ColumnData* ColDatUpd[1];
+		ColDatUpd[0] = new ColumnDataWStr(L"ValueWStr", Value);
+		RecordData* RecDatUpd = new RecordData(L"Property", ColDatUpd, 1);
+		UpdateRecord(RecDatSearch, RecDatUpd);
+		delete RecDatUpd;
+	} else {
+		// Insert
+		ColumnData* ColDatInsert[3];
+		ColDatInsert[0] = new ColumnDataWStr(L"Name", ((ColumnDataWStr*)RecDatFound->GetColumn(0))->GetValue());
+		ColDatInsert[1] = new ColumnDataInt(L"ValueInt", 0);
+		ColDatInsert[2] = new ColumnDataWStr(L"ValueWStr", Value);
+		RecordData* RecDatInsert = new RecordData(L"Property", ColDatInsert, 3);
+		InsertRecord(RecDatInsert);
+		delete RecDatInsert;
+	}
+	UnlockTable(L"Property");
+	delete RecDatSearch;
+	delete RecDatFound;
+}
+
+int DataAccessUm::GetPropertyValueInt(const wchar_t* Name)
+{
+	int Ret = -1;
+	LockTable(L"Property", LOCK_SHARE);
+	ColumnData* ColDatSearch[1];
+	ColDatSearch[0] = new ColumnDataWStr(L"Name", Name);
+	RecordData* RecDatSearch = new RecordData(L"Property", ColDatSearch, 1);
+	RecordData* RecDatFound = GetRecord(RecDatSearch);
+	if (RecDatFound) {
+		Ret = ((ColumnDataInt*)RecDatFound->GetColumn(1))->GetValue();
+	}
+	UnlockTable(L"Property");
+	delete RecDatSearch;
+	delete RecDatFound;
+	return Ret;
+}
+
+void DataAccessUm::GetPropertyValueWStr(const wchar_t* Name, wchar_t Value[UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR])
+{
+	LockTable(L"Property", LOCK_SHARE);
+	ColumnData* ColDatSearch[1];
+	ColDatSearch[0] = new ColumnDataWStr(L"Name", Name);
+	RecordData* RecDatSearch = new RecordData(L"Property", ColDatSearch, 1);
+	RecordData* RecDatFound = GetRecord(RecDatSearch);
+	if (RecDatFound) {
+		StkPlWcsCpy(Value, UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR, ((ColumnDataWStr*)RecDatFound->GetColumn(2))->GetValue());
+	}
+	UnlockTable(L"Property");
+	delete RecDatSearch;
+	delete RecDatFound;
+}
+
 // Create tables for CmdFreak
 // Return : [0:Success, -1:Failed]
 int DataAccessUm::CreateUserTable()
@@ -372,17 +464,38 @@ int DataAccessUm::CreateUserTable()
 		return -1;
 	}
 
+	// Property table
+	ColumnDefWStr ColDefPropertyName(L"Name", UserManagement::MAXLEN_OF_PROPERTY_NAME);
+	ColumnDefInt ColDefPropertyValueInt(L"ValueInt");
+	ColumnDefWStr ColDefPropertyValueWStr(L"ValueWStr", UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR);
+	TableDef TabDefProperty(L"Property", UserManagement::MAXNUM_OF_PROPERTY_RECORDS);
+	TabDefProperty.AddColumnDef(&ColDefPropertyName);
+	TabDefProperty.AddColumnDef(&ColDefPropertyValueInt);
+	TabDefProperty.AddColumnDef(&ColDefPropertyValueWStr);
+	if (CreateTable(&TabDefProperty) != 0) {
+		UnlockAllTable();
+		return -1;
+	}
+
 	// Add records for User
-	ColumnData *ColDatUser[4];
-	ColDatUser[0] = new ColumnDataInt(L"Id", 0);
-	ColDatUser[1] = new ColumnDataWStr(L"Name", L"admin");
-	ColDatUser[2] = new ColumnDataWStr(L"Password", L"manager");
-	ColDatUser[3] = new ColumnDataInt(L"Role", 0);
-	RecordData* RecUser = new RecordData(L"User", ColDatUser, 4);
-	// Add record
-	LockTable(L"User", LOCK_EXCLUSIVE);
-	int Ret = InsertRecord(RecUser);
-	UnlockTable(L"User");
-	delete RecUser;
+	{
+		ColumnData *ColDatUser[4];
+		ColDatUser[0] = new ColumnDataInt(L"Id", 0);
+		ColDatUser[1] = new ColumnDataWStr(L"Name", L"admin");
+		ColDatUser[2] = new ColumnDataWStr(L"Password", L"manager");
+		ColDatUser[3] = new ColumnDataInt(L"Role", 0);
+		RecordData* RecUser = new RecordData(L"User", ColDatUser, 4);
+		// Add record
+		LockTable(L"User", LOCK_EXCLUSIVE);
+		int Ret = InsertRecord(RecUser);
+		UnlockTable(L"User");
+		delete RecUser;
+	}
+	// For property table
+	{
+		SetPropertyValueInt(L"MaxUserId", 1);
+		SetPropertyValueInt(L"MaxLogId", 1);
+	}
+
 	return 0;
 }

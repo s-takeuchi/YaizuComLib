@@ -12,6 +12,10 @@ public:
 	static const int MAXLEN_OF_LOGTIME = 32;
 	static const int MAXLEN_OF_LOGMSG = 100;
 	static const int MAXNUM_OF_LOGRECORDS = 111;
+	static const int MAXLEN_OF_PROPERTY_NAME = 256;
+	static const int MAXLEN_OF_PROPERTY_VALUEWSTR = 256;
+	static const int MAXNUM_OF_PROPERTY_RECORDS = 1024;
+
 
 	static const int UM_AUTH_ERROR = 2001;
 	static const int UM_ACCESS_RIGHT_ERROR = 2002;

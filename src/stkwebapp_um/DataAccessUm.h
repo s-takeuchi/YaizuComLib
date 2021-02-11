@@ -28,5 +28,10 @@ public:
 	bool UpdateUser(int, wchar_t[UserManagement::MAXLEN_OF_USERNAME], int, wchar_t[UserManagement::MAXLEN_OF_PASSWORD]);
 	bool DeleteUser(int);
 
+	void SetPropertyValueInt(const wchar_t*, const int);
+	void SetPropertyValueWStr(const wchar_t*, const wchar_t[UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR]);
+	int GetPropertyValueInt(const wchar_t*);
+	void GetPropertyValueWStr(const wchar_t*, wchar_t[UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR]);
+
 	int CreateUserTable();
 };
