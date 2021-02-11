@@ -31,18 +31,23 @@ DataAccessUm* DataAccessUm::GetInstance()
 // Return : always zero returned.
 int DataAccessUm::AddLogMsg(wchar_t LogMsgEn[UserManagement::MAXLEN_OF_LOGMSG], wchar_t LogMsgJa[UserManagement::MAXLEN_OF_LOGMSG])
 {
-	static int MaxLogId = 0;
-	if (MaxLogId == 0) {
-		MaxLogId = GetMaxLogId() + 1;
-		DeleteOldLogs();
-	}
+	// Delete old logs
 	static int DelFlag = 0;
-	if (DelFlag == 10) {
+	if (DelFlag == 0) {
+		DeleteOldLogs();
+		DelFlag++;
+	} else if (DelFlag == 10) {
 		DeleteOldLogs();
 		DelFlag = 0;
 	} else {
 		DelFlag++;
 	}
+
+	LockTable(L"Log", LOCK_EXCLUSIVE);
+
+	// Get max log ID
+	int MaxLogId = GetPropertyValueInt(L"MaxLogId");
+	MaxLogId++;
 
 	wchar_t LocalTimeBuf[64];
 	StkPlGetWTimeInIso8601(LocalTimeBuf, true);
@@ -54,35 +59,15 @@ int DataAccessUm::AddLogMsg(wchar_t LogMsgEn[UserManagement::MAXLEN_OF_LOGMSG], 
 	ColDatLog[3] = new ColumnDataWStr(L"MessageJa", LogMsgJa);
 	RecordData* RecDatLog = new RecordData(L"Log", ColDatLog, 4);
 	// Add record
-	LockTable(L"Log", LOCK_EXCLUSIVE);
 	int Ret = InsertRecord(RecDatLog);
-	UnlockTable(L"Log");
 	delete RecDatLog;
-	MaxLogId++;
+
+	// Set max user ID
+	SetPropertyValueInt(L"MaxLogId", MaxLogId);
+
+	UnlockTable(L"Log");
+
 	return 0;
-}
-
-// Get maximum log id.
-// This method checks all of registered log ids and returns the maximum id
-// Return : Maximum log id
-int DataAccessUm::GetMaxLogId()
-{
-	LockTable(L"Log", LOCK_SHARE);
-	RecordData* RecDatLog = GetRecord(L"Log");
-	UnlockTable(L"Log");
-
-	RecordData* CurrRecDat = RecDatLog;
-	int MaxLogId = 0;
-	while (CurrRecDat != NULL) {
-		ColumnDataInt* ColDat = (ColumnDataInt*)CurrRecDat->GetColumn(0);
-		int CurrId = ColDat->GetValue();
-		if (CurrId > MaxLogId) {
-			MaxLogId = CurrId;
-		}
-		CurrRecDat = CurrRecDat->GetNextRecord();
-	}
-	delete RecDatLog;
-	return MaxLogId;
 }
 
 // Get number of logs.
@@ -267,28 +252,21 @@ bool DataAccessUm::AddUser(wchar_t Name[UserManagement::MAXLEN_OF_USERNAME], int
 	LockTable(L"User", LOCK_EXCLUSIVE);
 
 	// Get max user ID
-	RecordData* RecDatUser = GetRecord(L"User");
-	RecordData* CurrRecDat = RecDatUser;
-	int MaxLogId = 0;
-	while (CurrRecDat != NULL) {
-		ColumnDataInt* ColDat = (ColumnDataInt*)CurrRecDat->GetColumn(0);
-		int CurrId = ColDat->GetValue();
-		if (CurrId > MaxLogId) {
-			MaxLogId = CurrId;
-		}
-		CurrRecDat = CurrRecDat->GetNextRecord();
-	}
-	delete RecDatUser;
+	int MaxUserId = GetPropertyValueInt(L"MaxUserId");
+	MaxUserId++;
 	
 	// Add new user
 	ColumnData* ColDatInsertUser[4];
-	ColDatInsertUser[0] = new ColumnDataInt(L"Id", MaxLogId + 1);
+	ColDatInsertUser[0] = new ColumnDataInt(L"Id", MaxUserId);
 	ColDatInsertUser[1] = new ColumnDataWStr(L"Name", Name);
 	ColDatInsertUser[2] = new ColumnDataWStr(L"Password", Password);
 	ColDatInsertUser[3] = new ColumnDataInt(L"Role", Role);
 	RecordData* RecDatInsertUser = new RecordData(L"User", ColDatInsertUser, 4);
 	int Ret = InsertRecord(RecDatInsertUser);
 	delete RecDatInsertUser;
+
+	// Set max user ID
+	SetPropertyValueInt(L"MaxUserId", MaxUserId);
 
 	UnlockTable(L"User");
 	return true;
@@ -493,8 +471,8 @@ int DataAccessUm::CreateUserTable()
 	}
 	// For property table
 	{
-		SetPropertyValueInt(L"MaxUserId", 1);
-		SetPropertyValueInt(L"MaxLogId", 1);
+		SetPropertyValueInt(L"MaxUserId", 0);
+		SetPropertyValueInt(L"MaxLogId", 0);
 	}
 
 	return 0;

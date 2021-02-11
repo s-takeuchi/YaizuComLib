@@ -15,7 +15,6 @@ public:
 	static DataAccessUm* GetInstance();
 
 	int AddLogMsg(wchar_t[UserManagement::MAXLEN_OF_LOGMSG], wchar_t[UserManagement::MAXLEN_OF_LOGMSG]);
-	int GetMaxLogId();
 	int GetNumOfLogs();
 	int GetLogs(wchar_t[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGTIME], wchar_t[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG], wchar_t[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG]);
 	int DeleteOldLogs();
