@@ -78,30 +78,31 @@ Command usage : stkwebappcmd.exe &lt;command&gt; &lt;option 1&gt; &lt;option 2&g
 
 Commands
   help      : Display help.
-  modperm   : Modify permission of configuration and data files. 
+  modperm   : Modify permission of configuration and data files.
               SrvProgram option is required.
   modconfig : Modify configuration files. ProductName, SrvHost,
-              SrvPort, SrvProgram,
-              WebHost and WebPort options are required.
+              SrvPort, SrvProgram, WebHost and WebPort options
+              are required.
+  datadir   : Create data folder. SrvProgram option is required.
   fwadd     : Add exception to the firewall. ProductName option
               is required.
-  fwdel     : Delete exception from the firewall. ProductName 
+  fwdel     : Delete exception from the firewall. ProductName
               option is required.
-  srvadd    : Add service to the system. ProductName option is 
+  srvadd    : Add service to the system. ProductName option is
               required.
-  srvdel    : Delete service from the system. ProductName option 
+  srvdel    : Delete service from the system. ProductName option
               is required.
   start     : Start the service. ProductName option is required.
   stop      : Stop the service. ProductName option is required.
-  inst      : Execute modperm, modconfig, fwadd, srvadd and start 
-              sequencially.
+  inst      : Execute modperm, modconfig, datadir, fwadd, srvadd
+              and start sequencially.
   uninst    : Execute fwdel, srvdel and stop sequencially.
 
 Options
   ProductName : Product name
   SrvHost : Host name or IP address of REST API service
   SrvPort : Port number of REST API service
-  SrvProgram : Program name (without extension) which 
+  SrvProgram : Program name (without extension) which
                stkwebappcmd launches
   WebHost : Host name or IP address of WEB service
   WebPort : Port number of WEB service
