@@ -49,7 +49,7 @@ void ApiBase::DebugObject(StkObject* StkObj)
 	StkPlWPrintf(L"%ls\r\n", DebugStr);
 }
 
-bool ApiBase::CheckCredentials(wchar_t* Token, wchar_t* Name)
+bool ApiBase::CheckCredentials(wchar_t* Token, wchar_t* Name, int* Id)
 {
 	if (Token == NULL || *Token == L'\0') {
 		return false;
@@ -62,10 +62,10 @@ bool ApiBase::CheckCredentials(wchar_t* Token, wchar_t* Name)
 		return false;
 	}
 
-	int Id = 0;
+	int TmpId = 0;
 	wchar_t Password[UserManagement::MAXLEN_OF_PASSWORD];
 	int Role = 0;
-	bool Ret = DataAccessUm::GetInstance()->GetTargetUserByName(TmpName, &Id, Password, &Role);
+	bool Ret = DataAccessUm::GetInstance()->GetTargetUserByName(TmpName, &TmpId, Password, &Role);
 	if (Ret == false) {
 		return false;
 	}
@@ -74,6 +74,7 @@ bool ApiBase::CheckCredentials(wchar_t* Token, wchar_t* Name)
 		if (Name != NULL) {
 			StkPlWcsCpy(Name, UserManagement::MAXLEN_OF_USERNAME, TmpName);
 		}
+		*Id = TmpId;
 		return true;
 	} else {
 		return false;
@@ -86,7 +87,7 @@ bool ApiBase::IsAdminUser(wchar_t* Token)
 	wchar_t UserName[UserManagement::MAXLEN_OF_USERNAME] = L"";
 	wchar_t UserPassword[UserManagement::MAXLEN_OF_PASSWORD] = L"";
 	int Role = 0;
-	if (!CheckCredentials(Token, UserName)) {
+	if (!CheckCredentials(Token, UserName, &UserId)) {
 		return false;
 	}
 	DataAccessUm::GetInstance()->GetTargetUserByName(UserName, &UserId, UserPassword, &Role);

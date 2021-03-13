@@ -22,9 +22,9 @@ void StkWebAppUm_Init()
 	UserManagement::AddMsg();
 }
 
-int StkWebAppUm_AddLogMsg(wchar_t MsgEn[STKWEBAPPUM_MAXLEN_OF_LOGMSG], wchar_t MsgJa[STKWEBAPPUM_MAXLEN_OF_LOGMSG])
+int StkWebAppUm_AddLogMsg(wchar_t MsgEn[STKWEBAPPUM_MAXLEN_OF_LOGMSG], wchar_t MsgJa[STKWEBAPPUM_MAXLEN_OF_LOGMSG], int UserId)
 {
-	return DataAccessUm::GetInstance()->AddLogMsg(MsgEn, MsgJa);
+	return DataAccessUm::GetInstance()->AddLogMsg(MsgEn, MsgJa, UserId);
 }
 
 void StkWebAppUm_SetPropertyValueInt(const wchar_t* Name, const int Value)

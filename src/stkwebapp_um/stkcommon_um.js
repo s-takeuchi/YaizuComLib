@@ -310,7 +310,7 @@ function displayLogInfo() {
         let userName = "";
         for (let loopUser = 0; loopUser < userList.length; loopUser++) {
             if (Log[Loop].UserId == userList[loopUser].Id) {
-                userName = userList.Name;
+                userName = userList[loopUser].Name;
             } else if (Log[Loop].UserId == -1) {
                 userName = getClientMessage('STKCOMMONUG_LOGEVENTUSER_SYSTEM');
             }

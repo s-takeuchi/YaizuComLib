@@ -10,7 +10,7 @@ void StkWebAppUm_UnregisterApi(StkWebApp*);
 int StkWebAppUm_CreateTable();
 void StkWebAppUm_Init();
 
-int StkWebAppUm_AddLogMsg(wchar_t[STKWEBAPPUM_MAXLEN_OF_LOGMSG], wchar_t[STKWEBAPPUM_MAXLEN_OF_LOGMSG]);
+int StkWebAppUm_AddLogMsg(wchar_t[STKWEBAPPUM_MAXLEN_OF_LOGMSG], wchar_t[STKWEBAPPUM_MAXLEN_OF_LOGMSG], int UserId = -1);
 
 void StkWebAppUm_SetPropertyValueInt(const wchar_t*, const int);
 void StkWebAppUm_SetPropertyValueWStr(const wchar_t*, const wchar_t[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR]);

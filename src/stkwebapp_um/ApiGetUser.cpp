@@ -10,7 +10,7 @@ StkObject* ApiGetUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPat
 	wchar_t UserPassword[UserManagement::MAXLEN_OF_PASSWORD] = L"";
 	int Role = 0;
 	StkObject* TmpObj = new StkObject(L"");
-	if (!CheckCredentials(Token, UserName)) {
+	if (!CheckCredentials(Token, UserName, &UserId)) {
 		AddCodeAndMsg(TmpObj, UserManagement::UM_AUTH_ERROR, UserManagement::GetMsgEng(UserManagement::UM_AUTH_ERROR), UserManagement::GetMsgJpn(UserManagement::UM_AUTH_ERROR));
 		*ResultCode = 401;
 		return TmpObj;

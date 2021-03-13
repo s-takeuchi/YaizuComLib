@@ -14,7 +14,8 @@ StkObject* ApiLogging::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPat
 
 	StkObject* ResObj = new StkObject(L"");
 	wchar_t YourName[UserManagement::MAXLEN_OF_USERNAME] = L"";
-	if (!CheckCredentials(Token, YourName)) {
+	int YourId = -1;
+	if (!CheckCredentials(Token, YourName, &YourId)) {
 		AddCodeAndMsg(ResObj, UserManagement::UM_AUTH_ERROR, UserManagement::GetMsgEng(UserManagement::UM_AUTH_ERROR), UserManagement::GetMsgJpn(UserManagement::UM_AUTH_ERROR));
 		*ResultCode = 401;
 		return ResObj;

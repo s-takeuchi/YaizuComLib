@@ -9,7 +9,8 @@ StkObject* ApiDeleteUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t Url
 	StkObject* ResObj = new StkObject(L"");
 
 	wchar_t YourName[UserManagement::MAXLEN_OF_USERNAME] = L"";
-	if (!CheckCredentials(Token, YourName)) {
+	int YourId = -1;
+	if (!CheckCredentials(Token, YourName, &YourId)) {
 		AddCodeAndMsg(ResObj, UserManagement::UM_AUTH_ERROR, UserManagement::GetMsgEng(UserManagement::UM_AUTH_ERROR), UserManagement::GetMsgJpn(UserManagement::UM_AUTH_ERROR));
 		*ResultCode = 401;
 		return ResObj;
@@ -53,7 +54,7 @@ StkObject* ApiDeleteUser::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t Url
 	wchar_t LogBufJpn[512] = L"";
 	StkPlSwPrintf(LogBufEng, 512, UserManagement::GetMsgEng(UserManagement::UM_USER_DELETE), TmpName);
 	StkPlSwPrintf(LogBufJpn, 512, UserManagement::GetMsgJpn(UserManagement::UM_USER_DELETE), TmpName);
-	DataAccessUm::GetInstance()->AddLogMsg(LogBufEng, LogBufJpn);
+	DataAccessUm::GetInstance()->AddLogMsg(LogBufEng, LogBufJpn, YourId);
 
 	AddCodeAndMsg(ResObj, 0, L"", L"");
 	*ResultCode = 200;
