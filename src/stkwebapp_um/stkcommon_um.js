@@ -19,6 +19,17 @@
     addClientMessage('STKCOMMONUG_USER_PW_WRONG', {'en':'The specified password is not correct.', 'ja':'指定されたパスワードが不正です。'});
     addClientMessage('STKCOMMONUG_USER_NEWPW_WRONG', {'en':'The specified "New Password" and "Confirm New Password" are not matched.', 'ja':'"新しいパスワード"と"新しいパスワード(確認用)"が不一致です。'});
 
+    //
+    // Logging information
+    //
+    addClientMessage('STKCOMMONUG_LOGINFO', {'en':'Operation log', 'ja':'操作ログ'});
+    addClientMessage('STKCOMMONUG_LOGEVENTTIME', {'en':'Event Occurrence Time', 'ja':'イベント発生時刻'});
+    addClientMessage('STKCOMMONUG_LOGEVENT', {'en':'Event', 'ja':'イベント'});
+    addClientMessage('STKCOMMONUG_NOLOGINFO', {'en':'<p>No log information</p>', 'ja':'<p>ログはありません</p>'});
+
+    //
+    // Others
+    //
     addClientMessage('STKCOMMONUG_CONNERR', {
         'en':'Connection with REST API service failed. This may be caused by one of the following issues:<br>(1) REST API service cannot be started.<br>(2) REST API service is not registered as a firewall exception.<br>(3) The host name and/or port number you specified are/is invalid.<br>(4) A timeout has occurred when waiting for data from REST API server.<br>',
         'ja':'REST APIサービスとの通信が失敗しました。次の要因が考えられます。<br>(1) REST APIサービスが開始されていない。<br>(2) REST APIサービスがファイアウォールに例外登録されていない。<br>(3) 指定した接続先ホスト名およびポート番号が不正。<br>(4) REST APIサーバからのデータ取得中にタイムアウトが発生した。<br>'
@@ -249,4 +260,53 @@
             displayAlertDanger('#chgpassword_msg', getSvrMsg(responseData['API_OPE_USER']));
         }
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+function transDisplayLogInfo() {
+    apiCall('GET', '/api/logs/', null, 'API_GET_LOGS', displayLogInfo);
+}
+
+function displayLogInfo() {
+    let logInfo = $('<div id="loginfodlg">');
+    showInputModal(getClientMessage('STKCOMMONUG_LOGINFO'), logInfo);
+
+    if (statusCode['API_GET_LOGS'] == -1 || statusCode['API_GET_LOGS'] == 0) {
+        displayAlertDanger('#loginfodlg', getClientMessage('CSTKCOMMONUG_CONNERR'));
+        return;
+    } else if (statusCode['API_GET_LOGS'] != 200) {
+        displayAlertDanger('#loginfodlg', getSvrMsg(responseData['API_GET_LOGS']));
+        return;
+    }
+
+    var Log = getArray(responseData['API_GET_LOGS'].Data.Log);
+    if (Log == null) {
+        $('#loginfodlg').append(getClientMessage('STKCOMMONUG_NOLOGINFO'));
+        return;
+    }
+
+    var logData = $('<table>');
+    logData.addClass('table table-striped');
+
+    var tHead = $('<thead>');
+    tHead.append('<tr><th>' + getClientMessage('STKCOMMONUG_LOGEVENTTIME') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENT') + '</th></tr>');
+    logData.append(tHead);
+
+    var tBody = $('<tbody>');
+    for (var Loop = 0; Loop < Log.length; Loop++) {
+        if (getClientLanguage() == 1) {
+            tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + Log[Loop].MsgJa + '</td></tr>');
+        } else {
+            tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + Log[Loop].MsgEn + '</td></tr>');
+        }
+    }
+    logData.append(tBody);
+    $('#loginfodlg').append(logData);
+    $('#loginfodlg').append('<button type="button" id="loginfodlg_cancel" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('STKCOMMONUG_DLG_CLOSE') + '</button>');
+
+    $('td').css('vertical-align', 'middle');
 }

@@ -29,7 +29,7 @@ DataAccessUm* DataAccessUm::GetInstance()
 // LogMsgEn [in] : Message in English which you want to insert
 // LogMsgJa [in] : Message in Japanese which you want to insert
 // Return : always zero returned.
-int DataAccessUm::AddLogMsg(wchar_t LogMsgEn[UserManagement::MAXLEN_OF_LOGMSG], wchar_t LogMsgJa[UserManagement::MAXLEN_OF_LOGMSG])
+int DataAccessUm::AddLogMsg(wchar_t LogMsgEn[UserManagement::MAXLEN_OF_LOGMSG], wchar_t LogMsgJa[UserManagement::MAXLEN_OF_LOGMSG], int UserId)
 {
 	// Delete old logs
 	static int DelFlag = 0;
@@ -52,12 +52,13 @@ int DataAccessUm::AddLogMsg(wchar_t LogMsgEn[UserManagement::MAXLEN_OF_LOGMSG], 
 	wchar_t LocalTimeBuf[64];
 	StkPlGetWTimeInIso8601(LocalTimeBuf, true);
 	// New record information
-	ColumnData *ColDatLog[4];
+	ColumnData *ColDatLog[5];
 	ColDatLog[0] = new ColumnDataInt(L"Id", MaxLogId);
 	ColDatLog[1] = new ColumnDataWStr(L"Time", LocalTimeBuf);
-	ColDatLog[2] = new ColumnDataWStr(L"MessageEn", LogMsgEn);
-	ColDatLog[3] = new ColumnDataWStr(L"MessageJa", LogMsgJa);
-	RecordData* RecDatLog = new RecordData(L"Log", ColDatLog, 4);
+	ColDatLog[2] = new ColumnDataInt(L"UserId", UserId);
+	ColDatLog[3] = new ColumnDataWStr(L"MessageEn", LogMsgEn);
+	ColDatLog[4] = new ColumnDataWStr(L"MessageJa", LogMsgJa);
+	RecordData* RecDatLog = new RecordData(L"Log", ColDatLog, 5);
 	// Add record
 	int Ret = InsertRecord(RecDatLog);
 	delete RecDatLog;
@@ -90,10 +91,12 @@ int DataAccessUm::GetNumOfLogs()
 }
 
 // Get log information
+// LogMsgTime [out] : Acquired logging time
 // LogMsgEn [out] : Acquired log message in English
 // LogMsgJa [out] : Acquired log message in Japan
 // Return : Number of acquired log messages
 int DataAccessUm::GetLogs(wchar_t LogMsgTime[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGTIME],
+	int LogMsgUserId[UserManagement::MAXNUM_OF_LOGRECORDS],
 	wchar_t LogMsgEn[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG],
 	wchar_t LogMsgJa[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG])
 {
@@ -106,12 +109,18 @@ int DataAccessUm::GetLogs(wchar_t LogMsgTime[UserManagement::MAXNUM_OF_LOGRECORD
 	RecordData* CurrRecDat = RecDatLog;
 	while (CurrRecDat != NULL) {
 		ColumnDataWStr* ColDatTime = (ColumnDataWStr*)CurrRecDat->GetColumn(1);
-		ColumnDataWStr* ColDatMsgEn = (ColumnDataWStr*)CurrRecDat->GetColumn(2);
-		ColumnDataWStr* ColDatMsgJa = (ColumnDataWStr*)CurrRecDat->GetColumn(3);
+		ColumnDataInt* ColDatUserId = (ColumnDataInt*)CurrRecDat->GetColumn(2);
+		ColumnDataWStr* ColDatMsgEn = (ColumnDataWStr*)CurrRecDat->GetColumn(3);
+		ColumnDataWStr* ColDatMsgJa = (ColumnDataWStr*)CurrRecDat->GetColumn(4);
 		if (ColDatTime != NULL && ColDatTime->GetValue() != NULL) {
 			StkPlWcsCpy(LogMsgTime[NumOfRec], UserManagement::MAXLEN_OF_LOGTIME, ColDatTime->GetValue());
 		} else {
 			StkPlWcsCpy(LogMsgTime[NumOfRec], UserManagement::MAXLEN_OF_LOGTIME, L"");
+		}
+		if (ColDatUserId != NULL) {
+			LogMsgUserId[NumOfRec] = ColDatUserId->GetValue();
+		} else {
+			LogMsgUserId[NumOfRec] = 0;
 		}
 		if (ColDatMsgEn != NULL && ColDatMsgEn->GetValue() != NULL) {
 			StkPlWcsCpy(LogMsgEn[NumOfRec], UserManagement::MAXLEN_OF_LOGMSG, ColDatMsgEn->GetValue());
@@ -430,11 +439,13 @@ int DataAccessUm::CreateUserTable()
 	// Log table
 	ColumnDefInt ColDefLogId(L"Id");
 	ColumnDefWStr ColDefLogTime(L"Time", UserManagement::MAXLEN_OF_LOGTIME);
+	ColumnDefInt ColDefLogUserId(L"UserId");
 	ColumnDefWStr ColDefLogMsgEn(L"MessageEn", UserManagement::MAXLEN_OF_LOGMSG);
 	ColumnDefWStr ColDefLogMsgJa(L"MessageJa", UserManagement::MAXLEN_OF_LOGMSG);
 	TableDef TabDefLog(L"Log", UserManagement::MAXNUM_OF_LOGRECORDS);
 	TabDefLog.AddColumnDef(&ColDefLogId);
 	TabDefLog.AddColumnDef(&ColDefLogTime);
+	TabDefLog.AddColumnDef(&ColDefLogUserId);
 	TabDefLog.AddColumnDef(&ColDefLogMsgEn);
 	TabDefLog.AddColumnDef(&ColDefLogMsgJa);
 	if (CreateTable(&TabDefLog) != 0) {

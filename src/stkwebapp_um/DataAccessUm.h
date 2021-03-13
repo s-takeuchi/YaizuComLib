@@ -14,9 +14,9 @@ public:
 	// Get this instance
 	static DataAccessUm* GetInstance();
 
-	int AddLogMsg(wchar_t[UserManagement::MAXLEN_OF_LOGMSG], wchar_t[UserManagement::MAXLEN_OF_LOGMSG]);
+	int AddLogMsg(wchar_t[UserManagement::MAXLEN_OF_LOGMSG], wchar_t[UserManagement::MAXLEN_OF_LOGMSG], int UserId = -1);
 	int GetNumOfLogs();
-	int GetLogs(wchar_t[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGTIME], wchar_t[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG], wchar_t[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG]);
+	int GetLogs(wchar_t[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGTIME], int[UserManagement::MAXNUM_OF_LOGRECORDS], wchar_t[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG], wchar_t[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG]);
 	int DeleteOldLogs();
 
 	bool GetTargetUserByName(wchar_t[UserManagement::MAXLEN_OF_USERNAME], int*, wchar_t[UserManagement::MAXLEN_OF_PASSWORD], int*);
