@@ -24,6 +24,8 @@
     //
     addClientMessage('STKCOMMONUG_LOGINFO', {'en':'Operation log', 'ja':'操作ログ'});
     addClientMessage('STKCOMMONUG_LOGEVENTTIME', {'en':'Event Occurrence Time', 'ja':'イベント発生時刻'});
+    addClientMessage('STKCOMMONUG_LOGEVENTUSER', {'en':'User', 'ja':'ユーザー'});
+    addClientMessage('STKCOMMONUG_LOGEVENTUSER_SYSTEM', {'en':'System', 'ja':'System'});
     addClientMessage('STKCOMMONUG_LOGEVENT', {'en':'Event', 'ja':'イベント'});
     addClientMessage('STKCOMMONUG_NOLOGINFO', {'en':'<p>No log information</p>', 'ja':'<p>ログはありません</p>'});
 
@@ -268,7 +270,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 function transDisplayLogInfo() {
-    apiCall('GET', '/api/logs/', null, 'API_GET_LOGS', displayLogInfo);
+    let contents = [
+        { method: 'GET', url: '/api/user/', request: null, keystring: 'API_GET_USERS' },
+        { method: 'GET', url: '/api/logs/', request: null, keystring: 'API_GET_LOGS' }
+    ];
+    MultiApiCall(contents, displayLogInfo);
 }
 
 function displayLogInfo() {
@@ -283,25 +289,36 @@ function displayLogInfo() {
         return;
     }
 
-    var Log = getArray(responseData['API_GET_LOGS'].Data.Log);
+    let Log = getArray(responseData['API_GET_LOGS'].Data.Log);
     if (Log == null) {
         $('#loginfodlg').append(getClientMessage('STKCOMMONUG_NOLOGINFO'));
         return;
     }
 
-    var logData = $('<table>');
+    let userList = getArray(responseData['API_GET_USERS'].Data.User);
+
+
+    let logData = $('<table>');
     logData.addClass('table table-striped');
 
-    var tHead = $('<thead>');
-    tHead.append('<tr><th>' + getClientMessage('STKCOMMONUG_LOGEVENTTIME') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENT') + '</th></tr>');
+    let tHead = $('<thead class="thead-dark">');
+    tHead.append('<tr><th>' + getClientMessage('STKCOMMONUG_LOGEVENTTIME') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENTUSER') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENT') + '</th></tr>');
     logData.append(tHead);
 
-    var tBody = $('<tbody>');
-    for (var Loop = 0; Loop < Log.length; Loop++) {
+    let tBody = $('<tbody>');
+    for (let Loop = 0; Loop < Log.length; Loop++) {
+        let userName = "";
+        for (let loopUser = 0; loopUser < userList.length; loopUser++) {
+            if (Log[Loop].UserId == userList[loopUser].Id) {
+                userName = userList.Name;
+            } else if (Log[Loop].UserId == -1) {
+                userName = getClientMessage('STKCOMMONUG_LOGEVENTUSER_SYSTEM');
+            }
+        }
         if (getClientLanguage() == 1) {
-            tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + Log[Loop].MsgJa + '</td></tr>');
+            tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + userName + '</td><td>' + Log[Loop].MsgJa + '</td></tr>');
         } else {
-            tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + Log[Loop].MsgEn + '</td></tr>');
+            tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + userName + '</td><td>' + Log[Loop].MsgEn + '</td></tr>');
         }
     }
     logData.append(tBody);
