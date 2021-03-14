@@ -268,62 +268,78 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-function transDisplayLogInfo() {
-    let contents = [
-        { method: 'GET', url: '/api/user/', request: null, keystring: 'API_GET_USERS' },
-        { method: 'GET', url: '/api/logs/', request: null, keystring: 'API_GET_LOGS' }
-    ];
-    MultiApiCall(contents, displayLogInfo);
-}
-
-function displayLogInfo() {
-    let logInfo = $('<div id="loginfodlg">');
-    showInputModal(getClientMessage('STKCOMMONUG_LOGINFO'), logInfo);
-
-    if (statusCode['API_GET_LOGS'] == -1 || statusCode['API_GET_LOGS'] == 0) {
-        displayAlertDanger('#loginfodlg', getClientMessage('CSTKCOMMONUG_CONNERR'));
-        return;
-    } else if (statusCode['API_GET_LOGS'] != 200) {
-        displayAlertDanger('#loginfodlg', getSvrMsg(responseData['API_GET_LOGS']));
-        return;
+{
+    function transDisplayLogInfo() {
+        let contents = [
+            { method: 'GET', url: '/api/user/', request: null, keystring: 'API_GET_USER' },
+            { method: 'GET', url: '/api/logs/', request: null, keystring: 'API_GET_LOGS' }
+        ];
+        MultiApiCall(contents, transDisplayLogInfo2);
     }
 
-    let Log = getArray(responseData['API_GET_LOGS'].Data.Log);
-    if (Log == null) {
-        $('#loginfodlg').append(getClientMessage('STKCOMMONUG_NOLOGINFO'));
-        return;
+    function transDisplayLogInfo2() {
+        if (statusCode['API_GET_USER'] == 200 && responseData['API_GET_USER'].Data.User.Role == 0) {
+            let contents = [
+                { method: 'GET', url: '/api/user/?target=all', request: null, keystring: 'API_GET_USERS' }
+            ];
+            MultiApiCall(contents, displayLogInfo);
+        } else {
+            displayLogInfo();
+        }
     }
 
-    let userList = getArray(responseData['API_GET_USERS'].Data.User);
+    function displayLogInfo() {
+        let logInfo = $('<div id="loginfodlg">');
+        showInputModal(getClientMessage('STKCOMMONUG_LOGINFO'), logInfo);
 
+        if (statusCode['API_GET_LOGS'] == -1 || statusCode['API_GET_LOGS'] == 0) {
+            displayAlertDanger('#loginfodlg', getClientMessage('CSTKCOMMONUG_CONNERR'));
+            return;
+        } else if (statusCode['API_GET_LOGS'] != 200) {
+            displayAlertDanger('#loginfodlg', getSvrMsg(responseData['API_GET_LOGS']));
+            return;
+        }
 
-    let logData = $('<table>');
-    logData.addClass('table table-striped');
+        let Log = getArray(responseData['API_GET_LOGS'].Data.Log);
+        if (Log == null) {
+            $('#loginfodlg').append(getClientMessage('STKCOMMONUG_NOLOGINFO'));
+            return;
+        }
 
-    let tHead = $('<thead class="thead-dark">');
-    tHead.append('<tr><th>' + getClientMessage('STKCOMMONUG_LOGEVENTTIME') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENTUSER') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENT') + '</th></tr>');
-    logData.append(tHead);
+        let userList = [];
+        if (responseData['API_GET_USERS'] === undefined || responseData['API_GET_USERS'].Data === undefined || responseData['API_GET_USERS'].Data.User === undefined) {
+            userList.push(responseData['API_GET_USER'].Data.User);
+        } else {
+            userList = getArray(responseData['API_GET_USERS'].Data.User);
+        }
 
-    let tBody = $('<tbody>');
-    for (let Loop = 0; Loop < Log.length; Loop++) {
-        let userName = "";
-        for (let loopUser = 0; loopUser < userList.length; loopUser++) {
-            if (Log[Loop].UserId == userList[loopUser].Id) {
-                userName = userList[loopUser].Name;
-            } else if (Log[Loop].UserId == -1) {
-                userName = getClientMessage('STKCOMMONUG_LOGEVENTUSER_SYSTEM');
+        let logData = $('<table>');
+        logData.addClass('table table-striped');
+
+        let tHead = $('<thead class="thead-dark">');
+        tHead.append('<tr><th>' + getClientMessage('STKCOMMONUG_LOGEVENTTIME') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENTUSER') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENT') + '</th></tr>');
+        logData.append(tHead);
+
+        let tBody = $('<tbody>');
+        for (let Loop = 0; Loop < Log.length; Loop++) {
+            let userName = "";
+            for (let loopUser = 0; loopUser < userList.length; loopUser++) {
+                if (Log[Loop].UserId == userList[loopUser].Id) {
+                    userName = userList[loopUser].Name;
+                } else if (Log[Loop].UserId == -1) {
+                    userName = getClientMessage('STKCOMMONUG_LOGEVENTUSER_SYSTEM');
+                }
+            }
+            if (getClientLanguage() == 1) {
+                tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + userName + '</td><td>' + Log[Loop].MsgJa + '</td></tr>');
+            } else {
+                tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + userName + '</td><td>' + Log[Loop].MsgEn + '</td></tr>');
             }
         }
-        if (getClientLanguage() == 1) {
-            tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + userName + '</td><td>' + Log[Loop].MsgJa + '</td></tr>');
-        } else {
-            tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + userName + '</td><td>' + Log[Loop].MsgEn + '</td></tr>');
-        }
-    }
-    logData.append(tBody);
-    $('#loginfodlg').append(logData);
-    $('#loginfodlg').append('<button type="button" id="loginfodlg_cancel" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('STKCOMMONUG_DLG_CLOSE') + '</button>');
+        logData.append(tBody);
+        $('#loginfodlg').append(logData);
+        $('#loginfodlg').append('<button type="button" id="loginfodlg_cancel" class="btn btn-dark" onclick="closeInputModal()">' + getClientMessage('STKCOMMONUG_DLG_CLOSE') + '</button>');
 
-    $('td').css('vertical-align', 'middle');
+        $('td').css('vertical-align', 'middle');
+    }
 }
