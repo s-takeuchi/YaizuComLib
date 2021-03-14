@@ -270,22 +270,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 {
     function transDisplayLogInfo() {
-        let contents = [
-            { method: 'GET', url: '/api/user/', request: null, keystring: 'API_GET_USER' },
-            { method: 'GET', url: '/api/logs/', request: null, keystring: 'API_GET_LOGS' }
-        ];
-        MultiApiCall(contents, transDisplayLogInfo2);
-    }
-
-    function transDisplayLogInfo2() {
+        let contents = [];
         if (statusCode['API_GET_USER'] == 200 && responseData['API_GET_USER'].Data.User.Role == 0) {
-            let contents = [
-                { method: 'GET', url: '/api/user/?target=all', request: null, keystring: 'API_GET_USERS' }
+            contents = [
+                { method: 'GET', url: '/api/user/?target=all', request: null, keystring: 'API_GET_USERS' },
+                { method: 'GET', url: '/api/logs/', request: null, keystring: 'API_GET_LOGS' }
             ];
-            MultiApiCall(contents, displayLogInfo);
         } else {
-            displayLogInfo();
+            contents = [
+                { method: 'GET', url: '/api/logs/', request: null, keystring: 'API_GET_LOGS' }
+            ];
         }
+        MultiApiCall(contents, displayLogInfo);
     }
 
     function displayLogInfo() {
