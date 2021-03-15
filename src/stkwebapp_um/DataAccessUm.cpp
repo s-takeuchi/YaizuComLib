@@ -49,8 +49,10 @@ int DataAccessUm::AddLogMsg(wchar_t LogMsgEn[UserManagement::MAXLEN_OF_LOGMSG], 
 	int MaxLogId = GetPropertyValueInt(L"MaxLogId");
 	MaxLogId++;
 
-	wchar_t LocalTimeBuf[64];
-	StkPlGetWTimeInIso8601(LocalTimeBuf, true);
+	// Create unix epoch time
+	wchar_t LocalTimeBuf[64] = L"";
+	StkPlSwPrintf(LocalTimeBuf, 64, L"%016x", StkPlGetTime());
+
 	// New record information
 	ColumnData *ColDatLog[5];
 	ColDatLog[0] = new ColumnDataInt(L"Id", MaxLogId);

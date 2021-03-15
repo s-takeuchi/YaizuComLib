@@ -313,7 +313,7 @@
         logData.addClass('table table-striped');
 
         let tHead = $('<thead class="thead-dark">');
-        tHead.append('<tr><th>' + getClientMessage('STKCOMMONUG_LOGEVENTTIME') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENTUSER') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENT') + '</th></tr>');
+        tHead.append('<tr><th>' + getClientMessage('STKCOMMONUG_LOGEVENTTIME') + '</th><th class="d-none d-sm-table-cell">' + getClientMessage('STKCOMMONUG_LOGEVENTUSER') + '</th><th>' + getClientMessage('STKCOMMONUG_LOGEVENT') + '</th></tr>');
         logData.append(tHead);
 
         let tBody = $('<tbody>');
@@ -326,10 +326,18 @@
                     userName = getClientMessage('STKCOMMONUG_LOGEVENTUSER_SYSTEM');
                 }
             }
-            if (getClientLanguage() == 1) {
-                tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + userName + '</td><td>' + Log[Loop].MsgJa + '</td></tr>');
+            let dispTimeStr = "";
+            if (/^[0-9a-f]{16}$/i.test(Log[Loop].Time)) {
+                let dispTimeInt = parseInt(Log[Loop].Time, 16);
+                let dispTimeDate = new Date(dispTimeInt * 1000);
+                dispTimeStr = dispTimeDate.toString()
             } else {
-                tBody.append('<tr><td>' + Log[Loop].Time + '</td><td>' + userName + '</td><td>' + Log[Loop].MsgEn + '</td></tr>');
+                dispTimeStr = Log[Loop].Time;
+            }
+            if (getClientLanguage() == 1) {
+                tBody.append('<tr><td>' + dispTimeStr + '</td><td class="d-none d-sm-table-cell">' + userName + '</td><td>' + Log[Loop].MsgJa + '</td></tr>');
+            } else {
+                tBody.append('<tr><td>' + dispTimeStr + '</td><td class="d-none d-sm-table-cell">' + userName + '</td><td>' + Log[Loop].MsgEn + '</td></tr>');
             }
         }
         logData.append(tBody);
