@@ -104,12 +104,14 @@ Code要素が0ではないとき，Data要素は返されません。
   "Data" : {
     "Log" : [
       {
-        "Time" : "2019-04-07T22:22:18+09:00",
+        "Time" : "00000000ffffffff",
+        "UserId" : 0,
         "MsgEn" : "CmdFreak service has stopped.",
         "MsgJa" : "CmdFreakサービスを停止しました。"
       },
       {
-        "Time" : "2019-04-07T22:27:01+09:00",
+        "Time" : "00000000ffffffff",
+        "UserId" : 0,
         "MsgEn" : "CmdFreak service has started.",
         "MsgJa" : "CmdFreakサービスを開始しました。"
       }
@@ -123,7 +125,8 @@ Code要素が0ではないとき，Data要素は返されません。
 <tr><td>MsgJpn</td><td>String</td><td>和文メッセージ。結果コードが0のときは空文字が返る。</td></tr>
 <tr><td>Data</td><td>Element</td><td>結果コードが0でないとき，この要素は返却されない。</td></tr>
 <tr><td>Log</td><td>Element</td><td></td></tr>
-<tr><td>Time</td><td>String</td><td>イベントログが登録された時刻。ISO 8601形式で返却される。</td></tr>
+<tr><td>Time</td><td>String</td><td>Hexadecimal explession in 16 characters of operation performed time (unix epoch time)</td></tr>
+<tr><td>UserId</td><td>Integer</td><td>ログ出力の起点となったユーザーのID。</td></tr>
 <tr><td>MsgEn</td><td>String</td><td>イベントログの英語メッセージ。</td></tr>
 <tr><td>MsgJa</td><td>String</td><td>イベントログの日本語メッセージ。</td></tr>
 </table><br/>
