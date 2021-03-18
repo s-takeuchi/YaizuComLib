@@ -100,11 +100,21 @@ int DataAccessUm::GetNumOfLogs()
 int DataAccessUm::GetLogs(wchar_t LogMsgTime[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGTIME],
 	int LogMsgUserId[UserManagement::MAXNUM_OF_LOGRECORDS],
 	wchar_t LogMsgEn[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG],
-	wchar_t LogMsgJa[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG])
+	wchar_t LogMsgJa[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG],
+	int UserId)
 {
+	RecordData* RecDatLog = NULL;
 	LockTable(L"Log", LOCK_EXCLUSIVE);
 	AzSortRecord(L"Log", L"Id");
-	RecordData* RecDatLog = GetRecord(L"Log");
+	if (UserId == -1) {
+		RecDatLog = GetRecord(L"Log");
+	} else {
+		ColumnData* ColDatUserId[1];
+		ColDatUserId[0] = new ColumnDataInt(L"UserId", UserId);
+		RecordData* SearchRec = new RecordData(L"Log", ColDatUserId, 1);
+		RecDatLog = GetRecord(SearchRec);
+		delete SearchRec;
+	}
 	UnlockTable(L"Log");
 
 	int NumOfRec = 0;

@@ -9,9 +9,6 @@ StkObject* ApiLogging::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPat
 	wchar_t LogMsgEn[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG];
 	wchar_t LogMsgJa[UserManagement::MAXNUM_OF_LOGRECORDS][UserManagement::MAXLEN_OF_LOGMSG];
 
-	DataAccessUm* Dac = DataAccessUm::GetInstance();
-	int NumOfRec = Dac->GetLogs(LogMsgTime, LogMsgUserId, LogMsgEn, LogMsgJa);
-
 	StkObject* ResObj = new StkObject(L"");
 	wchar_t YourName[UserManagement::MAXLEN_OF_USERNAME] = L"";
 	int YourId = -1;
@@ -20,6 +17,12 @@ StkObject* ApiLogging::ExecuteImpl(StkObject* ReqObj, int Method, wchar_t UrlPat
 		*ResultCode = 401;
 		return ResObj;
 	}
+	if (IsAdminUser(Token)) {
+		YourId = -1;
+	}
+
+	DataAccessUm* Dac = DataAccessUm::GetInstance();
+	int NumOfRec = Dac->GetLogs(LogMsgTime, LogMsgUserId, LogMsgEn, LogMsgJa, YourId);
 
 	AddCodeAndMsg(ResObj, 0, L"", L"");
 	StkObject* DatObj = new StkObject(L"Data");
