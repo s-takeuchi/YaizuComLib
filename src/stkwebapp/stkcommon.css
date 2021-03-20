@@ -3,10 +3,6 @@ body {
     padding-top: 56px
 }
 
-td {
-    vertical-align: middle
-}
-
 a { color: #a0a0a0; text-decoration: none; }
 a:active { color: #a0a0a0; text-decoration: none; }
 a:hover { color: #f0f0f0; text-decoration: none; }
@@ -32,4 +28,20 @@ a:focus { color: #f0f0f0; text-decoration: none; }
 .dropdown-menu {         
     overflow-y: auto;
     max-height: 300px;
+}
+
+th, td {
+    vertical-align: middle;
+}
+
+.stktable table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.stktable thead th {
+    position: -webkit-sticky;    /* Safari */ 
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
