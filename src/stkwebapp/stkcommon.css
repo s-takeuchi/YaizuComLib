@@ -45,3 +45,8 @@ th, td {
     top: 0;
     z-index: 1;
 }
+
+.stktable th a { color: #505050; text-decoration: none; }
+.stktable th a:active { color: #505050; text-decoration: none; }
+.stktable th a:hover { color: #808080; text-decoration: none; }
+.stktable th a:focus { color: #808080; text-decoration: none; }
