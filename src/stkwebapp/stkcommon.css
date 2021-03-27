@@ -30,10 +30,6 @@ a:focus { color: #f0f0f0; text-decoration: none; }
     max-height: 300px;
 }
 
-th, td {
-    vertical-align: middle;
-}
-
 .stktable table {
     border-collapse: separate;
     border-spacing: 0;
@@ -44,6 +40,11 @@ th, td {
     position: sticky;
     top: 0;
     z-index: 1;
+    vertical-align: middle;
+}
+
+.stktable tbody td {
+    vertical-align: middle;
 }
 
 .stktable th a { color: #505050; text-decoration: none; }
