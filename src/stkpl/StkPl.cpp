@@ -1523,3 +1523,39 @@ void StkPlSeekFromEnd(void* FileHndl, size_t Offset)
 	fseek((FILE*)FileHndl, Offset, SEEK_END);
 #endif
 }
+
+int StkPlGetFileNameList(const wchar_t TargetDir[FILENAME_MAX], FileNameChain* CurFileName)
+{
+#ifdef WIN32
+	WIN32_FIND_DATAW Fd;
+	HANDLE FileNameHndl = FindFirstFile(TargetDir, &Fd);
+	if (FileNameHndl == INVALID_HANDLE_VALUE) {
+		return -1;
+	}
+	for (;;) {
+		lstrcpy(CurFileName->FileName, L"");
+		if (Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+			if (!FindNextFile(FileNameHndl, &Fd)) {
+				CurFileName->Next = NULL;
+				break;
+			} else {
+				continue;
+			}
+		}
+		lstrcpy(CurFileName->FileName, Fd.cFileName);
+		bool Ret = FindNextFile(FileNameHndl, &Fd);
+		if (Ret) {
+			FileNameChain* NewFileName = new FileNameChain;
+			CurFileName->Next = NewFileName;
+			CurFileName = NewFileName;
+		} else {
+			CurFileName->Next = NULL;
+			break;
+		}
+	}
+	FindClose(FileNameHndl);
+	return 0;
+#else
+
+#endif
+}

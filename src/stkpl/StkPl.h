@@ -138,3 +138,9 @@ int StkPlRead(void*, char*, size_t, size_t*);
 int StkPlWrite(void*, char*, size_t, size_t*);
 void StkPlSeekFromBegin(void*, size_t);
 void StkPlSeekFromEnd(void*, size_t);
+
+struct FileNameChain {
+	wchar_t FileName[FILENAME_MAX];
+	FileNameChain* Next;
+};
+int StkPlGetFileNameList(const wchar_t[FILENAME_MAX], FileNameChain*);
