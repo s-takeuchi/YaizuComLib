@@ -1524,14 +1524,16 @@ void StkPlSeekFromEnd(void* FileHndl, size_t Offset)
 #endif
 }
 
-int StkPlGetFileNameList(const wchar_t TargetDir[FILENAME_MAX], FileNameChain* CurFileName)
+FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 {
 #ifdef WIN32
 	WIN32_FIND_DATAW Fd;
 	HANDLE FileNameHndl = FindFirstFile(TargetDir, &Fd);
 	if (FileNameHndl == INVALID_HANDLE_VALUE) {
-		return -1;
+		return NULL;
 	}
+	FileNameChain* TopFileName = new FileNameChain;
+	FileNameChain* CurFileName = TopFileName;
 	for (;;) {
 		lstrcpy(CurFileName->FileName, L"");
 		if (Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
@@ -1554,8 +1556,21 @@ int StkPlGetFileNameList(const wchar_t TargetDir[FILENAME_MAX], FileNameChain* C
 		}
 	}
 	FindClose(FileNameHndl);
-	return 0;
+	if (lstrcmp(TopFileName->FileName, L"") == 0) {
+		StkPlDeleteFileNameChain(TopFileName);
+		return NULL;
+	}
+	return TopFileName;
 #else
 
 #endif
+}
+
+void StkPlDeleteFileNameChain(FileNameChain* CurFileName)
+{
+	do {
+		FileNameChain* NextFileName = CurFileName->Next;
+		delete CurFileName;
+		CurFileName = NextFileName;
+	} while (CurFileName);
 }

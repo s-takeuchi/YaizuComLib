@@ -143,4 +143,5 @@ struct FileNameChain {
 	wchar_t FileName[FILENAME_MAX];
 	FileNameChain* Next;
 };
-int StkPlGetFileNameList(const wchar_t[FILENAME_MAX], FileNameChain*);
+FileNameChain* StkPlCreateFileNameList(const wchar_t[FILENAME_MAX]);
+void StkPlDeleteFileNameChain(FileNameChain*);
