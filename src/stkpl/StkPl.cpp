@@ -1528,8 +1528,11 @@ void StkPlSeekFromEnd(void* FileHndl, size_t Offset)
 FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 {
 #ifdef WIN32
+	wchar_t TmpTargetDir[FILENAME_MAX];
+	lstrcpy(TmpTargetDir, TargetDir);
+	lstrcat(TmpTargetDir, L"\\*");
 	WIN32_FIND_DATAW Fd;
-	HANDLE FileNameHndl = FindFirstFile(TargetDir, &Fd);
+	HANDLE FileNameHndl = FindFirstFile(TmpTargetDir, &Fd);
 	if (FileNameHndl == INVALID_HANDLE_VALUE) {
 		return NULL;
 	}
@@ -1572,7 +1575,7 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 	FileNameChain* TopFileName = new FileNameChain;
 	FileNameChain* CurFileName = TopFileName;
 	while (Entry) {
-		lstrcpy(CurFileName->FileName, L"");
+		wcscpy(CurFileName->FileName, L"");
 		if (Entry->d_type == DT_DIR) {
 			Entry = readdir(DirPtr);
 			if (Entry == NULL) {
@@ -1582,7 +1585,9 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 				continue;
 			}
 		}
-		lstrcpy(CurFileName->FileName, Entry->d_name);
+		wchar_t* TmpFileName = StkPlCreateWideCharFromUtf8(Entry->d_name);
+		wcscpy(CurFileName->FileName, TmpFileName);
+		delete TmpFileName;
 		Entry = readdir(DirPtr);
 		if (Entry != NULL) {
 			FileNameChain* NewFileName = new FileNameChain;
@@ -1595,10 +1600,11 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 	}
 	closedir(DirPtr);
 	delete TmpPath;
-	if (lstrcmp(TopFileName->FileName, L"") == 0) {
+	if (wcscmp(TopFileName->FileName, L"") == 0) {
 		StkPlDeleteFileNameChain(TopFileName);
 		return NULL;
 	}
+	return TopFileName;
 #endif
 }
 
