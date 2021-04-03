@@ -16,6 +16,7 @@
 #include <sys/timeb.h>
 #else
 #include <unistd.h>
+#include <dirent.h>
 #include <experimental/filesystem>
 #include <sys/timeb.h>
 #endif
@@ -1562,7 +1563,42 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 	}
 	return TopFileName;
 #else
-
+	char* TmpPath = StkPlCreateUtf8FromWideChar(TargetDir);
+	DIR* DirPtr = opendir(TmpPath);
+	if (DirPtr == NULL) {
+		return NULL;
+	}
+	dirent* Entry = readdir(DirPtr);
+	FileNameChain* TopFileName = new FileNameChain;
+	FileNameChain* CurFileName = TopFileName;
+	while (Entry) {
+		lstrcpy(CurFileName->FileName, L"");
+		if (Entry->d_type == DT_DIR) {
+			Entry = readdir(DirPtr);
+			if (Entry == NULL) {
+				CurFileName->Next = NULL;
+				break;
+			} else {
+				continue;
+			}
+		}
+		lstrcpy(CurFileName->FileName, Entry->d_name);
+		Entry = readdir(DirPtr);
+		if (Entry != NULL) {
+			FileNameChain* NewFileName = new FileNameChain;
+			CurFileName->Next = NewFileName;
+			CurFileName = NewFileName;
+		} else {
+			CurFileName->Next = NULL;
+			break;
+		}
+	}
+	closedir(DirPtr);
+	delete TmpPath;
+	if (lstrcmp(TopFileName->FileName, L"") == 0) {
+		StkPlDeleteFileNameChain(TopFileName);
+		return NULL;
+	}
 #endif
 }
 
