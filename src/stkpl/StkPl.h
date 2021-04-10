@@ -126,6 +126,8 @@ void StkPlGetTime(int*, int*, int*, int*, int*, int*, bool);
 //////////////////////////////////////////////////////////////////////////////
 // APIs for file access
 int ChangeCurrentDirectory(const wchar_t*);
+int StkPlCreateDirectory(const wchar_t*);
+int StkPlAddSeparator(wchar_t*, size_t);
 int StkPlGetFullPathFromFileName(const wchar_t*, wchar_t[FILENAME_MAX]);
 int StkPlGetFullPathWithoutFileName(wchar_t*, wchar_t[FILENAME_MAX]);
 size_t StkPlGetFileSize(const wchar_t[FILENAME_MAX]);

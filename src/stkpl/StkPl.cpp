@@ -1275,6 +1275,26 @@ int ChangeCurrentDirectory(const wchar_t* PathToDir)
 	return Ret;
 }
 
+int StkPlCreateDirectory(const wchar_t* DirName)
+{
+	bool Res = std::filesystem::create_directory(DirName);
+	if (Res) {
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int StkPlAddSeparator(wchar_t* Path, size_t PathSize)
+{
+#ifdef WIN32
+	StkPlWcsCat(Path, PathSize, L"\\");
+#else
+	StkPlWcsCat(Path, PathSize, L"/");
+#endif
+	return 0;
+}
+
 // Get full path from the specified file name.
 // FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
 // FullPath [out] : Acquired full path for the specified file.
@@ -1283,7 +1303,7 @@ int StkPlGetFullPathFromFileName(const wchar_t* FileName, wchar_t FullPath[FILEN
 {
 #ifdef WIN32
 	GetModuleFileName(NULL, FullPath, FILENAME_MAX - 1);
-	std::experimental::filesystem::path CurPath = FullPath;
+	std::filesystem::path CurPath = FullPath;
 	std::filesystem::path NewPath = CurPath.parent_path() / FileName;
 	wcscpy_s(FullPath, FILENAME_MAX, NewPath.c_str());
 	return 0;

@@ -338,9 +338,63 @@ void TestUrlEncodeDecode()
 	}
 }
 
+int FileInfoChainTest()
+{
+	wchar_t TmpDirWithFileName[FILENAME_MAX] = L"";
+	wchar_t TmpDir[FILENAME_MAX] = L"";
+	wchar_t TmpDirTestA[FILENAME_MAX] = L"";
+	StkPlGetFullPathFromFileName(L"stkpltest.exe", TmpDirWithFileName);
+	StkPlGetFullPathWithoutFileName(TmpDirWithFileName, TmpDir);
+
+	{
+		StkPlPrintf("Test getting file information list (1) ... ");
+
+		StkPlWcsCpy(TmpDirTestA, FILENAME_MAX, TmpDir);
+		StkPlAddSeparator(TmpDirTestA, FILENAME_MAX);
+		StkPlWcsCat(TmpDirTestA, FILENAME_MAX, L"abc");
+		StkPlCreateDirectory(TmpDirTestA);
+
+		wchar_t FileNameA[FILENAME_MAX] = L"";
+		StkPlWcsCpy(FileNameA, FILENAME_MAX, TmpDirTestA);
+		StkPlAddSeparator(FileNameA, FILENAME_MAX);
+		StkPlWcsCat(FileNameA, FILENAME_MAX, L"xyz.txt");
+		StkPlWriteFile(FileNameA, (char*)"abcde", 5);
+
+		wchar_t FileNameB[FILENAME_MAX] = L"";
+		StkPlWcsCpy(FileNameB, FILENAME_MAX, TmpDirTestA);
+		StkPlAddSeparator(FileNameB, FILENAME_MAX);
+		StkPlWcsCat(FileNameB, FILENAME_MAX, L"𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿.txt");
+		StkPlWriteFile(FileNameB, (char*)"abcde01234", 10);
+
+		wchar_t FileNameC[FILENAME_MAX] = L"";
+		StkPlWcsCpy(FileNameC, FILENAME_MAX, TmpDirTestA);
+		StkPlAddSeparator(FileNameC, FILENAME_MAX);
+		StkPlWcsCat(FileNameC, FILENAME_MAX, L"あいうえお.txt");
+		StkPlWriteFile(FileNameC, (char*)"", 0);
+
+		FileNameChain* CurPtr = StkPlCreateFileNameList(TmpDirTestA);
+		FileNameChain* FileInfoList = CurPtr;
+		while (CurPtr) {
+			if (StkPlWcsCmp(CurPtr->FileName, L"xyz.txt") != 0 &&
+				StkPlWcsCmp(CurPtr->FileName, L"𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿.txt") != 0 &&
+				StkPlWcsCmp(CurPtr->FileName, L"あいうえお.txt")) {
+				StkPlPrintf("NG case (1)\n");
+				StkPlExit(-1);
+			}
+			CurPtr = CurPtr->Next;
+		}
+		StkPlDeleteFileNameChain(FileInfoList);
+		StkPlPrintf("OK case\n");
+	}
+
+	return 0;
+}
+
 int main(int Argc, char* Argv[])
 {
 	StkPlPrintf("stkpltest started.\n");
+	FileInfoChainTest();
+
 	TestUrlEncodeDecode();
 	Test_Time();
 	{
