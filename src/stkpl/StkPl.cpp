@@ -1277,7 +1277,11 @@ int ChangeCurrentDirectory(const wchar_t* PathToDir)
 
 int StkPlCreateDirectory(const wchar_t* DirName)
 {
+#ifdef WIN32
 	bool Res = std::filesystem::create_directory(DirName);
+#else
+	bool Res = std::experimental::filesystem::create_directory(DirName);
+#endif
 	if (Res) {
 		return 0;
 	} else {

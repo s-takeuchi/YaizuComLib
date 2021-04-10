@@ -373,17 +373,66 @@ int FileInfoChainTest()
 		StkPlWriteFile(FileNameC, (char*)"", 0);
 
 		FileNameChain* CurPtr = StkPlCreateFileNameList(TmpDirTestA);
+		if (CurPtr == NULL) {
+			StkPlPrintf("NG case (1)\n");
+			StkPlExit(-1);
+		}
 		FileNameChain* FileInfoList = CurPtr;
 		while (CurPtr) {
 			if (StkPlWcsCmp(CurPtr->FileName, L"xyz.txt") != 0 &&
 				StkPlWcsCmp(CurPtr->FileName, L"𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿.txt") != 0 &&
 				StkPlWcsCmp(CurPtr->FileName, L"あいうえお.txt")) {
-				StkPlPrintf("NG case (1)\n");
+				StkPlPrintf("NG case (2)\n");
 				StkPlExit(-1);
 			}
 			CurPtr = CurPtr->Next;
 		}
 		StkPlDeleteFileNameChain(FileInfoList);
+
+		StkPlPrintf("OK case\n");
+	}
+
+	{
+		StkPlPrintf("Test getting file information list (2) ... ");
+
+		StkPlWcsCpy(TmpDirTestA, FILENAME_MAX, TmpDir);
+		StkPlAddSeparator(TmpDirTestA, FILENAME_MAX);
+		StkPlWcsCat(TmpDirTestA, FILENAME_MAX, L"def");
+		StkPlCreateDirectory(TmpDirTestA);
+
+		FileNameChain* FileList = StkPlCreateFileNameList(TmpDirTestA);
+		if (FileList != NULL) {
+			StkPlPrintf("NG case (3)\n");
+			StkPlExit(-1);
+		}
+
+		StkPlPrintf("OK case\n");
+	}
+
+	{
+		StkPlPrintf("Test getting file information list (3) ... ");
+
+		StkPlWcsCpy(TmpDirTestA, FILENAME_MAX, TmpDir);
+		StkPlAddSeparator(TmpDirTestA, FILENAME_MAX);
+		StkPlWcsCat(TmpDirTestA, FILENAME_MAX, L"𠮷𠮷𠮷");
+		StkPlCreateDirectory(TmpDirTestA);
+
+		wchar_t FileNameA[FILENAME_MAX] = L"";
+		StkPlWcsCpy(FileNameA, FILENAME_MAX, TmpDirTestA);
+		StkPlAddSeparator(FileNameA, FILENAME_MAX);
+		StkPlWcsCat(FileNameA, FILENAME_MAX, L"𠮷𠮷𠮷.txt");
+		StkPlWriteFile(FileNameA, (char*)"abcde01234", 10);
+
+		FileNameChain* FileList = StkPlCreateFileNameList(TmpDirTestA);
+		if (FileList == NULL) {
+			StkPlPrintf("NG case (4)\n");
+			StkPlExit(-1);
+		}
+		if (StkPlWcsCmp(FileList->FileName, L"𠮷𠮷𠮷.txt") != 0) {
+			StkPlPrintf("NG case (5)\n");
+			StkPlExit(-1);
+		}
+
 		StkPlPrintf("OK case\n");
 	}
 
