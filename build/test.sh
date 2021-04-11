@@ -12,8 +12,6 @@ echo Building stkpltest
 cd stkpltest
 make all
 if [ $? -ne 0 ]; then
-  ls -l
-  ls -l abc
   exit $?
 fi
 cd ..
@@ -62,6 +60,8 @@ echo ---------------------------------------
 echo stkpltest
 ./stkpltest/stkpltest
 if [ $? -ne 0 ]; then
+  ls -l
+  ls -l abc
   exit $?
 fi
 echo ---------------------------------------
