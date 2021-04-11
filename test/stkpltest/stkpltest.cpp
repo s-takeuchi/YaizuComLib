@@ -343,7 +343,7 @@ int FileInfoChainTest()
 	wchar_t TmpDirWithFileName[FILENAME_MAX] = L"";
 	wchar_t TmpDir[FILENAME_MAX] = L"";
 	wchar_t TmpDirTestA[FILENAME_MAX] = L"";
-	StkPlGetFullPathFromFileName(L"stkpltest.exe", TmpDirWithFileName);
+	StkPlGetFullPathFromFileName(L"stkpltest", TmpDirWithFileName);
 	StkPlGetFullPathWithoutFileName(TmpDirWithFileName, TmpDir);
 
 	{

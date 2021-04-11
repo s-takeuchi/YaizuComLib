@@ -333,7 +333,7 @@ void MessageProc::ClearAllMsg()
 // (2) Launch a thread for logging
 // FilePath [in] : Path to log file
 // Return : Result code (0: Success, -1: Failure)
-int MessageProc::StartLogging(wchar_t* FilePath)
+int MessageProc::StartLogging(const wchar_t* FilePath)
 {
 	// Open log file
 	Impl::Instance->pImpl->LogFD = StkPlOpenFileForWrite(FilePath, true);
@@ -351,7 +351,7 @@ int MessageProc::StartLogging(wchar_t* FilePath)
 }
 
 // Logging message
-void MessageProc::AddLog(char* Msg, int Type)
+void MessageProc::AddLog(const char* Msg, int Type)
 {
 	char TypeStr[4][8] = { "F/", "E/", "W/", "I/" };
 	char TmpTimeStr[64] = "";

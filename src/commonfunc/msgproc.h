@@ -39,7 +39,7 @@ public:
 
 	static void ClearAllMsg();
 
-	static int StartLogging(wchar_t*);
-	static void AddLog(char*, int);
+	static int StartLogging(const wchar_t*);
+	static void AddLog(const char*, int);
 	static int StopLogging();
 };
