@@ -379,15 +379,13 @@ int FileInfoChainTest()
 		}
 		FileNameChain* FileInfoList = CurPtr;
 		while (CurPtr) {
-			/*
 			if (StkPlWcsCmp(CurPtr->FileName, L"xyz.txt") != 0 &&
 				StkPlWcsCmp(CurPtr->FileName, L"𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿.txt") != 0 &&
-				StkPlWcsCmp(CurPtr->FileName, L"あいうえお.txt")) {
+				StkPlWcsCmp(CurPtr->FileName, L"あいうえお.txt") != 0 &&
+				StkPlWcsCmp(CurPtr->FileName, L"") != 0) {
 				StkPlPrintf("NG case (2)\n");
 				StkPlExit(-1);
 			}
-			*/
-			StkPlPrintf("*");
 			CurPtr = CurPtr->Next;
 		}
 		StkPlDeleteFileNameChain(FileInfoList);
