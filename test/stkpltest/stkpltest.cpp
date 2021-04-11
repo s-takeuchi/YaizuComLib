@@ -379,7 +379,6 @@ int FileInfoChainTest()
 		}
 		FileNameChain* FileInfoList = CurPtr;
 		while (CurPtr) {
-			StkPlPrintf(" %ls, ", CurPtr->FileName);
 			if (StkPlWcsCmp(CurPtr->FileName, L"xyz.txt") != 0 &&
 				StkPlWcsCmp(CurPtr->FileName, L"𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿.txt") != 0 &&
 				StkPlWcsCmp(CurPtr->FileName, L"あいうえお.txt")) {

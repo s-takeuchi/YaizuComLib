@@ -60,8 +60,8 @@ echo ---------------------------------------
 echo stkpltest
 ./stkpltest/stkpltest
 if [ $? -ne 0 ]; then
-  ls -l
-  ls -l abc
+  ls -l stkpltest
+  ls -l stkpltest/abc
   exit $?
 fi
 echo ---------------------------------------
