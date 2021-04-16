@@ -372,12 +372,12 @@ int FileInfoChainTest()
 		StkPlWcsCat(FileNameC, FILENAME_MAX, L"あいうえお.txt");
 		StkPlWriteFile(FileNameC, (char*)"", 0);
 
-		FileNameChain* CurPtr = StkPlCreateFileNameList(TmpDirTestA);
+		FileInfoList* CurPtr = StkPlCreateFileInfoList(TmpDirTestA);
 		if (CurPtr == NULL) {
 			StkPlPrintf("NG case (1)\n");
 			StkPlExit(-1);
 		}
-		FileNameChain* FileInfoList = CurPtr;
+		FileInfoList* FList = CurPtr;
 		while (CurPtr) {
 			if (StkPlWcsCmp(CurPtr->FileName, L"xyz.txt") != 0 &&
 				StkPlWcsCmp(CurPtr->FileName, L"𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿.txt") != 0 &&
@@ -387,9 +387,15 @@ int FileInfoChainTest()
 				StkPlPrintf("NG case (2)\n");
 				StkPlExit(-1);
 			}
+			if ((StkPlWcsCmp(CurPtr->FileName, L"xyz.txt") == 0 && CurPtr->Size != 5) ||
+				(StkPlWcsCmp(CurPtr->FileName, L"𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿.txt") == 0 && CurPtr->Size != 10) ||
+				(StkPlWcsCmp(CurPtr->FileName, L"あいうえお.txt") == 0 && CurPtr->Size != 0)) {
+				StkPlPrintf("NG case (2.5)\n");
+				StkPlExit(-1);
+			}
 			CurPtr = CurPtr->Next;
 		}
-		StkPlDeleteFileNameChain(FileInfoList);
+		StkPlDeleteFileInfoList(FList);
 		StkPlPrintf("OK case\n");
 	}
 
@@ -401,7 +407,7 @@ int FileInfoChainTest()
 		StkPlWcsCat(TmpDirTestA, FILENAME_MAX, L"def");
 		StkPlCreateDirectory(TmpDirTestA);
 
-		FileNameChain* FileList = StkPlCreateFileNameList(TmpDirTestA);
+		FileInfoList* FileList = StkPlCreateFileInfoList(TmpDirTestA);
 		if (FileList == NULL ||
 			(StkPlWcsCmp(FileList->FileName, L".") != 0 &&
 			StkPlWcsCmp(FileList->FileName, L"..") != 0)) {
@@ -409,7 +415,7 @@ int FileInfoChainTest()
 			StkPlExit(-1);
 		}
 
-		StkPlDeleteFileNameChain(FileList);
+		StkPlDeleteFileInfoList(FileList);
 		StkPlPrintf("OK case\n");
 	}
 
@@ -427,18 +433,33 @@ int FileInfoChainTest()
 		StkPlWcsCat(FileNameA, FILENAME_MAX, L"𠮷𠮷𠮷.txt");
 		StkPlWriteFile(FileNameA, (char*)"abcde01234", 10);
 
-		FileNameChain* FileList = StkPlCreateFileNameList(TmpDirTestA);
-		if (FileList == NULL) {
+		FileInfoList* CurPtr = StkPlCreateFileInfoList(TmpDirTestA);
+		if (CurPtr == NULL) {
 			StkPlPrintf("NG case (4)\n");
 			StkPlExit(-1);
 		}
-		if (StkPlWcsCmp(FileList->FileName, L"𠮷𠮷𠮷.txt") != 0 &&
-			StkPlWcsCmp(FileList->FileName, L".") != 0 &&
-			StkPlWcsCmp(FileList->FileName, L"..") != 0) {
+		FileInfoList* FList = CurPtr;
+		if (StkPlWcsCmp(CurPtr->FileName, L"𠮷𠮷𠮷.txt") != 0 &&
+			StkPlWcsCmp(CurPtr->FileName, L".") != 0 &&
+			StkPlWcsCmp(CurPtr->FileName, L"..") != 0) {
 			StkPlPrintf("NG case (5)\n");
 			StkPlExit(-1);
 		}
+		StkPlDeleteFileInfoList(FList);
+		StkPlPrintf("OK case\n");
+	}
 
+	{
+		StkPlPrintf("Test for adding separator ... ");
+		wchar_t TmpDatA[32] = L"A";
+		wchar_t TmpDatB[32] = L"A";
+		StkPlAddSeparator(TmpDatA, 32);
+		StkPlAddSeparator(TmpDatB, 32);
+		StkPlAddSeparator(TmpDatB, 32);
+		if (StkPlWcsCmp(TmpDatA, TmpDatB) != 0) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
 		StkPlPrintf("OK case\n");
 	}
 

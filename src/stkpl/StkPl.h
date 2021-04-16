@@ -141,10 +141,11 @@ int StkPlWrite(void*, char*, size_t, size_t*);
 void StkPlSeekFromBegin(void*, size_t);
 void StkPlSeekFromEnd(void*, size_t);
 
-struct FileNameChain {
+struct FileInfoList {
 	wchar_t FileName[FILENAME_MAX];
 	bool IsDir;
-	FileNameChain* Next;
+	size_t Size;
+	FileInfoList* Next;
 };
-FileNameChain* StkPlCreateFileNameList(const wchar_t[FILENAME_MAX]);
-void StkPlDeleteFileNameChain(FileNameChain*);
+FileInfoList* StkPlCreateFileInfoList(const wchar_t[FILENAME_MAX]);
+void StkPlDeleteFileInfoList(FileInfoList*);

@@ -1291,10 +1291,15 @@ int StkPlCreateDirectory(const wchar_t* DirName)
 
 int StkPlAddSeparator(wchar_t* Path, size_t PathSize)
 {
+	size_t TmpLen = StkPlWcsLen(Path);
 #ifdef WIN32
-	StkPlWcsCat(Path, PathSize, L"\\");
+	if (Path[TmpLen - 1] != L'\\') {
+		StkPlWcsCat(Path, PathSize, L"\\");
+	}
 #else
-	StkPlWcsCat(Path, PathSize, L"/");
+	if (Path[TmpLen - 1] != L'/') {
+		StkPlWcsCat(Path, PathSize, L"/");
+	}
 #endif
 	return 0;
 }
@@ -1549,7 +1554,7 @@ void StkPlSeekFromEnd(void* FileHndl, size_t Offset)
 #endif
 }
 
-FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
+FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])
 {
 #ifdef WIN32
 	wchar_t TmpTargetDir[FILENAME_MAX];
@@ -1560,8 +1565,8 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 	if (FileNameHndl == INVALID_HANDLE_VALUE) {
 		return NULL;
 	}
-	FileNameChain* TopFileName = new FileNameChain;
-	FileNameChain* CurFileName = TopFileName;
+	FileInfoList* TopFileName = new FileInfoList;
+	FileInfoList* CurFileName = TopFileName;
 	for (;;) {
 		lstrcpy(CurFileName->FileName, Fd.cFileName);
 		if (Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
@@ -1569,9 +1574,16 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 		} else {
 			CurFileName->IsDir = false;
 		}
+
+		wchar_t FullPathName[FILENAME_MAX] = L"";
+		lstrcpy(FullPathName, TargetDir);
+		StkPlAddSeparator(FullPathName, FILENAME_MAX);
+		lstrcat(FullPathName, CurFileName->FileName);
+		CurFileName->Size = StkPlGetFileSize(FullPathName);
+
 		bool Ret = FindNextFile(FileNameHndl, &Fd);
 		if (Ret) {
-			FileNameChain* NewFileName = new FileNameChain;
+			FileInfoList* NewFileName = new FileInfoList;
 			CurFileName->Next = NewFileName;
 			CurFileName = NewFileName;
 		} else {
@@ -1589,8 +1601,8 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 		return NULL;
 	}
 	dirent* Entry = readdir(DirPtr);
-	FileNameChain* TopFileName = new FileNameChain;
-	FileNameChain* CurFileName = TopFileName;
+	FileInfoList* TopFileName = new FileInfoList;
+	FileInfoList* CurFileName = TopFileName;
 	while (Entry) {
 		wchar_t* TmpFileName = StkPlCreateWideCharFromUtf8(Entry->d_name);
 		wcscpy(CurFileName->FileName, TmpFileName);
@@ -1600,10 +1612,17 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 		} else {
 			CurFileName->IsDir = false;
 		}
+
+		wchar_t FullPathName[FILENAME_MAX] = L"";
+		wcscpy(FullPathName, TargetDir);
+		StkPlAddSeparator(FullPathName, FILENAME_MAX);
+		wcscat(FullPathName, CurFileName->FileName);
+		CurFileName->Size = StkPlGetFileSize(FullPathName);
+
 		delete TmpFileName;
 		Entry = readdir(DirPtr);
 		if (Entry != NULL) {
-			FileNameChain* NewFileName = new FileNameChain;
+			FileInfoList* NewFileName = new FileInfoList;
 			CurFileName->Next = NewFileName;
 			CurFileName = NewFileName;
 		} else {
@@ -1617,10 +1636,10 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 #endif
 }
 
-void StkPlDeleteFileNameChain(FileNameChain* CurFileName)
+void StkPlDeleteFileInfoList(FileInfoList* CurFileName)
 {
 	do {
-		FileNameChain* NextFileName = CurFileName->Next;
+		FileInfoList* NextFileName = CurFileName->Next;
 		delete CurFileName;
 		CurFileName = NextFileName;
 	} while (CurFileName);
