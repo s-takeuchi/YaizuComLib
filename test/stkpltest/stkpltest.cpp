@@ -382,14 +382,14 @@ int FileInfoChainTest()
 			if (StkPlWcsCmp(CurPtr->FileName, L"xyz.txt") != 0 &&
 				StkPlWcsCmp(CurPtr->FileName, L"𠮷𠀋𡈽𡌛𡑮𡢽𠮟𡚴𡸴𣗄𣜿.txt") != 0 &&
 				StkPlWcsCmp(CurPtr->FileName, L"あいうえお.txt") != 0 &&
-				StkPlWcsCmp(CurPtr->FileName, L"") != 0) {
+				StkPlWcsCmp(CurPtr->FileName, L".") != 0 &&
+				StkPlWcsCmp(CurPtr->FileName, L"..") != 0) {
 				StkPlPrintf("NG case (2)\n");
 				StkPlExit(-1);
 			}
 			CurPtr = CurPtr->Next;
 		}
 		StkPlDeleteFileNameChain(FileInfoList);
-
 		StkPlPrintf("OK case\n");
 	}
 
@@ -402,11 +402,14 @@ int FileInfoChainTest()
 		StkPlCreateDirectory(TmpDirTestA);
 
 		FileNameChain* FileList = StkPlCreateFileNameList(TmpDirTestA);
-		if (FileList != NULL) {
+		if (FileList == NULL ||
+			(StkPlWcsCmp(FileList->FileName, L".") != 0 &&
+			StkPlWcsCmp(FileList->FileName, L"..") != 0)) {
 			StkPlPrintf("NG case (3)\n");
 			StkPlExit(-1);
 		}
 
+		StkPlDeleteFileNameChain(FileList);
 		StkPlPrintf("OK case\n");
 	}
 
@@ -429,7 +432,9 @@ int FileInfoChainTest()
 			StkPlPrintf("NG case (4)\n");
 			StkPlExit(-1);
 		}
-		if (StkPlWcsCmp(FileList->FileName, L"𠮷𠮷𠮷.txt") != 0) {
+		if (StkPlWcsCmp(FileList->FileName, L"𠮷𠮷𠮷.txt") != 0 &&
+			StkPlWcsCmp(FileList->FileName, L".") != 0 &&
+			StkPlWcsCmp(FileList->FileName, L"..") != 0) {
 			StkPlPrintf("NG case (5)\n");
 			StkPlExit(-1);
 		}

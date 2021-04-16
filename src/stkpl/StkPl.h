@@ -143,6 +143,7 @@ void StkPlSeekFromEnd(void*, size_t);
 
 struct FileNameChain {
 	wchar_t FileName[FILENAME_MAX];
+	bool IsDir;
 	FileNameChain* Next;
 };
 FileNameChain* StkPlCreateFileNameList(const wchar_t[FILENAME_MAX]);

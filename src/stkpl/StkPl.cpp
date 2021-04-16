@@ -1563,16 +1563,12 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 	FileNameChain* TopFileName = new FileNameChain;
 	FileNameChain* CurFileName = TopFileName;
 	for (;;) {
-		lstrcpy(CurFileName->FileName, L"");
-		if (Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-			if (!FindNextFile(FileNameHndl, &Fd)) {
-				CurFileName->Next = NULL;
-				break;
-			} else {
-				continue;
-			}
-		}
 		lstrcpy(CurFileName->FileName, Fd.cFileName);
+		if (Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+			CurFileName->IsDir = true;
+		} else {
+			CurFileName->IsDir = false;
+		}
 		bool Ret = FindNextFile(FileNameHndl, &Fd);
 		if (Ret) {
 			FileNameChain* NewFileName = new FileNameChain;
@@ -1584,33 +1580,26 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 		}
 	}
 	FindClose(FileNameHndl);
-	if (lstrcmp(TopFileName->FileName, L"") == 0) {
-		StkPlDeleteFileNameChain(TopFileName);
-		return NULL;
-	}
 	return TopFileName;
 #else
 	char* TmpPath = StkPlCreateUtf8FromWideChar(TargetDir);
 	DIR* DirPtr = opendir(TmpPath);
 	if (DirPtr == NULL) {
+		delete TmpPath;
 		return NULL;
 	}
 	dirent* Entry = readdir(DirPtr);
 	FileNameChain* TopFileName = new FileNameChain;
 	FileNameChain* CurFileName = TopFileName;
 	while (Entry) {
-		wcscpy(CurFileName->FileName, L"");
-		if (Entry->d_type == DT_DIR) {
-			Entry = readdir(DirPtr);
-			if (Entry == NULL) {
-				CurFileName->Next = NULL;
-				break;
-			} else {
-				continue;
-			}
-		}
 		wchar_t* TmpFileName = StkPlCreateWideCharFromUtf8(Entry->d_name);
 		wcscpy(CurFileName->FileName, TmpFileName);
+
+		if (Entry->d_type == DT_DIR) {
+			CurFileName->IsDir = true;
+		} else {
+			CurFileName->IsDir = false;
+		}
 		delete TmpFileName;
 		Entry = readdir(DirPtr);
 		if (Entry != NULL) {
@@ -1624,10 +1613,6 @@ FileNameChain* StkPlCreateFileNameList(const wchar_t TargetDir[FILENAME_MAX])
 	}
 	closedir(DirPtr);
 	delete TmpPath;
-	if (wcscmp(TopFileName->FileName, L"") == 0) {
-		StkPlDeleteFileNameChain(TopFileName);
-		return NULL;
-	}
 	return TopFileName;
 #endif
 }
