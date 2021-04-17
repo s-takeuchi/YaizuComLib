@@ -19,6 +19,7 @@
 #include <dirent.h>
 #include <experimental/filesystem>
 #include <sys/timeb.h>
+#include <sys/stat.h>
 #endif
 
 #include "StkPl.h"
@@ -1568,19 +1569,32 @@ FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])
 	FileInfoList* TopFileName = new FileInfoList;
 	FileInfoList* CurFileName = TopFileName;
 	for (;;) {
+		// File name
 		lstrcpy(CurFileName->FileName, Fd.cFileName);
+
+		// Directory flag
 		if (Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 			CurFileName->IsDir = true;
 		} else {
 			CurFileName->IsDir = false;
 		}
 
+		// File size
 		wchar_t FullPathName[FILENAME_MAX] = L"";
 		lstrcpy(FullPathName, TargetDir);
 		StkPlAddSeparator(FullPathName, FILENAME_MAX);
 		lstrcat(FullPathName, CurFileName->FileName);
 		CurFileName->Size = StkPlGetFileSize(FullPathName);
 
+		// Update time
+		LARGE_INTEGER Date, Adjust;
+		Date.HighPart = Fd.ftLastWriteTime.dwHighDateTime;
+		Date.LowPart = Fd.ftLastWriteTime.dwLowDateTime;
+		Adjust.QuadPart = 11644473600000 * 10000;
+		Date.QuadPart -= Adjust.QuadPart;
+		CurFileName->UpdateTime = Date.QuadPart / 10000000;
+
+		// Next element
 		bool Ret = FindNextFile(FileNameHndl, &Fd);
 		if (Ret) {
 			FileInfoList* NewFileName = new FileInfoList;
@@ -1604,22 +1618,32 @@ FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])
 	FileInfoList* TopFileName = new FileInfoList;
 	FileInfoList* CurFileName = TopFileName;
 	while (Entry) {
+		// File name
 		wchar_t* TmpFileName = StkPlCreateWideCharFromUtf8(Entry->d_name);
 		wcscpy(CurFileName->FileName, TmpFileName);
+		delete TmpFileName;
 
+		// Directory flag
 		if (Entry->d_type == DT_DIR) {
 			CurFileName->IsDir = true;
 		} else {
 			CurFileName->IsDir = false;
 		}
 
+		// File size
 		wchar_t FullPathName[FILENAME_MAX] = L"";
 		wcscpy(FullPathName, TargetDir);
 		StkPlAddSeparator(FullPathName, FILENAME_MAX);
 		wcscat(FullPathName, CurFileName->FileName);
 		CurFileName->Size = StkPlGetFileSize(FullPathName);
 
-		delete TmpFileName;
+		// Update time
+		struct stat TmpSt;
+		stat(Entry->d_name, &TmpSt);
+		time_t TmpT = TmpSt.st_mtime;
+		CurFileName->UpdateTime = (long long)TmpT;
+
+		// Next element
 		Entry = readdir(DirPtr);
 		if (Entry != NULL) {
 			FileInfoList* NewFileName = new FileInfoList;

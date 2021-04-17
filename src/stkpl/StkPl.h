@@ -145,6 +145,7 @@ struct FileInfoList {
 	wchar_t FileName[FILENAME_MAX];
 	bool IsDir;
 	size_t Size;
+	long long UpdateTime;
 	FileInfoList* Next;
 };
 FileInfoList* StkPlCreateFileInfoList(const wchar_t[FILENAME_MAX]);
