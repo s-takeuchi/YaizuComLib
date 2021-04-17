@@ -1610,8 +1610,8 @@ FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])
 #else
 	char* TmpPath = StkPlCreateUtf8FromWideChar(TargetDir);
 	DIR* DirPtr = opendir(TmpPath);
+	delete TmpPath;
 	if (DirPtr == NULL) {
-		delete TmpPath;
 		return NULL;
 	}
 	dirent* Entry = readdir(DirPtr);
@@ -1638,8 +1638,10 @@ FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])
 		CurFileName->Size = StkPlGetFileSize(FullPathName);
 
 		// Update time
+		char* FullPathNameUtf8 = StkPlCreateUtf8FromWideChar(FullPathName);
 		struct stat TmpSt;
-		stat(Entry->d_name, &TmpSt);
+		stat(FullPathNameUtf8, &TmpSt);
+		delete FullPathNameUtf8;
 		time_t TmpT = TmpSt.st_mtime;
 		CurFileName->UpdateTime = (long long)TmpT;
 
@@ -1655,7 +1657,6 @@ FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])
 		}
 	}
 	closedir(DirPtr);
-	delete TmpPath;
 	return TopFileName;
 #endif
 }
