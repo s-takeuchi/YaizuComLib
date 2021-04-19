@@ -524,4 +524,34 @@ var responseData = {};
             setTimeout(function() {waitForResponse(0, targetFunc);}, 1);
         }
     }
+
+    {
+        let sContents = [];
+        let sTargetFunc = null;
+
+        function sequentialApiCall(contents, targetFunc) {
+            sContents = contents;
+            sTargetFunc = targetFunc;
+            if (sContents instanceof Array) {
+                if (sContents.length == 0) {
+                    return;
+                }
+            } else {
+                return;
+            }
+            let firstElem = sContents.shift();
+            if (firstElem.method != null && firstElem.url != null && firstElem.keystring !== '') {
+                sendRequestRecvResponse(firstElem.method, firstElem.url, firstElem.request, firstElem.keystring, true);
+            }
+            if (sTargetFunc != null && sContents.length == 0) {
+                setTimeout(function() {waitForResponse(0, targetFunc);}, 1);
+            } else {
+                setTimeout(function() {waitForResponse(0, nextSequentialApiCall);}, 1);
+            }
+        }
+
+        function nextSequentialApiCall() {
+            sequentialApiCall(sContents, sTargetFunc);
+        }
+    }
 }
