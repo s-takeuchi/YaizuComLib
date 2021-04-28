@@ -423,7 +423,26 @@ var responseData = {};
             return;
         }
         $('#loading_Modal').modal('show');
-        setTimeout(function() {waitForResponse(count + 1, targetFunc);}, 500);
+        setTimeout(function() {waitForResponse(count + 1, targetFunc);}, 1000);
+    }
+
+    let waitForResponseWithoutDialog = function(count, targetFunc) {
+        if (targetFunc == null) {
+            return;
+        }
+        if (count < 10) {
+            if (underComm == 0) {
+                targetFunc();
+            } else {
+                setTimeout(function() {waitForResponseWithoutDialog(count + 1, targetFunc);}, 50);
+            }
+            return;
+        }
+        if (underComm == 0) {
+            targetFunc();
+            return;
+        }
+        setTimeout(function() {waitForResponseWithoutDialog(count + 1, targetFunc);}, 500);
     }
 
     let sendRequestRecvResponse = function(method, url, request, keystring, asyncFlag) {
@@ -530,6 +549,11 @@ var responseData = {};
         let sTargetFunc = null;
 
         function sequentialApiCall(contents, targetFunc) {
+            $('#loading_Modal').modal('show');
+            sequentialApiCallImpl(contents, targetFunc);
+        }
+
+        function sequentialApiCallImpl(contents, targetFunc) {
             sContents = contents;
             sTargetFunc = targetFunc;
             if (sContents instanceof Array) {
@@ -544,14 +568,14 @@ var responseData = {};
                 sendRequestRecvResponse(firstElem.method, firstElem.url, firstElem.request, firstElem.keystring, true);
             }
             if (sTargetFunc != null && sContents.length == 0) {
-                setTimeout(function() {waitForResponse(0, targetFunc);}, 1);
+                setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc); $('#loading_Modal').modal('hide');}, 1000);
             } else {
-                setTimeout(function() {waitForResponse(0, nextSequentialApiCall);}, 1);
+                setTimeout(function() {waitForResponseWithoutDialog(0, nextSequentialApiCall);}, 1);
             }
         }
 
         function nextSequentialApiCall() {
-            sequentialApiCall(sContents, sTargetFunc);
+            sequentialApiCallImpl(sContents, sTargetFunc);
         }
     }
 }
