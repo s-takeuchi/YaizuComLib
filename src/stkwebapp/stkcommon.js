@@ -261,8 +261,14 @@ var responseData = {};
 //
 ////////////////////////////////////////
 {
+    let iconAlwaysVisibleFlag = false;
+
     function initMainPage(title, iconname, contents) {
-        let navBarHeader = $('<div class="d-none d-sm-block rscommand"><a class="navbar-brand" href=""><img src="' + iconname + '" width=22 height=22/><small>' + title + '</small></a></div> <div id="rsCommand"/> <div class="d-none d-lg-block" style="width:40px;"/><div class="d-none d-xl-block" style="width:40px;"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
+        let iconAlwaysVisibleClass = 'd-none d-sm-block';
+        if (iconAlwaysVisibleFlag) {
+            iconAlwaysVisibleClass = '';
+        }
+        let navBarHeader = $('<div class="rscommand ' + iconAlwaysVisibleClass + '"><a class="navbar-brand" href=""><img src="' + iconname + '" width=22 height=22/><small>' + title + '</small></a></div> <div id="rsCommand"/> <div class="d-none d-lg-block" style="width:40px;"/><div class="d-none d-xl-block" style="width:40px;"/> <button type="button" class="navbar-toggler" data-toggle="collapse" data-toggle="collapse" data-target="#top-nav"><span class="navbar-toggler-icon" style="font-size:15px;"></span></button>');
         let navBarNav = $('<ul class="navbar-nav  mr-auto">');
         if (contents instanceof Array) {
             for (let key in contents) {
@@ -282,6 +288,10 @@ var responseData = {};
         $('body').append(navBarDefault);
         $('body').append(containerFluidWorkSpace);
         clearRsUserMenu();
+    }
+
+    function iconAlwaysVisible() {
+        iconAlwaysVisibleFlag = true;
     }
 
     function drowContainer(contents) {
