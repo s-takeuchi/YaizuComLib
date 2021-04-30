@@ -557,24 +557,28 @@ var responseData = {};
     {
         let sContents = [];
         let sTargetFunc = null;
+        let lastApi = null;
 
         function sequentialApiCall(contents, targetFunc) {
             $('#loading_Modal').modal('show');
             sequentialApiCallImpl(contents, targetFunc);
         }
 
-        function sequentialApiCallImpl(contents, targetFunc) {
+        let sequentialApiCallImpl = function(contents, targetFunc) {
             sContents = contents;
             sTargetFunc = targetFunc;
             if (sContents instanceof Array) {
                 if (sContents.length == 0) {
+                    setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc); $('#loading_Modal').modal('hide');}, 1000);
                     return;
                 }
             } else {
+                setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc); $('#loading_Modal').modal('hide');}, 1000);
                 return;
             }
             let firstElem = sContents.shift();
             if (firstElem.method != null && firstElem.url != null && firstElem.keystring !== '') {
+                lastApi = firstElem.keystring;
                 sendRequestRecvResponse(firstElem.method, firstElem.url, firstElem.request, firstElem.keystring, true);
             }
             if (sTargetFunc != null && sContents.length == 0) {
@@ -584,8 +588,12 @@ var responseData = {};
             }
         }
 
-        function nextSequentialApiCall() {
-            sequentialApiCallImpl(sContents, sTargetFunc);
+        let nextSequentialApiCall = function() {
+            if (statusCode[lastApi] >= 400) {
+                sequentialApiCallImpl(null, sTargetFunc);
+            } else {
+                sequentialApiCallImpl(sContents, sTargetFunc);
+            }
         }
     }
 }
