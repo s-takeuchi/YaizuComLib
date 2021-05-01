@@ -1305,6 +1305,11 @@ int StkPlAddSeparator(wchar_t* Path, size_t PathSize)
 	return 0;
 }
 
+bool StkPlDeleteFile(wchar_t* Path)
+{
+	return std::filesystem::remove(Path);
+}
+
 // Get full path from the specified file name.
 // FileName [in] : File name which you want to get absolute path for. Do not specify path. Specify only file name. The file needs to be placed in the same folder of executing module.
 // FullPath [out] : Acquired full path for the specified file.
