@@ -61,8 +61,33 @@ void StkPlGetWTimeInOldFormat(wchar_t[64], bool)<br/>
 </td>
 <td>ローカルタイムまたはUTCを返却します。</td></tr>
 
+<tr>
+    <td>FileInfoList* StkPlCreateFileInfoList(const wchar_t[FILENAME_MAX])</td>
+    <td>API creates file information list under the specified directory.</td>
+</tr>
+
+<tr>
+    <td>void StkPlDeleteFileInfoList(FileInfoList*)</td>
+    <td>Delete file information list.</td>
+</tr>
+
+<tr>
+    <td>bool StkPlDeleteFile(wchar_t*)</td>
+    <td>Delete a file.</td>
+</tr>
+
+<tr>
+    <td>int StkPlCreateDirectory(const wchar_t*)</td>
+    <td>Create a directory.</td>
+</tr>
+
+<tr>
+    <td>int StkPlAddSeparator(wchar_t*, size_t))</td>
+    <td>Add separator to the existing path.</td>
+</tr>
+
 </table><p>
-</div><p>
+</div>
 
 
 
@@ -83,7 +108,7 @@ Sizeに0を指定した場合，変換を行わず，変換後の領域のサイ
 <tr><td>Utf[入力]</td><td>変換前のUTFコードが格納される領域)</td></tr>
 <tr><td>[戻り値]</td><td>変換後のUTFコードのサイズ</td></tr>
 </table>
-</div><p>
+</div>
 
 
 
@@ -104,7 +129,7 @@ Sizeに0を指定した場合，変換を行わず，変換後の領域のサイ
 <tr><td>Utf[入力]</td><td>変換前のUTFコードまたはワイドキャラクタ文字列が格納される領域)</td></tr>
 <tr><td>[戻り値]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列のサイズ</td></tr>
 </table>
-</div><p>
+</div>
 
 
 
@@ -122,7 +147,7 @@ char* StkPlCreateUtf8FromUtf16(const char16_t* Utf)<br/>
 <tr><td>Utf[入力]</td><td>変換前のUTFコードが格納される領域</td></tr>
 <tr><td>[戻り値]</td><td>変換後のUTFコードが格納される領域</td></tr>
 </table>
-</div><p>
+</div>
 
 
 
@@ -140,25 +165,95 @@ UTFとワイドキャラクタ文字列を相互に変換します。同時に�
 <tr><td>Str[入力]</td><td>変換前のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
 <tr><td>[戻り値]</td><td>変換後のUTFコードまたはワイドキャラクタ文字列が格納される領域</td></tr>
 </table>
-</div><p>
+</div>
 
 
 
-<H4 ID="1.6">1.6<br/>
-void StkPlGetTimeInRfc2822(char Date[64], bool IsLocalTime)<br/>
-void StkPlGetWTimeInRfc2822(wchar_t Date[64], bool IsLocalTime)<br/>
-void StkPlGetTimeInIso8601(char Date[64], bool IsLocalTime)<br/>
-void StkPlGetWTimeInIso8601(wchar_t Date[64], bool IsLocalTime)<br/>
-void StkPlGetTimeInOldFormat(char Date[64], bool IsLocalTime)<br/>
-void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)<br/>
-</H4>
-<div class="topic">
-RFC 2822形式, ISO 8601形式またはYYYY-MM-DD hh:mm:ss形式で，ローカルタイムまたはUTCを返却します。<br/>
-<table class="tblstyle">
-<tr><td>Date[入力]</td><td>ローカルタイムまたはUTC</td></tr>
-<tr><td>IsLocalTime[入力]</td><td>true : ローカルタイムを取得する<br/>false : UTCを取得する</td></tr>
-</table>
-</div><p>
+    <H4 ID="1.6">1.6<br/>
+        void StkPlGetTimeInRfc2822(char Date[64], bool IsLocalTime)<br/>
+        void StkPlGetWTimeInRfc2822(wchar_t Date[64], bool IsLocalTime)<br/>
+        void StkPlGetTimeInIso8601(char Date[64], bool IsLocalTime)<br/>
+        void StkPlGetWTimeInIso8601(wchar_t Date[64], bool IsLocalTime)<br/>
+        void StkPlGetTimeInOldFormat(char Date[64], bool IsLocalTime)<br/>
+        void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)<br/>
+    </H4>
+    <div class="topic">
+        RFC 2822形式, ISO 8601形式またはYYYY-MM-DD hh:mm:ss形式で，ローカルタイムまたはUTCを返却します。<br/>
+        <table class="tblstyle">
+            <tr><td>Date[入力]</td><td>ローカルタイムまたはUTC</td></tr>
+            <tr><td>IsLocalTime[入力]</td><td>true : ローカルタイムを取得する<br/>false : UTCを取得する</td></tr>
+        </table>
+    </div>
+        
+
+
+    <H4 ID="1.7">1.7 FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])</H4>
+    <div class="topic">
+        API creates file information list under the specified directory.<br/>
+        <table class="tblstyle">
+            <tr><td>TargetDir[Input]</td><td>Target directory for acquiring file information list</td></tr>
+            <tr>
+                <td>[Return]</td>
+                <td>File information list. This object needs to be deleted at caller side.<br/>
+                    <pre><code>
+struct FileInfoList {
+    wchar_t FileName[FILENAME_MAX];
+    bool IsDir;
+    size_t Size;
+    long long UpdateTime;
+    FileInfoList* Next;
+};
+                    </code></pre>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+
+    <H4 ID="1.8">1.8 void StkPlDeleteFileInfoList(FileInfoList* FileInfo)</H4>
+    <div class="topic">
+        Delete file information list.
+        <table class="tblstyle">
+            <tr><td>FileInfo[Input]</td><td>File information list to be deleted.</td></tr>
+        </table>
+    </div>
+    
+
+
+    <H4 ID="1.9">1.9 bool StkPlDeleteFile(wchar_t* Path)</H4>
+    <div class="topic">
+        Delete a file.
+        <table class="tblstyle">
+            <tr><td>Path[Input]</td><td>Path to the target file which you want to delete.</td></tr>
+            <tr><td>[Return]</td><td>true: Deleted, false: An error occurred</td></tr>
+        </table>
+    </div>
+
+
+
+    <H4 ID="1.10">1.10 int StkPlCreateDirectory(const wchar_t* Path)</H4>
+    <div class="topic">
+        Create a directory.
+        <table class="tblstyle">
+            <tr><td>Path[Input]</td><td>Path to the directory which you want to create.</td></tr>
+            <tr><td>[Return]</td><td>0: Succeeded, -1: Failed</td></tr>
+        </table>
+    </div>
+
+
+
+    <H4 ID="1.11">1.11 int StkPlAddSeparator(wchar_t* Path, size_t PathSize)</H4>
+    <div class="topic">
+        Add separator to the existing path.<br/>
+        Linux : '/' is to be added.<br/>
+        Windows : '\' is to be added.<br/>
+        <table class="tblstyle">
+            <tr><td>Path[Output]</td><td>Path to be added the separator.</td></tr>
+            <tr><td>PathSize[Input]</td><td>Buffer size of "Path".</td></tr>
+            <tr><td>[Return]</td><td>0: always zero returns</td></tr>
+        </table>
+    </div>
 
 
 
