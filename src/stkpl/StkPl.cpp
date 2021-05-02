@@ -1307,7 +1307,11 @@ int StkPlAddSeparator(wchar_t* Path, size_t PathSize)
 
 bool StkPlDeleteFile(wchar_t* Path)
 {
+#ifdef WIN32
 	return std::filesystem::remove(Path);
+#else
+	return std::experimental::filesystem::remove(Path);
+#endif
 }
 
 // Get full path from the specified file name.
