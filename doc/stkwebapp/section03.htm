@@ -77,6 +77,8 @@ stkcommonの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.30">function isPasswordCorrect(password)</a></td><td>指定されたパスワードが正しいか判定します。</td></tr>
 <tr><td><a href="#3.4.31">function drowContainer(contents)</a></td><td>class="container"として画面を描画します。</td></tr>
 <tr><td><a href="#3.4.32">function drowContainerFluid(contents)</a></td><td>class="container-fluid"として画面を描画します。</td></tr>
+<tr><td><a href="#3.4.33">function iconAlwaysVisible()</a></td><td>メニューバーにプロダクトアイコンを常に表示します。</td></tr>
+<tr><td><a href="#3.4.34">function sequentialApiCall(contents, targetFunc)</a></td><td>複数のREST APIをcontentsの格納順に呼び出します。</td></tr>
 </table>
 </div>
 
@@ -451,6 +453,37 @@ class="container-fluid"として画面を描画します。<br/>
 <tr><td>contents[入力]</td><td>描画するコンテンツ。</td></tr>
 </table>
 </div>
+
+
+
+<H3 ID="3.4.33">3.4.33 function iconAlwaysVisible()</H3>
+<div class="topic">
+ブラウザのサイズに関係なく、メニューバーにプロダクトアイコンを常に表示します。<br/>
+</div>
+
+
+
+<H3 ID="3.4.34">3.4.34 function sequentialApiCall(contents, targetFunc)</H3>
+<div class="topic">
+  複数のREST APIをcontentsの格納順に呼び出します。<br/>呼び出し先のAPIのレスポンスが返るまで次のAPIは呼び出されません。<br/>
+  すべてのREST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
+  このAPIは呼び出し直後に，LOADING中を示すダイアログを表示します。<br/>
+  レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
+  REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommonのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
+  REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
+  <table class="tblstyle">
+  <tr><td>contents[入力]</td><td>
+    複数のAPIを呼び出すための各種パラメータ。次の要素を含む情報を指定。
+    <ul>
+    <li>method<br/>HTTPメソッド。'GET', 'POST', 'DELETE', etc</li>
+    <li>url<br/>URL</li>
+    <li>request<br/>リクエストデータ</li>
+    <li>keystring<br/>ステータスおよびレスポンスデータを識別するキー</li>
+    </ul>
+  </td></tr>
+  <tr><td>targetFunc[入力]</td><td>レスポンス受信後に呼び出される関数。括弧および引数は指定できない。</td></tr>
+  </table>
+  </div>
 
 
 
