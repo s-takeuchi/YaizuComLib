@@ -346,7 +346,7 @@ Infoメッセージを表示します。<br/>
 <div class="topic">
 REST APIを非同期で呼び出します。<br/>
 REST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
-リクエスト送信後，500ミリ秒経過してもREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
+リクエスト送信後，1000ミリ秒経過してもREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
 レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
 REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommonのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
 REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
@@ -365,7 +365,7 @@ REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;l
 <div class="topic">
 複数のREST APIを非同期で同時に呼び出します。<br/>REST APIを呼び出す順序は保証されていません。<br/>
 すべてのREST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
-リクエスト送信後，500ミリ秒経過してもすべてのREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
+リクエスト送信後，1000ミリ秒経過してもすべてのREST APIからのレスポンスがない場合，LOADING中を示すダイアログを表示します。<br/>
 レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
 REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommonのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
 REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
@@ -471,6 +471,7 @@ class="container-fluid"として画面を描画します。<br/>
   レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
   REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommonのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
   REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
+  複数のAPI呼び出しにおいて、あるAPIのレスポンスがステータスコード400以上となる場合、本APIは次のAPIの呼び出しを行わず、処理を中断します。<br/>
   <table class="tblstyle">
   <tr><td>contents[入力]</td><td>
     複数のAPIを呼び出すための各種パラメータ。次の要素を含む情報を指定。
@@ -483,7 +484,7 @@ class="container-fluid"として画面を描画します。<br/>
   </td></tr>
   <tr><td>targetFunc[入力]</td><td>レスポンス受信後に呼び出される関数。括弧および引数は指定できない。</td></tr>
   </table>
-  </div>
+</div>
 
 
 
