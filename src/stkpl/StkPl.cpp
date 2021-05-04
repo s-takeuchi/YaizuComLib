@@ -964,6 +964,42 @@ int StkPlGetUsedMemorySizeOfCurrentProcess()
 	}
 	int ActualFileSize = fread(Buffer, sizeof(char), 4096, fp);
 	fclose(fp);
+	char* Ptr = strstr(Buffer, "VmRSS:");
+	if (Ptr == NULL) {
+		return -1;
+	}
+	char DummyStr[32] = "";
+	int VmSize = 0;
+	sscanf(Ptr, "%s %d", DummyStr, &VmSize);
+	return VmSize;
+#endif
+}
+
+int StkPlGetUsedVmSizeOfCurrentProcess()
+{
+#ifdef WIN32
+	DWORD dwProcessID = GetCurrentProcessId();
+	HANDLE hProcess;
+	PROCESS_MEMORY_COUNTERS pmc = { 0 };
+
+	long Size;
+	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
+		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
+			Size = (long)pmc.PeakPagefileUsage;
+		}
+	}
+	CloseHandle(hProcess);
+	return Size;
+#else
+	FILE *fp;
+	char ProcInfo[64];
+	char Buffer[4096];
+	sprintf(ProcInfo, "/proc/%d/status", getpid());
+	if ((fp = fopen(ProcInfo, "r")) == NULL) {
+		return -1;
+	}
+	int ActualFileSize = fread(Buffer, sizeof(char), 4096, fp);
+	fclose(fp);
 	char* Ptr = strstr(Buffer, "VmSize:");
 	if (Ptr == NULL) {
 		return -1;

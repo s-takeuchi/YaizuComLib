@@ -105,6 +105,7 @@ long int StkPlWcsToL(const wchar_t*);
 float StkPlWcsToF(const wchar_t*);
 
 int StkPlGetUsedMemorySizeOfCurrentProcess();
+int StkPlGetUsedVmSizeOfCurrentProcess();
 
 void StkPlGetHostName(wchar_t*, size_t);
 bool StkPlCheckHostName(const wchar_t*);
