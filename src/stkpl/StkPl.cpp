@@ -985,7 +985,7 @@ int StkPlGetUsedVmSizeOfCurrentProcess()
 	long Size;
 	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
 		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
-			Size = (long)pmc.PeakPagefileUsage;
+			Size = (long)pmc.PagefileUsage;
 		}
 	}
 	CloseHandle(hProcess);

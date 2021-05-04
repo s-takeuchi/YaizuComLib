@@ -82,8 +82,18 @@ void StkPlGetWTimeInOldFormat(wchar_t[64], bool)<br/>
 </tr>
 
 <tr>
-    <td>int StkPlAddSeparator(wchar_t*, size_t))</td>
+    <td>int StkPlAddSeparator(wchar_t*, size_t)</td>
     <td>Add separator to the existing path.</td>
+</tr>
+
+<tr>
+    <td>int StkPlGetUsedMemorySizeOfCurrentProcess()</td>
+    <td>Get physical memory size used by current process.</td>
+</tr>
+
+<tr>
+    <td>int StkPlGetUsedVmSizeOfCurrentProcess()</td>
+    <td>Get virtual memory size used by current process.</td>
 </tr>
 
 </table><p>
@@ -246,12 +256,44 @@ struct FileInfoList {
     <H4 ID="1.11">1.11 int StkPlAddSeparator(wchar_t* Path, size_t PathSize)</H4>
     <div class="topic">
         Add separator to the existing path.<br/>
-        Linux : '/' is to be added.<br/>
-        Windows : '\' is to be added.<br/>
+        <ul>
+            <li>Linux : '/' is to be added.</li>
+            <li>Windows : '\' is to be added.</li>
+        </ul>
         <table class="tblstyle">
             <tr><td>Path[Output]</td><td>Path to be added the separator.</td></tr>
             <tr><td>PathSize[Input]</td><td>Buffer size of "Path".</td></tr>
             <tr><td>[Return]</td><td>0: always zero returns</td></tr>
+        </table>
+    </div>
+
+
+
+    <H4 ID="1.12">1.12 int StkPlGetUsedMemorySizeOfCurrentProcess()</H4>
+    <div class="topic">
+        Get physical memory size used by current process.<br/>
+        This API acquires necessary information using following API or file.<br/>
+        <ul>
+            <li>Windows: GetProcessMemoryInfo API - WorkingSetSize</li>
+            <li>Linux: /proc//status - VmRSS (in KB)</li>
+        </ul>
+        <table class="tblstyle">
+            <tr><td>[Return]</td><td>Used physical memory size of current process</td></tr>
+        </table>
+    </div>
+
+
+
+    <H4 ID="1.13">1.13 int StkPlGetUsedVmSizeOfCurrentProcess()</H4>
+    <div class="topic">
+        Get virtual memory size used by current process.<br/>
+        This API acquires necessary information using following API or file.<br/>
+        <ul>
+            <li>Windows: GetProcessMemoryInfo API - PagefileUsage</li>
+            <li>Linux: /proc//status - VmSize (in KB)</li>
+        </ul>
+        <table class="tblstyle">
+            <tr><td>[Return]</td><td>Used virtual memory size of current process</td></tr>
         </table>
     </div>
 
