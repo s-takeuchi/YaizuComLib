@@ -953,6 +953,7 @@ int StkPlGetUsedMemorySizeOfCurrentProcess()
 		}
 	}
 	CloseHandle(hProcess);
+	Size /= 1024;
 	return Size;
 #else
 	FILE *fp;
@@ -989,6 +990,7 @@ int StkPlGetUsedVmSizeOfCurrentProcess()
 		}
 	}
 	CloseHandle(hProcess);
+	Size /= 1024;
 	return Size;
 #else
 	FILE *fp;

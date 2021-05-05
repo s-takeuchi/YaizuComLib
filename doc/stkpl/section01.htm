@@ -272,6 +272,7 @@ struct FileInfoList {
     <H4 ID="1.12">1.12 int StkPlGetUsedMemorySizeOfCurrentProcess()</H4>
     <div class="topic">
         Get physical memory size used by current process.<br/>
+        This API returns the size in KB.<br/>
         This API acquires necessary information using following API or file.<br/>
         <ul>
             <li>Windows: GetProcessMemoryInfo API - WorkingSetSize</li>
@@ -287,6 +288,7 @@ struct FileInfoList {
     <H4 ID="1.13">1.13 int StkPlGetUsedVmSizeOfCurrentProcess()</H4>
     <div class="topic">
         Get virtual memory size used by current process.<br/>
+        This API returns the size in KB.<br/>
         This API acquires necessary information using following API or file.<br/>
         <ul>
             <li>Windows: GetProcessMemoryInfo API - PagefileUsage</li>
