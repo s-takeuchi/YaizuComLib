@@ -557,10 +557,8 @@ var responseData = {};
     {
         let sContents = [];
         let sTargetFunc = null;
-        let lastApi = null;
 
         function sequentialApiCall(contents, targetFunc) {
-            $('#loading_Modal').modal('show');
             sequentialApiCallImpl(contents, targetFunc);
         }
 
@@ -571,40 +569,34 @@ var responseData = {};
             sTargetFunc = targetFunc;
             if (sContents instanceof Array) {
                 if (sContents.length == 0) {
-                    finalizationSequentialApiCall();
+                    setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc);}, 1000);
                     return;
                 }
             } else {
-                finalizationSequentialApiCall();
+                setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc);}, 1000);
                 return;
             }
             let firstElem = sContents.shift();
             if (firstElem.method != null && firstElem.url != null && firstElem.keystring !== '') {
-                lastApi = firstElem.keystring;
                 sendRequestRecvResponse(firstElem.method, firstElem.url, firstElem.request, firstElem.keystring, true);
             }
             if (sTargetFunc != null && sContents.length == 0) {
-                finalizationSequentialApiCall();
+                setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc);}, 1000);
             } else {
                 setTimeout(function() {waitForResponseWithoutDialog(0, nextSequentialApiCall);}, 1);
             }
         }
 
-        let finalizationSequentialApiCall = function() {
-            setTimeout(function() {
-                waitForResponseWithoutDialog(0, sTargetFunc);
-                $('#loading_Modal').modal('hide');
-                sContents = [];
-                lastApi = null;
-            }, 1000);
+        let nextSequentialApiCall = function() {
+            sequentialApiCallImpl(null, sTargetFunc);
         }
 
-        let nextSequentialApiCall = function() {
-            if (statusCode[lastApi] >= 400) {
-                finalizationSequentialApiCall();
-            } else {
-                sequentialApiCallImpl(null, sTargetFunc);
-            }
+        function initSequentialApiCall() {
+            $('#loading_Modal').modal('show');
+        }
+
+        function finalSequentialApiCall() {
+            $('#loading_Modal').modal('hide');
         }
     }
 }
