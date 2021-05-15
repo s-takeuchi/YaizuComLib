@@ -565,7 +565,9 @@ var responseData = {};
         }
 
         let sequentialApiCallImpl = function(contents, targetFunc) {
-            sContents = contents;
+            for (let loop = 0; contents != null && loop < contents.length; loop++) {
+                sContents.push(contents[loop]);
+            }
             sTargetFunc = targetFunc;
             if (sContents instanceof Array) {
                 if (sContents.length == 0) {
@@ -592,7 +594,7 @@ var responseData = {};
             if (statusCode[lastApi] >= 400) {
                 sequentialApiCallImpl(null, sTargetFunc);
             } else {
-                sequentialApiCallImpl(sContents, sTargetFunc);
+                sequentialApiCallImpl(null, sTargetFunc);
             }
         }
     }
