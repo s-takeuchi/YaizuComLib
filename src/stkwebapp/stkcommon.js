@@ -592,7 +592,7 @@ var responseData = {};
 
         let nextSequentialApiCall = function() {
             if (statusCode[lastApi] >= 400) {
-                sequentialApiCallImpl(null, sTargetFunc);
+                setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc); $('#loading_Modal').modal('hide');}, 1000);
             } else {
                 sequentialApiCallImpl(null, sTargetFunc);
             }
