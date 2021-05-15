@@ -79,6 +79,8 @@ stkcommonの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.32">function drowContainerFluid(contents)</a></td><td>class="container-fluid"として画面を描画します。</td></tr>
 <tr><td><a href="#3.4.33">function iconAlwaysVisible()</a></td><td>メニューバーにプロダクトアイコンを常に表示します。</td></tr>
 <tr><td><a href="#3.4.34">function sequentialApiCall(contents, targetFunc)</a></td><td>複数のREST APIをcontentsの格納順に呼び出します。</td></tr>
+<tr><td><a href="#3.4.35">function initSequentialApiCall()</a></td><td>読み込み中を示すダイアログを開きます。</td></tr>
+<tr><td><a href="#3.4.36">function finalSequentialApiCall()</a></td><td>読み込み中を示すダイアログを閉じます。</td></tr>
 </table>
 </div>
 
@@ -467,11 +469,11 @@ class="container-fluid"として画面を描画します。<br/>
 <div class="topic">
   複数のREST APIをcontentsの格納順に呼び出します。<br/>呼び出し先のAPIのレスポンスが返るまで次のAPIは呼び出されません。<br/>
   すべてのREST APIからレスポンスを受信後，指定した関数をコールバックします。<br/>
-  このAPIは呼び出し直後に，LOADING中を示すダイアログを表示します。<br/>
+  このAPIは，LOADING中を示すダイアログを表示しません。
+  呼び出し元のプログラムは必要に応じて、initSequentialApiCall()およびfinalSequentialApiCall()を呼び出し、LOADINGダイアログを制御する必要があります。<br/>
   レスポンスの受信におけるタイムアウト時間は固定で10秒となります。<br/>
   REST API呼び出しにおけるステータスおよびレスポンスデータは，stkcommonのグローバル変数statusCode['キー名']およびresponseData['キー名']に格納されます。<br/>
   REST API呼び出し時に，HTTPヘッダのAuthorizationには，"Bearer &lt;loginId&gt; &lt;loginPw&gt;"が指定されます。loginIdおよびloginPwは，showLoginModal関数で設定されます。<br/>
-  複数のAPI呼び出しにおいて、あるAPIのレスポンスがステータスコード400以上となる場合、本APIは次のAPIの呼び出しを行わず、処理を中断します。<br/>
   <table class="tblstyle">
   <tr><td>contents[入力]</td><td>
     複数のAPIを呼び出すための各種パラメータ。次の要素を含む情報を指定。
@@ -484,6 +486,20 @@ class="container-fluid"として画面を描画します。<br/>
   </td></tr>
   <tr><td>targetFunc[入力]</td><td>レスポンス受信後に呼び出される関数。括弧および引数は指定できない。</td></tr>
   </table>
+</div>
+
+
+
+<H3 ID="3.4.35">3.4.35 function initSequentialApiCall()</H3>
+<div class="topic">
+  読み込み中を示すダイアログを開きます。<br/>
+</div>
+
+
+
+<H3 ID="3.4.36">3.4.36 function finalSequentialApiCall()</H3>
+<div class="topic">
+  読み込み中を示すダイアログを閉じます。<br/>
 </div>
 
 
