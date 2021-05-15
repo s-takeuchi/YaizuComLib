@@ -571,11 +571,11 @@ var responseData = {};
             sTargetFunc = targetFunc;
             if (sContents instanceof Array) {
                 if (sContents.length == 0) {
-                    setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc); $('#loading_Modal').modal('hide');}, 1000);
+                    finalizationSequentialApiCall();
                     return;
                 }
             } else {
-                setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc); $('#loading_Modal').modal('hide');}, 1000);
+                finalizationSequentialApiCall();
                 return;
             }
             let firstElem = sContents.shift();
@@ -584,15 +584,24 @@ var responseData = {};
                 sendRequestRecvResponse(firstElem.method, firstElem.url, firstElem.request, firstElem.keystring, true);
             }
             if (sTargetFunc != null && sContents.length == 0) {
-                setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc); $('#loading_Modal').modal('hide');}, 1000);
+                finalizationSequentialApiCall();
             } else {
                 setTimeout(function() {waitForResponseWithoutDialog(0, nextSequentialApiCall);}, 1);
             }
         }
 
+        let finalizationSequentialApiCall = function() {
+            setTimeout(function() {
+                waitForResponseWithoutDialog(0, sTargetFunc);
+                $('#loading_Modal').modal('hide');
+                sContents = [];
+                lastApi = null;
+            }, 1000);
+        }
+
         let nextSequentialApiCall = function() {
             if (statusCode[lastApi] >= 400) {
-                setTimeout(function() {waitForResponseWithoutDialog(0, sTargetFunc); $('#loading_Modal').modal('hide');}, 1000);
+                finalizationSequentialApiCall();
             } else {
                 sequentialApiCallImpl(null, sTargetFunc);
             }
