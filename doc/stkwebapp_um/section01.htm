@@ -194,15 +194,16 @@ StkWebAppExec::STKWEBAPP_METHOD_DELETE<br/>
 </table><p>
 </div><p>
 
-<H3 ID="1.3.2">1.3.2 bool CheckCredentials(wchar_t*, wchar_t*)</H3>
+<H3 ID="1.3.2">1.3.2 bool CheckCredentials(wchar_t*, wchar_t*, int*)</H3>
 <div class="topic">
 <p>
-bool CheckCredentials(wchar_t* Token, wchar_t* Name)<br/>
+bool CheckCredentials(wchar_t* Token, wchar_t* Name, int* Id)<br/>
 ユーザー認証を行う。
 </p>
 <table class="tblstyle">
 <tr><td>Token(入力)</td><td>ExecuteImpl APIの引数として取得したTokenを指定する。</td></tr>
-<tr><td>Name(出力)</td><td>認証が成功した場合，Tokenから取得したユーザー名を返す。</td></tr>
+<tr><td>Name(出力)</td><td>認証が成功した場合，ユーザー名を返す。</td></tr>
+<tr><td>Id(出力)</td><td>認証が成功した場合，ユーザーIDを返す。</td></tr>
 <tr><td>戻り値</td><td>認証成功: true, 認証失敗: false</td></tr>
 </table><p>
 </div><p>
