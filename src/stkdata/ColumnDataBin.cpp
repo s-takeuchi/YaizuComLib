@@ -15,6 +15,7 @@ ColumnDataBin::ColumnDataBin(const wchar_t* ColumnName, const unsigned char* Val
 		StkPlMemSet(m_Value, 0, Length);
 		StkPlMemCpy(m_Value, Value, Length);
 	}
+	m_Length = Length;
 }
 
 ColumnDataBin::ColumnDataBin(const wchar_t* ColumnName, const unsigned char* Value, int Length, int CompOpe)
@@ -26,10 +27,16 @@ ColumnDataBin::ColumnDataBin(const wchar_t* ColumnName, const unsigned char* Val
 // Destructor
 ColumnDataBin::~ColumnDataBin()
 {
+	m_Length = 0;
 	delete m_Value;
 }
 
 unsigned char* ColumnDataBin::GetValue()
 {
 	return m_Value;
+}
+
+int ColumnDataBin::GetLength()
+{
+	return m_Length;
 }

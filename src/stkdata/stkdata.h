@@ -192,6 +192,7 @@ class ColumnDataBin : public ColumnData
 {
 private:
 	unsigned char *m_Value;
+	int m_Length;
 
 public:
 	ColumnDataBin(const wchar_t*, const unsigned char*, int);
@@ -199,6 +200,7 @@ public:
 	virtual ~ColumnDataBin();
 
 	unsigned char* GetValue();
+	int GetLength();
 };
 
 class RecordData

@@ -502,9 +502,13 @@ int DataAcController::InsertRecord(RecordData* RecDat)
 						return -1;
 					}
 					ColumnDataBin* ColDatBin = (ColumnDataBin*)ColDat;
-					wchar_t* Value = (wchar_t*)ColDatBin->GetValue();
-					wchar_t* ValueStore = (wchar_t*)Addr;
-					StkPlMemCpy(ValueStore, Value, m_ColumnSize[TableId][Loop]);
+					char* Value = (char*)ColDatBin->GetValue();
+					char* ValueStore = (char*)Addr;
+					int Length = ColDatBin->GetLength();
+					if (Length > m_ColumnSize[TableId][Loop]) {
+						Length = m_ColumnSize[TableId][Loop];
+					}
+					StkPlMemCpy(ValueStore, Value, Length);
 				}
 				Addr += m_ColumnSize[TableId][Loop];
 			} else {
@@ -877,7 +881,11 @@ RecordData* DataAcController::CommonRecordOperation(int OpType, RecordData* RecD
 							ColumnDataBin* ColDatBin = (ColumnDataBin*)ColDatUdt;
 							unsigned char* Value = (unsigned char*)ColDatBin->GetValue();
 							unsigned char* ValueStore = (unsigned char*)(Addr + m_ColumnOffset[TableId][CurColIdx]);
-							StkPlMemCpy(ValueStore, Value, m_ColumnSize[TableId][CurColIdx]);
+							int Length = ColDatBin->GetLength();
+							if (Length > m_ColumnSize[TableId][CurColIdx]) {
+								Length = m_ColumnSize[TableId][CurColIdx];
+							}
+							StkPlMemCpy(ValueStore, Value, Length);
 							UdtFlag = true;
 						}
 					}
