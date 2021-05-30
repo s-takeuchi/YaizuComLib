@@ -1497,7 +1497,7 @@ int StkPlWriteFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fi
 void* StkPlOpenFileForRead(const wchar_t FilePath[FILENAME_MAX])
 {
 #ifdef WIN32
-	HANDLE FileHndl = CreateFile(FilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE FileHndl = CreateFile(FilePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (FileHndl == INVALID_HANDLE_VALUE) {
 		return NULL;
 	};
@@ -1520,7 +1520,7 @@ void* StkPlOpenFileForWrite(const wchar_t FilePath[FILENAME_MAX], bool AddFlag)
 	if (AddFlag) {
 		Type = OPEN_ALWAYS;
 	}
-	HANDLE FileHndl = CreateFile(FilePath, GENERIC_WRITE, 0, NULL, Type, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE FileHndl = CreateFile(FilePath, GENERIC_WRITE, FILE_SHARE_READ, NULL, Type, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (FileHndl == INVALID_HANDLE_VALUE) {
 		return NULL;
 	};
