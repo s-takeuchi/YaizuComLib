@@ -54,6 +54,7 @@ int BasicBinaryTest01()
 			StkPlPrintf("...[OK]\n");
 		} else {
 			StkPlPrintf("...[NG]\n");
+			return -1;
 		}
 	}
 
