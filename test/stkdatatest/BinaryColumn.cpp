@@ -36,6 +36,27 @@ int BasicBinaryTest01()
 		StkPlPrintf("...[OK]\n");
 	}
 
+	{
+		StkPlPrintf("Insert one record to 'Bin-Test' table. Inappropriate column order (abnormal case)");
+		ColumnData* ColDat[10];
+		RecordData* RecDat;
+		unsigned char one_img1[10] = { 0x00, 0xFF, 0x01, 0x02, 0x03, 0x04, 0x05, 0x00, 0xFF, 0xFF };
+		unsigned char one_img2[10] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x00, 0x66, 0x00, 0x77, 0x00 };
+		ColDat[0] = new ColumnDataBin(L"Img2", one_img2, 10);
+		ColDat[1] = new ColumnDataBin(L"Img1", one_img1, 10);
+		ColDat[2] = new ColumnDataInt(L"ID", 11);
+		RecDat = new RecordData(L"Bin-Test", ColDat, 3);
+		LockTable(L"Bin-Test", 2);
+		int Ret = InsertRecord(RecDat);
+		UnlockTable(L"Bin-Test");
+		delete RecDat;
+		if (Ret == -1) {
+			StkPlPrintf("...[OK]\n");
+		} else {
+			StkPlPrintf("...[NG]\n");
+		}
+	}
+
 	// テーブル"Bin-Test"にInsertRecordで連結されたレコード３個を追加
 	{
 		StkPlPrintf("Insert 3 records connected each other to table 'Bin-Test'.");
