@@ -30,7 +30,7 @@ private<BR>
 <TABLE BORDER="1">
 <TR><TD>ColumnName</TD><TD>カラム名</TD></TR>
 <TR><TD>Val</TD><TD>バイナリ型カラムデータへのポインタ</TD></TR>
-<TR><TD>Length</TD><TD>コピーするValのデータのサイズ（バイト数）。実存するカラムのサイズと一致させる必要がある。</TD></TR>
+<TR><TD>Length</TD><TD>コピーするValのデータのサイズ（バイト数）。実存するカラムのサイズ以下にする必要がある。</TD></TR>
 </TABLE>
 </div><P>
 
@@ -40,7 +40,7 @@ private<BR>
 <TABLE BORDER="1">
 <TR><TD>ColumnName</TD><TD>カラム名</TD></TR>
 <TR><TD>Val</TD><TD>バイナリ型カラムデータへのポインタ</TD></TR>
-<TR><TD>Length</TD><TD>コピーするValのデータのサイズ（バイト数）。実存するカラムのサイズと一致させる必要がある。</TD></TR>
+<TR><TD>Length</TD><TD>コピーするValのデータのサイズ（バイト数）。実存するカラムのサイズ以下にする必要がある。</TD></TR>
 <TR><TD>CompOpe</TD><TD>比較種別</TD></TR>
 </TABLE>
 </div><P>
@@ -55,6 +55,14 @@ private<BR>
 バイナリ型カラムのデータを取得する。
 <TABLE BORDER="1">
 <TR><TD>戻り値</TD><TD>バイナリ型カラムデータへのポインタ</TD></TR>
+</TABLE>
+</div><P>
+
+(5) int GetLength()<BR>
+<div class=spc>
+設定されたデータのサイズを取得する。
+<TABLE BORDER="1">
+<TR><TD>戻り値</TD><TD>設定されたデータのサイズ（バイト数）</TD></TR>
 </TABLE>
 </div><P>
 
