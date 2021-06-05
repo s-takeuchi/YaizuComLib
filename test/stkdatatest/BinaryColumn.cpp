@@ -33,7 +33,12 @@ int BasicBinaryTest01()
 		InsertRecord(RecDat);
 		UnlockTable(L"Bin-Test");
 		delete RecDat;
-		StkPlPrintf("...[OK]\n");
+		if (GetNumOfRecords(L"Bin-Test") == 1) {
+			StkPlPrintf("...[OK]\n");
+		} else {
+			StkPlPrintf("...[NG]\n");
+			return -1;
+		}
 	}
 
 	{
@@ -505,6 +510,93 @@ int BasicBinaryTest09()
 	return 0;
 }
 
+int BasicBinaryTest10()
+{
+	ColumnDefInt ColDefId(L"ID");
+	ColumnDefBin ColDefImg1(L"Img1", 10);
+	ColumnDefBin ColDefImg2(L"Img2", 10);
+	TableDef TabDefTest(L"Bin-TestX", 100);
+
+	TabDefTest.AddColumnDef(&ColDefId);
+	TabDefTest.AddColumnDef(&ColDefImg1);
+	TabDefTest.AddColumnDef(&ColDefImg2);
+	CreateTable(&TabDefTest);
+	StkPlPrintf("...[OK]\n");
+
+	{
+		StkPlPrintf("Binary column length test (1) ...");
+		ColumnData* ColDat[10];
+		RecordData* RecDat;
+		unsigned char one_img1[10] = { 0x00, 0xFF, 0x01, 0x02, 0x03, 0x04, 0x05, 0x00, 0xFF, 0xFF };
+		unsigned char one_img2[10] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x00, 0x66, 0x00, 0x77, 0x00 };
+		ColDat[0] = new ColumnDataInt(L"ID", 10);
+		ColDat[1] = new ColumnDataBin(L"Img1", one_img1, 5);
+		ColDat[2] = new ColumnDataBin(L"Img2", one_img2, 5);
+		RecDat = new RecordData(L"Bin-TestX", ColDat, 3);
+
+		LockTable(L"Bin-TestX", 2);
+		int Ret = InsertRecord(RecDat);
+		RecordData* GetRec = GetRecord(L"Bin-TestX");
+		UnlockTable(L"Bin-TestX");
+		ColumnDataBin* GetCol = (ColumnDataBin*)GetRec->GetColumn(L"Img2");
+		if (StkPlMemCmp(GetCol->GetValue(), one_img2, 10) == 0 || StkPlMemCmp(GetCol->GetValue(), one_img2, 5) != 0) {
+			StkPlPrintf("...[NG]\n");
+			return -1;
+		}
+
+		delete RecDat;
+		delete GetRec;
+
+		if (Ret == 0 && GetNumOfRecords(L"Bin-TestX") == 1) {
+			StkPlPrintf("...[OK]\n");
+		} else {
+			StkPlPrintf("...[NG]\n");
+			return -1;
+		}
+	}
+
+	{
+		StkPlPrintf("Binary column length test (2) ...");
+		ColumnData* ColDat[10];
+		RecordData* RecDat1;
+		RecordData* RecDat2;
+
+		ColDat[1] = new ColumnDataInt(L"ID", 10);
+		RecDat1 = new RecordData(L"Bin-TestX", &ColDat[1], 1);
+
+		unsigned char one_img1[10] = { 0x39, 0x39, 0x39, 0x39, 0x39, 0x19, 0x19, 0x19, 0x19, 0x19 };
+		unsigned char one_img2[10] = { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x00, 0x00, 0xFF };
+		ColDat[2] = new ColumnDataBin(L"Img2", one_img2, 5);
+		ColDat[3] = new ColumnDataBin(L"Img1", one_img1, 5);
+		RecDat2 = new RecordData(L"Bin-TestX", &ColDat[2], 2);
+
+		LockTable(L"Bin-TestX", 2);
+		int Ret = UpdateRecord(RecDat1, RecDat2);
+		RecordData* GetRec = GetRecord(L"Bin-TestX");
+		UnlockTable(L"Bin-TestX");
+		ColumnDataBin* GetCol = (ColumnDataBin*)GetRec->GetColumn(L"Img1");
+		if (StkPlMemCmp(GetCol->GetValue(), one_img1, 10) == 0 || StkPlMemCmp(GetCol->GetValue(), one_img1, 5) != 0) {
+			StkPlPrintf("...[NG]\n");
+			return -1;
+		}
+
+		delete RecDat1;
+		delete RecDat2;
+		delete GetRec;
+
+		if (Ret == 0 && GetNumOfRecords(L"Bin-TestX") == 1) {
+			StkPlPrintf("...[OK]\n");
+		} else {
+			StkPlPrintf("...[NG]\n");
+			return -1;
+		}
+	}
+
+	return 0;
+
+	DeleteTable(L"Bin-TestX");
+}
+
 // 1MB(バイナリ型カラム) * 32 * 10 = 320MBのテーブル"LargeBinTable"をCreateTableで作成し，その後DeleteTableで削除する
 // 2MB(バイナリ型カラム) * 32 * 10 = 640MBのテーブル"LargeBinTable"をCreateTableで作成し，その後DeleteTableで削除する
 int LargeBinaryTableTest01()
@@ -635,6 +727,9 @@ int BinaryTest()
 		return -1;
 	}
 	if (BasicBinaryTest09() != 0) {
+		return -1;
+	}
+	if (BasicBinaryTest10() != 0) {
 		return -1;
 	}
 	if (LargeBinaryTableTest01() != 0) {
