@@ -228,10 +228,10 @@ char* StkPlWideCharToSjis(const wchar_t* Txt)
 wchar_t* StkPlSjisToWideChar(const char* Txt)
 {
 #ifdef WIN32
-	int WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, NULL, NULL);
+	int WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_USEGLYPHCHARS, (LPCSTR)Txt, -1, NULL, NULL);
 	if (WcBufLen > 0) {
 		wchar_t* WcTxt = new wchar_t[WcBufLen + 1];
-		WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_ERR_INVALID_CHARS, (LPCSTR)Txt, -1, WcTxt, WcBufLen);
+		WcBufLen = MultiByteToWideChar(CP_THREAD_ACP, MB_USEGLYPHCHARS, (LPCSTR)Txt, -1, WcTxt, WcBufLen);
 		WcTxt[WcBufLen] = L'\0';
 		return WcTxt;
 	}
