@@ -96,6 +96,16 @@ void StkPlGetWTimeInOldFormat(wchar_t[64], bool)<br/>
     <td>Get virtual memory size used by current process.</td>
 </tr>
 
+<tr>
+    <td>wchar_t* StkPlSjisToWideChar(const char*)</td>
+    <td>Convert SJIS encoded string to wide char string.</td>
+</tr>
+
+<tr>
+    <td>char* StkPlWideCharToSjis(const wchar_t*)</td>
+    <td>Convert wide char string to SJIS encoded string.</td>
+</tr>
+
 </table><p>
 </div>
 
@@ -296,6 +306,33 @@ struct FileInfoList {
         </ul>
         <table class="tblstyle">
             <tr><td>[Return]</td><td>Used virtual memory size of current process</td></tr>
+        </table>
+    </div>
+
+
+
+    <H4 ID="1.14">1.14 wchar_t* StkPlSjisToWideChar(const char* Txt)</H4>
+    <div class="topic">
+        Convert SJIS encoded string to wide char string.<br/>
+        This API creates necessary memory for returning wide char string.
+        After using wide char string returned, it needs to be deleted at caller side.<br/>
+        This API returns gryph character if it detects unknown code for the conversion.<br/>
+        <table class="tblstyle">
+            <tr><td>Txt[Input]</td><td>SJIS encoded string</td></tr>
+            <tr><td>[Return]</td><td>Converted wide char string</td></tr>
+        </table>
+    </div>
+
+
+
+    <H4 ID="1.15">1.15 char* StkPlWideCharToSjis(const wchar_t* Txt)</H4>
+    <div class="topic">
+        Convert wide char string to SJIS encoded string.<br/>
+        This API creates necessary memory for returning SJIS encoded string.
+        After using SJIS encoded string returned, it needs to be deleted at caller side.<br/>
+        <table class="tblstyle">
+            <tr><td>Txt[Input]</td><td>wide char string</td></tr>
+            <tr><td>[Return]</td><td>SJIS encoded string</td></tr>
         </table>
     </div>
 
