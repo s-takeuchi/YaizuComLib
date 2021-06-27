@@ -317,6 +317,7 @@ struct FileInfoList {
         This API creates necessary memory for returning wide char string.
         After using wide char string returned, it needs to be deleted at caller side.<br/>
         This API returns gryph character if it detects unknown code for the conversion.<br/>
+        In case you use Linux, preliminaly you need to install ja_JP.SJIS locale to your system before you call this API.<br/>
         <table class="tblstyle">
             <tr><td>Txt[Input]</td><td>SJIS encoded string</td></tr>
             <tr><td>[Return]</td><td>Converted wide char string</td></tr>
@@ -330,6 +331,7 @@ struct FileInfoList {
         Convert wide char string to SJIS encoded string.<br/>
         This API creates necessary memory for returning SJIS encoded string.
         After using SJIS encoded string returned, it needs to be deleted at caller side.<br/>
+        In case you use Linux, preliminaly you need to install ja_JP.SJIS locale to your system before you call this API.<br/>
         <table class="tblstyle">
             <tr><td>Txt[Input]</td><td>wide char string</td></tr>
             <tr><td>[Return]</td><td>SJIS encoded string</td></tr>
