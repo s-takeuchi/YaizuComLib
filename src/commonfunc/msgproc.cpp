@@ -156,9 +156,12 @@ void MessageProc::Impl::LoggingProc()
 	char TmpLogBuf[65536];
 	size_t WrittenSize = 0;
 
-	while (!Impl::Instance->pImpl->StopLogging) {
+	while (true) {
 		StkPlSleepMs(500);
-		if (Impl::Instance->pImpl->LoggingBuf[0] == '0') {
+		if (Impl::Instance->pImpl->StopLogging && Impl::Instance->pImpl->LoggingBuf[0] == '\0') {
+			break;
+		}
+		if (Impl::Instance->pImpl->LoggingBuf[0] == '\0') {
 			continue;
 		}
 		Impl::Instance->pImpl->Cs4LogBuf.lock();
