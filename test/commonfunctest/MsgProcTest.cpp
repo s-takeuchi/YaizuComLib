@@ -136,6 +136,12 @@ void MsgProcTest()
 		StkPlPrintf("Logging ... NG case\n");
 		StkPlExit(-1);
 	}
+	char FileBuf[2048] = "";
+	StkPlReadFile(L"log.txt", FileBuf, 2048);
+	if (StkPlStrStr(FileBuf, "done!") == NULL) {
+		StkPlPrintf("Logging ... NG case\n");
+		StkPlExit(-1);
+	}
 	StkPlPrintf("Logging ... OK case(size=%d)\n", LogSize);
 	// Logging test end
 
