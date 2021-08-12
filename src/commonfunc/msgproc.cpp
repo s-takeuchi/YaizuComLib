@@ -169,6 +169,7 @@ void MessageProc::Impl::LoggingProc()
 		Impl::Instance->pImpl->LoggingBuf[0] = '\0';
 		Impl::Instance->pImpl->Cs4LogBuf.unlock();
 		StkPlWrite(Impl::Instance->pImpl->LogFD, TmpLogBuf, StkPlStrLen(TmpLogBuf), &WrittenSize);
+		StkPlFlush(Impl::Instance->pImpl->LogFD);
 	}
 	Impl::Instance->pImpl->LoggingStopped = true;
 }

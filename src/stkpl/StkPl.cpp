@@ -1584,6 +1584,15 @@ int StkPlWrite(void* FileHndl, char* Ptr, size_t Size, size_t* ActSize)
 #endif
 }
 
+void StkPlFlush(void* FileHndl)
+{
+#ifdef WIN32
+	FlushFileBuffers(FileHndl);
+#else
+	fflush(FileHndl);
+#endif
+}
+
 void StkPlSeekFromBegin(void* FileHndl, size_t Offset)
 {
 #ifdef WIN32
