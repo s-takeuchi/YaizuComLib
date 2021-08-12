@@ -48,7 +48,7 @@ stkcommonの公開APIには下記のものがあります。<br/>
 <tr><td><a href="#3.4.1">function showLoginModal(func)</a></td><td>ログインダイアログを表示します。</td></tr>
 <tr><td><a href="#3.4.2">function showInputModal(title, contents)</a></td><td>入力ダイアログを表示します。</td></tr>
 <tr><td><a href="#3.4.3">function closeInputModal()</a></td><td>入力ダイアログを閉じます。</td></tr>
-<tr><td><a href="#3.4.4">function initMainPage(title, iconname, contents)</a></td><td>メインページを初期化します。</td></tr>
+<tr><td><a href="#3.4.4">function initMainPage(title, iconname, contents, apiName)</a></td><td>メインページを初期化します。</td></tr>
 <tr><td><a href="#3.4.5">function addRsCommand(func, icon, enable)</a></td><td>ナビゲーションバーにコマンドアイコンを追加します。</td></tr>
 <tr><td><a href="#3.4.6">function clearRsCommand()</a></td><td>ナビゲーションバーのコマンドアイコンおよびドロップダウンメニューをクリアします。</td></tr>
 <tr><td><a href="#3.4.7">function addRsUserMenu(contents)</a></td><td>ユーザーメニューに要素を追加します。</td></tr>
@@ -120,7 +120,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
 
 
 
-<H3 ID="3.4.4">3.4.4 function initMainPage(title, iconname, contents)</H3>
+<H3 ID="3.4.4">3.4.4 function initMainPage(title, iconname, contents, apiName)</H3>
 <div class="topic">
 メインページを初期化します。<br/>
 <table class="tblstyle">
@@ -133,6 +133,7 @@ func()の引数として，ログインダイアログで指定したユーザ�
   <li>title<br/>表示するメニューの名称</li>
   </ul>
 </td></tr>
+<tr><td>apiName</td><td>ブランド名, アイコンをクリックしたときに呼び出されるAPI</td></tr>
 </table>
 </div>
 
