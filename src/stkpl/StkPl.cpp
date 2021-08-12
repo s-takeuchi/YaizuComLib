@@ -1589,7 +1589,7 @@ void StkPlFlush(void* FileHndl)
 #ifdef WIN32
 	FlushFileBuffers(FileHndl);
 #else
-	fflush(FileHndl);
+	fflush((FILE*)FileHndl);
 #endif
 }
 
