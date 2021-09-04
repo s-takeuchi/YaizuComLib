@@ -361,7 +361,7 @@ void MessageProc::AddLog(const char* Msg, int Type)
 	char TmpTimeStr[64] = "";
 	char TmpBuf[65536] = "";
 	StkPlGetTimeInIso8601(TmpTimeStr, true);
-	StkPlSPrintf(TmpBuf, 65536, "%s [%06x] %s %s\r\n", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], Msg);
+	StkPlSPrintf(TmpBuf, 65536, "%s [%08x] %s %s\r\n", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], Msg);
 	Impl::Instance->pImpl->Cs4LogBuf.lock();
 	StkPlStrCat(Impl::Instance->pImpl->LoggingBuf, 65536, TmpBuf);
 	Impl::Instance->pImpl->Cs4LogBuf.unlock();
