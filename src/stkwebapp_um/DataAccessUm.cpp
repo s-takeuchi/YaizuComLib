@@ -385,7 +385,7 @@ void DataAccessUm::SetPropertyValueWStr(const wchar_t* Name, const wchar_t Value
 	} else {
 		// Insert
 		ColumnData* ColDatInsert[3];
-		ColDatInsert[0] = new ColumnDataWStr(L"Name", ((ColumnDataWStr*)RecDatFound->GetColumn(0))->GetValue());
+		ColDatInsert[0] = new ColumnDataWStr(L"Name", Name);
 		ColDatInsert[1] = new ColumnDataInt(L"ValueInt", 0);
 		ColDatInsert[2] = new ColumnDataWStr(L"ValueWStr", Value);
 		RecordData* RecDatInsert = new RecordData(L"Property", ColDatInsert, 3);
