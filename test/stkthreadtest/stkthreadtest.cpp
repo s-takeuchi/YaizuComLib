@@ -77,14 +77,14 @@ int MemoryLeakChecking1()
 int MemoryLeakChecking2()
 {
 	StkPlPrintf("Checks memory leak between StartStkThread and StopStkThread...");
-	long MaxMem[20];
+	long MaxMem[30];
 	wchar_t BufName[32];
 	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
 		StkPlSwPrintf(BufName, 32, L"person#%04d", Loop);
 		AddStkThread(Loop, BufName, L"Dummy thread", ElemStkThreadInit, ElemStkThreadFinal, ElemStkThreadMain, ElemStkThreadStart, ElemStkThreadStop);
 	}
 
-	for (int CreationLoop = 0; CreationLoop < 20; CreationLoop++) {
+	for (int CreationLoop = 0; CreationLoop < 30; CreationLoop++) {
 		int Ths[MAX_NUM_OF_STKTHREADS];
 		for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
 			Ths[Loop] = Loop;
@@ -99,15 +99,16 @@ int MemoryLeakChecking2()
 		int TargetId = GetStkThreadIdByIndex(0);
 		DeleteStkThread(TargetId);
 	}
-	if (MaxMem[0] < MaxMem[4] &&
-		MaxMem[4] < MaxMem[8] &&
-		MaxMem[8] < MaxMem[12] &&
-		MaxMem[12] < MaxMem[16] &&
-		MaxMem[16] < MaxMem[20]) {
-		StkPlPrintf("[NG] : %d %d %d %d %d \n", MaxMem[0], MaxMem[4], MaxMem[8], MaxMem[12], MaxMem[16]);
+	if (MaxMem[5] < MaxMem[9] &&
+		MaxMem[9] < MaxMem[13] &&
+		MaxMem[13] < MaxMem[17] &&
+		MaxMem[17] < MaxMem[21] &&
+		MaxMem[21] < MaxMem[25] &&
+		MaxMem[25] < MaxMem[29]) {
+		StkPlPrintf("[NG] : %d %d %d %d %d %d %d\n", MaxMem[5], MaxMem[9], MaxMem[13], MaxMem[17], MaxMem[21], MaxMem[25], MaxMem[29]);
 		return -1;
 	}
-	StkPlPrintf("[OK] : %d %d %d %d %d \n", MaxMem[0], MaxMem[4], MaxMem[8], MaxMem[12], MaxMem[16]);
+	StkPlPrintf("[OK] : %d %d %d %d %d %d %d\n", MaxMem[5], MaxMem[9], MaxMem[13], MaxMem[17], MaxMem[21], MaxMem[25], MaxMem[29]);
 	return 0;
 }
 
