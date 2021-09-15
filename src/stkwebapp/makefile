@@ -1,4 +1,4 @@
-﻿LDFLAGS = -L/usr/local/lib64 -L/usr/local/lib
+LDFLAGS = -L/usr/local/lib64 -L/usr/local/lib
 LIBS    = -lssl -lcrypto
 
 stkwebapp.a : StkWebApp.o StkWebAppSend.o

@@ -1,4 +1,4 @@
-﻿stkwebapp_um.a : ApiBase.o ApiGetUser.o ApiPostUser.o ApiDeleteUser.o ApiGetLanguage.o ApiLogging.o DataAccessUm.o UserManagement.o stkwebapp_um.o
+stkwebapp_um.a : ApiBase.o ApiGetUser.o ApiPostUser.o ApiDeleteUser.o ApiGetLanguage.o ApiLogging.o DataAccessUm.o UserManagement.o stkwebapp_um.o
 	ar r stkwebapp_um.a ApiBase.o ApiGetUser.o ApiPostUser.o ApiDeleteUser.o ApiGetLanguage.o ApiLogging.o DataAccessUm.o UserManagement.o stkwebapp_um.o
 
 ApiBase.o : ApiBase.cpp
