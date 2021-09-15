@@ -250,7 +250,15 @@ UTF-8エンコーディングした日本語メッセージまたは日本語ラ
 
 <H2 ID="2.20">2.20 void AddLog(char* Msg, int LogType)</H2>
 <div class="topic">
-ログを出力します。<br>
+ログファイルにログを出力します。<br>
+ログの出力フォーマットは以下のとおりです。<br/>
+YYYY-MM-DDThh:mm:ss+HH:MM [Thread-ID] X/ Message<br/>
+<ul>
+    <li>Thread-ID : スレッドIDを示す8文字の数値</li>
+    <li>X/ : FATAL=F, ERROR=E, WARN=W, INFO=I</li>
+    <li>Message : 出力するメッセージ</li>
+</ul>
+
 <table class="tblstyle">
 <tr><td>Msg[入力]</td><td>出力するメッセージ</td></tr>
 <tr><td>LogType[入力]</td><td>ログの種別。0:FATAL, 1:ERROR, 2:WARN, 3:INFO</td></tr>
