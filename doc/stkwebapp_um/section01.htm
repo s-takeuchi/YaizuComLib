@@ -41,6 +41,13 @@ StkWebAppUmが提供するサーバ側のAPIを以下に示す。<br/>
 <tr><td>void StkWebAppUm_SetPropertyValueWStr(const wchar_t*, const wchar_t[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])</td><td>WString型プロパティを設定する。</td></tr>
 <tr><td>int StkWebAppUm_GetPropertyValueInt(const wchar_t*)</td><td>Int型プロパティの値を取得する。</td></tr>
 <tr><td>void StkWebAppUm_GetPropertyValueWStr(const wchar_t*, wchar_t[STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])</td><td>WString型プロパティの値を取得する。</td></tr>
+<tr>
+    <td>int StkWebAppUm_GetAllPropertyData(
+        wchar_t[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS][STKWEBAPPUM_MAXLEN_OF_PROPERTY_NAME],
+        int[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS],
+        wchar_t[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS][STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])</td>
+    <td>すべてのプロパティの情報を取得する。</td>
+    </tr>
 </table><p>
 </div><p>
 
@@ -156,6 +163,21 @@ WString型プロパティの値を取得する。
 <tr><td>戻り値</td><td>なし</td></tr>
 </table><p>
 </div><p>
+
+    <H3 ID="1.2.10">1.2.10 int StkWebAppUm_GetAllPropertyData(wchar_t[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS][STKWEBAPPUM_MAXLEN_OF_PROPERTY_NAME], int[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS], wchar_t[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS][STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])</H3>
+    <div class="topic">
+    <p>
+        int StkWebAppUm_GetAllPropertyData(wchar_t Name[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS][STKWEBAPPUM_MAXLEN_OF_PROPERTY_NAME], int ValInt[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS], wchar_t ValWStr[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS][STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])<br/>
+        すべてのプロパティの情報を取得する。
+    </p>
+    <table class="tblstyle">
+    <tr><td>Name(出力)</td><td>プロパティ名</td></tr>
+    <tr><td>ValInt(出力)</td><td>Int型プロパティの値。</td></tr>
+    <tr><td>ValWStr(出力)</td><td>WString型プロパティ値。</td></tr>
+    <tr><td>戻り値</td><td>取得したプロパティの数。</td></tr>
+    </table><p>
+    </div><p>
+       
 
 <H2 ID="1.3">1.3 ApiBase</H2>
 <div class="topic">
