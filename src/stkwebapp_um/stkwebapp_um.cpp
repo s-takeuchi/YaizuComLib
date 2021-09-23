@@ -46,3 +46,10 @@ void StkWebAppUm_GetPropertyValueWStr(const wchar_t* Name, wchar_t Value[STKWEBA
 {
 	DataAccessUm::GetInstance()->GetPropertyValueWStr(Name, Value);
 }
+
+int StkWebAppUm_GetAllPropertyData(wchar_t Name[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS][STKWEBAPPUM_MAXLEN_OF_PROPERTY_NAME],
+	int ValInt[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS],
+	wchar_t ValWStr[STKWEBAPPUM_MAXNUM_OF_PROPERTY_RECORDS][STKWEBAPPUM_MAXLEN_OF_PROPERTY_VALUEWSTR])
+{
+	return DataAccessUm::GetInstance()->GetAllPropertyData(Name, ValInt, ValWStr);
+}

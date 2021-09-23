@@ -31,6 +31,9 @@ public:
 	void SetPropertyValueWStr(const wchar_t*, const wchar_t[UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR]);
 	int GetPropertyValueInt(const wchar_t*);
 	void GetPropertyValueWStr(const wchar_t*, wchar_t[UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR]);
+	int GetAllPropertyData(wchar_t[UserManagement::MAXNUM_OF_PROPERTY_RECORDS][UserManagement::MAXLEN_OF_PROPERTY_NAME],
+							int[UserManagement::MAXNUM_OF_PROPERTY_RECORDS],
+							wchar_t[UserManagement::MAXNUM_OF_PROPERTY_RECORDS][UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR]);
 
 	int CreateUserTable();
 };

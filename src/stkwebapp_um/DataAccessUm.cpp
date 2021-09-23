@@ -429,6 +429,26 @@ void DataAccessUm::GetPropertyValueWStr(const wchar_t* Name, wchar_t Value[UserM
 	delete RecDatFound;
 }
 
+int DataAccessUm::GetAllPropertyData(wchar_t Name[UserManagement::MAXNUM_OF_PROPERTY_RECORDS][UserManagement::MAXLEN_OF_PROPERTY_NAME],
+									int ValInt[UserManagement::MAXNUM_OF_PROPERTY_RECORDS],
+									wchar_t ValWStr[UserManagement::MAXNUM_OF_PROPERTY_RECORDS][UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR])
+{
+	LockTable(L"Property", LOCK_SHARE);
+	RecordData* RecDat = GetRecord(L"Property");
+	RecordData* CurDat = RecDat;
+	int Num = 0;
+	while (CurDat) {
+		StkPlWcsCpy(Name[Num], UserManagement::MAXLEN_OF_PROPERTY_NAME, ((ColumnDataWStr*)CurDat->GetColumn(0))->GetValue());
+		ValInt[Num] = ((ColumnDataInt*)CurDat->GetColumn(1))->GetValue();
+		StkPlWcsCpy(ValWStr[Num], UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR, ((ColumnDataWStr*)CurDat->GetColumn(2))->GetValue());
+		Num++;
+		CurDat = CurDat->GetNextRecord();
+	}
+	UnlockTable(L"Property");
+	delete RecDat;
+	return Num;
+}
+
 // Create tables for CmdFreak
 // Return : [0:Success, -1:Failed]
 int DataAccessUm::CreateUserTable()
