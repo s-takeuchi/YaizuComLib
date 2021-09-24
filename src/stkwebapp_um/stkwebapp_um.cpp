@@ -53,3 +53,8 @@ int StkWebAppUm_GetAllPropertyData(wchar_t Name[STKWEBAPPUM_MAXNUM_OF_PROPERTY_R
 {
 	return DataAccessUm::GetInstance()->GetAllPropertyData(Name, ValInt, ValWStr);
 }
+
+void StkWebAppUm_DeleteProperty(const wchar_t* Name)
+{
+	DataAccessUm::GetInstance()->DeleteProperty(Name);
+}

@@ -429,6 +429,17 @@ void DataAccessUm::GetPropertyValueWStr(const wchar_t* Name, wchar_t Value[UserM
 	delete RecDatFound;
 }
 
+void DataAccessUm::DeleteProperty(const wchar_t* Name)
+{
+	LockTable(L"Property", LOCK_EXCLUSIVE);
+	ColumnData* ColDatSearch[1];
+	ColDatSearch[0] = new ColumnDataWStr(L"Name", Name);
+	RecordData* RecDatSearch = new RecordData(L"Property", ColDatSearch, 1);
+	DeleteRecord(RecDatSearch);
+	UnlockTable(L"Property");
+	delete RecDatSearch;
+}
+
 int DataAccessUm::GetAllPropertyData(wchar_t Name[UserManagement::MAXNUM_OF_PROPERTY_RECORDS][UserManagement::MAXLEN_OF_PROPERTY_NAME],
 									int ValInt[UserManagement::MAXNUM_OF_PROPERTY_RECORDS],
 									wchar_t ValWStr[UserManagement::MAXNUM_OF_PROPERTY_RECORDS][UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR])

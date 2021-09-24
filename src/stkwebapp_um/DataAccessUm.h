@@ -34,6 +34,7 @@ public:
 	int GetAllPropertyData(wchar_t[UserManagement::MAXNUM_OF_PROPERTY_RECORDS][UserManagement::MAXLEN_OF_PROPERTY_NAME],
 							int[UserManagement::MAXNUM_OF_PROPERTY_RECORDS],
 							wchar_t[UserManagement::MAXNUM_OF_PROPERTY_RECORDS][UserManagement::MAXLEN_OF_PROPERTY_VALUEWSTR]);
+	void DataAccessUm::DeleteProperty(const wchar_t*);
 
 	int CreateUserTable();
 };
