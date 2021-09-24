@@ -1180,6 +1180,8 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 						StkPlSleepMs(100);
 					} else if ((int)(CurrTime - CurrWaitTime) > 1000) {
 						StkPlSleepMs(50);
+					} else if ((int)(CurrTime - CurrWaitTime) > 100) {
+						StkPlSleepMs(5);
 					}
 				}
 				continue;
