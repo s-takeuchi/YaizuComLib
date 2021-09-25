@@ -1172,16 +1172,16 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 							return Offset;
 						}
 					}
-					if ((int)(CurrTime - CurrWaitTime) > 20000) {
-						StkPlSleepMs(1000);
-					} else if ((int)(CurrTime - CurrWaitTime) > 5000) {
-						StkPlSleepMs(250);
+					if ((int)(CurrTime - CurrWaitTime) > 10000) {
+						StkPlSleepMs(500);
 					} else if ((int)(CurrTime - CurrWaitTime) > 2000) {
 						StkPlSleepMs(100);
-					} else if ((int)(CurrTime - CurrWaitTime) > 1000) {
-						StkPlSleepMs(50);
+					} else if ((int)(CurrTime - CurrWaitTime) > 500) {
+						StkPlSleepMs(25);
 					} else if ((int)(CurrTime - CurrWaitTime) > 100) {
 						StkPlSleepMs(5);
+					} else if ((int)(CurrTime - CurrWaitTime) > 40) {
+						StkPlSleepMs(2);
 					}
 				}
 				continue;
