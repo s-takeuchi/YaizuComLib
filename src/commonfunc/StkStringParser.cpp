@@ -199,10 +199,10 @@ int StkStringParser::ParseInto4Params(const wchar_t* OriginStr, const wchar_t* F
 
 	// Release the allocated memory
 	for (Loop = 0; Loop < 5; Loop++) {
-		delete SearchString[Loop];
+		delete [] SearchString[Loop];
 	}
-	delete OriginStrWk;
-	delete FormatWk;
+	delete [] OriginStrWk;
+	delete [] FormatWk;
 
 	if (NumberOfTargets == NumberOfParamSet) {
 		return 1;
