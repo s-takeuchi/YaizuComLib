@@ -194,7 +194,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, TimeoutInterval, NULL, -1);
 	if (Ret == 0 || Ret == -1 || Ret == -2) {
 		StkSocket_CloseAccept(TargetId, TargetId, true);
-		delete Dat;
+		delete [] Dat;
 		return NULL;
 	}
 	if (Ret >= RecvBufSize) {
@@ -203,7 +203,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		Dat[Ret] = '\0';
 	}
 	wchar_t *DatWc = StkPlCreateWideCharFromUtf8((char*)Dat);
-	delete Dat;
+	delete [] Dat;
 	if (DatWc == NULL) {
 		StkSocket_CloseAccept(TargetId, TargetId, true);
 		return NULL;
@@ -238,16 +238,16 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_OPTIONS;
 	} else {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
-		delete DatWc;
-		delete HttpHeader;
+		delete [] DatWc;
+		delete [] HttpHeader;
 		return NULL;
 	}
 
 	// Check whether the presented body is consist of JSON
 	*XmlJsonType = StkObject::Analyze(Req);
 	if (*XmlJsonType == -1 || *XmlJsonType == 1) {
-		delete DatWc;
-		delete HttpHeader;
+		delete [] DatWc;
+		delete [] HttpHeader;
 		return NULL;
 	}
 	{
@@ -256,8 +256,8 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		StkStringParser::ParseInto3Params(HttpHeader, L"#Content-Type: #\n#", L'#', Buf, 1024, ContentType, 32, NULL, -1);
 		if (StkPlWcsStr(ContentType, L"application/json") == NULL && StkPlWcsCmp(ContentType, L"") != 0) {
 			*XmlJsonType = -1;
-			delete DatWc;
-			delete HttpHeader;
+			delete [] DatWc;
+			delete [] HttpHeader;
 			return NULL;
 		}
 	}
@@ -299,11 +299,11 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 				ErrObj->ToJson(TmpBuf, 1024);
 				Dat = (unsigned char*)StkPlCreateUtf8FromWideChar(TmpBuf);
 				DatLength = (int)StkPlStrLen((char*)Dat);
-				delete XmlOrJson;
+				delete [] XmlOrJson;
 			} else {
 				Dat = (unsigned char*)StkPlCreateUtf8FromWideChar(XmlOrJson);
 				DatLength = (int)StkPlStrLen((char*)Dat);
-				delete XmlOrJson;
+				delete [] XmlOrJson;
 			}
 		}
 	}
@@ -325,8 +325,8 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 	if (Dat != NULL) {
 		delete Dat;
 	}
-	delete HeaderDat;
-	delete RespDat;
+	delete [] HeaderDat;
+	delete [] RespDat;
 	StkSocket_CloseAccept(TargetId, TargetId, true);
 }
 

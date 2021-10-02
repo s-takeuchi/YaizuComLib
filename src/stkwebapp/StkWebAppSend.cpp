@@ -48,7 +48,7 @@ StkObject* StkWebAppSend::Impl::RecvResponse(int TargetId, wchar_t Header[1024])
 	unsigned char *Dat = new unsigned char[RecvBufSize];
 	int Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, TimeoutInterval, NULL, -1);
 	if (Ret == 0 || Ret == -1 || Ret == -2) {
-		delete Dat;
+		delete [] Dat;
 		return NULL;
 	}
 	if (Ret >= RecvBufSize) {
@@ -57,7 +57,7 @@ StkObject* StkWebAppSend::Impl::RecvResponse(int TargetId, wchar_t Header[1024])
 		Dat[Ret] = '\0';
 	}
 	wchar_t *DatWc = StkPlCreateWideCharFromUtf8((char*)Dat);
-	delete Dat;
+	delete [] Dat;
 	if (DatWc == NULL) {
 		return NULL;
 	}
@@ -86,12 +86,12 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 		ReqObj->ToJson(WDat, SendBufSize);
 	}
 	if (Length == SendBufSize - 1) {
-		delete WDat;
+		delete [] WDat;
 		return -1;
 	}
 	char* Dat = StkPlCreateUtf8FromWideChar(WDat);
 	size_t DatLength = StkPlStrLen(Dat);
-	delete WDat;
+	delete [] WDat;
 
 	// Making HTTP header
 	char HttpHeader[1024] = "";
@@ -164,7 +164,7 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 
 	// Delete array
 	delete Dat;
-	delete ReqDat;
+	delete [] ReqDat;
 	return RetD;
 }
 

@@ -299,8 +299,8 @@ void DecodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutS
 	}
 	TmpUrlAc[AcIndex] = '\0';
 	StkPlConvUtf8ToWideChar(UrlOut, UrlOutSize, TmpUrlAc);
-	delete TmpUrlBc;
-	delete TmpUrlAc;
+	delete [] TmpUrlBc;
+	delete [] TmpUrlAc;
 }
 
 void EncodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutSize)
@@ -340,9 +340,9 @@ void EncodeURL(wchar_t* UrlIn, size_t UrlInSize, wchar_t* UrlOut, size_t UrlOutS
 	}
 	TmpUrlAc[AcIndex] = '\0';
 	StkPlConvUtf8ToWideChar(UrlOut, UrlOutSize, TmpUrlAc);
-	delete WkUrlIn;
-	delete TmpUrlBc;
-	delete TmpUrlAc;
+	delete [] WkUrlIn;
+	delete [] TmpUrlBc;
+	delete [] TmpUrlAc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1454,9 +1454,11 @@ int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fil
 	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
 	FILE *fp = fopen(FileNameUtf8, "r");
 	if (fp == NULL) {
+		if (FileNameUtf8 != NULL) {
+			delete FileNameUtf8;
+		}
 		return -1;
 	}
-	char* work_dat = new char[(int)FileSize + 1];
 	int actual_filesize = fread(Buffer, sizeof(char), (int)FileSize, fp);
 	fclose(fp);
 	delete FileNameUtf8;
@@ -1484,9 +1486,11 @@ int StkPlWriteFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fi
 	char* FileNameUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
 	FILE *fp = fopen(FileNameUtf8, "w");
 	if (fp == NULL) {
+		if (FileNameUtf8 != NULL) {
+			delete FileNameUtf8;
+		}
 		return -1;
 	}
-	char* work_dat = new char[(int)FileSize + 1];
 	int actual_filesize = fwrite(Buffer, sizeof(char), (int)FileSize, fp);
 	fclose(fp);
 	delete FileNameUtf8;

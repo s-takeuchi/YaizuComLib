@@ -1367,8 +1367,8 @@ int DataAcController::SaveData(const wchar_t* FilePath)
 						TmpWStr[ColumnSizeInWord - 1] = L'\0';
 						StkPlConvWideCharToUtf16(TmpUtf16, ColumnSizeInWord, TmpWStr);
 						StkPlWrite(FileHndl, (char*)TmpUtf16, ColumnSizeInWord * sizeof(char16_t), &NumOfByteWrite);
-						delete TmpWStr;
-						delete TmpUtf16;
+						delete [] TmpWStr;
+						delete [] TmpUtf16;
 						DatPtr += m_ColumnSize[LoopTbl][LoopClm];
 					}
 				}
@@ -1564,7 +1564,7 @@ int DataAcController::LoadData(const wchar_t* FilePath)
 						StkPlRead(FileHndl, (char*)TmpUtf16, ColumnSizeInWord * sizeof(char16_t), &NumOfByteRead);
 						TmpUtf16[ColumnSizeInWord - 1] = u'\0';
 						StkPlConvUtf16ToWideChar((wchar_t*)DatPtr, ColumnSizeInWord, TmpUtf16);
-						delete TmpUtf16;
+						delete [] TmpUtf16;
 						DatPtr += m_ColumnSize[TableId][LoopClm];
 					}
 				}

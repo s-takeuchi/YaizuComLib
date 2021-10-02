@@ -273,7 +273,7 @@ bool StkObject::Impl::GetJsonNumber(const wchar_t* OrgStr, int* Len, int* ValInt
 	} else {
 		*ValInt = (int)StkPlWcsToL(RtnValue);
 	}
-	delete RtnValue;
+	delete [] RtnValue;
 	return FloatFlag;
 }
 
@@ -1050,7 +1050,7 @@ void StkObject::ToXml(wchar_t* Msg, int MsgLength, int Indent)
 			wchar_t* TmpStr = new wchar_t[StrLen + 1];
 			pImpl->XmlEncode((wchar_t*)pImpl->Value, TmpStr, StrLen + 1);
 			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L" %ls=\"%ls\"", pImpl->Name, TmpStr);
-			delete TmpStr;
+			delete [] TmpStr;
 		}
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;
@@ -1126,7 +1126,7 @@ void StkObject::ToXml(wchar_t* Msg, int MsgLength, int Indent)
 			wchar_t* TmpStr = new wchar_t[StrLen + 1];
 			pImpl->XmlEncode((wchar_t*)pImpl->Value, TmpStr, StrLen + 1);
 			StkPlSwPrintf(&Msg[Length], MsgLength - Length, L"<%ls>%ls</%ls>\r\n", pImpl->Name, TmpStr, pImpl->Name);
-			delete TmpStr;
+			delete [] TmpStr;
 		}
 		if (pImpl->Next != NULL) {
 			StkObject* TmpObj = pImpl->Next;
@@ -1162,7 +1162,7 @@ int StkObject::ToJson(wchar_t* Msg, int MsgLength, int Indent, bool ArrayFlag)
 			Length += pImpl->AddString(&Msg[Length], EndPoint, L"\" : \"");
 			Length += pImpl->AddString(&Msg[Length], EndPoint, TmpStr);
 			Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
-			delete TmpStr;
+			delete [] TmpStr;
 		}
 		if (pImpl->Next != NULL) {
 			Length += pImpl->AddString(&Msg[Length], EndPoint, L", ");
@@ -1209,7 +1209,7 @@ int StkObject::ToJson(wchar_t* Msg, int MsgLength, int Indent, bool ArrayFlag)
 				Length += pImpl->AddString(&Msg[Length], EndPoint, TmpStr);
 				Length += pImpl->AddString(&Msg[Length], EndPoint, L"\"");
 			}
-			delete TmpStr;
+			delete [] TmpStr;
 		}
 		return Length;
 	}
@@ -1502,7 +1502,7 @@ StkObject* StkObject::CreateObjectFromJson(const wchar_t* Json, int* Offset, Stk
 					return NULL;
 				}
 				if (ArrayFlag == false) {
-					delete PrevName;
+					delete [] PrevName;
 					PrevName = NULL;
 				}
 				continue;
@@ -1543,7 +1543,7 @@ StkObject* StkObject::CreateObjectFromJson(const wchar_t* Json, int* Offset, Stk
 			if (PrevStatus == ELEMOBJ_END) {
 				PrevStatus = ARRAY_END;
 				ArrayFlag = false;
-				delete PrevName;
+				delete [] PrevName;
 				PrevName = NULL;
 				continue;
 			} else {
@@ -1585,7 +1585,7 @@ StkObject* StkObject::CreateObjectFromJson(const wchar_t* Json, int* Offset, Stk
 				}
 				RetObj->AppendChildElement(ChildObj);
 				if (ArrayFlag == false) {
-					delete PrevName;
+					delete [] PrevName;
 					PrevName = NULL;
 				}
 				Loop = Loop + StrLen - 1;
@@ -1615,7 +1615,7 @@ StkObject* StkObject::CreateObjectFromJson(const wchar_t* Json, int* Offset, Stk
 			RetObj->AppendChildElement(new StkObject(PrevName, Value));
 			delete Value;
 			if (ArrayFlag == false) {
-				delete PrevName;
+				delete [] PrevName;
 				PrevName = NULL;
 			}
 			Loop = Loop + StrLen;

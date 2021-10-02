@@ -79,7 +79,7 @@ int StkProperties::GetProperties(const wchar_t* FileName)
 		WorkDatAddr++;
 	}
 	Loop++;
-	delete WorkDat;
+	delete [] WorkDat;
 
 	// Acquire property name and value
 	for (int PrLoop = 0; PrLoop < Loop; PrLoop++) {
