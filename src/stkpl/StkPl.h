@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <cstddef>
+#include <mutex>
 
 #ifndef FILENAME_MAX
 #ifdef WIN32
@@ -99,6 +100,10 @@ int StkPlSystem(const char*);
 void StkPlExit(int);
 int StkPlRand();
 void StkPlSleepMs(int);
+
+#define StkPlCriticalSection std::mutex
+void StkPlLockCs(StkPlCriticalSection*);
+void StkPlUnlockCs(StkPlCriticalSection*);
 
 int StkPlAtoi(const char*);
 long int StkPlWcsToL(const wchar_t*);

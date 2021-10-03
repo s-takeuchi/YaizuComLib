@@ -924,6 +924,16 @@ void StkPlSleepMs(int MilliSec)
 	std::this_thread::sleep_for(std::chrono::milliseconds(MilliSec));
 }
 
+void StkPlLockCs(StkPlCriticalSection* Cs)
+{
+	Cs->lock();
+}
+
+void StkPlUnlockCs(StkPlCriticalSection* Cs)
+{
+	Cs->unlock();
+}
+
 int StkPlAtoi(const char* Str)
 {
 	return atoi(Str);
