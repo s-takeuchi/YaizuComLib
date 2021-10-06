@@ -21,7 +21,7 @@ public:
 	int GetTimeoutInterval();
 	void SetTimeoutInterval(int);
 
-	int AddReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*, bool = true);
+	int AddReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
 	int DeleteReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
 
 	void TheLoop();

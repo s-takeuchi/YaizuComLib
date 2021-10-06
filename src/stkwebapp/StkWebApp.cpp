@@ -33,7 +33,6 @@ public:
 	int HandlerMethod[MAX_REQHANDLER_COUNT];
 	wchar_t HandlerUrlPath[MAX_REQHANDLER_COUNT][StkWebAppExec::URL_PATH_LENGTH];
 	StkWebAppExec* Handler[MAX_REQHANDLER_COUNT];
-	bool HandlerSimpleMode[MAX_REQHANDLER_COUNT];
 
 	bool StopFlag;
 
@@ -53,7 +52,7 @@ public:
 
 	static int ElemStkThreadMainRecv(int);
 
-	int AddReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*, bool = true);
+	int AddReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
 	int DeleteReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
 };
 
@@ -378,7 +377,7 @@ int StkWebApp::Impl::ElemStkThreadMainRecv(int Id)
 	return Obj->ThreadLoop(Id);
 }
 
-int StkWebApp::Impl::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj, bool SimpleMode)
+int StkWebApp::Impl::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
 {
 	ReqHandlerCs.lock();
 	for (int Loop = 0; Loop < HandlerCount; Loop++) {
@@ -390,7 +389,6 @@ int StkWebApp::Impl::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppEx
 	HandlerMethod[HandlerCount] = Method;
 	StkPlWcsCpy(HandlerUrlPath[HandlerCount], StkWebAppExec::URL_PATH_LENGTH, UrlPath);
 	Handler[HandlerCount] = HandlerObj;
-	HandlerSimpleMode[HandlerCount] = SimpleMode;
 	HandlerCount++;
 	ReqHandlerCs.unlock();
 	return HandlerCount;
@@ -674,9 +672,9 @@ StkWebApp::~StkWebApp()
 	delete pImpl;
 };
 
-int StkWebApp::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj, bool SimpleMode)
+int StkWebApp::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
 {
-	return pImpl->AddReqHandler(Method, UrlPath, HandlerObj, SimpleMode);
+	return pImpl->AddReqHandler(Method, UrlPath, HandlerObj);
 }
 
 int StkWebApp::DeleteReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])
