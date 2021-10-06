@@ -349,23 +349,14 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 
 	unsigned char* HeaderDat = MakeHttpHeader(ResultCode, DatLength, XmlJsonType);
 	int HeaderDatLength = (int)StkPlStrLen((char*)HeaderDat);
-
-	int RespDatLength = DatLength + HeaderDatLength;
-	unsigned char* RespDat = new unsigned char[RespDatLength + 1];
-
-	StkPlStrCpy((char*)RespDat, RespDatLength + 1, "");
-	StkPlStrCat((char*)RespDat, RespDatLength + 1, (char*)HeaderDat);
-	if (Dat != NULL) {
-		StkPlStrCat((char*)RespDat, RespDatLength + 1, (char*)Dat);
-	}
-
-	int RetD = StkSocket_Send(TargetId, TargetId, RespDat, RespDatLength);
+	int RetH = StkSocket_Send(TargetId, TargetId, HeaderDat, HeaderDatLength);
+	delete[] HeaderDat;
 
 	if (Dat != NULL) {
+		int RetD = StkSocket_Send(TargetId, TargetId, Dat, DatLength);
 		delete Dat;
 	}
-	delete [] HeaderDat;
-	delete [] RespDat;
+
 	StkSocket_CloseAccept(TargetId, TargetId, true);
 }
 
