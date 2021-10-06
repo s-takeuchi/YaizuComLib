@@ -715,8 +715,8 @@ void ReqResTest4()
 		StkPlExit(-1);
 	}
 	Soc->SetSendBufSize(2000);
-	Soc->SetRecvBufSize(100);
-	if (Soc->GetSendBufSize() != 2000 || Soc->GetRecvBufSize() != 100) {
+	Soc->SetRecvBufSize(45);
+	if (Soc->GetSendBufSize() != 2000 || Soc->GetRecvBufSize() != 45) {
 		StkPlPrintf("NG\n");
 		StkPlExit(-1);
 	}

@@ -11,6 +11,12 @@
 #define MAX_THREAD_COUNT MAX_NUM_OF_STKTHREADS
 #define MAX_REQHANDLER_COUNT 1024
 #define MAX_IMPL_COUNT 8
+#define MAX_HTTPHEADERSIZE 2048
+
+#define XMLJSONTYPE_INVALID -1
+#define XMLJSONTYPE_EMPTYSTR 0
+#define XMLJSONTYPE_XML 1
+#define XMLJSONTYPE_JSON 2
 
 int StkWebAppCount = 0;
 StkWebApp* StkWebAppArray[MAX_IMPL_COUNT];
@@ -27,6 +33,7 @@ public:
 	int HandlerMethod[MAX_REQHANDLER_COUNT];
 	wchar_t HandlerUrlPath[MAX_REQHANDLER_COUNT][StkWebAppExec::URL_PATH_LENGTH];
 	StkWebAppExec* Handler[MAX_REQHANDLER_COUNT];
+	bool HandlerSimpleMode[MAX_REQHANDLER_COUNT];
 
 	bool StopFlag;
 
@@ -39,13 +46,15 @@ public:
 	const wchar_t* SkipHttpHeader(wchar_t*);
 
 	unsigned char* MakeHttpHeader(int, int, int);
+	int RecvRequestHeader(int, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t[MAX_HTTPHEADERSIZE]);
+	StkObject* RecvRequest(int, int*, int, wchar_t*);
 	StkObject* RecvRequest(int, int*, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t**);
 	void SendResponse(StkObject*, int, int, int);
 	StkObject* MakeErrorResponse(int ErrId);
 
 	static int ElemStkThreadMainRecv(int);
 
-	int AddReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*);
+	int AddReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec*, bool = true);
 	int DeleteReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
 };
 
@@ -150,11 +159,11 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	StkPlSPrintf(RespLine, 64, "HTTP/1.1 %d %s\r\n", ResultCode, Status);
 	/***** Make response status end *****/
 
-	if (XmlJsonType == 1) {
+	if (XmlJsonType == XMLJSONTYPE_XML) {
 		StkPlStrCpy(ContType, 64, "Content-Type: application/xml\r\n");
-	} else if (XmlJsonType == 2) {
+	} else if (XmlJsonType == XMLJSONTYPE_JSON) {
 		StkPlStrCpy(ContType, 64, "Content-Type: application/json\r\n");
-	} else if (XmlJsonType == 0) {
+	} else if (XmlJsonType == XMLJSONTYPE_EMPTYSTR) {
 	}
 	StkPlSPrintf(ContLen, 64, "Content-Length: %d\r\n", DataLength);
 	StkPlSPrintf(Connection, 64, "Connection: close\r\n");
@@ -179,50 +188,47 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 	return (unsigned char*)HeaderData;
 }
 
-StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], wchar_t** PrmHttpHeader)
+// Return = -1 : No request received
+// Return = -2 : Header size exceeds the upper limit
+// Return = -3 : Request method is invalid
+// Return = -4 : Error / Timeout
+int StkWebApp::Impl::RecvRequestHeader(int TargetId, int* Method, wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], wchar_t HttpHeader[MAX_HTTPHEADERSIZE])
 {
-	*XmlJsonType = -1;
+	size_t MaxHeaderSize = MAX_HTTPHEADERSIZE;
+
 	*Method = StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED;
 	StkPlWcsCpy(UrlPath, StkWebAppExec::URL_PATH_LENGTH, L"");
-	*PrmHttpHeader = NULL;
 
 	int Ret = StkSocket_Accept(TargetId);
 	if (Ret == -1) {
-		return NULL;
+		return -1;
 	}
-	unsigned char *Dat = new unsigned char[RecvBufSize];
-	Ret = StkSocket_Receive(TargetId, TargetId, Dat, RecvBufSize, STKSOCKET_RECV_FINISHCOND_CONTENTLENGTH, TimeoutInterval, NULL, -1);
-	if (Ret == 0 || Ret == -1 || Ret == -2) {
-		StkSocket_CloseAccept(TargetId, TargetId, true);
-		delete [] Dat;
-		return NULL;
+	int Loop = 0;
+	for (; Loop < MaxHeaderSize - 1; Loop++) {
+		unsigned char TmpDat[1];
+		Ret = StkSocket_Receive(TargetId, TargetId, TmpDat, 1, 1, TimeoutInterval, NULL, -1);
+		if ((Ret == -1 || Ret == -2) && Loop >= 1) {
+			return -4;
+		} else if (Ret == 0 || Ret == -1 || Ret == -2) {
+			StkSocket_CloseAccept(TargetId, TargetId, true);
+			return -1;
+		}
+		HttpHeader[Loop] = (wchar_t)TmpDat[0];
+		if (Loop >= 1 && HttpHeader[Loop - 1] == L'\n' && HttpHeader[Loop] == L'\n') {
+			break;
+		} else if (Loop >= 3 && 
+			((HttpHeader[Loop - 3] == L'\r' && HttpHeader[Loop - 2] == L'\n' && HttpHeader[Loop - 1] == L'\r' && HttpHeader[Loop] == L'\n') ||
+			 (HttpHeader[Loop - 3] == L'\n' && HttpHeader[Loop - 2] == L'\r' && HttpHeader[Loop - 1] == L'\n' && HttpHeader[Loop] == L'\r'))) {
+			break;
+		}
 	}
-	if (Ret >= RecvBufSize) {
-		Dat[RecvBufSize - 1] = '\0';
-	} else {
-		Dat[Ret] = '\0';
+	if (Loop == MaxHeaderSize - 1) {
+		return -2;
 	}
-	wchar_t *DatWc = StkPlCreateWideCharFromUtf8((char*)Dat);
-	delete [] Dat;
-	if (DatWc == NULL) {
-		StkSocket_CloseAccept(TargetId, TargetId, true);
-		return NULL;
-	}
-
-	// Acquire HTTP header
-	const wchar_t* Req = SkipHttpHeader(DatWc);
-	if (Req == DatWc) {
-		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
-		delete DatWc;
-		return NULL;
-	}
-	int HttpHeaderLen =(int)( Req - DatWc + 1);
-	wchar_t* HttpHeader = new wchar_t[HttpHeaderLen];
-	StkPlMemCpy(HttpHeader, DatWc, HttpHeaderLen * sizeof(wchar_t));
-	HttpHeader[HttpHeaderLen - 1] = L'\0';
+	HttpHeader[Loop] = L'\0';
 
 	// Acquire METHOD and URL path
-	wchar_t MethodStr[16];
+	wchar_t MethodStr[16] = L"";
 	StkStringParser::ParseInto3Params(HttpHeader, L"# # HTTP#", L'#', MethodStr, 16, UrlPath, StkWebAppExec::URL_PATH_LENGTH, NULL, -1);
 	if (StkPlWcsCmp(MethodStr, L"GET") == 0) {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_GET;
@@ -238,16 +244,52 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_OPTIONS;
 	} else {
 		*Method = StkWebAppExec::STKWEBAPP_METHOD_INVALID;
-		delete [] DatWc;
-		delete [] HttpHeader;
+		return -3;
+	}
+
+	// Acquire "Content-Length:"
+	wchar_t ContentLength[16] = L"";
+	StkStringParser::ParseInto3Params(HttpHeader, L"#Content-Length:#\n#", L'#', NULL, -1, ContentLength, 16, NULL, -1);
+	int ContLen = StkPlWcsToL(ContentLength);
+
+	return ContLen;
+}
+
+StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int ContLen, wchar_t* HttpHeader)
+{
+	int Ret = StkSocket_Accept(TargetId);
+	if (Ret == -1) {
+		return NULL;
+	}
+	int ActLen = 0;
+	if (RecvBufSize < ContLen) {
+		ActLen = RecvBufSize;
+	} else {
+		ActLen = ContLen;
+	}
+	unsigned char *Dat = new unsigned char[ActLen + 1];
+	Ret = StkSocket_Receive(TargetId, TargetId, Dat, ActLen + 1, ActLen, TimeoutInterval, NULL, -1);
+	if (Ret == 0 || Ret == -1 || Ret == -2) {
+		StkSocket_CloseAccept(TargetId, TargetId, true);
+		delete[] Dat;
+		return NULL;
+	}
+	if (Ret >= ActLen) {
+		Dat[ActLen] = '\0';
+	} else {
+		Dat[Ret] = '\0';
+	}
+	wchar_t *DatWc = StkPlCreateWideCharFromUtf8((char*)Dat);
+	delete[] Dat;
+	if (DatWc == NULL) {
+		StkSocket_CloseAccept(TargetId, TargetId, true);
 		return NULL;
 	}
 
 	// Check whether the presented body is consist of JSON
-	*XmlJsonType = StkObject::Analyze(Req);
-	if (*XmlJsonType == -1 || *XmlJsonType == 1) {
-		delete [] DatWc;
-		delete [] HttpHeader;
+	*XmlJsonType = StkObject::Analyze(DatWc);
+	if (*XmlJsonType == XMLJSONTYPE_INVALID || *XmlJsonType == XMLJSONTYPE_XML) {
+		delete[] DatWc;
 		return NULL;
 	}
 	{
@@ -255,9 +297,8 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 		wchar_t ContentType[32];
 		StkStringParser::ParseInto3Params(HttpHeader, L"#Content-Type: #\n#", L'#', Buf, 1024, ContentType, 32, NULL, -1);
 		if (StkPlWcsStr(ContentType, L"application/json") == NULL && StkPlWcsCmp(ContentType, L"") != 0) {
-			*XmlJsonType = -1;
-			delete [] DatWc;
-			delete [] HttpHeader;
+			*XmlJsonType = XMLJSONTYPE_INVALID;
+			delete[] DatWc;
 			return NULL;
 		}
 	}
@@ -265,12 +306,11 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int* Met
 	// Create JSON object
 	int ErrorCode = 0;
 	StkObject* ReqObj = NULL;
-	if (*XmlJsonType == 2) {
-		ReqObj = StkObject::CreateObjectFromJson(Req, &ErrorCode);
-	} else if (*XmlJsonType == 0) {
+	if (*XmlJsonType == XMLJSONTYPE_JSON) {
+		ReqObj = StkObject::CreateObjectFromJson(DatWc, &ErrorCode);
+	} else if (*XmlJsonType == XMLJSONTYPE_EMPTYSTR) {
 	}
 	delete DatWc;
-	*PrmHttpHeader = HttpHeader;
 	return ReqObj;
 }
 
@@ -279,16 +319,16 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 	unsigned char* Dat = NULL;
 	int DatLength = 0;
 
-	if (XmlJsonType != 0 && XmlJsonType != 1 && XmlJsonType != 2) {
+	if (XmlJsonType != XMLJSONTYPE_EMPTYSTR && XmlJsonType != XMLJSONTYPE_XML && XmlJsonType != XMLJSONTYPE_JSON) {
 		// There is no chance to handle this case without a bug.
 		ResultCode = 500;
-	} else if ((XmlJsonType == 1 && Obj == NULL) || (XmlJsonType == 2 && Obj == NULL)) {
+	} else if ((XmlJsonType == XMLJSONTYPE_XML && Obj == NULL) || (XmlJsonType == XMLJSONTYPE_JSON && Obj == NULL)) {
 		// There is no chance to handle this case without a bug.
 		ResultCode = 500;
 	} else {
 		if (XmlJsonType == 1 && Obj != NULL) {
 			ResultCode = 500;
-		} else if ((XmlJsonType == 0 || XmlJsonType == 2) && Obj != NULL) {
+		} else if ((XmlJsonType == XMLJSONTYPE_EMPTYSTR || XmlJsonType == XMLJSONTYPE_JSON) && Obj != NULL) {
 			wchar_t* XmlOrJson = new wchar_t[SendBufSize];
 			StkPlWcsCpy(XmlOrJson, SendBufSize, L"");
 			int Length = Obj->ToJson(XmlOrJson, SendBufSize);
@@ -348,7 +388,7 @@ int StkWebApp::Impl::ElemStkThreadMainRecv(int Id)
 	return Obj->ThreadLoop(Id);
 }
 
-int StkWebApp::Impl::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
+int StkWebApp::Impl::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj, bool SimpleMode)
 {
 	ReqHandlerCs.lock();
 	for (int Loop = 0; Loop < HandlerCount; Loop++) {
@@ -360,6 +400,7 @@ int StkWebApp::Impl::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppEx
 	HandlerMethod[HandlerCount] = Method;
 	StkPlWcsCpy(HandlerUrlPath[HandlerCount], StkWebAppExec::URL_PATH_LENGTH, UrlPath);
 	Handler[HandlerCount] = HandlerObj;
+	HandlerSimpleMode[HandlerCount] = SimpleMode;
 	HandlerCount++;
 	ReqHandlerCs.unlock();
 	return HandlerCount;
@@ -411,26 +452,39 @@ void StkWebApp::TheLoop()
 
 int StkWebApp::ThreadLoop(int ThreadId)
 {
-	int XmlJsonType;
+	int XmlJsonType = XMLJSONTYPE_EMPTYSTR;
 	int Method;
 	wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH];
 	int ResultCode = 200;
-	wchar_t* HttpHeader = NULL;
+	wchar_t HttpHeader[MAX_HTTPHEADERSIZE] = L"";
 
-	StkObject* StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, &Method, UrlPath, &HttpHeader);
-
-	// If no request is received, return from this method.
-	if (StkObjReq == NULL && Method == StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED && StkPlWcsCmp(UrlPath, L"") == 0 && XmlJsonType == -1) {
-		if (HttpHeader != NULL) {
-			delete HttpHeader;
-		}
+	// Acquire HTTP header
+	int ContLen = pImpl->RecvRequestHeader(ThreadId, &Method, UrlPath, HttpHeader);
+	if (ContLen == -1 && Method == StkWebAppExec::STKWEBAPP_METHOD_UNDEFINED && StkPlWcsCmp(UrlPath, L"") == 0) {
 		return 0;
+	} else if (ContLen == -2) {
+		ResultCode = 400;
+		StkObject* ErrorObj = pImpl->MakeErrorResponse(1003);
+		pImpl->SendResponse(ErrorObj, ThreadId, XMLJSONTYPE_JSON, ResultCode);
+		delete ErrorObj;
+		return 0;
+	} else if (ContLen == -3 || ContLen == -4) {
+		ResultCode = 400;
+		StkObject* ErrorObj = pImpl->MakeErrorResponse(1005);
+		pImpl->SendResponse(ErrorObj, ThreadId, XMLJSONTYPE_JSON, ResultCode);
+		delete ErrorObj;
+		return 0;
+	}
+
+	StkObject* StkObjReq = NULL;
+	if (ContLen > 0) {
+		StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, ContLen, HttpHeader);
 	}
 
 	// If a request is received...
 	StkObject* StkObjRes = NULL;
 	bool FndFlag = false;
-	if (XmlJsonType == 0 || XmlJsonType == 2) {
+	if (XmlJsonType == XMLJSONTYPE_EMPTYSTR || XmlJsonType == XMLJSONTYPE_JSON) {
 		// If valid request is received...
 		for (int Loop = 0; Loop < pImpl->HandlerCount; Loop++) {
 			wchar_t Param[4][StkWebAppExec::URL_PATH_LENGTH] = {L"", L"", L"", L""};
@@ -458,9 +512,6 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		}
 		FndFlag = true;
 	}
-	if (HttpHeader != NULL) {
-		delete HttpHeader;
-	}
 
 	// If service stop request is presented...
 	if (FndFlag == false && Method == StkWebAppExec::STKWEBAPP_METHOD_POST && StkPlWcsCmp(UrlPath, L"/service/") == 0) {
@@ -485,11 +536,11 @@ int StkWebApp::ThreadLoop(int ThreadId)
 	}
 
 	// Reset "XmlJsonType"
-	if (StkObjRes == NULL && XmlJsonType == 2) {
-		XmlJsonType = 0;
+	if (StkObjRes == NULL && XmlJsonType == XMLJSONTYPE_JSON) {
+		XmlJsonType = XMLJSONTYPE_EMPTYSTR;
 	}
-	if (StkObjRes != NULL && (XmlJsonType == -1 || XmlJsonType == 0 || XmlJsonType == 1)) {
-		XmlJsonType = 2;
+	if (StkObjRes != NULL && (XmlJsonType == XMLJSONTYPE_INVALID || XmlJsonType == XMLJSONTYPE_EMPTYSTR || XmlJsonType == XMLJSONTYPE_XML)) {
+		XmlJsonType = XMLJSONTYPE_JSON;
 	}
 
 	pImpl->SendResponse(StkObjRes, ThreadId, XmlJsonType, ResultCode);
@@ -526,6 +577,8 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, const wchar_t* HostName, int Tar
 	MessageProc::AddEng(1001, L"No API is defined for the request sent from client.");
 	MessageProc::AddJpn(1002, L"リクエストがJSONではないデータを含んでいるかHTTPヘッダのContent-Typeがapplication/jsonではありません。");
 	MessageProc::AddEng(1002, L"The request contains non-JSON data or Content-Type of HTTP header is not application/json.");
+	MessageProc::AddJpn(1003, L"HTTPヘッダサイズが許容できる上限を超えました。");
+	MessageProc::AddEng(1003, L"HTTP header size exceeds the upper limit.");
 	MessageProc::AddJpn(1004, L"URL\"/service/\"にPOSTされたリクエストは不正です。");
 	MessageProc::AddEng(1004, L"An invalid request is posted to URL\"/service/\".");
 	MessageProc::AddJpn(1005, L"不正なリクエストを受信しました。リクエストが壊れているおそれがあります。");
@@ -631,9 +684,9 @@ StkWebApp::~StkWebApp()
 	delete pImpl;
 };
 
-int StkWebApp::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj)
+int StkWebApp::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH], StkWebAppExec* HandlerObj, bool SimpleMode)
 {
-	return pImpl->AddReqHandler(Method, UrlPath, HandlerObj);
+	return pImpl->AddReqHandler(Method, UrlPath, HandlerObj, SimpleMode);
 }
 
 int StkWebApp::DeleteReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])
