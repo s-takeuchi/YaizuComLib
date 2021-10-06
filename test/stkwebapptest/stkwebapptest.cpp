@@ -140,7 +140,7 @@ int SendTestData(int Id, const char* Dat)
 
 int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, const char* ContType, int* ErrorCode, wchar_t Header[1024] = NULL, int ContLen = -1)
 {
-	char Tmp[256];
+	char Tmp[4096];
 	unsigned char RecvDat[8192];
 	*ErrorCode = -1;
 
@@ -148,7 +148,7 @@ int SendTestData2(int Id, const char* Method, const char* Url, const char* Dat, 
 	int RetS = 0;
 
 	if (Method == NULL && Url == NULL) {
-		StkPlSPrintf(Tmp, 256, "%s", Dat);
+		StkPlSPrintf(Tmp, 4096, "%s", Dat);
 	} else if (ContLen == -1) {
 		StkPlSPrintf(Tmp, 256, "%s %s HTTP/1.1\nContent-Length: %d\nContent-Type: %s\n\n%s", Method, Url, StkPlStrLen(Dat), ContType, Dat);
 	} else {
@@ -259,6 +259,28 @@ int ElemStkThreadMainSend2(int Id)
 
 	StkPlPrintf("StkWebAppTest2:Invalid request 2 == 400");
 	if (SendTestData2(Id, NULL, NULL, "Aaaaaaaaaaaaaaaaaaaaaaaaa\r\n\r\n Bbbbbbbbbbbbbb HTTP Cccccccccccccccccccccccccccc", "", &ErrorCode) != 400 || ErrorCode != 1005) {
+		StkPlPrintf("... NG\n");
+		StkPlExit(-1);
+	}
+	StkPlPrintf("... OK\n");
+
+	StkPlPrintf("StkWebAppTest2:Invalid request 3 (invalid method) == 400");
+	if (SendTestData2(Id, NULL, NULL, "ZZZ /aaa/ HTTP/1.1\r\n\r\naaa", "", &ErrorCode) != 400 || ErrorCode != 1005) {
+		StkPlPrintf("... NG\n");
+		StkPlExit(-1);
+	}
+	StkPlPrintf("... OK\n");
+
+	StkPlPrintf("StkWebAppTest2:Invalid request 4 (large method) == 400");
+	char TmpBuf[4096] = "";
+	for (int Loop = 0; Loop < 3000; Loop++) {
+		TmpBuf[Loop] = 'a';
+	}
+	TmpBuf[3000] = '\r';
+	TmpBuf[3001] = '\n';
+	TmpBuf[3002] = '\r';
+	TmpBuf[3003] = '\n';
+	if (SendTestData2(Id, NULL, NULL, TmpBuf, "", &ErrorCode) != 400 || ErrorCode != 1003) {
 		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}

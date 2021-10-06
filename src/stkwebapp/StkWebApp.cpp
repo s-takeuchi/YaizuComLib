@@ -48,7 +48,6 @@ public:
 	unsigned char* MakeHttpHeader(int, int, int);
 	int RecvRequestHeader(int, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t[MAX_HTTPHEADERSIZE]);
 	StkObject* RecvRequest(int, int*, int, wchar_t*);
-	StkObject* RecvRequest(int, int*, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t**);
 	void SendResponse(StkObject*, int, int, int);
 	StkObject* MakeErrorResponse(int ErrId);
 
