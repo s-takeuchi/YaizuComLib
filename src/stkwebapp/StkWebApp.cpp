@@ -44,7 +44,7 @@ public:
 public:
 	const wchar_t* SkipHttpHeader(wchar_t*);
 
-	unsigned char* MakeHttpHeader(int, int, int);
+	void MakeHttpHeader(int, int, int, char[2048]);
 	int RecvRequestHeader(int, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t[MAX_HTTPHEADERSIZE]);
 	StkObject* RecvRequest(int, int*, int, wchar_t*);
 	void SendResponse(StkObject*, int, int, int);
@@ -77,11 +77,8 @@ const wchar_t* StkWebApp::Impl::SkipHttpHeader(wchar_t* Txt)
 	return Txt;
 }
 
-unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJsonType)
+void StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, int XmlJsonType, char HeaderData[2048])
 {
-	char* HeaderData = new char[2048];
-	StkPlStrCpy(HeaderData, 2048, "");
-
 	char Status[32] = "";
 	char RespLine[64] = "";
 	char ContType[64] = "";
@@ -183,7 +180,7 @@ unsigned char* StkWebApp::Impl::MakeHttpHeader(int ResultCode, int DataLength, i
 
 	StkPlStrCat(HeaderData, 2048, "\r\n");
 
-	return (unsigned char*)HeaderData;
+	return;
 }
 
 // Return = -1 : No request received
@@ -346,10 +343,10 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 		}
 	}
 
-	unsigned char* HeaderDat = MakeHttpHeader(ResultCode, DatLength, XmlJsonType);
-	int HeaderDatLength = (int)StkPlStrLen((char*)HeaderDat);
-	int RetH = StkSocket_Send(TargetId, TargetId, HeaderDat, HeaderDatLength);
-	delete[] HeaderDat;
+	char HeaderDat[2048] = "";
+	MakeHttpHeader(ResultCode, DatLength, XmlJsonType, HeaderDat);
+	int HeaderDatLength = (int)StkPlStrLen(HeaderDat);
+	int RetH = StkSocket_Send(TargetId, TargetId, (unsigned char*)HeaderDat, HeaderDatLength);
 
 	if (Dat != NULL) {
 		int RetD = StkSocket_Send(TargetId, TargetId, Dat, DatLength);
