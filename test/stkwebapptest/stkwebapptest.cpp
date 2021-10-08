@@ -514,20 +514,6 @@ int ElemStkThreadMainSend4(int Id)
 {
 	int ErrorCode;
 
-	StkPlPrintf("StkWebAppTest4:GET /bigdata/ [{ \"AAA\":123 }] == 500 buffer over flow");
-	if (SendTestData2(Id, "GET", "/bigdata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500 || ErrorCode != 1006) {
-		StkPlPrintf("... NG\n");
-		StkPlExit(-1);
-	}
-	StkPlPrintf("... OK\n");
-
-	StkPlPrintf("StkWebAppTest4:GET /middledata/ [{ \"AAA\":123 }] == 500 buffer over flow");
-	if (SendTestData2(Id, "GET", "/middledata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 500 || ErrorCode != 1006) {
-		StkPlPrintf("... NG\n");
-		StkPlExit(-1);
-	}
-	StkPlPrintf("... OK\n");
-
 	StkPlPrintf("StkWebAppTest4:GET /smalldata/ [{ \"AAA\":123 }] == 200 sufficient buffer allocated");
 	if (SendTestData2(Id, "GET", "/smalldata/", "{ \"AAA\":123 }\n", "application/json", &ErrorCode) != 200) {
 		StkPlPrintf("... NG\n");

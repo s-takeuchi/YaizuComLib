@@ -48,6 +48,7 @@ public:
 	int RecvRequestHeader(int, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t[MAX_HTTPHEADERSIZE]);
 	StkObject* RecvRequest(int, int*, int, wchar_t*);
 	void SendResponse(StkObject*, int, int, int);
+	int GetJsonSize(StkObject*, int = 0);
 	StkObject* MakeErrorResponse(int ErrId);
 
 	static int ElemStkThreadMainRecv(int);
@@ -324,10 +325,11 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 		if (XmlJsonType == 1 && Obj != NULL) {
 			ResultCode = 500;
 		} else if ((XmlJsonType == XMLJSONTYPE_EMPTYSTR || XmlJsonType == XMLJSONTYPE_JSON) && Obj != NULL) {
-			wchar_t* XmlOrJson = new wchar_t[SendBufSize];
-			StkPlWcsCpy(XmlOrJson, SendBufSize, L"");
-			int Length = Obj->ToJson(XmlOrJson, SendBufSize);
-			if (Length == SendBufSize - 1) {
+			int JsonSize = GetJsonSize(Obj);
+			wchar_t* XmlOrJson = new wchar_t[JsonSize];
+			StkPlWcsCpy(XmlOrJson, JsonSize, L"");
+			int Length = Obj->ToJson(XmlOrJson, JsonSize);
+			if (Length > JsonSize) {
 				ResultCode = 500;
 				StkObject* ErrObj = MakeErrorResponse(1006);
 				wchar_t TmpBuf[1024] = L"";
@@ -354,6 +356,42 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 	}
 
 	StkSocket_CloseAccept(TargetId, TargetId, true);
+}
+
+int StkWebApp::Impl::GetJsonSize(StkObject* Obj, int Hierarchy)
+{
+	int Ret = 0;
+	StkObject* CldElem = Obj->GetFirstChildElement();
+	if (CldElem != NULL) {
+		Ret += GetJsonSize(CldElem, Hierarchy + 1);
+	}
+	StkObject* CldAttr = Obj->GetFirstAttribute();
+	if (CldAttr != NULL) {
+		Ret += GetJsonSize(CldAttr, Hierarchy + 1);
+	}
+	StkObject* NextElem = Obj->GetNext();
+	if (NextElem != NULL) {
+		Ret += GetJsonSize(NextElem, Hierarchy);
+	}
+	wchar_t* Name = Obj->GetName();
+	if (Name != NULL) {
+		Ret += ((int)StkPlWcsLen(Obj->GetName()) + 5);
+	}
+	int Type = Obj->GetType();
+	if (Type == StkObject::STKOBJECT_ELEM_INT || Type == StkObject::STKOBJECT_ATTR_INT || Type == StkObject::STKOBJECT_UNKW_INT) {
+		Ret += 11;
+	} else if (Type == StkObject::STKOBJECT_ELEM_FLOAT || Type == StkObject::STKOBJECT_ATTR_FLOAT || Type == StkObject::STKOBJECT_UNKW_FLOAT) {
+		Ret += 20;
+	} else if (Type == StkObject::STKOBJECT_ELEM_STRING || Type == StkObject::STKOBJECT_ATTR_STRING || Type == StkObject::STKOBJECT_UNKW_STRING) {
+		wchar_t* ValStr = Obj->GetStringValue();
+		if (ValStr != NULL) {
+			Ret += ((int)StkPlWcsLen(ValStr) + 4);
+		}
+	} else if (Type == StkObject::STKOBJECT_ELEMENT || Type == StkObject::STKOBJECT_ATTRIBUTE || Type == StkObject::STKOBJECT_UNKNOWN) {
+		Ret += 10;
+	}
+	Ret += (Hierarchy * 2) + 15;
+	return Ret;
 }
 
 StkObject* StkWebApp::Impl::MakeErrorResponse(int ErrId)
