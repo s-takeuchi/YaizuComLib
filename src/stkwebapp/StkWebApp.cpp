@@ -48,6 +48,7 @@ public:
 	int RecvRequestHeader(int, int*, wchar_t[StkWebAppExec::URL_PATH_LENGTH], wchar_t[MAX_HTTPHEADERSIZE]);
 	StkObject* RecvRequest(int, int*, int, wchar_t*);
 	void SendResponse(StkObject*, int, int, int);
+	int GetJsonStrSize(wchar_t*);
 	int GetJsonSize(StkObject*, int = 0);
 	StkObject* MakeErrorResponse(int ErrId);
 
@@ -358,6 +359,24 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 	StkSocket_CloseAccept(TargetId, TargetId, true);
 }
 
+int StkWebApp::Impl::GetJsonStrSize(wchar_t* Str)
+{
+	int Size = 0;
+	wchar_t* CurPtr = Str;
+	for (; *CurPtr; CurPtr++) {
+		if (*CurPtr == L'\"' || *CurPtr == L'\\' || *CurPtr == L'/' ||
+			*CurPtr == L'\b' || *CurPtr == L'\f' || *CurPtr == L'\n' ||
+			*CurPtr == L'\r' || *CurPtr == L'\t') {
+			Size += 2;
+		} else if (*CurPtr >= 0x00 && *CurPtr <= 0x1f) {
+			Size += 6;
+		} else {
+			Size++;
+		}
+	}
+	return Size;
+}
+
 int StkWebApp::Impl::GetJsonSize(StkObject* Obj, int Hierarchy)
 {
 	int Ret = 0;
@@ -373,24 +392,26 @@ int StkWebApp::Impl::GetJsonSize(StkObject* Obj, int Hierarchy)
 	if (NextElem != NULL) {
 		Ret += GetJsonSize(NextElem, Hierarchy);
 	}
+
+	Ret += (Hierarchy * 2);
 	wchar_t* Name = Obj->GetName();
 	if (Name != NULL) {
-		Ret += ((int)StkPlWcsLen(Obj->GetName()) + 5);
+		Ret += (GetJsonStrSize(Name) + 5); // "xxx" : 
 	}
 	int Type = Obj->GetType();
 	if (Type == StkObject::STKOBJECT_ELEM_INT || Type == StkObject::STKOBJECT_ATTR_INT || Type == StkObject::STKOBJECT_UNKW_INT) {
-		Ret += 11;
+		Ret += 14; // 100,\r\n
 	} else if (Type == StkObject::STKOBJECT_ELEM_FLOAT || Type == StkObject::STKOBJECT_ATTR_FLOAT || Type == StkObject::STKOBJECT_UNKW_FLOAT) {
-		Ret += 20;
+		Ret += 20; // 0.123,\r\n
 	} else if (Type == StkObject::STKOBJECT_ELEM_STRING || Type == StkObject::STKOBJECT_ATTR_STRING || Type == StkObject::STKOBJECT_UNKW_STRING) {
 		wchar_t* ValStr = Obj->GetStringValue();
 		if (ValStr != NULL) {
-			Ret += ((int)StkPlWcsLen(ValStr) + 4);
+			Ret += (GetJsonStrSize(ValStr) + 5); // "aaa",\r\n
 		}
 	} else if (Type == StkObject::STKOBJECT_ELEMENT || Type == StkObject::STKOBJECT_ATTRIBUTE || Type == StkObject::STKOBJECT_UNKNOWN) {
-		Ret += 10;
+		Ret += (Hierarchy * 2 + 10); // ... }
 	}
-	Ret += (Hierarchy * 2) + 15;
+	Ret += 15;
 	return Ret;
 }
 
