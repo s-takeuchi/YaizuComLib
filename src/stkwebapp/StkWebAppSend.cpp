@@ -150,21 +150,10 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 	StkPlStrCat(HttpHeader, 1024, "\r\n");
 	int HeaderLength = (int)StkPlStrLen(HttpHeader);
 
-	// Making request data and send
-	int ReqDatLength = (int)(DatLength + HeaderLength);
-	if (ReqDatLength >= SendBufSize) {
-		delete Dat;
-		return -1;
-	}
-	char* ReqDat = new char[ReqDatLength + 1];
-	StkPlStrCpy(ReqDat, ReqDatLength + 1, "");
-	StkPlStrCat(ReqDat, ReqDatLength + 1, HttpHeader);
-	StkPlStrCat((char*)ReqDat, ReqDatLength + 1, Dat);
-	int RetD = StkSocket_Send(TargetId, TargetId, (unsigned char*)ReqDat, ReqDatLength);
+	int RetD = StkSocket_Send(TargetId, TargetId, (unsigned char*)HttpHeader, HeaderLength);
+	RetD += StkSocket_Send(TargetId, TargetId, (unsigned char*)Dat, (int)DatLength);
 
-	// Delete array
-	delete Dat;
-	delete [] ReqDat;
+	delete[] Dat;
 	return RetD;
 }
 
