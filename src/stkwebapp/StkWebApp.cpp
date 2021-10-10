@@ -315,17 +315,29 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 		// There is no chance to handle this case without a bug.
 		ResultCode = 500;
 	} else {
-		if (XmlJsonType == 1 && Obj != NULL) {
+		if (XmlJsonType == XMLJSONTYPE_XML && Obj != NULL) {
+			// There is no chance to handle this case without a bug.
 			ResultCode = 500;
 		} else if ((XmlJsonType == XMLJSONTYPE_EMPTYSTR || XmlJsonType == XMLJSONTYPE_JSON) && Obj != NULL) {
 			int JsonSize = GetJsonSize(Obj);
 			wchar_t* XmlOrJson = new wchar_t[JsonSize];
 			StkPlWcsCpy(XmlOrJson, JsonSize, L"");
-			int Length = Obj->ToJson(XmlOrJson, JsonSize);
+			Obj->ToJson(XmlOrJson, JsonSize);
 			Dat = (unsigned char*)StkPlCreateUtf8FromWideChar(XmlOrJson);
 			DatLength = (int)StkPlStrLen((char*)Dat);
 			delete[] XmlOrJson;
 		}
+	}
+	if (ResultCode == 500) {
+		StkObject* ErrObj = MakeErrorResponse(1006);
+		int JsonSize = GetJsonSize(ErrObj);
+		wchar_t* XmlOrJson = new wchar_t[JsonSize];
+		StkPlWcsCpy(XmlOrJson, JsonSize, L"");
+		ErrObj->ToJson(XmlOrJson, JsonSize);
+		Dat = (unsigned char*)StkPlCreateUtf8FromWideChar(XmlOrJson);
+		DatLength = (int)StkPlStrLen((char*)Dat);
+		delete[] XmlOrJson;
+		delete ErrObj;
 	}
 
 	char HeaderDat[2048] = "";
@@ -609,8 +621,8 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, const wchar_t* HostName, int Tar
 	MessageProc::AddEng(1004, L"An invalid request is posted to URL\"/service/\".");
 	MessageProc::AddJpn(1005, L"不正なリクエストを受信しました。リクエストが壊れているおそれがあります。");
 	MessageProc::AddEng(1005, L"An invalid request is received. The request might be broken.");
-	MessageProc::AddJpn(1006, L"データサイズが送信できるサイズの上限を超えました。");
-	MessageProc::AddEng(1006, L"Data size has exceeded the limit for sending.");
+	MessageProc::AddJpn(1006, L"内部エラーが発生しました。");
+	MessageProc::AddEng(1006, L"An internal error occurred.");
 
 	// Update array of StkWebApp
 	if (StkWebAppCount < MAX_IMPL_COUNT) {

@@ -462,7 +462,7 @@ int ElemStkThreadMainSend3(int Id)
 	StkPlPrintf("... OK\n");
 
 	StkPlPrintf("StkWebAppTest3:GET /aaa/500/ [{ \"AAA\":\"aaa\" }] == 500 Internal Server Error");
-	if (SendTestData2(Id, "GET", "/aaa/500/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 500 || StkPlWcsStr(Header, L"Internal Server Error") == NULL || ErrorCode != -1) {
+	if (SendTestData2(Id, "GET", "/aaa/500/", "{ \"AAA\":\"aaa\" }\n", "application/json", &ErrorCode, Header) != 500 || StkPlWcsStr(Header, L"Internal Server Error") == NULL || ErrorCode != 1006) {
 		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
