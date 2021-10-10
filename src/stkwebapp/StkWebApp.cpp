@@ -258,12 +258,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int Cont
 	if (Ret == -1) {
 		return NULL;
 	}
-	int ActLen = 0;
-	if (RecvBufSize < ContLen) {
-		ActLen = RecvBufSize;
-	} else {
-		ActLen = ContLen;
-	}
+	int ActLen = ContLen;
 	unsigned char *Dat = new unsigned char[ActLen + 1];
 	Ret = StkSocket_Receive(TargetId, TargetId, Dat, ActLen + 1, ActLen, TimeoutInterval, NULL, -1);
 	if (Ret == 0 || Ret == -1 || Ret == -2) {
@@ -271,11 +266,8 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int Cont
 		delete[] Dat;
 		return NULL;
 	}
-	if (Ret >= ActLen) {
-		Dat[ActLen] = '\0';
-	} else {
-		Dat[Ret] = '\0';
-	}
+	Dat[Ret] = '\0';
+
 	wchar_t *DatWc = StkPlCreateWideCharFromUtf8((char*)Dat);
 	delete[] Dat;
 	if (DatWc == NULL) {
@@ -330,19 +322,9 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 			wchar_t* XmlOrJson = new wchar_t[JsonSize];
 			StkPlWcsCpy(XmlOrJson, JsonSize, L"");
 			int Length = Obj->ToJson(XmlOrJson, JsonSize);
-			if (Length > JsonSize) {
-				ResultCode = 500;
-				StkObject* ErrObj = MakeErrorResponse(1006);
-				wchar_t TmpBuf[1024] = L"";
-				ErrObj->ToJson(TmpBuf, 1024);
-				Dat = (unsigned char*)StkPlCreateUtf8FromWideChar(TmpBuf);
-				DatLength = (int)StkPlStrLen((char*)Dat);
-				delete [] XmlOrJson;
-			} else {
-				Dat = (unsigned char*)StkPlCreateUtf8FromWideChar(XmlOrJson);
-				DatLength = (int)StkPlStrLen((char*)Dat);
-				delete [] XmlOrJson;
-			}
+			Dat = (unsigned char*)StkPlCreateUtf8FromWideChar(XmlOrJson);
+			DatLength = (int)StkPlStrLen((char*)Dat);
+			delete[] XmlOrJson;
 		}
 	}
 

@@ -521,8 +521,8 @@ int ElemStkThreadMainSend4(int Id)
 	}
 	StkPlPrintf("... OK\n");
 
-	StkPlPrintf("StkWebAppTest4:POST /smalldata/ [{ \"AAAAAAAAAABBBBBBBBBB\":\"CCCCCCCCCCDDDDDDDDDD\" }] == 400 read buffer over flow");
-	if (SendTestData2(Id, "POST", "/smalldata/", "{ \"AAAAAAAAAABBBBBBBBBB\":\"CCCCCCCCCCDDDDDDDDDD\" }\n", "application/json", &ErrorCode) != 400 || ErrorCode != 1002) {
+	StkPlPrintf("StkWebAppTest4:POST /middledata/  Deep nest");
+	if (SendTestData2(Id, "POST", "/middledata/", "{ \"aaa\":\"bbb\", \"ccc\":{\"ddd\":{\"eee\":{\"fff\":{\"ggg\":\"hhh\"}}}} }\n", "application/json", &ErrorCode) != 200) {
 		StkPlPrintf("... NG\n");
 		StkPlExit(-1);
 	}
@@ -734,7 +734,7 @@ void ReqResTest4()
 	StkWebAppTest5* Test5bHndl = new StkWebAppTest5();
 	StkWebAppTest5* Test5cHndl = new StkWebAppTest5();
 	int Add1 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/bigdata/", (StkWebAppExec*)Test5aHndl);
-	int Add2 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/middledata/", (StkWebAppExec*)Test5bHndl);
+	int Add2 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, L"/middledata/", (StkWebAppExec*)Test5bHndl);
 	int Add3 = Soc->AddReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/smalldata/", (StkWebAppExec*)Test5cHndl);
 
 	StartSpecifiedStkThreads(SendIds, 1);
@@ -742,7 +742,7 @@ void ReqResTest4()
 	StopSpecifiedStkThreads(SendIds, 1);
 
 	int Del1 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/bigdata/");
-	int Del2 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/middledata/");
+	int Del2 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_POST, L"/middledata/");
 	int Del3 = Soc->DeleteReqHandler(StkWebAppExec::STKWEBAPP_METHOD_GET, L"/smalldata/");
 	delete Soc;
 
