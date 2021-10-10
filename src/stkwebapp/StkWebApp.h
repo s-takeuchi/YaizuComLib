@@ -13,11 +13,6 @@ public:
 	StkWebApp(int*, int, const wchar_t*, int, const char* PrivateKey = NULL, const char* Certificate = NULL);
 	virtual ~StkWebApp();
 
-	int GetSendBufSize();
-	void SetSendBufSize(int);
-	int GetRecvBufSize();
-	void SetRecvBufSize(int);
-
 	int GetTimeoutInterval();
 	void SetTimeoutInterval(int);
 

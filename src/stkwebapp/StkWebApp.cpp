@@ -36,9 +36,6 @@ public:
 
 	bool StopFlag;
 
-	int SendBufSize;
-	int RecvBufSize;
-
 	int TimeoutInterval;
 
 public:
@@ -606,8 +603,6 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, const wchar_t* HostName, int Tar
 	pImpl->WebThreadCount = 0;
 	pImpl->HandlerCount = 0;
 	pImpl->StopFlag = false;
-	pImpl->SendBufSize = 1000000;
-	pImpl->RecvBufSize = 1000000;
 	pImpl->TimeoutInterval = 3000;
 
 	// Message definition
@@ -730,26 +725,6 @@ int StkWebApp::AddReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::UR
 int StkWebApp::DeleteReqHandler(int Method, const wchar_t UrlPath[StkWebAppExec::URL_PATH_LENGTH])
 {
 	return pImpl->DeleteReqHandler(Method, UrlPath);
-}
-
-int StkWebApp::GetSendBufSize()
-{
-	return pImpl->SendBufSize;
-}
-
-void StkWebApp::SetSendBufSize(int Size)
-{
-	pImpl->SendBufSize = Size;
-}
-
-int StkWebApp::GetRecvBufSize()
-{
-	return pImpl->RecvBufSize;
-}
-
-void StkWebApp::SetRecvBufSize(int Size)
-{
-	pImpl->RecvBufSize = Size;
 }
 
 int StkWebApp::GetTimeoutInterval()

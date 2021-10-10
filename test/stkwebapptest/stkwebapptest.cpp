@@ -717,18 +717,6 @@ void ReqResTest4()
 	StkSocket_AddInfo(SendIds[0], STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_SENDER, L"localhost", 2080);
 
 	StkWebApp* Soc = new StkWebApp(Ids, 1, L"localhost", 2080);
-	StkPlPrintf("StkWebAppTest4:Test GetSendBufSize, GetRecvBufSize, SetSendBufSize, SetRecvBufSize ... ");
-	if (Soc->GetSendBufSize() != 1000000 || Soc->GetRecvBufSize() != 1000000) {
-		StkPlPrintf("NG\n");
-		StkPlExit(-1);
-	}
-	Soc->SetSendBufSize(2000);
-	Soc->SetRecvBufSize(45);
-	if (Soc->GetSendBufSize() != 2000 || Soc->GetRecvBufSize() != 45) {
-		StkPlPrintf("NG\n");
-		StkPlExit(-1);
-	}
-	StkPlPrintf("OK\n");
 
 	StkWebAppTest5* Test5aHndl = new StkWebAppTest5();
 	StkWebAppTest5* Test5bHndl = new StkWebAppTest5();
