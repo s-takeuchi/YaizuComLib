@@ -251,6 +251,8 @@ var responseData = {};
     }
 
     function closeInputModal() {
+        $('#inputDlgModalTitle').empty();
+        $('#inputDlgModalBody').empty();
         $('#inputDlgModal').modal('hide');
     }
 }
