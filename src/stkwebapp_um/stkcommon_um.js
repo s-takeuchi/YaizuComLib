@@ -49,6 +49,23 @@
     // User operation result
     let userOpeStatus = 0;
 
+    function getDateAndTimeStr(datentime) {
+        let datentimeInt = parseInt(datentime, 16);
+        let datentimeObj = new Date(datentimeInt * 1000);
+        let datentimeStr = '';
+        if (true) {
+            datentimeStr = datentimeObj.getFullYear() + '/'
+                           + ('00' + (datentimeObj.getMonth() + 1)).slice(-2) + '/'
+                           + ('00' + datentimeObj.getDate()).slice(-2) + ' '
+                           + ('00' + datentimeObj.getHours()).slice(-2) + ':'
+                           + ('00' + datentimeObj.getMinutes()).slice(-2) + ':'
+                           + ('00' + datentimeObj.getSeconds()).slice(-2);
+        } else {
+            datentimeStr = datentimeObj.toString();
+        }
+        return datentimeStr;
+    }
+    
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -328,9 +345,7 @@
             }
             let dispTimeStr = "";
             if (/^[0-9a-f]{16}$/i.test(Log[Loop].Time)) {
-                let dispTimeInt = parseInt(Log[Loop].Time, 16);
-                let dispTimeDate = new Date(dispTimeInt * 1000);
-                dispTimeStr = dispTimeDate.toString()
+                dispTimeStr = getDateAndTimeStr(Log[Loop].Time);
             } else {
                 dispTimeStr = Log[Loop].Time;
             }
