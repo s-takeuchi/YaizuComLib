@@ -468,35 +468,37 @@ int FileInfoChainTest()
 
 int main(int Argc, char* Argv[])
 {
-	StkPlPrintf("Execute child process...");
-	int Ret = 0;
-#ifdef WIN32
-	Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe", L"/c \"exit /b 99\"", 3000);
-	if (Ret != 99) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-	Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe", L"/c \"date\"", 3000);
-	if (Ret != -2) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-#else
-	Ret = StkPlExec(L"/usr/bin/bash -c \"exit 99\"", L"", 3000);
-	if (Ret != 99) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-	Ret = StkPlExec(L"/usr/bin/bash -c \"/usr/bin/sleep 10\"", L"", 3000);
-	if (Ret != -2) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-#endif
-	StkPlPrintf("OK case\n");
-
 	StkPlPrintf("stkpltest started.\n");
 	FileInfoChainTest();
+
+	{
+		StkPlPrintf("Execute child process...");
+		int Ret = 0;
+#ifdef WIN32
+		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe", L"/c \"exit /b 99\"", 3000);
+		if (Ret != 99) {
+			StkPlPrintf("NG case (%d)\n", Ret);
+			StkPlExit(-1);
+		}
+		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe", L"/c \"date\"", 3000);
+		if (Ret != -2) {
+			StkPlPrintf("NG case (%d)\n", Ret);
+			StkPlExit(-1);
+		}
+#else
+		Ret = StkPlExec(L"/bin/bash -c \"exit 99\"", L"", 3000);
+		if (Ret != 99) {
+			StkPlPrintf("NG case (%d)\n", Ret);
+			StkPlExit(-1);
+		}
+		Ret = StkPlExec(L"/bin/bash -c \"/bin/sleep 10\"", L"", 3000);
+		if (Ret != -2) {
+			StkPlPrintf("NG case (%d)\n", Ret);
+			StkPlExit(-1);
+		}
+#endif
+		StkPlPrintf("OK case\n");
+	}
 
 	TestUrlEncodeDecode();
 	Test_Time();
