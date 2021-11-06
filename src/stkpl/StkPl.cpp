@@ -20,6 +20,8 @@
 #include <experimental/filesystem>
 #include <sys/timeb.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #endif
 
 #include "StkPl.h"
@@ -925,7 +927,7 @@ void StkPlSleepMs(int MilliSec)
 }
 
 // Return (-1:internal error, -2:timeout, otherwise:exist code of the command
-int StkPlExec(wchar_t* CmdPath, wchar_t* CmdParam, int TimeoutInMs)
+int StkPlExec(const wchar_t* CmdPath, const wchar_t* CmdParam, int TimeoutInMs)
 {
 #ifdef WIN32
 	wchar_t CmdLineBuf[FILENAME_MAX];
@@ -956,33 +958,68 @@ int StkPlExec(wchar_t* CmdPath, wchar_t* CmdParam, int TimeoutInMs)
 		return -1;
 	} else if (RetFork == 0) {
 		// child process
-		wchar_t CmdName[FILENAME_MAX] = L"";
-		for (int Loop = StkPlWcsLen(CmdPath); Loop >= 0; Loop--) {
-			if (CmdPath[Loop] == L'/') {
-				StkPlWcsCpy(CmdName, FILENAME_MAX, &CmdPath[Loop + 1]);
+		char* CmdPathU8 = StkPlCreateUtf8FromWideChar(CmdPath);
+
+		char* Argv[100];
+		int Loop = 0;
+		int CurrentPos = 0;
+		for (; Loop < 100; Loop++) {
+			bool OptFound = false;
+			bool ExitFlag = false;
+			bool DqFlag = false;
+			while (true) {
+				if (CmdPathU8[CurrentPos] == ' ') {
+					CurrentPos++;
+				} else if (CmdPathU8[CurrentPos] == '\"' && CmdPathU8[CurrentPos + 1] != '\0') {
+					Argv[Loop] = &CmdPathU8[CurrentPos + 1];
+					OptFound = true;
+					DqFlag = true;
+					CurrentPos += 2;
+					break;
+				} else if (CmdPathU8[CurrentPos] == '\"' && CmdPathU8[CurrentPos + 1] == '\0') {
+					break;
+				} else if (CmdPathU8[CurrentPos] == '\0') {
+					ExitFlag = true;
+					break;
+				} else {
+					Argv[Loop] = &CmdPathU8[CurrentPos];
+					OptFound = true;
+					CurrentPos++;
+					break;
+				}
+			}
+			while (OptFound) {
+				if (DqFlag == false && CmdPathU8[CurrentPos] == ' ') {
+					CmdPathU8[CurrentPos] = '\0';
+					CurrentPos++;
+					break;
+				} else if (DqFlag == true && CmdPathU8[CurrentPos] == '\"') {
+					CmdPathU8[CurrentPos] = '\0';
+					CurrentPos++;
+					break;
+				} else if (CmdPathU8[CurrentPos] == '\0') {
+					ExitFlag = true;
+					break;
+				} else {
+					CurrentPos++;
+				}
+			}
+			if (ExitFlag) {
+				break;
 			}
 		}
-		char* CmdPathU8 = StkPlCreateUtf8FromWideChar(CmdPath);
-		char* CmdNameU8 = StkPlCreateUtf8FromWideChar(CmdName);
-		char* CmdParamU8 = StkPlCreateUtf8FromWideChar(CmdParam);
-		char* argv[3];
-		argv[0] = CmdNameU8;
-		argv[1] = CmdParamU8;
-		argv[2] = NULL;
-		execv(CmdPath, argv);
+		Argv[Loop] = NULL;
+
+		execv(Argv[0], Argv);
 		delete CmdPathU8;
-		delete CmdNameU8;
-		delete CmdParamU8;
-		int Status = 0;
-		wait(&Status);
-		ExitCode = WEXITSTATUS(Status);
-		return ExitCode;
+		return -1;
 	} else {
 		// parent process
 		int SumOfSleep = 0;
+		pid_t RetWait = 0;
 		do {
 			int Status = 0;
-			pid_t RetWait = waitpid(RetFork, &Status, WNOHANG);
+			RetWait = waitpid(RetFork, &Status, WNOHANG);
 			if (RetWait == -1) {
 				// Abnormal end
 				ExitCode = -1;
