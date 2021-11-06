@@ -924,6 +924,94 @@ void StkPlSleepMs(int MilliSec)
 	std::this_thread::sleep_for(std::chrono::milliseconds(MilliSec));
 }
 
+// Return (-1:internal error, -2:timeout, otherwise:exist code of the command
+int StkPlExec(wchar_t* CmdPath, wchar_t* CmdParam, int TimeoutInMs)
+{
+#ifdef WIN32
+	wchar_t CmdLineBuf[FILENAME_MAX];
+	StkPlWcsCpy(CmdLineBuf, FILENAME_MAX, CmdPath);
+	StkPlWcsCat(CmdLineBuf, FILENAME_MAX, L" ");
+	StkPlWcsCat(CmdLineBuf, FILENAME_MAX, CmdParam);
+	PROCESS_INFORMATION pi_cmd;
+	STARTUPINFO si_cmd;
+	ZeroMemory(&si_cmd, sizeof(si_cmd));
+	si_cmd.cb = sizeof(si_cmd);
+	int Ret = CreateProcess(NULL, CmdLineBuf, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_cmd, &pi_cmd);
+	if (Ret == 0) {
+		CloseHandle(pi_cmd.hProcess);
+		return -1;
+	}
+	int RetSig = WaitForSingleObject(pi_cmd.hProcess, TimeoutInMs);
+	if (RetSig == WAIT_TIMEOUT) {
+		TerminateProcess(pi_cmd.hProcess, -2);
+	}
+	DWORD ExitCode = 0;
+	GetExitCodeProcess(pi_cmd.hProcess, &ExitCode);
+	CloseHandle(pi_cmd.hProcess);
+	return ExitCode;
+#else
+	int ExitCode = 0;
+	pid_t RetFork = fork();
+	if (RetFork < 0) {
+		return -1;
+	} else if (RetFork == 0) {
+		// child process
+		wchar_t CmdName[FILENAME_MAX] = L"";
+		for (int Loop = StkPlWcsLen(CmdPath); Loop >= 0; Loop--) {
+			if (CmdPath[Loop] == L'/') {
+				StkPlWcsCpy(CmdName, FILENAME_MAX, &CmdPath[Loop + 1]);
+			}
+		}
+		char* CmdPathU8 = StkPlCreateUtf8FromWideChar(CmdPath);
+		char* CmdNameU8 = StkPlCreateUtf8FromWideChar(CmdName);
+		char* CmdParamU8 = StkPlCreateUtf8FromWideChar(CmdParam);
+		char* argv[3];
+		argv[0] = CmdNameU8;
+		argv[1] = CmdParamU8;
+		argv[2] = NULL;
+		execv(CmdPath, argv);
+		delete CmdPathU8;
+		delete CmdNameU8;
+		delete CmdParamU8;
+		int Status = 0;
+		wait(&Status);
+		ExitCode = WEXITSTATUS(Status);
+		return ExitCode;
+	} else {
+		// parent process
+		int SumOfSleep = 0;
+		do {
+			int Status = 0;
+			pid_t RetWait = waitpid(RetFork, &Status, WNOHANG);
+			if (RetWait == -1) {
+				// Abnormal end
+				ExitCode = -1;
+				break;
+			} else if (RetWait == 0) {
+				// Child process is still running.
+				StkPlSleepMs(100);
+				SumOfSleep += 100;
+				if (SumOfSleep >= TimeoutInMs) {
+					// Kill child process
+					kill(RetFork, SIGKILL);
+					ExitCode = -2;
+					break;
+				}
+			} else {
+				// Child process ended.
+				if (WIFEXITED(Status)) {
+					ExitCode = WEXITSTATUS(Status);
+					break;
+				} else {
+					ExitCode = -1;
+				}
+			}
+		} while (RetWait == 0);
+		return ExitCode;
+	}
+#endif
+}
+
 void StkPlLockCs(StkPlCriticalSection* Cs)
 {
 	Cs->lock();

@@ -468,6 +468,34 @@ int FileInfoChainTest()
 
 int main(int Argc, char* Argv[])
 {
+	StkPlPrintf("Execute child process...");
+	int Ret = 0;
+#ifdef WIN32
+	Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe", L"/c \"exit /b 999\"", 3000);
+	if (Ret != 999) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe", L"/c \"date\"", 3000);
+	if (Ret != -2) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+#else
+	Ret = StkPlExec(L"/usr/bin/bash", L"-c \"exit 999\"", 3000);
+	if (Ret != 999) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	Ret = StkPlExec(L"/usr/bin/bash", L"-c \"/usr/bin/sleep 10\"", 3000);
+	if (Ret != -2) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+#endif
+	StkPlPrintf("OK case\n");
+	StkPlExit(Ret);
+
 	StkPlPrintf("stkpltest started.\n");
 	FileInfoChainTest();
 
