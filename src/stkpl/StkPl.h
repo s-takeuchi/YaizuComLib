@@ -100,7 +100,7 @@ int StkPlSystem(const char*);
 void StkPlExit(int);
 int StkPlRand();
 void StkPlSleepMs(int);
-int StkPlExec(const wchar_t*, const wchar_t*, int);
+int StkPlExec(const wchar_t*, int);
 
 #define StkPlCriticalSection std::mutex
 void StkPlLockCs(StkPlCriticalSection*);

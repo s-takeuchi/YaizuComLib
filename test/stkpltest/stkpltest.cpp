@@ -475,17 +475,17 @@ int main(int Argc, char* Argv[])
 		StkPlPrintf("Execute child process...");
 		int Ret = 0;
 #ifdef WIN32
-		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe", L"/c \"exit /b 99\"", 3000);
+		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe /c \"exit /b 99\"", 3000);
 		if (Ret != 99) {
 			StkPlPrintf("NG case (1-%d)\n", Ret);
 			StkPlExit(-1);
 		}
-		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe", L"/c \"date\"", 3000);
+		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe /c \"date\"", 3000);
 		if (Ret != -2) {
 			StkPlPrintf("NG case (2-%d)\n", Ret);
 			StkPlExit(-1);
 		}
-		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe", L"/c \"dir > out.txt\"", 3000);
+		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe /c \"dir > out.txt\"", 3000);
 		if (Ret != 0) {
 			StkPlPrintf("NG case (3-%d)\n", Ret);
 			StkPlExit(-1);

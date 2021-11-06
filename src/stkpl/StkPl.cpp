@@ -927,13 +927,11 @@ void StkPlSleepMs(int MilliSec)
 }
 
 // Return (-1:internal error, -2:timeout, otherwise:exist code of the command
-int StkPlExec(const wchar_t* CmdPath, const wchar_t* CmdParam, int TimeoutInMs)
+int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs)
 {
 #ifdef WIN32
 	wchar_t CmdLineBuf[FILENAME_MAX];
-	StkPlWcsCpy(CmdLineBuf, FILENAME_MAX, CmdPath);
-	StkPlWcsCat(CmdLineBuf, FILENAME_MAX, L" ");
-	StkPlWcsCat(CmdLineBuf, FILENAME_MAX, CmdParam);
+	StkPlWcsCpy(CmdLineBuf, FILENAME_MAX, CmdLine);
 	PROCESS_INFORMATION pi_cmd;
 	STARTUPINFO si_cmd;
 	ZeroMemory(&si_cmd, sizeof(si_cmd));
@@ -958,7 +956,7 @@ int StkPlExec(const wchar_t* CmdPath, const wchar_t* CmdParam, int TimeoutInMs)
 		return -1;
 	} else if (RetFork == 0) {
 		// child process
-		char* CmdPathU8 = StkPlCreateUtf8FromWideChar(CmdPath);
+		char* CmdLineU8 = StkPlCreateUtf8FromWideChar(CmdLine);
 
 		char* Argv[100];
 		int Loop = 0;
@@ -968,36 +966,36 @@ int StkPlExec(const wchar_t* CmdPath, const wchar_t* CmdParam, int TimeoutInMs)
 			bool ExitFlag = false;
 			bool DqFlag = false;
 			while (true) {
-				if (CmdPathU8[CurrentPos] == ' ') {
+				if (CmdLineU8[CurrentPos] == ' ') {
 					CurrentPos++;
-				} else if (CmdPathU8[CurrentPos] == '\"' && CmdPathU8[CurrentPos + 1] != '\0') {
-					Argv[Loop] = &CmdPathU8[CurrentPos + 1];
+				} else if (CmdLineU8[CurrentPos] == '\"' && CmdLineU8[CurrentPos + 1] != '\0') {
+					Argv[Loop] = &CmdLineU8[CurrentPos + 1];
 					OptFound = true;
 					DqFlag = true;
 					CurrentPos += 2;
 					break;
-				} else if (CmdPathU8[CurrentPos] == '\"' && CmdPathU8[CurrentPos + 1] == '\0') {
+				} else if (CmdLineU8[CurrentPos] == '\"' && CmdLineU8[CurrentPos + 1] == '\0') {
 					break;
-				} else if (CmdPathU8[CurrentPos] == '\0') {
+				} else if (CmdLineU8[CurrentPos] == '\0') {
 					ExitFlag = true;
 					break;
 				} else {
-					Argv[Loop] = &CmdPathU8[CurrentPos];
+					Argv[Loop] = &CmdLineU8[CurrentPos];
 					OptFound = true;
 					CurrentPos++;
 					break;
 				}
 			}
 			while (OptFound) {
-				if (DqFlag == false && CmdPathU8[CurrentPos] == ' ') {
-					CmdPathU8[CurrentPos] = '\0';
+				if (DqFlag == false && CmdLineU8[CurrentPos] == ' ') {
+					CmdLineU8[CurrentPos] = '\0';
 					CurrentPos++;
 					break;
-				} else if (DqFlag == true && CmdPathU8[CurrentPos] == '\"') {
-					CmdPathU8[CurrentPos] = '\0';
+				} else if (DqFlag == true && CmdLineU8[CurrentPos] == '\"') {
+					CmdLineU8[CurrentPos] = '\0';
 					CurrentPos++;
 					break;
-				} else if (CmdPathU8[CurrentPos] == '\0') {
+				} else if (CmdLineU8[CurrentPos] == '\0') {
 					ExitFlag = true;
 					break;
 				} else {
@@ -1011,7 +1009,7 @@ int StkPlExec(const wchar_t* CmdPath, const wchar_t* CmdParam, int TimeoutInMs)
 		Argv[Loop] = NULL;
 
 		execv(Argv[0], Argv);
-		delete CmdPathU8;
+		delete CmdLineU8;
 		return -1;
 	} else {
 		// parent process
