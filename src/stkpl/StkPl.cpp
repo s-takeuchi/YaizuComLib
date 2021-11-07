@@ -946,7 +946,12 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs)
 		TerminateProcess(pi_cmd.hProcess, -2);
 	}
 	DWORD ExitCode = 0;
+	StkPlSleepMs(1000);
 	GetExitCodeProcess(pi_cmd.hProcess, &ExitCode);
+	for (int Loop = 0; Loop < 30 && (ExitCode == STATUS_PENDING || ExitCode == STILL_ACTIVE); Loop++) {
+		StkPlSleepMs(1000);
+		GetExitCodeProcess(pi_cmd.hProcess, &ExitCode);
+	}
 	CloseHandle(pi_cmd.hProcess);
 	return ExitCode;
 #else
