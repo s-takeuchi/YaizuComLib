@@ -474,35 +474,36 @@ int main(int Argc, char* Argv[])
 	{
 		StkPlPrintf("Execute child process...");
 		int Ret = 0;
+		int Result = 0;
 #ifdef WIN32
-		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe /c \"exit /b 99\"", 3000);
-		if (Ret != 99) {
+		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe /c \"exit /b 99\"", 3000, &Result);
+		if (Ret != 99 || Result != 0) {
 			StkPlPrintf("NG case (1-%d)\n", Ret);
 			StkPlExit(-1);
 		}
-		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe /c \"date\"", 3000);
-		if (Ret != -2) {
+		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe /c \"date\"", 3000, &Result);
+		if (Ret != -2 || Result == 0) {
 			StkPlPrintf("NG case (2-%d)\n", Ret);
 			StkPlExit(-1);
 		}
-		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe /c \"dir > out.txt\"", 3000);
-		if (Ret != 0) {
+		Ret = StkPlExec(L"c:\\Windows\\System32\\cmd.exe /c \"dir > out.txt\"", 3000, &Result);
+		if (Ret != 0 || Result != 0) {
 			StkPlPrintf("NG case (3-%d)\n", Ret);
 			StkPlExit(-1);
 		}
 #else
-		Ret = StkPlExec(L"/bin/bash -c \"exit 99\"", 3000);
-		if (Ret != 99) {
+		Ret = StkPlExec(L"/bin/bash -c \"exit 99\"", 3000, &Result);
+		if (Ret != 99 || Result != 0) {
 			StkPlPrintf("NG case (1-%d)\n", Ret);
 			StkPlExit(-1);
 		}
-		Ret = StkPlExec(L"/bin/bash -c \"/bin/sleep 10\"", 3000);
-		if (Ret != -2) {
+		Ret = StkPlExec(L"/bin/bash -c \"/bin/sleep 10\"", 3000, &Result);
+		if (Ret != -2 || Result == 0) {
 			StkPlPrintf("NG case (2-%d)\n", Ret);
 			StkPlExit(-1);
 		}
-		Ret = StkPlExec(L"/bin/bash -c \"/bin/ls -al > out.txt\"", 3000);
-		if (Ret != 0) {
+		Ret = StkPlExec(L"/bin/bash -c \"/bin/ls -al > out.txt\"", 3000, &Result);
+		if (Ret != 0 || Result != 0) {
 			StkPlPrintf("NG case (3-%d)\n", Ret);
 			StkPlExit(-1);
 		}

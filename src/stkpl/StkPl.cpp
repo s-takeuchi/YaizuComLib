@@ -927,8 +927,9 @@ void StkPlSleepMs(int MilliSec)
 }
 
 // Return (-1:internal error, -2:timeout, otherwise:exist code of the command
-int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs)
+int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 {
+	*Result = 0;
 #ifdef WIN32
 	wchar_t CmdLineBuf[FILENAME_MAX];
 	StkPlWcsCpy(CmdLineBuf, FILENAME_MAX, CmdLine);
@@ -939,10 +940,12 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs)
 	int Ret = CreateProcess(NULL, CmdLineBuf, NULL, NULL, false, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si_cmd, &pi_cmd);
 	if (Ret == 0) {
 		CloseHandle(pi_cmd.hProcess);
+		*Result = -1;
 		return -1;
 	}
 	int RetSig = WaitForSingleObject(pi_cmd.hProcess, TimeoutInMs);
 	if (RetSig == WAIT_TIMEOUT) {
+		*Result = -1;
 		TerminateProcess(pi_cmd.hProcess, -2);
 	}
 	DWORD ExitCode = 0;
@@ -1025,6 +1028,7 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs)
 			RetWait = waitpid(RetFork, &Status, WNOHANG);
 			if (RetWait == -1) {
 				// Abnormal end
+				*Result = -1;
 				ExitCode = -1;
 				break;
 			} else if (RetWait == 0) {
@@ -1034,6 +1038,7 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs)
 				if (SumOfSleep >= TimeoutInMs) {
 					// Kill child process
 					kill(RetFork, SIGKILL);
+					*Result = -1;
 					ExitCode = -2;
 					break;
 				}
