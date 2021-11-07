@@ -491,17 +491,17 @@ int main(int Argc, char* Argv[])
 			StkPlExit(-1);
 		}
 #else
-		Ret = StkPlExec(L"/bin/bash -c \"exit 99\"", L"", 3000);
+		Ret = StkPlExec(L"/bin/bash -c \"exit 99\"", 3000);
 		if (Ret != 99) {
 			StkPlPrintf("NG case (1-%d)\n", Ret);
 			StkPlExit(-1);
 		}
-		Ret = StkPlExec(L"/bin/bash -c \"/bin/sleep 10\"", L"", 3000);
+		Ret = StkPlExec(L"/bin/bash -c \"/bin/sleep 10\"", 3000);
 		if (Ret != -2) {
 			StkPlPrintf("NG case (2-%d)\n", Ret);
 			StkPlExit(-1);
 		}
-		Ret = StkPlExec(L"/bin/bash -c \"/bin/ls -al > out.txt\"", L"", 3000);
+		Ret = StkPlExec(L"/bin/bash -c \"/bin/ls -al > out.txt\"", 3000);
 		if (Ret != 0) {
 			StkPlPrintf("NG case (3-%d)\n", Ret);
 			StkPlExit(-1);
