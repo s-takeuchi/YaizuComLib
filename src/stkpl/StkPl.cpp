@@ -964,6 +964,7 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 		return -1;
 	} else if (RetFork == 0) {
 		// child process
+		setpgid(0, 0);
 		char* CmdLineU8 = StkPlCreateUtf8FromWideChar(CmdLine);
 
 		char* Argv[100];
@@ -1037,7 +1038,10 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 				SumOfSleep += 100;
 				if (SumOfSleep >= TimeoutInMs) {
 					// Kill child process
-					kill(RetFork, SIGKILL);
+					kill(-RetFork, SIGTERM);
+					StkPlSleepMs(2000);
+					kill(-RetFork, SIGKILL);
+					pid_t RetChild = waitpid(RetFork, &Status, WUNTRACED);
 					*Result = -1;
 					ExitCode = -2;
 					break;
@@ -1051,6 +1055,7 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 					ExitCode = -1;
 				}
 			}
+			StkPlSleepMs(10);
 		} while (RetWait == 0);
 		return ExitCode;
 	}
