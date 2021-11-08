@@ -930,6 +930,7 @@ void StkPlSleepMs(int MilliSec)
 // This API is called from only StkPlExec
 void TerminateChildProcess(int TargetProcessId, int ExitCode)
 {
+#ifdef WIN32
 	PROCESSENTRY32 ProEnt;
 	ZeroMemory(&ProEnt, sizeof(ProEnt));
 	HANDLE ProcSnapHndl = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -948,6 +949,7 @@ void TerminateChildProcess(int TargetProcessId, int ExitCode)
 		}
 		CloseHandle(ProcSnapHndl);
 	}
+#endif
 }
 
 // Execute command as child process
