@@ -927,10 +927,11 @@ void StkPlSleepMs(int MilliSec)
 	std::this_thread::sleep_for(std::chrono::milliseconds(MilliSec));
 }
 
+#ifdef WIN32
+
 // This API is called from only StkPlExec
 void TerminateChildProcess(int TargetProcessId, int ExitCode)
 {
-#ifdef WIN32
 	PROCESSENTRY32 ProEnt;
 	ZeroMemory(&ProEnt, sizeof(ProEnt));
 	HANDLE ProcSnapHndl = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -949,8 +950,8 @@ void TerminateChildProcess(int TargetProcessId, int ExitCode)
 		}
 		CloseHandle(ProcSnapHndl);
 	}
-#endif
 }
+#endif
 
 // Execute command as child process
 // CmdLine [in] : command line
@@ -1089,6 +1090,7 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 		} while (RetWait == 0);
 		return ExitCode;
 	}
+	return -1;
 #endif
 }
 
