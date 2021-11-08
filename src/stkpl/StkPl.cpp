@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <sys/types.h>
 #include <sys/timeb.h>
+#include <tlhelp32.h>
 #else
 #include <unistd.h>
 #include <dirent.h>
@@ -926,7 +927,34 @@ void StkPlSleepMs(int MilliSec)
 	std::this_thread::sleep_for(std::chrono::milliseconds(MilliSec));
 }
 
-// Return (-1:internal error, -2:timeout, otherwise:exist code of the command
+// This API is called from only StkPlExec
+void TerminateChildProcess(int TargetProcessId, int ExitCode)
+{
+	PROCESSENTRY32 ProEnt;
+	ZeroMemory(&ProEnt, sizeof(ProEnt));
+	HANDLE ProcSnapHndl = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (ProcSnapHndl != INVALID_HANDLE_VALUE) {
+		ProEnt.dwSize = sizeof(PROCESSENTRY32);
+		if (Process32First(ProcSnapHndl, &ProEnt)) {
+			do {
+				if (ProEnt.th32ParentProcessID == TargetProcessId) {
+					TerminateChildProcess(ProEnt.th32ProcessID, ExitCode);
+					HANDLE ProcHndl = OpenProcess(PROCESS_TERMINATE, FALSE, ProEnt.th32ProcessID);
+					TerminateProcess(ProcHndl, ExitCode);
+					WaitForSingleObject(ProcHndl, INFINITE);
+					CloseHandle(ProcHndl);
+				}
+			} while (Process32Next(ProcSnapHndl, &ProEnt));
+		}
+		CloseHandle(ProcSnapHndl);
+	}
+}
+
+// Execute command as child process
+// CmdLine [in] : command line
+// TimeoutInMs [in] : Timeout interval in millisec
+// Result [out] : (0:Normal, -1:Abnormal)
+// Return : (-1:internal error, -2:timeout, otherwise:exist code of the command)
 int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 {
 	*Result = 0;
@@ -945,16 +973,16 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 	}
 	int RetSig = WaitForSingleObject(pi_cmd.hProcess, TimeoutInMs);
 	if (RetSig == WAIT_TIMEOUT) {
-		*Result = -1;
+		TerminateChildProcess(pi_cmd.dwProcessId, -2);
 		TerminateProcess(pi_cmd.hProcess, -2);
+		*Result = -1;
 	}
+
 	DWORD ExitCode = 0;
-	StkPlSleepMs(1000);
+	WaitForSingleObject(pi_cmd.hProcess, INFINITE);
+	StkPlSleepMs(500);
 	GetExitCodeProcess(pi_cmd.hProcess, &ExitCode);
-	for (int Loop = 0; Loop < 30 && (ExitCode == STATUS_PENDING || ExitCode == STILL_ACTIVE); Loop++) {
-		StkPlSleepMs(1000);
-		GetExitCodeProcess(pi_cmd.hProcess, &ExitCode);
-	}
+	CloseHandle(pi_cmd.hThread);
 	CloseHandle(pi_cmd.hProcess);
 	return ExitCode;
 #else
@@ -1019,7 +1047,7 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 
 		execv(Argv[0], Argv);
 		delete CmdLineU8;
-		return -1;
+		StkPlExit(0);
 	} else {
 		// parent process
 		int SumOfSleep = 0;
