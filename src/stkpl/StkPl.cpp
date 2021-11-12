@@ -983,7 +983,7 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 
 	DWORD ExitCode = 0;
 	WaitForSingleObject(pi_cmd.hProcess, INFINITE);
-	StkPlSleepMs(500);
+	StkPlSleepMs(1000);
 	GetExitCodeProcess(pi_cmd.hProcess, &ExitCode);
 	CloseHandle(pi_cmd.hThread);
 	CloseHandle(pi_cmd.hProcess);
