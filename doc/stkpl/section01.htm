@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html lang="ja">
+<html lang="en">
 
 <HEAD>
 <title>stkpl</title>
@@ -104,6 +104,11 @@ void StkPlGetWTimeInOldFormat(wchar_t[64], bool)<br/>
 <tr>
     <td>char* StkPlWideCharToSjis(const wchar_t*)</td>
     <td>Convert wide char string to SJIS encoded string.</td>
+</tr>
+
+<tr>
+    <td>int StkPlExec(const wchar_t*, int, int*)</td>
+    <td>Execute the command specified</td>
 </tr>
 
 </table><p>
@@ -338,6 +343,21 @@ struct FileInfoList {
         </table>
     </div>
 
+
+
+    <H4 ID="1.16">1.16 int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)</H4>
+    <div class="topic">
+        Execute the command specified.<br/>
+        The command will be timeout in TimeoutInMs.<br/>
+        If expired, related process tree with the command will be deleted.<br/>
+        <table class="tblstyle">
+            <tr><td>CmdLine[Input]</td><td>Command line which is executed.</td></tr>
+            <tr><td>TimeoutInMs[Input]</td><td>Timeout in milliseconds.</td></tr>
+            <tr><td>Result[Output]</td><td>Result status (0:Normal, -1:Abnormal)</td></tr>
+            <tr><td>[Return]</td><td>(-1:internal error(Result=-1), -2:timeout(Result=-1), otherwise:exist code of the command)</td></tr>
+        </table>
+    </div>
+    
 
 
 </div>
