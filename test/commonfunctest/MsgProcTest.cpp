@@ -1,10 +1,9 @@
 ﻿#include "../../src/stkpl/StkPl.h"
 #include "../../src/commonfunc/msgproc.h"
+#include "../../src/commonfunc/StkStringParser.h"
 
-void MsgProcTest()
+void MsgProcTest1()
 {
-	StkPlPrintf("MsgProcTest started.\n");
-
 	MessageProc::AddJpn(100, L"あいうえお");
 	MessageProc::AddEng(100, L"abcde");
 
@@ -144,7 +143,39 @@ void MsgProcTest()
 	}
 	StkPlPrintf("Logging ... OK case(size=%d)\n", LogSize);
 	// Logging test end
+}
 
-	StkPlPrintf("MsgProcTest completed.\n\n\n");
-
+void MsgProcTest2()
+{
+	MessageProc::StartLogging(L"log2.txt");
+	char TmpLog[256] = "";
+	for (int Loop = 0; Loop < 14000; Loop++) {
+		StkPlSPrintf(TmpLog, 256, "[%d] This is wrapping test!!  This is wrapping test!!  This is wrapping test!!  This is wrapping test!!", Loop);
+		MessageProc::AddLog(TmpLog, MessageProc::LOG_TYPE_INFO);
+	}
+	MessageProc::StopLogging();
+	size_t FileSize = StkPlGetFileSize(L"log2.txt");
+	if (FileSize > 2000000 || FileSize < 1000000) {
+		StkPlPrintf("LoggingTest-2 ... NG case\n");
+		StkPlExit(-1);
+	}
+	char LogDat[2000000] = "";
+	StkPlReadFile(L"log2.txt", LogDat, 2000000);
+	wchar_t* LogDatW = StkPlCreateWideCharFromUtf8(LogDat);
+	wchar_t* LogDatPtr = LogDatW;
+	wchar_t AcqDat[64];
+	int MinIndex = -1;
+	for (int Loop = 0; Loop < 5000; Loop++) {
+		StkStringParser::ParseInto3Params(LogDatPtr, L"$I/ [$] This is$", L'$', NULL, AcqDat, NULL);
+		int Index = StkPlWcsToL(AcqDat);
+		if (MinIndex >= Index) {
+			delete LogDatW;
+			StkPlPrintf("LoggingTest-2 ... NG case\n");
+			StkPlExit(-1);
+		}
+		MinIndex = Index;
+		LogDatPtr = (wchar_t*)StkPlWcsStr(LogDatPtr, L"This is wrapping test!!\r\n") + 1;
+	}
+	delete LogDatW;
+	StkPlPrintf("LoggingTest-2 ... OK case\n");
 }

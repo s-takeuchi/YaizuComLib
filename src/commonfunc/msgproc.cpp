@@ -28,6 +28,9 @@ public:
 	bool LoggingStopped;
 	char LoggingBuf[65536];
 	std::mutex Cs4LogBuf;
+	size_t LogSizeA;
+	size_t LogSizeB;
+	wchar_t FileName[FILENAME_MAX];
 
 	void Eng(int, const wchar_t*);
 	void Jpn(int, const wchar_t*);
@@ -155,6 +158,8 @@ void MessageProc::Impl::LoggingProc()
 {
 	char TmpLogBuf[65536];
 	size_t WrittenSize = 0;
+	size_t LogSize = StkPlGetFileSize(Impl::Instance->pImpl->FileName);
+	size_t TotalAddSize = 0;
 
 	while (true) {
 		StkPlSleepMs(500);
@@ -168,8 +173,40 @@ void MessageProc::Impl::LoggingProc()
 		StkPlStrCpy(TmpLogBuf, 65536, Impl::Instance->pImpl->LoggingBuf);
 		Impl::Instance->pImpl->LoggingBuf[0] = '\0';
 		Impl::Instance->pImpl->Cs4LogBuf.unlock();
-		StkPlWrite(Impl::Instance->pImpl->LogFD, TmpLogBuf, StkPlStrLen(TmpLogBuf), &WrittenSize);
+		size_t AddSize = StkPlStrLen(TmpLogBuf);
+		TotalAddSize += AddSize;
+		StkPlWrite(Impl::Instance->pImpl->LogFD, TmpLogBuf, AddSize, &WrittenSize);
 		StkPlFlush(Impl::Instance->pImpl->LogFD);
+
+		// Cut a part of log file off
+		if (LogSize + TotalAddSize > Impl::Instance->pImpl->LogSizeB) {
+			char Buf[2000000] = "";
+			size_t Diff = LogSize + TotalAddSize - Impl::Instance->pImpl->LogSizeA;
+			size_t ActSizeR = 0;
+			size_t ActSizeW = 0;
+			StkPlCloseFile(Impl::Instance->pImpl->LogFD);
+
+			Impl::Instance->pImpl->LogFD = StkPlOpenFileForRead(Impl::Instance->pImpl->FileName);
+			StkPlSeekFromBegin(Impl::Instance->pImpl->LogFD, Diff);
+			StkPlRead(Impl::Instance->pImpl->LogFD, Buf, 2000000, &ActSizeR);
+			StkPlCloseFile(Impl::Instance->pImpl->LogFD);
+
+			Impl::Instance->pImpl->LogFD = StkPlOpenFileForWrite(Impl::Instance->pImpl->FileName, false);
+			StkPlSeekFromBegin(Impl::Instance->pImpl->LogFD, 0);
+			StkPlWrite(Impl::Instance->pImpl->LogFD, Buf, ActSizeR, &ActSizeW);
+			char TmpBuf[128] = "";
+			char TmpTimeStr[64] = "";
+			size_t TmpSize = 0;
+			StkPlGetTimeInIso8601(TmpTimeStr, true);
+			StkPlSPrintf(TmpBuf, 128, "%s [%08x] I/ %s [%d --> %d]\r\n", TmpTimeStr, std::this_thread::get_id(), "Log rotation (old log was deleted)", LogSize + TotalAddSize, ActSizeW);
+			StkPlWrite(Impl::Instance->pImpl->LogFD, TmpBuf, StkPlStrLen(TmpBuf), &TmpSize);
+			StkPlCloseFile(Impl::Instance->pImpl->LogFD);
+
+			Impl::Instance->pImpl->LogFD = StkPlOpenFileForWrite(Impl::Instance->pImpl->FileName, true);
+			StkPlSeekFromEnd(Impl::Instance->pImpl->LogFD, 0);
+			LogSize = StkPlGetFileSize(Impl::Instance->pImpl->FileName);
+			TotalAddSize = 0;
+		}
 	}
 	Impl::Instance->pImpl->LoggingStopped = true;
 }
@@ -183,6 +220,8 @@ MessageProc::MessageProc()
 	pImpl->LoggingStopped = false;
 	pImpl->LogFD = NULL;
 	pImpl->LoggingBuf[0] = '\0';
+	pImpl->LogSizeA = 1000000;
+	pImpl->LogSizeB = 2000000;
 }
 
 // Probably there is no chance to be called from any functions.
@@ -339,6 +378,8 @@ void MessageProc::ClearAllMsg()
 // Return : Result code (0: Success, -1: Failure)
 int MessageProc::StartLogging(const wchar_t* FilePath)
 {
+	StkPlWcsCpy(Impl::Instance->pImpl->FileName, FILENAME_MAX, FilePath);
+	
 	// Open log file
 	Impl::Instance->pImpl->LogFD = StkPlOpenFileForWrite(FilePath, true);
 	if (Impl::Instance->pImpl->LogFD == NULL) {
@@ -362,9 +403,17 @@ void MessageProc::AddLog(const char* Msg, int Type)
 	char TmpBuf[65536] = "";
 	StkPlGetTimeInIso8601(TmpTimeStr, true);
 	StkPlSPrintf(TmpBuf, 65536, "%s [%08x] %s %s\r\n", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], Msg);
-	Impl::Instance->pImpl->Cs4LogBuf.lock();
-	StkPlStrCat(Impl::Instance->pImpl->LoggingBuf, 65536, TmpBuf);
-	Impl::Instance->pImpl->Cs4LogBuf.unlock();
+	while (true) {
+		Impl::Instance->pImpl->Cs4LogBuf.lock();
+		if (StkPlStrLen(Impl::Instance->pImpl->LoggingBuf) + StkPlStrLen(TmpBuf) + 1 < 65536) {
+			StkPlStrCat(Impl::Instance->pImpl->LoggingBuf, 65536, TmpBuf);
+			Impl::Instance->pImpl->Cs4LogBuf.unlock();
+			break;
+		} else {
+			Impl::Instance->pImpl->Cs4LogBuf.unlock();
+			StkPlSleepMs(10);
+		}
+	}
 }
 
 // Disable logging feature. This API executes procedures shown below.
