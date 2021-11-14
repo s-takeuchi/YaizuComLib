@@ -378,6 +378,10 @@ void MessageProc::ClearAllMsg()
 // Return : Result code (0: Success, -1: Failure)
 int MessageProc::StartLogging(const wchar_t* FilePath)
 {
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+
 	StkPlWcsCpy(Impl::Instance->pImpl->FileName, FILENAME_MAX, FilePath);
 	
 	// Open log file

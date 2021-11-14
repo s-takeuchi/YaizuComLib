@@ -180,9 +180,6 @@ DWORD WINAPI HandlerEx (DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, 
 	switch(dwControl) {
 	case SERVICE_CONTROL_STOP:
 	case SERVICE_CONTROL_SHUTDOWN:
-
-		StopProcesses();
-
 		// Set STOP_PENDING status.
 		ss.dwCurrentState = SERVICE_STOP_PENDING;
 		if (!SetServiceStatus(g_hServiceStatus, &ss)) {
@@ -192,6 +189,9 @@ DWORD WINAPI HandlerEx (DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, 
 		// SERVICE SPECIFIC STOPPING CODE HERE.
 		// ...
 		// ...
+
+		StopProcesses();
+
 		g_bService = false;
 		Sleep(2 * 1000);
 
