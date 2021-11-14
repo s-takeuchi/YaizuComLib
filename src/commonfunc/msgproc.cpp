@@ -220,8 +220,8 @@ MessageProc::MessageProc()
 	pImpl->LoggingStopped = false;
 	pImpl->LogFD = NULL;
 	pImpl->LoggingBuf[0] = '\0';
-	pImpl->LogSizeA = 1000000;
-	pImpl->LogSizeB = 2000000;
+	pImpl->LogSizeA = 1000000; // delete logs up to this size when the log size exceeds LogSizeB
+	pImpl->LogSizeB = 2000000; // limitation of log size
 }
 
 // Probably there is no chance to be called from any functions.

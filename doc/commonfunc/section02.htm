@@ -240,6 +240,7 @@ UTF-8エンコーディングした日本語メッセージまたは日本語ラ
 <H2 ID="2.19">2.19 int StartLogging(wchar_t* FilePath)</H2>
 <div class="topic">
 ログファイルへのログの出力を開始します。<br>
+ログファイルのサイズが2MBytesを超えた場合、古いログを削除し、1MBytesまでファイルサイズを縮小します。<br/>
 <table class="tblstyle">
 <tr><td>FilePath[入力]</td><td>ログファイルへのパス</td></tr>
 <tr><td>[戻り値]</td><td>0:成功, -1:失敗</td></tr>

@@ -106,13 +106,13 @@ StkStringParserクラスが提供するAPI一覧を以下に示します。<br>
 <tr><td>OriginStr[入力]</td><td>構文解析を行う対象の文字列。</td></tr>
 <tr><td>Format[入力]</td><td>OriginStrを検索するための文字列。Targetに示す文字を1個から最大4個まで含んでいる必要がある。</td></tr>
 <tr><td>Target[入力]</td><td>OriginStrを検索し文字列を取得するためにFormat中に存在する文字。</td></tr>
-<tr><td>OutStr1[出力]</td><td>Format内に存在する1番目のTargetと対応する文字列を取得する。</td></tr>
+<tr><td>OutStr1[出力]</td><td>Format内に存在する1番目のTargetと対応する文字列を取得する。NULLを指定した場合は取得しない。</td></tr>
 <tr><td>OutStr1Len[入力]</td><td>OutStr1のサイズ(ワード数)を指定する。-1は無制限を示す。</td></tr>
-<tr><td>OutStr2[出力]</td><td>Format内に存在する2番目のTargetと対応する文字列を取得する。</td></tr>
+<tr><td>OutStr2[出力]</td><td>Format内に存在する2番目のTargetと対応する文字列を取得する。NULLを指定した場合は取得しない。</td></tr>
 <tr><td>OutStr2Len[入力]</td><td>OutStr2のサイズ(ワード数)を指定する。-1は無制限を示す。</td></tr>
-<tr><td>OutStr3[出力]</td><td>Format内に存在する3番目のTargetと対応する文字列を取得する。</td></tr>
+<tr><td>OutStr3[出力]</td><td>Format内に存在する3番目のTargetと対応する文字列を取得する。NULLを指定した場合は取得しない。</td></tr>
 <tr><td>OutStr3Len[入力]</td><td>OutStr3のサイズ(ワード数)を指定する。-1は無制限を示す。</td></tr>
-<tr><td>OutStr4[出力]</td><td>Format内に存在する4番目のTargetと対応する文字列を取得する。</td></tr>
+<tr><td>OutStr4[出力]</td><td>Format内に存在する4番目のTargetと対応する文字列を取得する。NULLを指定した場合は取得しない。</td></tr>
 <tr><td>OutStr4Len[入力]</td><td>OutStr4のサイズ(ワード数)を指定する。-1は無制限を示す。</td></tr>
 <tr><td>[戻り値]</td><td>Result code<br/>
 0:Format内に存在するTargetの数と取得できたOutStrの数が一致しない(FormatがTargetを含まず，且つOriginStrと文字列が一致しない場合も0が返る),<br/>
