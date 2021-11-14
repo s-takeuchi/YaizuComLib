@@ -402,6 +402,13 @@ int MessageProc::StartLogging(const wchar_t* FilePath)
 // Logging message
 void MessageProc::AddLog(const char* Msg, int Type)
 {
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+	if (Impl::Instance->pImpl->LogFD == NULL) {
+		return;
+	}
+
 	char TypeStr[4][8] = { "F/", "E/", "W/", "I/" };
 	char TmpTimeStr[64] = "";
 	char TmpBuf[65536] = "";
@@ -426,6 +433,10 @@ void MessageProc::AddLog(const char* Msg, int Type)
 // Return : Always zero returns
 int MessageProc::StopLogging()
 {
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+
 	// Stop logging thread
 	Impl::Instance->pImpl->StopLogging = true;
 	while (!Impl::Instance->pImpl->LoggingStopped) {
