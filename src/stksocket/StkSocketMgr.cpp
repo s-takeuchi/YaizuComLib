@@ -16,6 +16,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include <signal.h>
 #define STKSOCKET_ERRORCODE errno
 #define STKSOCKET_ERROR -1
 
@@ -53,6 +54,8 @@ StkSocketMgr::StkSocketMgr()
 #ifdef WIN32
 	static WSADATA WsaDat;
 	WSAStartup(MAKEWORD(2,0), &WsaDat);
+#else
+	signal(SIGPIPE, SIG_IGN);
 #endif
 
 	ClearLog();
