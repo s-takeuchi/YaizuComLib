@@ -22,7 +22,7 @@
     //
     // Logging information
     //
-    addClientMessage('STKCOMMONUG_LOGINFO', {'en':'Operation log', 'ja':'操作ログ'});
+    addClientMessage('STKCOMMONUG_LOGINFO', {'en':'Event log', 'ja':'イベントログ'});
     addClientMessage('STKCOMMONUG_LOGEVENTTIME', {'en':'Event Occurrence Time', 'ja':'イベント発生時刻'});
     addClientMessage('STKCOMMONUG_LOGEVENTUSER', {'en':'User', 'ja':'ユーザー'});
     addClientMessage('STKCOMMONUG_LOGEVENTUSER_SYSTEM', {'en':'System', 'ja':'System'});

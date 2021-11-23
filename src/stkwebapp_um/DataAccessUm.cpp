@@ -105,7 +105,7 @@ int DataAccessUm::GetLogs(wchar_t LogMsgTime[UserManagement::MAXNUM_OF_LOGRECORD
 {
 	RecordData* RecDatLog = NULL;
 	LockTable(L"Log", LOCK_EXCLUSIVE);
-	AzSortRecord(L"Log", L"Id");
+	ZaSortRecord(L"Log", L"Id");
 	if (UserId == -1) {
 		RecDatLog = GetRecord(L"Log");
 	} else {
