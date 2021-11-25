@@ -18,6 +18,7 @@
     addClientMessage('STKCOMMONUG_USER_CHG_PW_CONFIRM', {'en':'Confirm New Password', 'ja':'新しいパスワード(確認用)'});
     addClientMessage('STKCOMMONUG_USER_PW_WRONG', {'en':'The specified password is not correct.', 'ja':'指定されたパスワードが不正です。'});
     addClientMessage('STKCOMMONUG_USER_NEWPW_WRONG', {'en':'The specified "New Password" and "Confirm New Password" are not matched.', 'ja':'"新しいパスワード"と"新しいパスワード(確認用)"が不一致です。'});
+    addClientMessage('STKCOMMONUG_USER_DELCONFIRM', {'en':'Are you sure you want to delete the user? Click [Delete] button.', 'ja':'ユーザーを削除します。再度、[削除]ボタンを押してください。'});
 
     //
     // Logging information
@@ -78,6 +79,10 @@
     }
 
     function displayUser() {
+        function clearUserMgmtMsg() {
+            $('#usermgt_msg').empty();
+        }
+
         let userMgmt = $('<div id="usermgmt">');
         showInputModal(getClientMessage('STKCOMMONUG_USERMGMT'), userMgmt);
 
@@ -99,6 +104,7 @@
 
         if (responseData['API_GET_USERS'].Data.User !== undefined) {
             let userListTable = $('<table>');
+            $('#usermgmt').append(userListTable);
             userListTable.addClass('table table-striped');
 
             let tHead = $('<thead class="thead-dark">');
@@ -106,6 +112,7 @@
             userListTable.append(tHead);
 
             let tBody = $('<tbody>');
+            userListTable.append(tBody);
             for (let Loop = 0; Loop < userList.length; Loop++) {
                 let StrUserRole = '';
                 if (userList[Loop].Role == 0) {
@@ -114,9 +121,8 @@
                     StrUserRole = getClientMessage('STKCOMMONUG_USERROLEUSER');
                 }
                 tBody.append('<tr><td><div class="radio"><label><input type="radio" id="radioUser' + userList[Loop].Id + '" name="optradio" onclick="selectUser(\''+ userList[Loop].Id + '\')"/>&nbsp;' + userList[Loop].Name + '</label></div></td><td>' + StrUserRole + '</td></tr>');
+                $('#radioUser' + userList[Loop].Id).on('focusin', function() {clearUserMgmtMsg();});
             }
-            userListTable.append(tBody);
-            $('#usermgmt').append(userListTable);
         }
         $('#usermgmt').append('<div id="usermgmt-ope" style="margin-top:30px;padding-left:30px;padding-right:30px;padding-top:30px;padding-bottom:30px;border-color:#000000;border-style:solid;border-width:2px">');
         $('#usermgmt-ope').append('<div class="form-group"><label for="userName">' + getClientMessage('STKCOMMONUG_USERNAME') + '</label><input type="text" class="form-control" id="userName" placeholder="' + getClientMessage('STKCOMMONUG_USERNAME') + '"/></div>');
@@ -124,6 +130,10 @@
 
         let userPwOn = '';
         $('#usermgmt-ope').append($('<div class="form-check"><input class="form-check-input" type="checkbox" id="userPwOn" onClick="clickUserPwOn()" ' + userPwOn + '><label class="form-check-label" for="userPwOn">' + getClientMessage('STKCOMMONUG_USER_PASSWORD_ON') + '</label><input type="password" class="form-control" id="userPassword" placeholder="' + getClientMessage('STKCOMMONUG_USER_PASSWORD') + '" disabled/></div>'));
+
+        $('#userName').on('focusin', function() {clearUserMgmtMsg();});
+        $('#userRole').on('focusin', function() {clearUserMgmtMsg();});
+        $('#userPassword').on('focusin', function() {clearUserMgmtMsg();});
 
         $('#usermgmt').append('<br/>');
         $('#usermgmt').append('<div id="usermgt_msg"/>');
@@ -175,6 +185,14 @@
         apiCall('POST', '/api/user/', reqDatDf, 'API_OPE_USER', userOpeFinal);
     }
 
+    function confirmDeleteUser() {
+        if ($('#confirmDeleteUser').length) {
+            deleteUser();
+        } else {
+            displayAlertInfo('#usermgt_msg', '<div id="confirmDeleteUser">' + getClientMessage('STKCOMMONUG_USER_DELCONFIRM') + '</div>');
+        }
+    }
+
     function deleteUser() {
         apiCall('DELETE', '/api/user/' + selectedUserId + '/', null, 'API_OPE_USER', userOpeFinal);
     }
@@ -207,9 +225,11 @@
                 $('#userPassword').prop('disabled', true);
                 $('#userPassword').val('');
                 $('#userBtnUpdate').removeClass('disabled');
+                $('#userBtnUpdate').off('click');
                 $('#userBtnUpdate').click(function() {updateUser(true);});
                 $('#userBtnDelete').removeClass('disabled');
-                $('#userBtnDelete').click(function() {deleteUser();});
+                $('#userBtnDelete').off('click');
+                $('#userBtnDelete').click(function() {confirmDeleteUser();});
             }
         }
     }
