@@ -114,7 +114,7 @@ STKSOCKET_LOG_CACERT           = 1023 <br/>
 <ul>
 <li>Serverの秘密鍵の作成方法<br/>&gt; "\program files\OpenSSL-Win64\bin\openssl" genrsa -out server.key</li>
 <li>ServerのCSRの作成方法<br/>&gt; "\program files\OpenSSL-Win64\bin\openssl" req -new -key server.key -out server.csr -subj "/C=JP/ST=Kanagawa/O=Private/CN=localhost"</li>
-<li>subjectnames.txt<br/>subjectAltName = DNS:localhost, IP:127.0.0.1</li>
+<li>subjectnames.txt<br/>subjectAltName = DNS:localhost, IP:127.0.0.1<br/>&gt; echo subjectAltName = DNS:localhost, IP:127.0.0.1&gt;subjectnames.txt</li>
 <li>Server公開鍵証明書作成方法<br/>&gt; "\program files\OpenSSL-Win64\bin\openssl" x509 -req -CAkey ca.key -CA ca.crt -CAcreateserial -in server.csr -out server.crt -days 730 -extfile subjectnames.txt</li>
 </ul>
 
