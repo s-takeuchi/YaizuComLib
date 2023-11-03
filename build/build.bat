@@ -11,8 +11,8 @@ if defined APPVEYOR (
 )
 
 if defined GITHUBACTIONS (
-  echo For AppVeyor
-  set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe"
+  echo For GitHub Actions
+  set MSBUILD="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\msbuild.exe"
   set WKHTMLTOPDF=""
   set PDFTK=""
   set SEVENZIP="7z.exe"
@@ -22,7 +22,7 @@ if defined GITHUBACTIONS (
 
 set LOCALMACHINE="true"
 
-set MSBUILD="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+set MSBUILD="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\msbuild.exe"
 set WKHTMLTOPDF="C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
 set PDFTK="C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
 set SEVENZIP="C:\Program Files\7-Zip\7z.exe"
@@ -190,7 +190,6 @@ echo Building commonfunc.sln...
 %MSBUILD% "..\src\commonfunc\commonfunc.sln" /t:clean;build /p:Configuration=Release /p:platform="x64"
 IF %ERRORLEVEL% NEQ 0 goto buildexit
 copy "..\src\commonfunc\msgproc.h" deployment
-copy "..\src\commonfunc\StkGeneric.h" deployment
 copy "..\src\commonfunc\StkProperties.h" deployment
 copy "..\src\commonfunc\StkObject.h" deployment
 copy "..\src\commonfunc\StkStringParser.h" deployment
