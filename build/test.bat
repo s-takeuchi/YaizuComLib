@@ -6,7 +6,7 @@ if defined APPVEYOR (
 )
 
 if defined GITHUBACTIONS (
-  set MSBUILD="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\msbuild.exe"
+  set MSBUILD="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\msbuild.exe"
   goto definitionend
 )
 
