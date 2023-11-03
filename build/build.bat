@@ -12,7 +12,7 @@ if defined APPVEYOR (
 
 if defined GITHUBACTIONS (
   echo For GitHub Actions
-  set MSBUILD="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\msbuild.exe"
+  set MSBUILD="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\msbuild.exe"
   set WKHTMLTOPDF=""
   set PDFTK=""
   set SEVENZIP="7z.exe"
