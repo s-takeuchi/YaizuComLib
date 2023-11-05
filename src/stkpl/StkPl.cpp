@@ -213,17 +213,21 @@ char* StkPlWideCharToSjis(const wchar_t* Txt)
 	}
 	return NULL;
 #else
-	setlocale(LC_CTYPE, "");
+	char OrgLc[64] = "";
+	char* TmpOrgLc = setlocale(LC_CTYPE, "");
+	strncpy(OrgLc, TmpOrgLc, 64);
 	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
 	mbstate_t MbState;
 	memset((void*)&MbState, 0, sizeof(MbState));
 	int ActualSize = wcsrtombs(NULL, &Txt, 1, &MbState);
 	if (ActualSize == -1 || ConfLc == NULL) {
+		setlocale(LC_CTYPE, OrgLc);
 		return NULL;
 	}
 	char* NewMbs = new char[ActualSize + 1];
 	wcsrtombs(NewMbs, &Txt, ActualSize, &MbState);
 	NewMbs[ActualSize] = '\0';
+	setlocale(LC_CTYPE, OrgLc);
 	return NewMbs;
 #endif
 }
@@ -240,17 +244,21 @@ wchar_t* StkPlSjisToWideChar(const char* Txt)
 	}
 	return NULL;
 #else
-	setlocale(LC_CTYPE, "");
+	char OrgLc[64] = "";
+	char* TmpOrgLc = setlocale(LC_CTYPE, "");
+	strncpy(OrgLc, TmpOrgLc, 64);
 	char* ConfLc = setlocale(LC_CTYPE, "ja_JP.sjis");
 	mbstate_t MbState;
 	memset((void*)&MbState, 0, sizeof(MbState));
 	int ActualSize = mbsrtowcs(NULL, &Txt, 1, &MbState);
 	if (ActualSize == -1 || ConfLc == NULL) {
+		setlocale(LC_CTYPE, OrgLc);
 		return NULL;
 	}
 	wchar_t* NewWcs = new wchar_t[ActualSize + 1];
 	mbsrtowcs(NewWcs, &Txt, ActualSize, &MbState);
 	NewWcs[ActualSize] = L'\0';
+	setlocale(LC_CTYPE, OrgLc);
 	return NewWcs;
 #endif
 }
@@ -1498,14 +1506,21 @@ int StkPlCreateDirectory(const wchar_t* DirName)
 {
 #ifdef WIN32
 	bool Res = std::filesystem::create_directory(DirName);
-#else
-	bool Res = std::experimental::filesystem::create_directory(DirName);
-#endif
 	if (Res) {
 		return 0;
 	} else {
 		return -1;
 	}
+#else
+	char* PathToCreateDirUtf8 = StkPlCreateUtf8FromWideChar(DirName);
+	int Res = mkdir(PathToCreateDirUtf8, 0777);
+	delete PathToCreateDirUtf8;
+	if (Res == 0) {
+		return 0;
+	} else {
+		return -1;
+	}
+#endif
 }
 
 int StkPlAddSeparator(wchar_t* Path, size_t PathSize)
@@ -1528,7 +1543,14 @@ bool StkPlDeleteFile(wchar_t* Path)
 #ifdef WIN32
 	return std::filesystem::remove(Path);
 #else
-	return std::experimental::filesystem::remove(Path);
+	char* removeTargetUtf8 = StkPlCreateUtf8FromWideChar(Path);
+	int Ret = remove(removeTargetUtf8);
+	delete removeTargetUtf8;
+	if (Ret == 0) {
+		return false;
+	} else {
+		return true;
+	}
 #endif
 }
 
