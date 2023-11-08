@@ -1567,11 +1567,19 @@ int StkPlGetFullPathFromFileName(const wchar_t* FileName, wchar_t FullPath[FILEN
 	wcscpy_s(FullPath, FILENAME_MAX, NewPath.c_str());
 	return 0;
 #else
-	char c_full_path[FILENAME_MAX];
+	char c_full_path[FILENAME_MAX * 6]; // Assuming string in UTF-8 is returned.
 	readlink("/proc/self/exe", c_full_path, sizeof(c_full_path) - 1);
-	std::experimental::filesystem::path CurPath = c_full_path;
-	std::experimental::filesystem::path NewPath = CurPath.parent_path() / FileName;
-	wcscpy(FullPath, NewPath.wstring().c_str());
+	char* FileNameInUtf8 = StkPlCreateUtf8FromWideChar(FileName);
+	for (char* Ptr = c_full_path + strlen(c_full_path) - 2; Ptr > c_full_path; Ptr--) {
+		if (*Ptr == '/') {
+			*Ptr = '\0';
+			break;
+		}
+	}
+	strncat(c_full_path, "/", sizeof(c_full_path) - 1);
+	strncat(c_full_path, FileNameInUtf8, sizeof(c_full_path) - 1);
+	delete FileNameInUtf8;
+	StkPlConvUtf8ToWideChar(FullPath, FILENAME_MAX, c_full_path);
 	return 0;
 #endif
 }
