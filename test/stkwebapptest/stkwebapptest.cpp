@@ -997,6 +997,8 @@ void StkWebAppSendTest1()
 
 int main(int Argc, char* Argv[])
 {
+	StkPlPrintf("Test started\n");
+
 	StkSocket_InitSecureSetting();
 
 	StkWebAppSendTest1();
@@ -1007,6 +1009,8 @@ int main(int Argc, char* Argv[])
 	ReqResTest2();
 	ReqResTest1(true);
 	ReqResTest1(false);
+
+	StkPlPrintf("Test completed\n");
 
 	return 0;
 }
