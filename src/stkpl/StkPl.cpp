@@ -1630,12 +1630,12 @@ size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
 #else
 	uintmax_t FileSize = 0;
 	char* FilePathUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
-	try {
-		FileSize = std::experimental::filesystem::file_size(FilePathUtf8);
-	} catch (std::experimental::filesystem::filesystem_error ex) {
+	struct stat TmpSt;
+	if (stat(FilePathUtf8, &TmpSt) != 0) {
 		delete FilePathUtf8;
 		return -1;
 	}
+	FileSize = TmpSt.st_size;
 	delete FilePathUtf8;
 	if (FileSize == 0) {
 		return 0;
