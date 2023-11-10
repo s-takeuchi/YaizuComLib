@@ -591,10 +591,8 @@ int BasicBinaryTest10()
 			return -1;
 		}
 	}
-
-	return 0;
-
 	DeleteTable(L"Bin-TestX");
+	return 0;
 }
 
 // 1MB(バイナリ型カラム) * 32 * 10 = 320MBのテーブル"LargeBinTable"をCreateTableで作成し，その後DeleteTableで削除する
