@@ -12,9 +12,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: exec build
       run: |
-        wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz
-        tar -zxf openssl-1.1.1g.tar.gz
-        cd openssl-1.1.1g
+        wget https://www.openssl.org/source/openssl-3.1.4.tar.gz
+        tar -zxf openssl-3.1.4.tar.gz
+        cd openssl-3.1.4
         ./config
         make
         sudo make install
