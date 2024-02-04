@@ -231,7 +231,7 @@ void StkThreadGuiManager::RefreshLog(bool Force)
 		wchar_t *Out = new wchar_t[StkLog->GetLogMaxSize()];
 		StkLog->GetLog(Out, StkLog->GetLogMaxSize());
 		SendMessage(Tracelog, WM_SETTEXT, (WPARAM)0, (LPARAM)Out);
-		delete Out;
+		delete [] Out;
 	}
 }
 

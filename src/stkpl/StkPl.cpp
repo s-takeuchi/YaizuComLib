@@ -167,7 +167,7 @@ bool StkPlIsJapaneseLocale()
 {
 	setlocale(LC_ALL, "");
 	char* TmpLoc = setlocale(LC_CTYPE, NULL);
-	if (strstr(TmpLoc, "ja_JP") != NULL || strstr(TmpLoc, "Japanese_Japan") != NULL) {
+	if (TmpLoc != NULL && (strstr(TmpLoc, "ja_JP") != NULL || strstr(TmpLoc, "Japanese_Japan") != NULL)) {
 		return true;
 	}
 	return false;
@@ -1134,13 +1134,13 @@ int StkPlGetUsedMemorySizeOfCurrentProcess()
 	HANDLE hProcess;
 	PROCESS_MEMORY_COUNTERS pmc = { 0 };
 
-	long Size;
+	long Size = 0;
 	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
 		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
 			Size = (long)pmc.WorkingSetSize;
 		}
+		CloseHandle(hProcess);
 	}
-	CloseHandle(hProcess);
 	Size /= 1024;
 	return Size;
 #else
@@ -1171,13 +1171,13 @@ int StkPlGetUsedVmSizeOfCurrentProcess()
 	HANDLE hProcess;
 	PROCESS_MEMORY_COUNTERS pmc = { 0 };
 
-	long Size;
+	long Size = 0;
 	if ((hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessID)) != NULL) {
 		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
 			Size = (long)pmc.PagefileUsage;
 		}
+		CloseHandle(hProcess);
 	}
-	CloseHandle(hProcess);
 	Size /= 1024;
 	return Size;
 #else

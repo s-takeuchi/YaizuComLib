@@ -52,7 +52,7 @@ void StkThreadGuiLogging::AddLog(wchar_t* Message)
 	wchar_t *TmpBuf = new wchar_t[MaxLogSize + lstrlen(Message) + 1]; // 追加するメッセージの最大長を512文字と想定
 	lstrcpy(TmpBuf, Message);
 	JoinToExistedLogStream(TmpBuf);
-	delete TmpBuf;
+	delete [] TmpBuf;
 	UpdateVersion++;
 	LeaveCriticalSection(&CriticalSection);
 }
@@ -65,7 +65,7 @@ void StkThreadGuiLogging::AddLogWithThreadInfo(wchar_t* Name, wchar_t* Message)
 	wchar_t *TmpBuf = new wchar_t[MaxLogSize + lstrlen(Message) + 100]; // 追加するメッセージの最大長を512文字と想定
 	wsprintf(TmpBuf, L"%02d:%02d:%02d [%s]  %s", SysTm.wHour, SysTm.wMinute, SysTm.wSecond, Name, Message);
 	JoinToExistedLogStream(TmpBuf);
-	delete TmpBuf;
+	delete [] TmpBuf;
 	UpdateVersion++;
 	LeaveCriticalSection(&CriticalSection);
 }

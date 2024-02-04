@@ -187,6 +187,9 @@ StkThreadManager::StkThreadManager()
 	StkThreadElementCount = 0;
 	ProcBeforeFirstThreadStarts = (void (*)(void))NULL;
 	ProcAfterLastThreadStops = (void (*)(void))NULL;
+	for (int Loop = 0; Loop < MAX_NUM_OF_STKTHREADS; Loop++) {
+		StkThreadArray[Loop] = NULL;
+	}
 }
 
 // Destructor
