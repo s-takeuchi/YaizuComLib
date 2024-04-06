@@ -1153,11 +1153,13 @@ int StkSocketMgr::Receive(int Id, int LogId, unsigned char* Buffer, int BufferSi
 			fd_set RecFds;
 			FD_ZERO(&RecFds);
 			FD_SET(TmpSock, &RecFds);
-			// 一定時間待ったあとAcceptedSockに接続があるか確認する
-			select((int)TmpSock + 1, &RecFds, NULL, NULL, &Timeout);
 			int SslPend = 0;
 			if (SocketInfo[Loop].SecureCtx != NULL && SocketInfo[Loop].SecureSsl != NULL) {
 				SslPend = SSL_has_pending(SocketInfo[Loop].SecureSsl);
+			}
+			if (SslPend == 0) {
+				// 一定時間待ったあとAcceptedSockに接続があるか確認する
+				select((int)TmpSock + 1, &RecFds, NULL, NULL, &Timeout);
 			}
 			if (!FD_ISSET(TmpSock, &RecFds) && SslPend == 0) {
 				// Timeout occurrence and no data received
