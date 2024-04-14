@@ -1,7 +1,7 @@
 stkpltest : stkpltest.o
 	cd ../../src/stkpl; make
 	cp ../../src/stkpl/stkpl.a .
-	g++ -o stkpltest stkpltest.o stkpl.a -std=c++1z -lstdc++fs -static-libstdc++
+	g++ -o stkpltest stkpltest.o stkpl.a -std=c++1z -lstdc++fs -lstdc++
 
 stkpltest.o : stkpltest.cpp
 	g++ -c stkpltest.cpp -std=c++1z
