@@ -30,7 +30,7 @@ set LCOUNTER="C:\Program Files (x86)\lcounter\lcounter.exe"
 
 echo;
 echo This batch file requires softwares shown below.
-echo 1. Microsoft Visual Studio 2017
+echo 1. Microsoft Visual Studio 2022
 echo 2. wkhtmltopdf 0.12.0.3
 echo 3. PDFtk Server 2.02
 echo 4. 7-Zip 9.20
