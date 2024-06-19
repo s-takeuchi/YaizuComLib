@@ -84,9 +84,9 @@ StkWebApp_Umが使用するテーブルを作成する。<br/>
 本APIを呼び出すことによりデータベース内に下記のテーブルが作成される。<br/>
 </p>
 <ul>
-<li>User (Id:Int, Name:WStr, Password:WStr, Role:Int)</li>
-<li>Log (Id:Int, Time:WStr, MessageEn:WStr, MessageJa:WStr)</li>
-<li>Property (Name:WStr, ValueInt:Int, ValueWStr:WStr)</li>
+<li>User (Id:Int, Name:WStr[32], Password:WStr[32], Role:Int)</li>最大レコード数=64
+<li>Log (Id:Int, Time:WStr[32], MessageEn:WStr[100], MessageJa:WStr[100])</li>最大レコード数=111
+<li>Property (Name:WStr[256], ValueInt:Int, ValueWStr:WStr[256])</li>最大レコード数=1024
 </ul>
 <table class="tblstyle">
 <tr><td>戻り値</td><td>成功:0, 失敗:-1</td></tr>
@@ -105,7 +105,7 @@ StkWebApp_Umを初期化する。他のサーバAPIの呼び出し前に，本AP
 <div class="topic">
 <p>
 int StkWebAppUm_AddLogMsg(wchar_t MsgEn[STKWEBAPPUM_MAXLEN_OF_LOGMSG], wchar_t MsgJa[STKWEBAPPUM_MAXLEN_OF_LOGMSG])<br/>
-ログを追加する。
+ログを追加する。ログは少なくとも99個保存可能である。99個目より昔のログは定期的に削除される。
 </p>
 <table class="tblstyle">
 <tr><td>MsgEn(入力)</td><td>英語メッセージ。</td></tr>
