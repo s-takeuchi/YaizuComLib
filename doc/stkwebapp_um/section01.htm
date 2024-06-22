@@ -84,9 +84,9 @@ StkWebApp_Umが使用するテーブルを作成する。<br/>
 本APIを呼び出すことによりデータベース内に下記のテーブルが作成される。<br/>
 </p>
 <ul>
-<li>User (Id:Int, Name:WStr[32], Password:WStr[32], Role:Int)</li>最大レコード数=64
-<li>Log (Id:Int, Time:WStr[32], MessageEn:WStr[100], MessageJa:WStr[100])</li>最大レコード数=111
-<li>Property (Name:WStr[256], ValueInt:Int, ValueWStr:WStr[256])</li>最大レコード数=1024
+<li>User (Id:Int, Name:WStr[32], Password:WStr[32], Role:Int) 最大レコード数=64</li>
+<li>Log (Id:Int, Time:WStr[32], UserId:Int, MessageEn:WStr[100], MessageJa:WStr[100]) 最大レコード数=111</li>
+<li>Property (Name:WStr[256], ValueInt:Int, ValueWStr:WStr[256]) 最大レコード数=1024</li>
 </ul>
 <table class="tblstyle">
 <tr><td>戻り値</td><td>成功:0, 失敗:-1</td></tr>
