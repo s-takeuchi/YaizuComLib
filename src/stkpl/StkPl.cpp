@@ -1429,6 +1429,21 @@ void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)
 	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
 }
 
+long long StkPlGetUnixTimeFromRfc2822(char StrRfc2822[64])
+{
+	// "%s, %02d %s %d %02d:%02d:%02d %s", wday, mday, mon, year, hour, min, sec, diff
+}
+
+long long StkPlGetUnixTimeFromOldFormat(char StrOldFormat[64])
+{
+	// "%d-%02d-%02d %02d:%02d:%02d", year, mon, mday, hour, min, sec
+}
+
+long long StkPlGetUnixTimeFromIso8601(char StrIso8601[64])
+{
+	// %d-%02d-%02dT%02d:%02d:%02d%s, year, mon, mday, hour, min, sec
+}
+
 long long StkPlGetTime()
 {
 #ifdef WIN32
