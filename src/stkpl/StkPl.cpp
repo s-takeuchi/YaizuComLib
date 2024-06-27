@@ -1432,16 +1432,87 @@ void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)
 long long StkPlGetUnixTimeFromRfc2822(char StrRfc2822[64])
 {
 	// "%s, %02d %s %d %02d:%02d:%02d %s", wday, mday, mon, year, hour, min, sec, diff
+	char workStr[64] = "";
+	strcpy_s(workStr, 64, StrRfc2822);
+	char* elem[9] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	char deli[8][5] = {", ", " ", " ", " ", ":", ":", " ", " "};
+
+	int Ptr = 0;
+	for (int Index = 0; Index < 8; Index++) {
+		elem[Index] = &workStr[Ptr];
+		for (; Ptr < 63 && workStr[Ptr] != NULL; Ptr++) {
+			if (strncmp(&workStr[Ptr], deli[Index], strlen(deli[Index])) == 0) {
+				break;
+			}
+		}
+		if (Ptr == 63 || workStr[Ptr] == NULL) {
+			if (Index == 7) {
+				break;
+			}
+			return -1;
+		} else {
+			workStr[Ptr] = '\0';
+			Ptr += (int)strlen(deli[Index]);
+			continue;
+		}
+	}
+	struct tm Origin;
+	if (elem[0] != NULL) {
+		char *TmpWday[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+		int IntWday = -1;
+		for (int Loop = 0; Loop < 7; Loop++) {
+			if (strcmp(TmpWday[Loop], elem[0]) == 0) {
+				IntWday = Loop;
+			}
+		}
+		if (IntWday == -1) {
+			return -1;
+		}
+		Origin.tm_wday = IntWday;
+	}
+	if (elem[1] != NULL) {
+		Origin.tm_mday = atoi(elem[1]);
+	}
+	if (elem[2] != NULL) {
+		char* TmpMon[12] = { "Jun", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"};
+		int IntMon = -1;
+		for (int Loop = 0; Loop < 12; Loop++) {
+			if (strcmp(TmpMon[Loop], elem[2]) == 0) {
+				IntMon = Loop;
+			}
+		}
+		if (IntMon == -1) {
+			return -1;
+		}
+		Origin.tm_mon = IntMon;
+	}
+	if (elem[3] != NULL) {
+		Origin.tm_year = atoi(elem[3]) - 1900;
+	}
+	if (elem[4] != NULL) {
+		Origin.tm_hour = atoi(elem[4]);
+	}
+	if (elem[5] != NULL) {
+		Origin.tm_min = atoi(elem[5]);
+	}
+	if (elem[6] != NULL) {
+		Origin.tm_sec = atoi(elem[6]);
+	}
+	Origin.tm_isdst = -1;
+	Origin.tm_yday = 0;
+	return mktime(&Origin);
 }
 
 long long StkPlGetUnixTimeFromOldFormat(char StrOldFormat[64])
 {
 	// "%d-%02d-%02d %02d:%02d:%02d", year, mon, mday, hour, min, sec
+	return 0;
 }
 
 long long StkPlGetUnixTimeFromIso8601(char StrIso8601[64])
 {
 	// %d-%02d-%02dT%02d:%02d:%02d%s, year, mon, mday, hour, min, sec
+	return 0;
 }
 
 long long StkPlGetTime()

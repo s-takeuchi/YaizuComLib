@@ -168,11 +168,11 @@ void Test_Invalid_String_Utf8_Utf16(const char* MsgPtr, int Count)
 
 void Test_Time()
 {
-	StkPlPrintf("Test time in RFC 2822 ... ");
 	char Time[64];
 	wchar_t WTime[64];
 
 	//
+	StkPlPrintf("Test time in RFC 2822 ... ");
 	StkPlGetTimeInRfc2822(Time, true);
 	if (Time == NULL || StkPlStrStr(Time, ",") == NULL || StkPlStrStr(Time, " ") == NULL || StkPlStrStr(Time, ":") == NULL) {
 		StkPlPrintf("NG case\n");
@@ -189,6 +189,11 @@ void Test_Time()
 		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
+	//
+	StkPlPrintf("Test Unixtime by RFC 2822 ... ");
+	StkPlGetUnixTimeFromRfc2822(Time);
+	StkPlPrintf("OK case\n");
+
 
 	//
 	StkPlPrintf("Test time in ISO 8601 ... ");
