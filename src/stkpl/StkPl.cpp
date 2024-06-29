@@ -1429,19 +1429,22 @@ void StkPlGetWTimeInOldFormat(wchar_t Date[64], bool IsLocalTime)
 	StkPlConvUtf8ToWideChar(Date, 64, DateTmp);
 }
 
-long long StkPlGetUnixTimeFromRfc2822(char StrRfc2822[64])
+long long StkPlGetUnixTimeFromRfc2822(const char StrRfc2822[64])
 {
 	// "%s, %02d %s %d %02d:%02d:%02d %s", wday, mday, mon, year, hour, min, sec, diff
+	if (StrRfc2822 == NULL) {
+		return -1;
+	}
 	char workStr[64] = "";
-	strcpy_s(workStr, 64, StrRfc2822);
+	StkPlStrCpy(workStr, 64, StrRfc2822);
 	char* elem[9] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 	char deli[8][5] = {", ", " ", " ", " ", ":", ":", " ", " "};
 
 	int Ptr = 0;
 	for (int Index = 0; Index < 8; Index++) {
 		elem[Index] = &workStr[Ptr];
-		for (; Ptr < 63 && workStr[Ptr] != NULL; Ptr++) {
-			if (strncmp(&workStr[Ptr], deli[Index], strlen(deli[Index])) == 0) {
+		for (; Ptr < 63 && workStr[Ptr] != '\0'; Ptr++) {
+			if (StkPlStrNCmp(&workStr[Ptr], deli[Index], strlen(deli[Index])) == 0) {
 				break;
 			}
 		}
@@ -1458,7 +1461,7 @@ long long StkPlGetUnixTimeFromRfc2822(char StrRfc2822[64])
 	}
 	struct tm Origin;
 	if (elem[0] != NULL) {
-		char *TmpWday[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+		const char *TmpWday[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 		int IntWday = -1;
 		for (int Loop = 0; Loop < 7; Loop++) {
 			if (strcmp(TmpWday[Loop], elem[0]) == 0) {
@@ -1474,7 +1477,7 @@ long long StkPlGetUnixTimeFromRfc2822(char StrRfc2822[64])
 		Origin.tm_mday = atoi(elem[1]);
 	}
 	if (elem[2] != NULL) {
-		char* TmpMon[12] = { "Jun", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"};
+		const char* TmpMon[12] = { "Jun", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"};
 		int IntMon = -1;
 		for (int Loop = 0; Loop < 12; Loop++) {
 			if (strcmp(TmpMon[Loop], elem[2]) == 0) {
@@ -1503,13 +1506,13 @@ long long StkPlGetUnixTimeFromRfc2822(char StrRfc2822[64])
 	return mktime(&Origin);
 }
 
-long long StkPlGetUnixTimeFromOldFormat(char StrOldFormat[64])
+long long StkPlGetUnixTimeFromOldFormat(const char StrOldFormat[64])
 {
 	// "%d-%02d-%02d %02d:%02d:%02d", year, mon, mday, hour, min, sec
 	return 0;
 }
 
-long long StkPlGetUnixTimeFromIso8601(char StrIso8601[64])
+long long StkPlGetUnixTimeFromIso8601(const char StrIso8601[64])
 {
 	// %d-%02d-%02dT%02d:%02d:%02d%s, year, mon, mday, hour, min, sec
 	return 0;
