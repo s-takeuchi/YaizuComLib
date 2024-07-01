@@ -215,6 +215,18 @@ void Test_Time()
 		StkPlPrintf("NG case\n");
 		StkPlExit(-1);
 	}
+	if (StkPlGetUnixTimeFromRfc2822("Mon,31 Jan 1992 12:11:22 +0000") != -1) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	if (StkPlGetUnixTimeFromRfc2822("Mon, 31 Jan 1992 12:11 +0000") != -1) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	if (StkPlGetUnixTimeFromRfc2822("Mon, 31 Jan 1992 12:11:22") != -1) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
 	StkPlPrintf("OK case\n");
 
 

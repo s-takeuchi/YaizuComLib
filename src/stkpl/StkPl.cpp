@@ -1448,7 +1448,7 @@ long long StkPlGetUnixTimeFromRfc2822(const char StrRfc2822[64])
 				break;
 			}
 		}
-		if (Ptr == 63 || workStr[Ptr] == NULL) {
+		if (Ptr == 63 || workStr[Ptr] == '\0') {
 			if (Index == 7) {
 				break;
 			}
@@ -1477,7 +1477,7 @@ long long StkPlGetUnixTimeFromRfc2822(const char StrRfc2822[64])
 		Origin.tm_mday = atoi(elem[1]);
 	}
 	if (elem[2] != NULL) {
-		const char* TmpMon[12] = { "Jun", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"};
+		const char* TmpMon[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 		int IntMon = -1;
 		for (int Loop = 0; Loop < 12; Loop++) {
 			if (strcmp(TmpMon[Loop], elem[2]) == 0) {
