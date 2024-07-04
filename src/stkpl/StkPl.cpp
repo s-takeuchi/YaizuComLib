@@ -1437,7 +1437,7 @@ long long StkPlGetUnixTimeFromRfc2822(const char StrRfc2822[64])
 	}
 	char workStr[64] = "";
 	StkPlStrCpy(workStr, 64, StrRfc2822);
-	char* elem[9] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	char* elem[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 	char deli[8][5] = {", ", " ", " ", " ", ":", ":", " ", " "};
 
 	int Ptr = 0;
@@ -1509,13 +1509,116 @@ long long StkPlGetUnixTimeFromRfc2822(const char StrRfc2822[64])
 long long StkPlGetUnixTimeFromOldFormat(const char StrOldFormat[64])
 {
 	// "%d-%02d-%02d %02d:%02d:%02d", year, mon, mday, hour, min, sec
-	return 0;
+	if (StrOldFormat == NULL) {
+		return -1;
+	}
+	char workStr[64] = "";
+	StkPlStrCpy(workStr, 64, StrOldFormat);
+	char* elem[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
+	char deli[6][5] = { "-", "-", " ", ":", ":", " "};
+
+	int Ptr = 0;
+	for (int Index = 0; Index < 6; Index++) {
+		elem[Index] = &workStr[Ptr];
+		for (; Ptr < 63 && workStr[Ptr] != '\0'; Ptr++) {
+			if (StkPlStrNCmp(&workStr[Ptr], deli[Index], strlen(deli[Index])) == 0) {
+				break;
+			}
+		}
+		if (Ptr == 63 || workStr[Ptr] == '\0') {
+			if (Index == 5) {
+				break;
+			}
+			return -1;
+		} else {
+			workStr[Ptr] = '\0';
+			Ptr += (int)strlen(deli[Index]);
+			continue;
+		}
+	}
+	struct tm Origin;
+
+	if (elem[0] != NULL) {
+		Origin.tm_year = atoi(elem[0]) - 1900;
+	}
+	if (elem[1] != NULL) {
+		Origin.tm_mon = atoi(elem[1]) - 1;
+	}
+	if (elem[2] != NULL) {
+		Origin.tm_mday = atoi(elem[2]);
+	}
+	if (elem[3] != NULL) {
+		Origin.tm_hour = atoi(elem[3]);
+	}
+	if (elem[4] != NULL) {
+		Origin.tm_min = atoi(elem[4]);
+	}
+	if (elem[5] != NULL) {
+		Origin.tm_sec = atoi(elem[5]);
+	}
+	Origin.tm_isdst = -1;
+	Origin.tm_yday = 0;
+	Origin.tm_wday = 0;
+	return mktime(&Origin);
 }
 
 long long StkPlGetUnixTimeFromIso8601(const char StrIso8601[64])
 {
-	// %d-%02d-%02dT%02d:%02d:%02d%s, year, mon, mday, hour, min, sec
-	return 0;
+	// %d-%02d-%02dT%02d:%02d:%02d%s, year, mon, mday, hour, min, sec, diff
+	if (StrIso8601 == NULL) {
+		return -1;
+	}
+	char workStr[64] = "";
+	StkPlStrCpy(workStr, 64, StrIso8601);
+	char* elem[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	char deli[7][5] = { "-", "-", "T", ":", ":", "@", " "};
+
+	int Ptr = 0;
+	for (int Index = 0; Index < 7; Index++) {
+		elem[Index] = &workStr[Ptr];
+		for (; Ptr < 63 && workStr[Ptr] != '\0'; Ptr++) {
+			if (deli[Index][0] == '@' && (workStr[Ptr] == '-' || workStr[Ptr] == '+')) {
+				break;
+			}
+			if (StkPlStrNCmp(&workStr[Ptr], deli[Index], strlen(deli[Index])) == 0) {
+				break;
+			}
+		}
+		if (Ptr == 63 || workStr[Ptr] == '\0') {
+			if (Index == 6) {
+				break;
+			}
+			return -1;
+		} else {
+			workStr[Ptr] = '\0';
+			Ptr += (int)strlen(deli[Index]);
+			continue;
+		}
+	}
+	struct tm Origin;
+
+	if (elem[0] != NULL) {
+		Origin.tm_year = atoi(elem[0]) - 1900;
+	}
+	if (elem[1] != NULL) {
+		Origin.tm_mon = atoi(elem[1]) - 1;
+	}
+	if (elem[2] != NULL) {
+		Origin.tm_mday = atoi(elem[2]);
+	}
+	if (elem[3] != NULL) {
+		Origin.tm_hour = atoi(elem[3]);
+	}
+	if (elem[4] != NULL) {
+		Origin.tm_min = atoi(elem[4]);
+	}
+	if (elem[5] != NULL) {
+		Origin.tm_sec = atoi(elem[5]);
+	}
+	Origin.tm_isdst = -1;
+	Origin.tm_yday = 0;
+	Origin.tm_wday = 0;
+	return mktime(&Origin);
 }
 
 long long StkPlGetTime()

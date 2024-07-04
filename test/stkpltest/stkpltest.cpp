@@ -190,44 +190,46 @@ void Test_Time()
 	}
 	StkPlPrintf("OK case\n");
 	//
-	StkPlPrintf("Test Unixtime by RFC 2822 ... ");
-	StkPlGetTimeInRfc2822(Time, true);
-	long long UnixTime = StkPlGetUnixTimeFromRfc2822(Time);
-	time_t Now = time(NULL);
-	if (Now - UnixTime > 1 || Now - UnixTime < -1) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
+	{
+		StkPlPrintf("Test Unixtime by RFC 2822 ... ");
+		StkPlGetTimeInRfc2822(Time, true);
+		long long UnixTime = StkPlGetUnixTimeFromRfc2822(Time);
+		time_t Now = time(NULL);
+		if (Now - UnixTime > 1 || Now - UnixTime < -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromRfc2822(NULL) != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromRfc2822("") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		// "%s, %02d %s %d %02d:%02d:%02d %s", wday, mday, mon, year, hour, min, sec, diff
+		if (StkPlGetUnixTimeFromRfc2822("Xxx, 31 Jan 1992 12:11:22 +0000") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromRfc2822("Mon, 31 Xxx 1992 12:11:22 +0000") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromRfc2822("Mon,31 Jan 1992 12:11:22 +0000") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromRfc2822("Mon, 31 Jan 1992 12:11 +0000") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromRfc2822("Mon, 31 Jan 1992 12:11:22") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		StkPlPrintf("OK case\n");
 	}
-	if (StkPlGetUnixTimeFromRfc2822(NULL) != -1) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-	if (StkPlGetUnixTimeFromRfc2822("") != -1) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-	// "%s, %02d %s %d %02d:%02d:%02d %s", wday, mday, mon, year, hour, min, sec, diff
-	if (StkPlGetUnixTimeFromRfc2822("Xxx, 31 Jan 1992 12:11:22 +0000") != -1) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-	if (StkPlGetUnixTimeFromRfc2822("Mon, 31 Xxx 1992 12:11:22 +0000") != -1) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-	if (StkPlGetUnixTimeFromRfc2822("Mon,31 Jan 1992 12:11:22 +0000") != -1) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-	if (StkPlGetUnixTimeFromRfc2822("Mon, 31 Jan 1992 12:11 +0000") != -1) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-	if (StkPlGetUnixTimeFromRfc2822("Mon, 31 Jan 1992 12:11:22") != -1) {
-		StkPlPrintf("NG case\n");
-		StkPlExit(-1);
-	}
-	StkPlPrintf("OK case\n");
 
 
 	//
@@ -262,6 +264,39 @@ void Test_Time()
 		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
+	//
+	{
+		StkPlPrintf("Test Unixtime by old format ... ");
+		StkPlGetTimeInOldFormat(Time, true);
+		long long UnixTime = StkPlGetUnixTimeFromOldFormat(Time);
+		time_t Now = time(NULL);
+		if (Now - UnixTime > 1 || Now - UnixTime < -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromOldFormat(NULL) != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromOldFormat("") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		// "%d-%02d-%02d %02d:%02d:%02d", year, mon, mday, hour, min, sec
+		if (StkPlGetUnixTimeFromOldFormat("2023-01-01 01:01:01") == -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromOldFormat("2023 01 01 01:01:01") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromOldFormat("2023-01-01 01 01 01") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		StkPlPrintf("OK case\n");
+	}
 }
 
 void TestHostName()
