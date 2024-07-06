@@ -58,8 +58,17 @@ void StkPlGetTimeInRfc2822(char[64], bool)<br/>
 void StkPlGetWTimeInRfc2822(wchar_t[64], bool)<br/>
 void StkPlGetTimeInOldFormat(char[64], bool)<br/>
 void StkPlGetWTimeInOldFormat(wchar_t[64], bool)<br/>
+void StkPlGetTimeInIso8601(char[64], bool);<br/>
+void StkPlGetWTimeInIso8601(wchar_t[64], bool);<br/>
 </td>
 <td>ローカルタイムまたはUTCを返却します。</td></tr>
+
+<tr><td>
+long long StkPlGetUnixTimeFromRfc2822(const char[64]);<br/>
+long long StkPlGetUnixTimeFromOldFormat(const char[64]);<br/>
+long long StkPlGetUnixTimeFromIso8601(const char[64]);<br/>
+</td>
+<td>ローカルタイムを文字列として受け取り、Unix timeを返却します。</td></tr>
 
 <tr>
     <td>FileInfoList* StkPlCreateFileInfoList(const wchar_t[FILENAME_MAX])</td>
@@ -212,7 +221,23 @@ UTFとワイドキャラクタ文字列を相互に変換します。同時に�
         
 
 
-    <H4 ID="1.7">1.7 FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])</H4>
+    <H4 ID="1.7">1.7<br/>
+        long long StkPlGetUnixTimeFromRfc2822(const char Date[64]);<br/>
+        long long StkPlGetUnixTimeFromOldFormat(const char Date[64]);<br/>
+        long long StkPlGetUnixTimeFromIso8601(const char Date[64]);<br/>
+    </H4>
+    <div class="topic">
+        RFC 2822形式, ISO 8601形式またはYYYY-MM-DD hh:mm:ss形式のローカルタイムを受け取り、Unix timeを返却します。<br/>
+        ローカルタイムのUnix timeが返却されます。UTCとしては扱われません。<br/>
+        <table class="tblstyle">
+            <tr><td>Date[入力]</td><td>ローカルタイムを示す文字列(RFC 2822形式, ISO 8601形式またはYYYY-MM-DD hh:mm:ss形式)</td></tr>
+            <tr><td>[戻り値]</td><td>Unix time</td></tr>
+        </table>
+    </div>
+        
+
+
+    <H4 ID="1.8">1.8 FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])</H4>
     <div class="topic">
         API creates file information list under the specified directory.<br/>
         <table class="tblstyle">
@@ -236,7 +261,7 @@ struct FileInfoList {
 
 
 
-    <H4 ID="1.8">1.8 void StkPlDeleteFileInfoList(FileInfoList* FileInfo)</H4>
+    <H4 ID="1.9">1.9 void StkPlDeleteFileInfoList(FileInfoList* FileInfo)</H4>
     <div class="topic">
         Delete file information list.
         <table class="tblstyle">
@@ -246,7 +271,7 @@ struct FileInfoList {
     
 
 
-    <H4 ID="1.9">1.9 bool StkPlDeleteFile(wchar_t* Path)</H4>
+    <H4 ID="1.10">1.10 bool StkPlDeleteFile(wchar_t* Path)</H4>
     <div class="topic">
         Delete a file.
         <table class="tblstyle">
@@ -257,7 +282,7 @@ struct FileInfoList {
 
 
 
-    <H4 ID="1.10">1.10 int StkPlCreateDirectory(const wchar_t* Path)</H4>
+    <H4 ID="1.11">1.11 int StkPlCreateDirectory(const wchar_t* Path)</H4>
     <div class="topic">
         Create a directory.
         <table class="tblstyle">
@@ -268,7 +293,7 @@ struct FileInfoList {
 
 
 
-    <H4 ID="1.11">1.11 int StkPlAddSeparator(wchar_t* Path, size_t PathSize)</H4>
+    <H4 ID="1.12">1.12 int StkPlAddSeparator(wchar_t* Path, size_t PathSize)</H4>
     <div class="topic">
         Add separator to the existing path.<br/>
         <ul>
@@ -284,7 +309,7 @@ struct FileInfoList {
 
 
 
-    <H4 ID="1.12">1.12 int StkPlGetUsedMemorySizeOfCurrentProcess()</H4>
+    <H4 ID="1.13">1.13 int StkPlGetUsedMemorySizeOfCurrentProcess()</H4>
     <div class="topic">
         Get physical memory size used by current process.<br/>
         This API returns the size in KB.<br/>
@@ -300,7 +325,7 @@ struct FileInfoList {
 
 
 
-    <H4 ID="1.13">1.13 int StkPlGetUsedVmSizeOfCurrentProcess()</H4>
+    <H4 ID="1.14">1.14 int StkPlGetUsedVmSizeOfCurrentProcess()</H4>
     <div class="topic">
         Get virtual memory size used by current process.<br/>
         This API returns the size in KB.<br/>
@@ -316,7 +341,7 @@ struct FileInfoList {
 
 
 
-    <H4 ID="1.14">1.14 wchar_t* StkPlSjisToWideChar(const char* Txt)</H4>
+    <H4 ID="1.15">1.15 wchar_t* StkPlSjisToWideChar(const char* Txt)</H4>
     <div class="topic">
         Convert SJIS encoded string to wide char string.<br/>
         This API creates necessary memory for returning wide char string.
@@ -331,7 +356,7 @@ struct FileInfoList {
 
 
 
-    <H4 ID="1.15">1.15 char* StkPlWideCharToSjis(const wchar_t* Txt)</H4>
+    <H4 ID="1.16">1.16 char* StkPlWideCharToSjis(const wchar_t* Txt)</H4>
     <div class="topic">
         Convert wide char string to SJIS encoded string.<br/>
         This API creates necessary memory for returning SJIS encoded string.
@@ -345,7 +370,7 @@ struct FileInfoList {
 
 
 
-    <H4 ID="1.16">1.16 int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)</H4>
+    <H4 ID="1.17">1.17 int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)</H4>
     <div class="topic">
         Execute the command specified.<br/>
         The command will be timeout in TimeoutInMs.<br/>
