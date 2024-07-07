@@ -1621,6 +1621,27 @@ long long StkPlGetUnixTimeFromIso8601(const char StrIso8601[64])
 	return mktime(&Origin);
 }
 
+long long StkPlGetUnixTimeFromRfc2822W(const wchar_t StrRfc2822[64])
+{
+	char NewDateTime[64];
+	StkPlConvWideCharToUtf8(NewDateTime, 64, StrRfc2822);
+	return StkPlGetUnixTimeFromRfc2822(NewDateTime);
+}
+
+long long StkPlGetUnixTimeFromOldFormatW(const wchar_t StrOldFormat[64])
+{
+	char NewDateTime[64];
+	StkPlConvWideCharToUtf8(NewDateTime, 64, StrOldFormat);
+	return StkPlGetUnixTimeFromOldFormat(NewDateTime);
+}
+
+long long StkPlGetUnixTimeFromIso8601W(const wchar_t StrIso8601[64])
+{
+	char NewDateTime[64];
+	StkPlConvWideCharToUtf8(NewDateTime, 64, StrIso8601);
+	return StkPlGetUnixTimeFromIso8601(NewDateTime);
+}
+
 long long StkPlGetTime()
 {
 #ifdef WIN32

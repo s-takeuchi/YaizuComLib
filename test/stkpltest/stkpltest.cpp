@@ -199,6 +199,13 @@ void Test_Time()
 			StkPlPrintf("NG case\n");
 			StkPlExit(-1);
 		}
+		StkPlGetWTimeInRfc2822(WTime, true);
+		UnixTime = StkPlGetUnixTimeFromRfc2822W(WTime);
+		Now = time(NULL);
+		if (Now - UnixTime > 1 || Now - UnixTime < -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
 		if (StkPlGetUnixTimeFromRfc2822(NULL) != -1) {
 			StkPlPrintf("NG case\n");
 			StkPlExit(-1);
@@ -250,6 +257,49 @@ void Test_Time()
 		StkPlExit(-1);
 	}
 	StkPlPrintf("OK case\n");
+	{
+		StkPlPrintf("Test Unixtime by ISO 8601 ... ");
+		StkPlGetTimeInIso8601(Time, true);
+		long long UnixTime = StkPlGetUnixTimeFromIso8601(Time);
+		time_t Now = time(NULL);
+		if (Now - UnixTime > 1 || Now - UnixTime < -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		StkPlGetWTimeInIso8601(WTime, true);
+		UnixTime = StkPlGetUnixTimeFromIso8601W(WTime);
+		Now = time(NULL);
+		if (Now - UnixTime > 1 || Now - UnixTime < -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromIso8601(NULL) != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromIso8601("") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		// %d-%02d-%02dT%02d:%02d:%02d%s, year, mon, mday, hour, min, sec, diff
+		if (StkPlGetUnixTimeFromIso8601("2023-01-01T01:01:01+0000") == -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromIso8601("2023-01-01 01:01:01+0000") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromIso8601("2023 01 01T01:01:01+0000") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		if (StkPlGetUnixTimeFromIso8601("2023-01-01T01 01 01+0000") != -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		StkPlPrintf("OK case\n");
+	}
 
 	//
 	StkPlPrintf("Test time in old format ... ");
@@ -270,6 +320,13 @@ void Test_Time()
 		StkPlGetTimeInOldFormat(Time, true);
 		long long UnixTime = StkPlGetUnixTimeFromOldFormat(Time);
 		time_t Now = time(NULL);
+		if (Now - UnixTime > 1 || Now - UnixTime < -1) {
+			StkPlPrintf("NG case\n");
+			StkPlExit(-1);
+		}
+		StkPlGetWTimeInOldFormat(WTime, true);
+		UnixTime = StkPlGetUnixTimeFromOldFormatW(WTime);
+		Now = time(NULL);
 		if (Now - UnixTime > 1 || Now - UnixTime < -1) {
 			StkPlPrintf("NG case\n");
 			StkPlExit(-1);

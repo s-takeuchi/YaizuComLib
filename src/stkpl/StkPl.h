@@ -129,6 +129,9 @@ void StkPlGetWTimeInIso8601(wchar_t[64], bool);
 long long StkPlGetUnixTimeFromRfc2822(const char[64]);
 long long StkPlGetUnixTimeFromOldFormat(const char[64]);
 long long StkPlGetUnixTimeFromIso8601(const char[64]);
+long long StkPlGetUnixTimeFromRfc2822W(const wchar_t[64]);
+long long StkPlGetUnixTimeFromOldFormatW(const wchar_t[64]);
+long long StkPlGetUnixTimeFromIso8601W(const wchar_t[64]);
 long long StkPlGetTime();
 void StkPlGetTime(int*, int*, int*, int*, int*, int*, bool);
 

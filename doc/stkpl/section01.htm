@@ -65,8 +65,11 @@ void StkPlGetWTimeInIso8601(wchar_t[64], bool);<br/>
 
 <tr><td>
 long long StkPlGetUnixTimeFromRfc2822(const char[64]);<br/>
+long long StkPlGetUnixTimeFromRfc2822W(const wchar_t[64]);<br/>
 long long StkPlGetUnixTimeFromOldFormat(const char[64]);<br/>
+long long StkPlGetUnixTimeFromOldFormatW(const wchar_t[64]);<br/>
 long long StkPlGetUnixTimeFromIso8601(const char[64]);<br/>
+long long StkPlGetUnixTimeFromIso8601W(const wchar_t[64]);<br/>
 </td>
 <td>ローカルタイムを文字列として受け取り、Unix timeを返却します。</td></tr>
 
@@ -223,8 +226,11 @@ UTFとワイドキャラクタ文字列を相互に変換します。同時に�
 
     <H4 ID="1.7">1.7<br/>
         long long StkPlGetUnixTimeFromRfc2822(const char Date[64]);<br/>
+        long long StkPlGetUnixTimeFromRfc2822W(const wchar_t Date[64]);<br/>
         long long StkPlGetUnixTimeFromOldFormat(const char Date[64]);<br/>
+        long long StkPlGetUnixTimeFromOldFormatW(const wchar_t Date[64]);<br/>
         long long StkPlGetUnixTimeFromIso8601(const char Date[64]);<br/>
+        long long StkPlGetUnixTimeFromIso8601W(const wchar_t Date[64]);<br/>
     </H4>
     <div class="topic">
         RFC 2822形式, ISO 8601形式またはYYYY-MM-DD hh:mm:ss形式のローカルタイムを受け取り、Unix timeを返却します。<br/>
