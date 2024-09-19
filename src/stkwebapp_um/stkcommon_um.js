@@ -382,3 +382,20 @@
         $('td').css('vertical-align', 'middle');
     }
 }
+
+{
+    let doAfterLoginSuccess = null;
+
+    function showLoginModalAndCheck(func) {
+        doAfterLoginSuccess = func;
+        showLoginModal(checkLogin);
+    }
+
+    function checkLogin(dummyId, dummyPw) {
+        setAuthenticationToken(dummyId + ' ' + dummyPw);
+        apiCall('GET', '/api/user/', null, 'API_GET_USER', checkLoginAfterApiCall);
+    }
+
+    function checkLoginAfterApiCall() {
+    }
+}
