@@ -194,8 +194,8 @@ WString型プロパティの値を取得する。
 <H2 ID="1.3">1.3 ApiBase</H2>
 <div class="topic">
 <p>
-ApiBaseは，StkWebAppExecを継承するAPIの抽象クラスです。<br/>
-ApiBaseを使用することにより，利用者側は次のメリットを得ることができます。<br/>
+ApiBaseは，StkWebAppExecを継承するAPIの抽象クラスである。<br/>
+ApiBaseを使用することにより，利用者側は次のメリットを得ることができる。<br/>
 </p>
 <ul>
 <li>ユーザー認証や権限チェックを行うための機能を呼び出すことができる。</li>
@@ -260,9 +260,22 @@ bool IsAdminUser(wchar_t* Token)<br/>
 stkcommon_um.jsは，以下に示すAPIを提供する。<br/>
 </p>
 <ul>
-<li>transDisplayUser()<br/>ユーザー管理ダイアログを表示する。</li>
-<li>transDisplayChgPassword()<br/>パスワード変更ダイアログを表示する。</li>
-<li>transDisplayLogInfo()<br/>操作ログ参照ダイアログを表示する。</li>
+<li>transDisplayUser()<br>
+    ユーザー管理ダイアログを表示する。<br>
+    GET /api/user/?target=all を呼び出し、結果を API_GET_USERSとして statusCodeおよび responseDataに格納する。
+    ユーザー管理ダイアログの操作により、POST /api/user/ または DELETE /api/user/ を呼び出し、結果を API_OPE_USERとしてstatusCodeおよび responseDataに格納する。<br>
+</li>
+<li>transDisplayChgPassword()<br>
+    パスワード変更ダイアログを表示する。<br>
+    GET /api/user/ を呼び出し、結果を API_GET_USERとして statusCodeおよび responseDataに格納する。
+    パスワード変更ダイアログの操作により、POST /api/user/ を呼び出し、結果を API_OPE_USERとしてstatusCodeおよび responseDataに格納する。<br>
+</li>
+<li>transDisplayLogInfo()<br>
+    操作ログ参照ダイアログを表示する。<br>
+    ログインユーザーの種別が管理者の場合、GET /api/user/?target=all と /api/logs/ を呼び出し、
+    結果を API_GET_USERS および API_GET_LOGS としてstatusCodeおよび responseDataに格納する。<br>
+    管理者でない場合、GET /api/logs/ を呼び出し、結果を API_GET_LOGS としてstatusCodeおよび responseDataに格納する。<br>
+</li>
 </ul>
 </div><p>
 
