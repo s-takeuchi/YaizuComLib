@@ -260,6 +260,12 @@ bool IsAdminUser(wchar_t* Token)<br/>
 stkcommon_um.jsは，以下に示すAPIを提供する。<br/>
 </p>
 <ul>
+<li>showLoginAndCheck(func)<br>
+    ログインダイアログを表示し、入力されたユーザー名およびパスワードを評価する。<br>
+    この関数は、内部的にstkcommonのcheckLogin()およびsetLoginResult()を呼び出し、ログインダイアログを制御する。
+    GET /api/user/ を呼び出し、結果を API_GET_USERとして statusCodeおよび responseDataに格納する。
+    ログイン成功後、引数に指定されたfunc()関数を呼び出す。
+</li>
 <li>transDisplayUser()<br>
     ユーザー管理ダイアログを表示する。<br>
     GET /api/user/?target=all を呼び出し、結果を API_GET_USERSとして statusCodeおよび responseDataに格納する。
