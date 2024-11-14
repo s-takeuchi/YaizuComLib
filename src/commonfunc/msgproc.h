@@ -41,7 +41,6 @@ public:
 
 	static int StartLogging(const wchar_t*);
 	static void AddLog(const char*, int);
+	static void AddLog(const wchar_t*, int);
 	static int StopLogging();
-	static int SetLogSizeA(int);
-	static int SetLogSizeB(int);
 };

@@ -269,7 +269,26 @@ YYYY-MM-DDThh:mm:ss+HH:MM [Thread-ID] X/ Message<br/>
 
 
 
-<H2 ID="2.21">2.21 int StopLogging()</H2>
+<H2 ID="2.21">2.21 void AddLog(wchar_t* Msg, int LogType)</H2>
+<div class="topic">
+ログファイルにログをUTF-8で出力します。<br>
+ログの出力フォーマットは以下のとおりです。<br/>
+YYYY-MM-DDThh:mm:ss+HH:MM [Thread-ID] X/ Message<br/>
+<ul>
+    <li>Thread-ID : スレッドIDを示す8文字の数値</li>
+    <li>X/ : FATAL=F, ERROR=E, WARN=W, INFO=I</li>
+    <li>Message : 出力するメッセージ</li>
+</ul>
+
+<table class="tblstyle">
+<tr><td>Msg[入力]</td><td>出力するメッセージ</td></tr>
+<tr><td>LogType[入力]</td><td>ログの種別。0:FATAL, 1:ERROR, 2:WARN, 3:INFO</td></tr>
+</table>
+</div><p>
+    
+    
+    
+<H2 ID="2.22">2.22 int StopLogging()</H2>
 <div class="topic">
 ログファイルへのログの出力を終了します。<br>
 <table class="tblstyle">

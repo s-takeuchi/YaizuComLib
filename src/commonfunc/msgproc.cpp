@@ -427,6 +427,36 @@ void MessageProc::AddLog(const char* Msg, int Type)
 	}
 }
 
+// Logging message for UTF-8
+void MessageProc::AddLog(const wchar_t* Msg, int Type)
+{
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+	if (Impl::Instance->pImpl->LogFD == NULL) {
+		return;
+	}
+
+	char TypeStr[4][8] = { "F/", "E/", "W/", "I/" };
+	char TmpTimeStr[64] = "";
+	char TmpBuf[65536] = "";
+	StkPlGetTimeInIso8601(TmpTimeStr, true);
+	char* MsgUft8 = StkPlCreateUtf8FromWideChar(Msg);
+	StkPlSPrintf(TmpBuf, 65536, "%s [%08x] %s %s\r\n", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], MsgUft8);
+	delete MsgUft8;
+	while (true) {
+		Impl::Instance->pImpl->Cs4LogBuf.lock();
+		if (StkPlStrLen(Impl::Instance->pImpl->LoggingBuf) + StkPlStrLen(TmpBuf) + 1 < 65536) {
+			StkPlStrCat(Impl::Instance->pImpl->LoggingBuf, 65536, TmpBuf);
+			Impl::Instance->pImpl->Cs4LogBuf.unlock();
+			break;
+		} else {
+			Impl::Instance->pImpl->Cs4LogBuf.unlock();
+			StkPlSleepMs(10);
+		}
+	}
+}
+
 // Disable logging feature. This API executes procedures shown below.
 // (1) Stop a thread for logging
 // (2) Close file descriptor for logging

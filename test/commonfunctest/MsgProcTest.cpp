@@ -126,7 +126,9 @@ void MsgProcTest1()
 	MessageProc::StartLogging(L"log.txt");
 	MessageProc::AddLog("hello, world!!", MessageProc::LOG_TYPE_INFO);
 	StkPlSleepMs(500);
-	MessageProc::AddLog("test!teset!test!", MessageProc::LOG_TYPE_FATAL);
+	MessageProc::AddLog("test!test!test!", MessageProc::LOG_TYPE_FATAL);
+	MessageProc::AddLog(L"test#test#test#", MessageProc::LOG_TYPE_FATAL);
+	MessageProc::AddLog(L"あいうえお", MessageProc::LOG_TYPE_FATAL);
 	StkPlSleepMs(500);
 	MessageProc::AddLog("done!", MessageProc::LOG_TYPE_WARN);
 	MessageProc::StopLogging();
@@ -137,7 +139,9 @@ void MsgProcTest1()
 	}
 	char FileBuf[2048] = "";
 	StkPlReadFile(L"log.txt", FileBuf, 2048);
-	if (StkPlStrStr(FileBuf, "done!") == NULL) {
+	if (StkPlStrStr(FileBuf, "done!") == NULL ||
+		StkPlStrStr(FileBuf, "test!test!test!") == NULL ||
+		StkPlStrStr(FileBuf, "test#test#test#") == NULL) {
 		StkPlPrintf("Logging ... NG case\n");
 		StkPlExit(-1);
 	}
@@ -156,7 +160,7 @@ void MsgProcTest2()
 	MessageProc::StopLogging();
 	size_t FileSize = StkPlGetFileSize(L"log2.txt");
 	if (FileSize > 2000000 || FileSize < 1000000) {
-		StkPlPrintf("LoggingTest-2 ... NG case\n");
+		StkPlPrintf("LoggingTest-2 ... NG case(1)\n");
 		StkPlExit(-1);
 	}
 	char LogDat[2000000] = "";
@@ -166,15 +170,15 @@ void MsgProcTest2()
 	wchar_t AcqDat[64];
 	int MinIndex = -1;
 	for (int Loop = 0; Loop < 5000; Loop++) {
+		LogDatPtr = (wchar_t*)StkPlWcsStr(LogDatPtr, L"This is wrapping test!!\r\n") + 1;
 		StkStringParser::ParseInto3Params(LogDatPtr, L"$I/ [$] This is$", L'$', NULL, AcqDat, NULL);
 		int Index = StkPlWcsToL(AcqDat);
 		if (MinIndex >= Index) {
 			delete LogDatW;
-			StkPlPrintf("LoggingTest-2 ... NG case\n");
+			StkPlPrintf("LoggingTest-2 ... NG case(2)\n");
 			StkPlExit(-1);
 		}
 		MinIndex = Index;
-		LogDatPtr = (wchar_t*)StkPlWcsStr(LogDatPtr, L"This is wrapping test!!\r\n") + 1;
 	}
 	delete LogDatW;
 	StkPlPrintf("LoggingTest-2 ... OK case\n");
