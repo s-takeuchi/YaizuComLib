@@ -413,7 +413,16 @@ void MessageProc::AddLog(const char* Msg, int Type)
 	char TmpTimeStr[64] = "";
 	char TmpBuf[65536] = "";
 	StkPlGetTimeInIso8601(TmpTimeStr, true);
-	StkPlSPrintf(TmpBuf, 65536, "%s [%08x] %s %s\r\n", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], Msg);
+	StkPlSPrintf(TmpBuf, 65536, "%s [%08x] %s %s", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], Msg);
+
+	// CR/LF Replacement
+	for (int Loop = 0; TmpBuf[Loop] != '\0'; Loop++) {
+		if (TmpBuf[Loop] == '\r' || TmpBuf[Loop] == '\n') {
+			TmpBuf[Loop] = ' ';
+		}
+	}
+	StkPlStrCat(TmpBuf, 65536, "\r\n");
+
 	while (true) {
 		Impl::Instance->pImpl->Cs4LogBuf.lock();
 		if (StkPlStrLen(Impl::Instance->pImpl->LoggingBuf) + StkPlStrLen(TmpBuf) + 1 < 65536) {
@@ -427,7 +436,7 @@ void MessageProc::AddLog(const char* Msg, int Type)
 	}
 }
 
-// Logging message for UTF-8
+// Logging message as UTF-8
 void MessageProc::AddLog(const wchar_t* Msg, int Type)
 {
 	if (Impl::Instance == NULL) {
@@ -442,8 +451,66 @@ void MessageProc::AddLog(const wchar_t* Msg, int Type)
 	char TmpBuf[65536] = "";
 	StkPlGetTimeInIso8601(TmpTimeStr, true);
 	char* MsgUft8 = StkPlCreateUtf8FromWideChar(Msg);
-	StkPlSPrintf(TmpBuf, 65536, "%s [%08x] %s %s\r\n", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], MsgUft8);
+	StkPlSPrintf(TmpBuf, 65536, "%s [%08x] %s %s", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], MsgUft8);
 	delete MsgUft8;
+
+	// CR/LF Replacement
+	for (int Loop = 0; TmpBuf[Loop] != '\0'; Loop++) {
+		if (TmpBuf[Loop] == '\r' || TmpBuf[Loop] == '\n') {
+			TmpBuf[Loop] = ' ';
+		}
+	}
+	StkPlStrCat(TmpBuf, 65536, "\r\n");
+
+	while (true) {
+		Impl::Instance->pImpl->Cs4LogBuf.lock();
+		if (StkPlStrLen(Impl::Instance->pImpl->LoggingBuf) + StkPlStrLen(TmpBuf) + 1 < 65536) {
+			StkPlStrCat(Impl::Instance->pImpl->LoggingBuf, 65536, TmpBuf);
+			Impl::Instance->pImpl->Cs4LogBuf.unlock();
+			break;
+		} else {
+			Impl::Instance->pImpl->Cs4LogBuf.unlock();
+			StkPlSleepMs(10);
+		}
+	}
+}
+
+// Logging message
+void MessageProc::AddLogBin(const char* HeadMsg, const char* Bin, int BinLen, int Type)
+{
+	if (Impl::Instance == NULL) {
+		Impl::Instance = new MessageProc();
+	}
+	if (Impl::Instance->pImpl->LogFD == NULL) {
+		return;
+	}
+
+	// Make a string for binary data
+	char* BinMsg = new char[BinLen * 2 + 1];
+	{
+		char Conv[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		int Loop = 0;
+		for (; Loop < BinLen; Loop++) {
+			BinMsg[Loop * 2] = Conv[(Bin[Loop] & 0b11110000) >> 4];
+			BinMsg[Loop * 2 + 1] = Conv[Bin[Loop] & 0b00001111];
+		}
+		BinMsg[Loop * 2] = '\0';
+	}
+
+	char TypeStr[4][8] = { "F/", "E/", "W/", "I/" };
+	char TmpTimeStr[64] = "";
+	char TmpBuf[65536] = "";
+	StkPlGetTimeInIso8601(TmpTimeStr, true);
+	StkPlSPrintf(TmpBuf, 65536, "%s [%08x] %s %s %s", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], HeadMsg, BinMsg);
+
+	// CR/LF Replacement
+	for (int Loop = 0; TmpBuf[Loop] != '\0'; Loop++) {
+		if (TmpBuf[Loop] == '\r' || TmpBuf[Loop] == '\n') {
+			TmpBuf[Loop] = ' ';
+		}
+	}
+	StkPlStrCat(TmpBuf, 65536, "\r\n");
+
 	while (true) {
 		Impl::Instance->pImpl->Cs4LogBuf.lock();
 		if (StkPlStrLen(Impl::Instance->pImpl->LoggingBuf) + StkPlStrLen(TmpBuf) + 1 < 65536) {

@@ -42,5 +42,6 @@ public:
 	static int StartLogging(const wchar_t*);
 	static void AddLog(const char*, int);
 	static void AddLog(const wchar_t*, int);
+	static void AddLogBin(const char*, const char*, int, int);
 	static int StopLogging();
 };
