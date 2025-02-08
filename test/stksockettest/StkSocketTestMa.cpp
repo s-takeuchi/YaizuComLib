@@ -1,4 +1,5 @@
-﻿#include <thread>
+﻿#include <cstdlib>
+#include <thread>
 #include <chrono>
 #include "../../src/stkpl/StkPl.h"
 #include "../../src/stksocket/stksocket.h"

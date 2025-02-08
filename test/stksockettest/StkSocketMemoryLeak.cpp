@@ -1,4 +1,5 @@
-﻿#include <thread>
+﻿#include <cstdlib>
+#include <thread>
 #include "../../src/stkpl/StkPl.h"
 #include "../../src/stksocket/stksocket.h"
 #include "StkSocketMemoryLeak.h"
