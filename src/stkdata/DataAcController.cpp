@@ -1,6 +1,7 @@
 ﻿#include <cstdlib>
 #include <thread>
 #include <mutex>
+#include <new>
 
 #include "../stkpl/StkPl.h"
 #include "DataAcController.h"
