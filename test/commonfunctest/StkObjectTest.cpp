@@ -1302,7 +1302,7 @@ void XmlDecodingTest3(const wchar_t* Name)
 	}
 
 	delete Elem;
-	delete Xml;
+	delete [] Xml;
 }
 
 void XmlDecodingTest4(const wchar_t* Name)
@@ -1336,7 +1336,7 @@ void XmlDecodingTest4(const wchar_t* Name)
 	}
 
 	delete Elem;
-	delete Xml;
+	delete [] Xml;
 }
 
 void XmlDecodingAbnormalTest1()
