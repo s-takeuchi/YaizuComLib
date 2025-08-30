@@ -615,7 +615,7 @@ int FilePathTest()
 #ifdef WIN32
 	Ret = StkPlGetFileNameFromFullPath(L"\\aaa\\bbb\\ccc\\xxx.dat", Output, 5);
 #else
-	Ret = StkPlGetFileNameFromFullPath(L"/aaa/bbb/ccc/xxx.dat", Output, 64);
+	Ret = StkPlGetFileNameFromFullPath(L"/aaa/bbb/ccc/xxx.dat", Output, 5);
 #endif
 	if (Ret != -1) {
 		StkPlPrintf("NG case\n");
