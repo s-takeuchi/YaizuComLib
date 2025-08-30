@@ -608,7 +608,7 @@ int FilePathTest()
 #else
 	Ret = StkPlGetFileNameFromFullPath(L"/aaa/bbb/ccc/xxx.dat", Output, 64);
 #endif
-	if (Ret != 0 || StkPlWcsCmp(Output, L"xxx.dat") == 0) {
+	if (Ret != 0 || StkPlWcsCmp(Output, L"xxx.dat") != 0) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(-1);
 	}
