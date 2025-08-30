@@ -598,10 +598,38 @@ int FileInfoChainTest()
 	return 0;
 }
 
+int FilePathTest()
+{
+	StkPlPrintf("File path test ... ");
+	wchar_t Output[64];
+	int Ret = 0;
+#ifdef WIN32
+	Ret = StkPlGetFileNameFromFullPath(L"\\aaa\\bbb\\ccc\\xxx.dat", Output, 64);
+#else
+	Ret = StkPlGetFileNameFromFullPath(L"/aaa/bbb/ccc/xxx.dat", Output, 64);
+#endif
+	if (Ret != 0 || StkPlWcsCmp(Output, L"xxx.dat") == 0) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+#ifdef WIN32
+	Ret = StkPlGetFileNameFromFullPath(L"\\aaa\\bbb\\ccc\\xxx.dat", Output, 5);
+#else
+	Ret = StkPlGetFileNameFromFullPath(L"/aaa/bbb/ccc/xxx.dat", Output, 64);
+#endif
+	if (Ret != -1) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	StkPlPrintf("OK case\n");
+	return 0;
+}
+
 int main(int Argc, char* Argv[])
 {
 	StkPlPrintf("stkpltest started.\n");
 	FileInfoChainTest();
+	FilePathTest();
 
 	{
 		StkPlPrintf("Execute child process...");

@@ -1801,7 +1801,7 @@ int StkPlGetFullPathFromFileName(const wchar_t* FileName, wchar_t FullPath[FILEN
 // PathWithFileName [in] : Full path which contains file name.
 // Output [out] : Acquired full path without file name.
 // Return : 0:Success, -1:Failure
-int StkPlGetFullPathWithoutFileName(wchar_t* PathWithFileName, wchar_t Output[FILENAME_MAX])
+int StkPlGetFullPathWithoutFileName(const wchar_t* PathWithFileName, wchar_t Output[FILENAME_MAX])
 {
 	if (PathWithFileName == NULL || Output == NULL) {
 		return -1;
@@ -1824,6 +1824,36 @@ int StkPlGetFullPathWithoutFileName(wchar_t* PathWithFileName, wchar_t Output[FI
 		return -1;
 	}
 	*Addr = L'\0';
+	return 0;
+}
+
+// Extract the file name from a string containing the full path.
+// FullPath [in] : Full path to the file
+// Output [out] : Extracted file name to be stored
+// OutputSize [in] : Size of Output
+// Return : 0=Success, -1=Failure
+int StkPlGetFileNameFromFullPath(const wchar_t* FullPath, wchar_t* Output, int OutputSize)
+{
+#ifdef WIN32
+	wchar_t Separator = '\\';
+#else
+	wchar_t Separator = '/';
+#endif
+	if (FullPath == NULL) {
+		return -1;
+	}
+	int SizeOfFullPath = (int)StkPlWcsLen(FullPath);
+	const wchar_t* Ptr = &FullPath[SizeOfFullPath] - 1;
+	for (; Ptr >= &FullPath[0]; Ptr--) {
+		if (*Ptr == Separator) {
+			Ptr++;
+			break;
+		}
+	}
+	if (StkPlWcsLen(Ptr) >= OutputSize) {
+		return -1;
+	}
+	StkPlWcsCpy(Output, OutputSize, Ptr + 1);
 	return 0;
 }
 
