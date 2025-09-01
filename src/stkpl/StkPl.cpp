@@ -1850,6 +1850,9 @@ int StkPlGetFileNameFromFullPath(const wchar_t* FullPath, wchar_t* Output, int O
 			break;
 		}
 	}
+	if (Ptr < FullPath) {
+		Ptr = FullPath;
+	}
 	if (StkPlWcsLen(Ptr) >= OutputSize) {
 		return -1;
 	}

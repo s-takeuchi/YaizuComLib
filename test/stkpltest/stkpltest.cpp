@@ -613,15 +613,40 @@ int FilePathTest()
 		StkPlExit(-1);
 	}
 #ifdef WIN32
-	Ret = StkPlGetFileNameFromFullPath(L"\\aaa\\bbb\\ccc\\xxx.dat", Output, 5);
+	Ret = StkPlGetFileNameFromFullPath(L"\\aaa\\bbb\\ccc\\xxx.dat", Output, 7);
 #else
-	Ret = StkPlGetFileNameFromFullPath(L"/aaa/bbb/ccc/xxx.dat", Output, 5);
+	Ret = StkPlGetFileNameFromFullPath(L"/aaa/bbb/ccc/xxx.dat", Output, 7);
 #endif
 	if (Ret != -1) {
 		StkPlPrintf("NG case\n");
 		StkPlExit(-1);
 	}
+#ifdef WIN32
+	Ret = StkPlGetFileNameFromFullPath(L"\\aaa\\bbb\\ccc\\xxx.dat", Output, 8);
+#else
+	Ret = StkPlGetFileNameFromFullPath(L"/aaa/bbb/ccc/xxx.dat", Output, 8);
+#endif
+	if (Ret != 0 || StkPlWcsCmp(Output, L"xxx.dat") != 0) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+	Ret = StkPlGetFileNameFromFullPath(L"abcdefghijklmnopqrstuvwxyz", Output, 27);
+	if (Ret != 0 || StkPlWcsCmp(Output, L"abcdefghijklmnopqrstuvwxyz") != 0) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+#ifdef WIN32
+	Ret = StkPlGetFileNameFromFullPath(L"\\aaabbbcccxxx.dat", Output, 64);
+#else
+	Ret = StkPlGetFileNameFromFullPath(L"/aaabbbcccxxx.dat", Output, 64);
+#endif
+	if (Ret != 0 || StkPlWcsCmp(Output, L"aaabbbcccxxx.dat") != 0) {
+		StkPlPrintf("NG case\n");
+		StkPlExit(-1);
+	}
+
 	StkPlPrintf("OK case\n");
+
 	return 0;
 }
 
