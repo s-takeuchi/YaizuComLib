@@ -693,7 +693,6 @@ int main(int Argc, char* Argv[])
 			StkPlExit(-1);
 		}
 #endif
-		StkPlDeleteFile(L"out.txt");
 		StkPlPrintf("OK case\n");
 	}
 
