@@ -2,4 +2,8 @@ x64/
 *.exe
 .vs/
 build/deployment/
+build/setup/Debug/
+build/setup/Release/
+build/webapp/
 *.user
+*.filters
