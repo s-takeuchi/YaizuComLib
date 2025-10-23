@@ -4,19 +4,19 @@ stkdb.a :  DbAccessor.o DbMariaDbAccessor.o DbMySqlAccessor.oDbPostgreSqlAccesso
 	ar r stkdb.a DbAccessor.o DbMariaDbAccessor.o DbMySqlAccessor.oDbPostgreSqlAccessor.o FilteringCondition.o
 
 DbAccessor.o : DbAccessor.cpp
-	g++ -c DbAccessor.cpp (CCOPTS)
+	g++ -c DbAccessor.cpp $(CCOPTS)
 
 DbMariaDbAccessor.o : DbMariaDbAccessor.cpp
-	g++ -c DbMariaDbAccessor.cpp (CCOPTS)
+	g++ -c DbMariaDbAccessor.cpp $(CCOPTS)
 
 DbMySqlAccessor.o : DbMySqlAccessor.cpp
-	g++ -c DbMySqlAccessor.cpp (CCOPTS)
+	g++ -c DbMySqlAccessor.cpp $(CCOPTS)
 
 DbPostgreSqlAccessor.o : DbPostgreSqlAccessor.cpp
-	g++ -c DbPostgreSqlAccessor.cpp (CCOPTS)
+	g++ -c DbPostgreSqlAccessor.cpp $(CCOPTS)
 
 FilteringCondition.o : FilteringCondition.cpp
-	g++ -c FilteringCondition.cpp (CCOPTS)
+	g++ -c FilteringCondition.cpp $(CCOPTS)
 
 clean :
 	rm -f *.o *.a
