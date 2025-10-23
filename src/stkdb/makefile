@@ -1,20 +1,22 @@
+CCOPTS    = -DUNICODE -std=c++1z
+
 stkdb.a :  DbAccessor.o DbMariaDbAccessor.o DbMySqlAccessor.oDbPostgreSqlAccessor.o FilteringCondition.o
 	ar r stkdb.a DbAccessor.o DbMariaDbAccessor.o DbMySqlAccessor.oDbPostgreSqlAccessor.o FilteringCondition.o
 
 DbAccessor.o : DbAccessor.cpp
-	g++ -c DbAccessor.cpp -std=c++1z
+	g++ -c DbAccessor.cpp (CCOPTS)
 
 DbMariaDbAccessor.o : DbMariaDbAccessor.cpp
-	g++ -c DbMariaDbAccessor.cpp -std=c++1z
+	g++ -c DbMariaDbAccessor.cpp (CCOPTS)
 
 DbMySqlAccessor.o : DbMySqlAccessor.cpp
-	g++ -c DbMySqlAccessor.cpp -std=c++1z
+	g++ -c DbMySqlAccessor.cpp (CCOPTS)
 
 DbPostgreSqlAccessor.o : DbPostgreSqlAccessor.cpp
-	g++ -c DbPostgreSqlAccessor.cpp -std=c++1z
+	g++ -c DbPostgreSqlAccessor.cpp (CCOPTS)
 
 FilteringCondition.o : FilteringCondition.cpp
-	g++ -c FilteringCondition.cpp -std=c++1z
+	g++ -c FilteringCondition.cpp (CCOPTS)
 
 clean :
 	rm -f *.o *.a
