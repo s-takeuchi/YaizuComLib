@@ -63,7 +63,7 @@ int DbMySqlAccessor::GetTables(StkObject* Obj, wchar_t StateMsg[10], wchar_t Msg
 {
 	SQLRETURN Ret = 0;
 
-	Ret = OpenDatabase(pImpl->ConnectionString, StateMsg, Msg);
+	Ret = OpenDatabase(StateMsg, Msg);
 	if (Ret != 0) {
 		return Ret;
 	}
@@ -82,7 +82,7 @@ int DbMySqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* Tbl
 	SQLSMALLINT ActualMsgLen; // This will not be refered from anywhere
 	SQLRETURN Ret = 0;
 
-	Ret = OpenDatabase(pImpl->ConnectionString, StateMsg, Msg);
+	Ret = OpenDatabase(StateMsg, Msg);
 	if (Ret != 0) {
 		return 0;
 	}
@@ -158,7 +158,7 @@ int DbMySqlAccessor::GetRecordsByTableName(wchar_t* TableName, FilteringConditio
 		SqlEncoding(SortTarget, EcdSortTarget, TYPE_KEY);
 	}
 
-	Ret = OpenDatabase(pImpl->ConnectionString, StateMsg, Msg);
+	Ret = OpenDatabase(StateMsg, Msg);
 
 	wchar_t ColumnNameCnv[5][COLUMNNAME_LENGTH * 4 + 2];
 	int OpeType[5];

@@ -21,7 +21,7 @@ protected:
 	static const int MAXNUM_COLUMNS = 50;
 
 protected:
-	int OpenDatabase(wchar_t*, wchar_t[10], wchar_t[1024]);
+	int OpenDatabase(wchar_t[10], wchar_t[1024]);
 	int CloseDatabase(wchar_t[10], wchar_t[1024]);
 
 	int GetTablesCommon(const wchar_t*, StkObject*, wchar_t[10], wchar_t[1024]);
@@ -38,7 +38,7 @@ public:
 	DbAccessor(wchar_t*);
 	virtual ~DbAccessor();
 
-	virtual int Test(wchar_t[MAX_PARAM_LENGTH], wchar_t[1024]);
+	virtual int Test(wchar_t[10], wchar_t[1024]);
 	virtual int GetNumOfRecords(wchar_t*, FilteringCondition*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int GetTables(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int GetColumnInfoByTableName(wchar_t*,	StkObject*, wchar_t[10], wchar_t[1024]) = 0;

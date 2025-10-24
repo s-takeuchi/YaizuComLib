@@ -63,7 +63,7 @@ int DbPostgreSqlAccessor::GetTables(StkObject* Obj, wchar_t StateMsg[10], wchar_
 {
 	SQLRETURN Ret = 0;
 
-	Ret = OpenDatabase(pImpl->ConnectionString, StateMsg, Msg);
+	Ret = OpenDatabase(StateMsg, Msg);
 	if (Ret != 0) {
 		return Ret;
 	}
@@ -82,7 +82,7 @@ int DbPostgreSqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject
 	SQLSMALLINT ActualMsgLen; // This will not be refered from anywhere
 	SQLRETURN Ret = 0;
 
-	Ret = OpenDatabase(pImpl->ConnectionString, StateMsg, Msg);
+	Ret = OpenDatabase(StateMsg, Msg);
 	if (Ret != 0) {
 		return 0;
 	}
@@ -167,7 +167,7 @@ int DbPostgreSqlAccessor::GetRecordsByTableName(wchar_t* TableName, FilteringCon
 		SqlEncoding(SortTarget, EcdSortTarget, TYPE_KEY);
 	}
 
-	Ret = OpenDatabase(pImpl->ConnectionString, StateMsg, Msg);
+	Ret = OpenDatabase(StateMsg, Msg);
 
 	wchar_t ColumnNameCnv[5][COLUMNNAME_LENGTH * 4 + 2];
 	int OpeType[5];

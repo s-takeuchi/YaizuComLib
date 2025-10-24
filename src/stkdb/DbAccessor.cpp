@@ -42,24 +42,17 @@ void DbAccessor::ConvertMessage(wchar_t StateMsg[10], wchar_t Msg[1024], const c
 }
 
 // Return 0: Success, -1:Error
-int DbAccessor::Test(wchar_t ConnStr[MAX_PARAM_LENGTH], wchar_t ErrMsg[1024])
+int DbAccessor::Test(wchar_t StateMsg[10], wchar_t Msg[1024])
 {
-	char LogBuf[1024] = "";
-
-	wchar_t StateMsg[10];
-	wchar_t Msg[1024];
 	int Ret = 0;
-	Ret = OpenDatabase(ConnStr, StateMsg, Msg);
+	Ret = OpenDatabase(StateMsg, Msg);
 	if (Ret != 0) {
-		StkPlSwPrintf(ErrMsg, 1024, L"ODBC: %ls %ls", (StateMsg == NULL)? L"null" : (wchar_t*)StateMsg, (Msg == NULL)? L"null" : (wchar_t*)Msg);
 		return Ret;
 	}
 	Ret = CloseDatabase(StateMsg, Msg);
 	if (Ret != 0) {
-		StkPlSwPrintf(ErrMsg, 1024, L"ODBC: %ls %ls", (StateMsg == NULL)? L"null" : (wchar_t*)StateMsg, (Msg == NULL)? L"null" : (wchar_t*)Msg);
 		return Ret;
 	}
-	StkPlWcsCpy(ErrMsg, 1024, L"");
 	return 0;
 }
 
@@ -123,7 +116,7 @@ int DbAccessor::GetNumOfRecordsCommon(wchar_t* TableName,
 	SQLSMALLINT ActualMsgLen; // This will not be refered from anywhere
 	SQLRETURN Ret = 0;
 
-	Ret = OpenDatabase(pImpl->ConnectionString, StateMsg, Msg);
+	Ret = OpenDatabase(StateMsg, Msg);
 	if (Ret != 0) {
 		return Ret;
 	}
@@ -301,10 +294,10 @@ int DbAccessor::GetRecordsByTableNameCommon(const wchar_t* TableName,
 }
 
 // Return 0: Success, -1:Error
-int DbAccessor::OpenDatabase(wchar_t* ConnectStr, wchar_t StateMsg[10], wchar_t Msg[1024])
+int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])
 {
 	SQLWCHAR CvtConnectStr[256];
-	StkPlConvWideCharToUtf16((char16_t*)CvtConnectStr, 256, ConnectStr);
+	StkPlConvWideCharToUtf16((char16_t*)CvtConnectStr, 256, pImpl->ConnectionString);
 
 	SQLWCHAR CvtStateMsg[10];
 	SQLWCHAR CvtMsg[1024];
