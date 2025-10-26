@@ -95,7 +95,7 @@ int DbPostgreSqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject
 	StkPlSwPrintf(SqlBuf, 1024, L"SELECT * FROM information_schema.columns WHERE table_schema='public' and table_name='%ls';", EcdTableName);
 	char16_t* CvtSqlBuf = StkPlCreateUtf16FromWideChar(SqlBuf);
 	Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
-	delete CvtSqlBuf;
+	delete [] CvtSqlBuf;
 	delete [] EcdTableName;
 	if (Ret != SQL_SUCCESS) {
 		SQLGetDiagRec(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
@@ -143,9 +143,9 @@ int DbPostgreSqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject
 		ClmObj->AppendChildElement(new StkObject(L"isnull", TmpIsNullCnv));
 		TblObj->AppendChildElement(ClmObj);
 
-		delete TmpColumnNameCnv;
-		delete TmpIsNullCnv;
-		delete ColumnTypeCnv;
+		delete [] TmpColumnNameCnv;
+		delete [] TmpIsNullCnv;
+		delete [] ColumnTypeCnv;
 	}
 	Ret = CloseDatabase(StateMsg, Msg);
 

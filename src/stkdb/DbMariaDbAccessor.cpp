@@ -95,7 +95,7 @@ int DbMariaDbAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* T
 	StkPlSwPrintf(SqlBuf, 1024, L"show full columns from %ls;", (wchar_t*)EcdTableName);
 	char16_t* CvtSqlBuf = StkPlCreateUtf16FromWideChar(SqlBuf);
 	Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
-	delete CvtSqlBuf;
+	delete [] CvtSqlBuf;
 	delete [] EcdTableName;
 	if (Ret != SQL_SUCCESS) {
 		SQLGetDiagRec(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
@@ -144,9 +144,9 @@ int DbMariaDbAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* T
 		ClmObj->AppendChildElement(new StkObject(L"isnull", (wchar_t*)TmpIsNull));
 		TblObj->AppendChildElement(ClmObj);
 
-		delete TmpColumnNameTmpCnv;
-		delete TmpColumnTypeTmpCnv;
-		delete TmpIsNullCnv;
+		delete [] TmpColumnNameTmpCnv;
+		delete [] TmpColumnTypeTmpCnv;
+		delete [] TmpIsNullCnv;
 	}
 	Ret = CloseDatabase(StateMsg, Msg);
 

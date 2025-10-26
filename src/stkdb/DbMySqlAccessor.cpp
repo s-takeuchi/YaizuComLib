@@ -95,7 +95,7 @@ int DbMySqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* Tbl
 	StkPlSwPrintf(SqlBuf, 1024, L"show full columns from %ls;", (wchar_t*)EcdTableName);
 	char16_t* CvtSqlBuf = StkPlCreateUtf16FromWideChar(SqlBuf);
 	Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
-	delete CvtSqlBuf;
+	delete [] CvtSqlBuf;
 	delete [] EcdTableName;
 	if (Ret != SQL_SUCCESS) {
 		SQLGetDiagRec(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
@@ -134,9 +134,9 @@ int DbMySqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* Tbl
 		ClmObj->AppendChildElement(new StkObject(L"isnull", TmpIsNullCnv));
 		TblObj->AppendChildElement(ClmObj);
 
-		delete TmpColumnNameCnv;
-		delete TmpColumnTypeCnv;
-		delete TmpIsNullCnv;
+		delete [] TmpColumnNameCnv;
+		delete [] TmpColumnTypeCnv;
+		delete [] TmpIsNullCnv;
 	}
 	Ret = CloseDatabase(StateMsg, Msg);
 

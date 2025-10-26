@@ -68,7 +68,7 @@ int DbAccessor::GetTablesCommon(const wchar_t* Query, StkObject* Obj, wchar_t St
 	// SQLExecDirect
 	SQLWCHAR* CvtQuery = (SQLWCHAR*)StkPlCreateUtf16FromWideChar(Query);
 	Ret = SQLExecDirect(pImpl->Hstmt, CvtQuery, SQL_NTS);
-	delete CvtQuery;
+	delete [] CvtQuery;
 
 	if (Ret != SQL_SUCCESS) {
 		SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
@@ -91,7 +91,7 @@ int DbAccessor::GetTablesCommon(const wchar_t* Query, StkObject* Obj, wchar_t St
 		StkObject* TblInfObj = new StkObject(L"TableInfo");
 		wchar_t* CvtTableName = StkPlCreateWideCharFromUtf16((char16_t*)TableName);
 		TblInfObj->AppendChildElement(new StkObject(L"Name", (wchar_t*)CvtTableName));
-		delete CvtTableName;
+		delete [] CvtTableName;
 		Obj->AppendChildElement(TblInfObj);
 		Loop++;
 		if (Loop >= MAXNUM_TABLES) {
@@ -164,7 +164,7 @@ int DbAccessor::GetNumOfRecordsCommon(wchar_t* TableName,
 	StkPlWcsCat(SqlBuf, 1024, L";");
 	char16_t* CvtSqlBuf = StkPlCreateUtf16FromWideChar(SqlBuf);
 	Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
-	delete CvtSqlBuf;
+	delete [] CvtSqlBuf;
 	if (Ret != SQL_SUCCESS) {
 		SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
@@ -252,7 +252,7 @@ int DbAccessor::GetRecordsByTableNameCommon(const wchar_t* TableName,
 	StkPlWcsCat(SqlBuf, 1024, L";");
 	char16_t* CvtSqlBuf = StkPlCreateUtf16FromWideChar(SqlBuf);
 	Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
-	delete CvtSqlBuf;
+	delete [] CvtSqlBuf;
 	if (Ret != SQL_SUCCESS) {
 		SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
@@ -284,7 +284,7 @@ int DbAccessor::GetRecordsByTableNameCommon(const wchar_t* TableName,
 				TmpRecord[LoopCol][COLUMNVAL_LENGTH - 1] = '\0';
 				wchar_t* TmpRecordCnv = StkPlCreateWideCharFromUtf16((char16_t*)TmpRecord[LoopCol]);
 				RecObj->AppendChildElement(new StkObject(IndStr, TmpRecordCnv));
-				delete TmpRecordCnv;
+				delete [] TmpRecordCnv;
 			}
 		}
 		Obj->AppendChildElement(RecObj);
