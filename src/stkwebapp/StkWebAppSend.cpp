@@ -65,14 +65,14 @@ StkObject* StkWebAppSend::Impl::RecvResponse(int TargetId, wchar_t Header[1024])
 	// Acquire HTTP header
 	const wchar_t* Req = SkipHttpHeader(DatWc);
 	if (Req == DatWc || Req - DatWc >= 1024 - 1) {
-		delete DatWc;
+		delete [] DatWc;
 		return NULL;
 	}
 	StkPlWcsNCpy(Header, 1024, DatWc, Req - DatWc);
 	int Tmp;
 	StkObject* ReqObj = StkObject::CreateObjectFromJson(Req, &Tmp);
 
-	delete DatWc;
+	delete [] DatWc;
 	return ReqObj;
 }
 
@@ -137,7 +137,7 @@ int StkWebAppSend::Impl::SendRequest(int TargetId, int Method, const char* Url, 
 			char* TargetAddru8 = StkPlCreateUtf8FromWideChar(TargetAddr);
 			StkPlSPrintf(HostHeader, 512, "Host: %s\r\n", TargetAddru8);
 			StkPlStrCat(HttpHeader, 1024, HostHeader);
-			delete TargetAddru8;
+			delete [] TargetAddru8;
 		}
 	}
 	{

@@ -1057,7 +1057,7 @@ int StkPlExec(const wchar_t* CmdLine, int TimeoutInMs, int* Result)
 		Argv[Loop] = NULL;
 
 		execv(Argv[0], Argv);
-		delete CmdLineU8;
+		delete [] CmdLineU8;
 		StkPlExit(0);
 	} else {
 		// parent process
@@ -1710,7 +1710,7 @@ int ChangeCurrentDirectory(const wchar_t* PathToDir)
 #else
 	char* PathToDirUtf8 = StkPlCreateUtf8FromWideChar(PathToDir);
 	Ret = chdir(PathToDirUtf8);
-	delete PathToDirUtf8;
+	delete [] PathToDirUtf8;
 #endif
 	return Ret;
 }
@@ -1727,7 +1727,7 @@ int StkPlCreateDirectory(const wchar_t* DirName)
 #else
 	char* PathToCreateDirUtf8 = StkPlCreateUtf8FromWideChar(DirName);
 	int Res = mkdir(PathToCreateDirUtf8, 0777);
-	delete PathToCreateDirUtf8;
+	delete [] PathToCreateDirUtf8;
 	if (Res == 0) {
 		return 0;
 	} else {
@@ -1758,7 +1758,7 @@ bool StkPlDeleteFile(wchar_t* Path)
 #else
 	char* removeTargetUtf8 = StkPlCreateUtf8FromWideChar(Path);
 	int Ret = remove(removeTargetUtf8);
-	delete removeTargetUtf8;
+	delete [] removeTargetUtf8;
 	if (Ret == 0) {
 		return false;
 	} else {
@@ -1791,7 +1791,7 @@ int StkPlGetFullPathFromFileName(const wchar_t* FileName, wchar_t FullPath[FILEN
 	}
 	strncat(c_full_path, "/", sizeof(c_full_path) - 1);
 	strncat(c_full_path, FileNameInUtf8, sizeof(c_full_path) - 1);
-	delete FileNameInUtf8;
+	delete [] FileNameInUtf8;
 	StkPlConvUtf8ToWideChar(FullPath, FILENAME_MAX, c_full_path);
 	return 0;
 #endif
@@ -1878,11 +1878,11 @@ size_t StkPlGetFileSize(const wchar_t FilePath[FILENAME_MAX])
 	char* FilePathUtf8 = StkPlCreateUtf8FromWideChar(FilePath);
 	struct stat TmpSt;
 	if (stat(FilePathUtf8, &TmpSt) != 0) {
-		delete FilePathUtf8;
+		delete [] FilePathUtf8;
 		return -1;
 	}
 	FileSize = TmpSt.st_size;
-	delete FilePathUtf8;
+	delete [] FilePathUtf8;
 	if (FileSize == 0) {
 		return 0;
 	}
@@ -1911,13 +1911,13 @@ int StkPlReadFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fil
 	FILE *fp = fopen(FileNameUtf8, "r");
 	if (fp == NULL) {
 		if (FileNameUtf8 != NULL) {
-			delete FileNameUtf8;
+			delete [] FileNameUtf8;
 		}
 		return -1;
 	}
 	int actual_filesize = fread(Buffer, sizeof(char), (int)FileSize, fp);
 	fclose(fp);
-	delete FileNameUtf8;
+	delete [] FileNameUtf8;
 	return actual_filesize;
 #endif
 }
@@ -1943,13 +1943,13 @@ int StkPlWriteFile(const wchar_t FilePath[FILENAME_MAX], char* Buffer, size_t Fi
 	FILE *fp = fopen(FileNameUtf8, "w");
 	if (fp == NULL) {
 		if (FileNameUtf8 != NULL) {
-			delete FileNameUtf8;
+			delete [] FileNameUtf8;
 		}
 		return -1;
 	}
 	int actual_filesize = fwrite(Buffer, sizeof(char), (int)FileSize, fp);
 	fclose(fp);
-	delete FileNameUtf8;
+	delete [] FileNameUtf8;
 	return actual_filesize;
 #endif
 }
@@ -1968,7 +1968,7 @@ void* StkPlOpenFileForRead(const wchar_t FilePath[FILENAME_MAX])
 	if (fp == NULL) {
 		return NULL;
 	}
-	delete FileNameUtf8;
+	delete [] FileNameUtf8;
 	return fp;
 #endif
 }
@@ -1995,7 +1995,7 @@ void* StkPlOpenFileForWrite(const wchar_t FilePath[FILENAME_MAX], bool AddFlag)
 	if (fp == NULL) {
 		return NULL;
 	}
-	delete FileNameUtf8;
+	delete [] FileNameUtf8;
 	return fp;
 #endif
 }
@@ -2126,7 +2126,7 @@ FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])
 #else
 	char* TmpPath = StkPlCreateUtf8FromWideChar(TargetDir);
 	DIR* DirPtr = opendir(TmpPath);
-	delete TmpPath;
+	delete [] TmpPath;
 	if (DirPtr == NULL) {
 		return NULL;
 	}
@@ -2137,7 +2137,7 @@ FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])
 		// File name
 		wchar_t* TmpFileName = StkPlCreateWideCharFromUtf8(Entry->d_name);
 		wcscpy(CurFileName->FileName, TmpFileName);
-		delete TmpFileName;
+		delete [] TmpFileName;
 
 		// Directory flag
 		if (Entry->d_type == DT_DIR) {
@@ -2157,7 +2157,7 @@ FileInfoList* StkPlCreateFileInfoList(const wchar_t TargetDir[FILENAME_MAX])
 		char* FullPathNameUtf8 = StkPlCreateUtf8FromWideChar(FullPathName);
 		struct stat TmpSt;
 		stat(FullPathNameUtf8, &TmpSt);
-		delete FullPathNameUtf8;
+		delete [] FullPathNameUtf8;
 		time_t TmpT = TmpSt.st_mtime;
 		CurFileName->UpdateTime = (long long)TmpT;
 

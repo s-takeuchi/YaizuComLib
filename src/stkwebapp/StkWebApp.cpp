@@ -296,7 +296,7 @@ StkObject* StkWebApp::Impl::RecvRequest(int TargetId, int* XmlJsonType, int Cont
 		ReqObj = StkObject::CreateObjectFromJson(DatWc, &ErrorCode);
 	} else if (*XmlJsonType == XMLJSONTYPE_EMPTYSTR) {
 	}
-	delete DatWc;
+	delete [] DatWc;
 	return ReqObj;
 }
 
@@ -344,7 +344,7 @@ void StkWebApp::Impl::SendResponse(StkObject* Obj, int TargetId, int XmlJsonType
 
 	if (Dat != NULL) {
 		int RetD = StkSocket_Send(TargetId, TargetId, Dat, DatLength);
-		delete Dat;
+		delete [] Dat;
 	}
 
 	StkSocket_CloseAccept(TargetId, TargetId, true);
