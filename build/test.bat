@@ -69,6 +69,13 @@ echo stkwebapptest.exe
 ..\test\stkwebapptest\x64\release\stkwebapptest.exe
 IF %ERRORLEVEL% NEQ 0 goto testexit
 
+del ca.crt
+del ca.key
+del server.crt
+del server.key
+del *.txt
+del *.std
+
 :testexit
 echo;
 echo Testing libraries has done.

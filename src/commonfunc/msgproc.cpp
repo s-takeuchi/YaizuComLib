@@ -71,7 +71,7 @@ int MessageProc::Impl::GetLocale()
 void MessageProc::Impl::Eng(int Id, const wchar_t* Msg)
 {
 	if (StkMsg[Id][ENG] != NULL) {
-		delete StkMsg[Id][ENG];
+		delete [] StkMsg[Id][ENG];
 	}
 	int WcBufLen = (int)StkPlWcsLen(Msg);
 	StkMsg[Id][ENG] = new wchar_t[WcBufLen + 1];
@@ -79,12 +79,12 @@ void MessageProc::Impl::Eng(int Id, const wchar_t* Msg)
 	StkMsg[Id][ENG][WcBufLen] = L'\0';
 
 	if (StkMsgSjis[Id][ENG] != NULL) {
-		delete StkMsgSjis[Id][ENG];
+		delete [] StkMsgSjis[Id][ENG];
 	}
 	StkMsgSjis[Id][ENG] = (char*)StkPlWideCharToSjis(Msg);
 
 	if (StkMsgUtf8[Id][ENG] != NULL) {
-		delete StkMsgUtf8[Id][ENG];
+		delete [] StkMsgUtf8[Id][ENG];
 	}
 	StkMsgUtf8[Id][ENG] = StkPlCreateUtf8FromWideChar(Msg);
 }
@@ -92,7 +92,7 @@ void MessageProc::Impl::Eng(int Id, const wchar_t* Msg)
 void MessageProc::Impl::Jpn(int Id, const wchar_t* Msg)
 {
 	if (StkMsg[Id][JPN] != NULL) {
-		delete StkMsg[Id][JPN];
+		delete [] StkMsg[Id][JPN];
 	}
 	int WcBufLen = (int)StkPlWcsLen(Msg);
 	StkMsg[Id][JPN] = new wchar_t[WcBufLen + 1];
@@ -100,12 +100,12 @@ void MessageProc::Impl::Jpn(int Id, const wchar_t* Msg)
 	StkMsg[Id][JPN][WcBufLen] = L'\0';
 
 	if (StkMsgSjis[Id][JPN] != NULL) {
-		delete StkMsgSjis[Id][JPN];
+		delete [] StkMsgSjis[Id][JPN];
 	}
 	StkMsgSjis[Id][JPN] = (char*)StkPlWideCharToSjis(Msg);
 
 	if (StkMsgUtf8[Id][JPN] != NULL) {
-		delete StkMsgUtf8[Id][JPN];
+		delete [] StkMsgUtf8[Id][JPN];
 	}
 	StkMsgUtf8[Id][JPN] = (char*)StkPlCreateUtf8FromWideChar(Msg);
 }
@@ -127,22 +127,22 @@ void MessageProc::Impl::AllClear()
 {
 	for (int Loop = 0; Loop < Impl::MAX_MSG_COUNT; Loop++) {
 		if (StkMsg[Loop][ENG] != NULL) {
-			delete StkMsg[Loop][ENG];
+			delete [] StkMsg[Loop][ENG];
 		}
 		if (StkMsg[Loop][JPN] != NULL) {
-			delete StkMsg[Loop][JPN];
+			delete [] StkMsg[Loop][JPN];
 		}
 		if (StkMsgSjis[Loop][ENG] != NULL) {
-			delete StkMsgSjis[Loop][ENG];
+			delete [] StkMsgSjis[Loop][ENG];
 		}
 		if (StkMsgSjis[Loop][JPN] != NULL) {
-			delete StkMsgSjis[Loop][JPN];
+			delete [] StkMsgSjis[Loop][JPN];
 		}
 		if (StkMsgUtf8[Loop][ENG] != NULL) {
-			delete StkMsgUtf8[Loop][ENG];
+			delete [] StkMsgUtf8[Loop][ENG];
 		}
 		if (StkMsgUtf8[Loop][JPN] != NULL) {
-			delete StkMsgUtf8[Loop][JPN];
+			delete [] StkMsgUtf8[Loop][JPN];
 		}
 
 		StkMsg[Loop][ENG] = NULL;
@@ -227,6 +227,9 @@ MessageProc::MessageProc()
 // Probably there is no chance to be called from any functions.
 MessageProc::~MessageProc()
 {
+	StopLogging();
+	ClearAllMsg();
+	delete pImpl;
 }
 
 void MessageProc::SetLocaleMode(int SpecifiedMode)
@@ -331,13 +334,13 @@ void MessageProc::DelEng(int Id)
 		Impl::Instance = new MessageProc();
 	}
 	if (Impl::Instance->pImpl->StkMsg[Id][Impl::ENG] != NULL) {
-		delete Impl::Instance->pImpl->StkMsg[Id][Impl::ENG];
+		delete [] Impl::Instance->pImpl->StkMsg[Id][Impl::ENG];
 	}
 	if (Impl::Instance->pImpl->StkMsgSjis[Id][Impl::ENG] != NULL) {
-		delete Impl::Instance->pImpl->StkMsgSjis[Id][Impl::ENG];
+		delete [] Impl::Instance->pImpl->StkMsgSjis[Id][Impl::ENG];
 	}
 	if (Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::ENG] != NULL) {
-		delete Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::ENG];
+		delete [] Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::ENG];
 	}
 	Impl::Instance->pImpl->StkMsg[Id][Impl::ENG] = NULL;
 	Impl::Instance->pImpl->StkMsgSjis[Id][Impl::ENG] = NULL;
@@ -350,13 +353,13 @@ void MessageProc::DelJpn(int Id)
 		Impl::Instance = new MessageProc();
 	}
 	if (Impl::Instance->pImpl->StkMsg[Id][Impl::JPN] != NULL) {
-		delete Impl::Instance->pImpl->StkMsg[Id][Impl::JPN];
+		delete [] Impl::Instance->pImpl->StkMsg[Id][Impl::JPN];
 	}
 	if (Impl::Instance->pImpl->StkMsgSjis[Id][Impl::JPN] != NULL) {
-		delete Impl::Instance->pImpl->StkMsgSjis[Id][Impl::JPN];
+		delete [] Impl::Instance->pImpl->StkMsgSjis[Id][Impl::JPN];
 	}
 	if (Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::JPN] != NULL) {
-		delete Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::JPN];
+		delete [] Impl::Instance->pImpl->StkMsgUtf8[Id][Impl::JPN];
 	}
 	Impl::Instance->pImpl->StkMsg[Id][Impl::JPN] = NULL;
 	Impl::Instance->pImpl->StkMsgSjis[Id][Impl::JPN] = NULL;
@@ -452,7 +455,7 @@ void MessageProc::AddLog(const wchar_t* Msg, int Type)
 	StkPlGetTimeInIso8601(TmpTimeStr, true);
 	char* MsgUft8 = StkPlCreateUtf8FromWideChar(Msg);
 	StkPlSPrintf(TmpBuf, 65536, "%s [%08x] %s %s", TmpTimeStr, std::this_thread::get_id(), TypeStr[Type], MsgUft8);
-	delete MsgUft8;
+	delete [] MsgUft8;
 
 	// CR/LF Replacement
 	for (int Loop = 0; TmpBuf[Loop] != '\0'; Loop++) {
