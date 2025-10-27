@@ -293,6 +293,11 @@ int DbAccessor::GetRecordsByTableNameCommon(const wchar_t* TableName,
 	return LoopRec;
 }
 
+int DbAccessor::AddTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wchar_t Msg[1024])
+{
+	return 0;
+}
+
 // Return 0: Success, -1:Error
 int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])
 {

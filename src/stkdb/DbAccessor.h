@@ -31,6 +31,7 @@ protected:
 		int, int, wchar_t[10], wchar_t[1024]);
 	int GetNumOfRecordsCommon(wchar_t*, bool, wchar_t[5][COLUMNNAME_LENGTH * 4 + 2],
 		int[5], wchar_t[5][COLUMNVAL_LENGTH * 4 + 2], wchar_t[10], wchar_t[1024]);
+	int AddTableCommon(StkObject*, wchar_t[10], wchar_t[1024]);
 
 	void ConvertMessage(wchar_t[10], wchar_t[1024], const char16_t[10], const char16_t[1024]);
 
