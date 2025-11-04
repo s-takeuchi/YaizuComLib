@@ -293,8 +293,41 @@ int DbAccessor::GetRecordsByTableNameCommon(const wchar_t* TableName,
 	return LoopRec;
 }
 
+// TableInfo [in] : Object represents { "zzz" : { "ColumnInfo" : [ { "Name" : "xxx", "Type" : "yyy" }, ... ] } }
+// StateMsg [out] : State code
+// Msg [out] : Error message
+// Return : 0=Success, -1=Error
 int DbAccessor::AddTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
+	wchar_t SqlBuf[1024] = L"";
+	wchar_t TableName[TABLENAME_LENGTH] = L"";
+	if (TableInfo) {
+		StkPlWcsCpy(TableName, TABLENAME_LENGTH, TableInfo->GetName());
+		StkPlSwPrintf(SqlBuf, 1024, L"CREATE TABLE %ls (", TableName);
+		StkObject* ColumnInfo = TableInfo->GetFirstChildElement();
+		while (ColumnInfo && StkPlWcsCmp(ColumnInfo->GetName(), L"ColumnInfo") == 0) {
+			StkObject* Attr = ColumnInfo->GetFirstChildElement();
+			wchar_t ColumnName[COLUMNNAME_LENGTH] = L"";
+			wchar_t ColumnType[COLUMNTYPE_LENGTH] = L"";
+			while (Attr) {
+				if (StkPlWcsCmp(Attr->GetName(), L"Name") == 0) {
+					StkPlWcsCpy(ColumnName, COLUMNNAME_LENGTH, Attr->GetStringValue());
+				} else if (StkPlWcsCmp(Attr->GetName(), L"Type") == 0) {
+					StkPlWcsCpy(ColumnType, COLUMNTYPE_LENGTH, Attr->GetStringValue());
+				}
+				Attr = Attr->GetNext();
+			}
+			wchar_t SqlBufTmp[COLUMNNAME_LENGTH + COLUMNTYPE_LENGTH + 2] = L"";
+			StkPlSwPrintf(SqlBufTmp, COLUMNNAME_LENGTH + COLUMNTYPE_LENGTH + 2, L"%ls %ls", ColumnName, ColumnType);
+			StkPlWcsCat(SqlBuf, 1024, SqlBufTmp);
+			ColumnInfo = ColumnInfo->GetNext();
+			if (ColumnInfo) {
+				StkPlWcsCat(SqlBuf, 1024, L",");
+			} else {
+				StkPlWcsCat(SqlBuf, 1024, L");");
+			}
+		}
+	}
 	return 0;
 }
 
