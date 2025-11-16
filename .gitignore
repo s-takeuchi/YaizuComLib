@@ -5,5 +5,11 @@ build/deployment/
 build/setup/Debug/
 build/setup/Release/
 build/webapp/
+build/*.std
+build/log.txt
+build/log2.txt
+build/*.crt
+build/*.key
+test/
 *.user
 *.filters
