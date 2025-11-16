@@ -48,4 +48,5 @@ public:
 	virtual int GetTables(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int GetColumnInfoByTableName(wchar_t*,	StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int GetRecordsByTableName(wchar_t*, FilteringCondition*, int, StkObject*, wchar_t*, wchar_t*, int, int, wchar_t[10], wchar_t[1024]) = 0;
+	virtual int AddTable(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 };

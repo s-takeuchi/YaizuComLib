@@ -327,6 +327,7 @@ int DbAccessor::AddTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wchar
 				StkPlWcsCat(SqlBuf, 1024, L");");
 			}
 		}
+		StkPlWPrintf(L"%ls\r\n", SqlBuf);
 	}
 	return 0;
 }
