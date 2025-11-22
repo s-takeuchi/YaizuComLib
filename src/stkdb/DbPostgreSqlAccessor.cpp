@@ -107,11 +107,11 @@ int DbPostgreSqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
 		return 0;
 	}
-	SQLWCHAR TmpColumnName[COLUMNNAME_LENGTH];
-	SQLWCHAR ColumnType[COLUMNTYPE_LENGTH];
-	SQLWCHAR TmpIsNull[10];
-	int TmpColumnMaxLen;
-	SQLLEN ColumneNameLen, ColumneTypeLen, ColumneMaxLen, IsNullLen;
+	SQLWCHAR TmpColumnName[COLUMNNAME_LENGTH] = { 0 };
+	SQLWCHAR ColumnType[COLUMNTYPE_LENGTH] = { 0 };
+	SQLWCHAR TmpIsNull[10] = { 0 };
+	int TmpColumnMaxLen = -1;
+	SQLLEN ColumneNameLen = -1, ColumneTypeLen = -1, ColumneMaxLen = -1, IsNullLen = -1;
 	SQLBindCol(pImpl->Hstmt, 4, SQL_C_WCHAR, TmpColumnName, COLUMNNAME_LENGTH * sizeof(SQLWCHAR), &ColumneNameLen);
 	SQLBindCol(pImpl->Hstmt, 7, SQL_C_WCHAR, TmpIsNull, 10 * sizeof(SQLWCHAR), &IsNullLen);
 	SQLBindCol(pImpl->Hstmt, 8, SQL_C_WCHAR, ColumnType, COLUMNTYPE_LENGTH * sizeof(SQLWCHAR), &ColumneTypeLen);

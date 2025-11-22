@@ -107,9 +107,9 @@ int DbMariaDbAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* T
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
 		return 0;
 	}
-	SQLWCHAR TmpColumnNameTmp[COLUMNNAME_LENGTH * 2]; // For adaptation to the bug of MariaDB ODBC connector
-	SQLWCHAR TmpColumnTypeTmp[COLUMNTYPE_LENGTH * 2]; // For adaptation to the bug of MariaDB ODBC connector
-	SQLWCHAR TmpIsNullTmp[10];
+	SQLWCHAR TmpColumnNameTmp[COLUMNNAME_LENGTH * 2] = { 0 }; // For adaptation to the bug of MariaDB ODBC connector
+	SQLWCHAR TmpColumnTypeTmp[COLUMNTYPE_LENGTH * 2] = { 0 }; // For adaptation to the bug of MariaDB ODBC connector
+	SQLWCHAR TmpIsNullTmp[10] = { 0 };
 	SQLLEN ColumneNameLen = 0;
 	SQLLEN ColumneTypeLen = 0;
 	SQLLEN IsNullLen = 0;

@@ -107,9 +107,9 @@ int DbMySqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* Tbl
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
 		return 0;
 	}
-	SQLWCHAR TmpColumnName[COLUMNNAME_LENGTH];
-	SQLWCHAR TmpColumnType[COLUMNTYPE_LENGTH];
-	SQLWCHAR TmpIsNull[10];
+	SQLWCHAR TmpColumnName[COLUMNNAME_LENGTH] = { 0 };
+	SQLWCHAR TmpColumnType[COLUMNTYPE_LENGTH] = { 0 };
+	SQLWCHAR TmpIsNull[10] = { 0 };
 	SQLBindCol(pImpl->Hstmt, 1, SQL_C_WCHAR, TmpColumnName, COLUMNNAME_LENGTH * sizeof(SQLWCHAR), NULL);
 	SQLBindCol(pImpl->Hstmt, 2, SQL_C_WCHAR, TmpColumnType, COLUMNTYPE_LENGTH * sizeof(SQLWCHAR), NULL);
 	SQLBindCol(pImpl->Hstmt, 4, SQL_C_WCHAR, TmpIsNull, 10 * sizeof(SQLWCHAR), NULL);

@@ -75,7 +75,7 @@ int DbAccessor::GetTablesCommon(const wchar_t* Query, StkObject* Obj, wchar_t St
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
 		return -1;
 	}
-	SQLWCHAR TableName[TABLENAME_LENGTH];
+	SQLWCHAR TableName[TABLENAME_LENGTH] = { 0 };
 	SQLBindCol(pImpl->Hstmt, 1, SQL_C_WCHAR, TableName, TABLENAME_LENGTH * sizeof(SQLWCHAR), NULL);
 
 	bool InitFlag = true;
@@ -328,7 +328,23 @@ int DbAccessor::AddTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wchar
 			}
 		}
 		StkPlWPrintf(L"%ls\r\n", SqlBuf);
+
+		OpenDatabase(StateMsg, Msg);
+		SQLWCHAR CvtStateMsg[10];
+		SQLWCHAR CvtMsg[1024];
+		SQLINTEGER Native; // This will not be refered from anywhere
+		SQLSMALLINT ActualMsgLen; // This will not be refered from anywhere
+		char16_t* CvtSqlBuf = StkPlCreateUtf16FromWideChar(SqlBuf);
+		SQLRETURN Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
+		delete[] CvtSqlBuf;
+		if (Ret != SQL_SUCCESS) {
+			CloseDatabase(StateMsg, Msg);
+			SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
+			ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
+			return -1;
+		}
 	}
+	CloseDatabase(StateMsg, Msg);
 	return 0;
 }
 
