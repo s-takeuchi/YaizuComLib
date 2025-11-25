@@ -105,6 +105,9 @@ int DbPostgreSqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject
 	if (Ret != SQL_SUCCESS) {
 		SQLGetDiagRec(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
+		wchar_t DummyStateMsg[10];
+		wchar_t DummyMsg[1024];
+		CloseDatabase(DummyStateMsg, DummyMsg);
 		return 0;
 	}
 	SQLWCHAR TmpColumnName[COLUMNNAME_LENGTH] = { 0 };
@@ -124,6 +127,9 @@ int DbPostgreSqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject
 		if (Ret != SQL_SUCCESS && Ret != SQL_SUCCESS_WITH_INFO && ColumneMaxLen != SQL_NULL_DATA) {
 			SQLGetDiagRec(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
 			ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
+			wchar_t DummyStateMsg[10];
+			wchar_t DummyMsg[1024];
+			CloseDatabase(DummyStateMsg, DummyMsg);
 			return 0;
 		}
 
