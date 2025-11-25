@@ -73,9 +73,9 @@ int DbMySqlAccessor::GetTables(StkObject* Obj, wchar_t StateMsg[10], wchar_t Msg
 	return Ret;
 }
 
-int DbMySqlAccessor::AddTable(StkObject* Obj, wchar_t StateMsg[10], wchar_t Msg[1024])
+int DbMySqlAccessor::CreateTable(StkObject* Obj, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
-	return AddTableCommon(Obj, StateMsg, Msg);
+	return CreateTableCommon(Obj, StateMsg, Msg);
 }
 
 int DbMySqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* TblObj, wchar_t StateMsg[10], wchar_t Msg[1024])

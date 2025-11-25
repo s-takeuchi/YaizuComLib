@@ -73,9 +73,9 @@ int DbMariaDbAccessor::GetTables(StkObject* Obj, wchar_t StateMsg[10], wchar_t M
 	return Ret;
 }
 
-int DbMariaDbAccessor::AddTable(StkObject* Obj, wchar_t StateMsg[10], wchar_t Msg[1024])
+int DbMariaDbAccessor::CreateTable(StkObject* Obj, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
-	return AddTableCommon(Obj, StateMsg, Msg);
+	return CreateTableCommon(Obj, StateMsg, Msg);
 }
 
 int DbMariaDbAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* TblObj, wchar_t StateMsg[10], wchar_t Msg[1024])

@@ -168,6 +168,9 @@ int DbAccessor::GetNumOfRecordsCommon(wchar_t* TableName,
 	if (Ret != SQL_SUCCESS) {
 		SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
+		wchar_t DummyStateMsg[10];
+		wchar_t DummyMsg[1024];
+		CloseDatabase(DummyStateMsg, DummyMsg);
 		return 0;
 	}
 	DWORD TmpNumOfRec = 0;
@@ -297,7 +300,7 @@ int DbAccessor::GetRecordsByTableNameCommon(const wchar_t* TableName,
 // StateMsg [out] : State code
 // Msg [out] : Error message
 // Return : 0=Success, -1=Error
-int DbAccessor::AddTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wchar_t Msg[1024])
+int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
 	wchar_t SqlBuf[1024] = L"";
 	wchar_t TableName[TABLENAME_LENGTH] = L"";
@@ -338,9 +341,11 @@ int DbAccessor::AddTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wchar
 		SQLRETURN Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
 		delete[] CvtSqlBuf;
 		if (Ret != SQL_SUCCESS) {
-			CloseDatabase(StateMsg, Msg);
 			SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
 			ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
+			wchar_t DummyStateMsg[10];
+			wchar_t DummyMsg[1024];
+			CloseDatabase(DummyStateMsg, DummyMsg);
 			return -1;
 		}
 	}
