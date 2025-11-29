@@ -874,6 +874,11 @@ int StkPlWPrintf(const wchar_t* Format, ...)
 	return Ret;
 }
 
+int StkPlFlush()
+{
+	return fflush(stdout);
+}
+
 int StkPlSPrintf(char* Str, size_t Len, const char* Format, ...)
 {
 	va_list va;

@@ -90,6 +90,7 @@ char* StkPlCreateUtf8FromWideChar(const wchar_t*);
 // APIs for etc
 int StkPlPrintf(const char*, ...);
 int StkPlWPrintf(const wchar_t*, ...);
+int StkPlFlush();
 int StkPlSPrintf(char*, size_t, const char*, ...);
 int StkPlSwPrintf(wchar_t*, size_t, const wchar_t*, ...);
 

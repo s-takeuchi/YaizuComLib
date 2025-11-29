@@ -1006,14 +1006,15 @@ void TestThreadProc5()
 void TestThreadProc6(bool SslMode)
 {
 	StkPlPrintf("[Recv/Send%s] : Keep waiting for sender's finish ...", SslMode ? "(SSL/TSL)" : "");
+	StkPlFlush();
 	FinishFlag = false;
 	StkSocket_AddInfo(0, STKSOCKET_TYPE_STREAM, STKSOCKET_ACTIONTYPE_RECEIVER, L"127.0.0.1", 2001);
 	if (SslMode) {
 		StkSocket_SecureForRecv(0, "./server.key", "./server.crt");
 	}
 	StkSocket_Open(0);
-	unsigned char Buffer[10000];
-	unsigned char CondStr[1000];
+	unsigned char Buffer[10000] = "";
+	unsigned char CondStr[1000] = "";
 	while (true) {
 		int Ret = StkSocket_Receive(0, 0, Buffer, 10000, STKSOCKET_RECV_FINISHCOND_UNCONDITIONAL, 100, CondStr, 1000);
 		if (Ret > 0) {
@@ -1027,6 +1028,7 @@ void TestThreadProc6(bool SslMode)
 	StkSocket_Close(0, false);
 	StkSocket_DeleteInfo(0);
 	StkPlPrintf("OK\n");
+	StkPlFlush();
 }
 
 void TestThreadProc7(bool SslMode)
