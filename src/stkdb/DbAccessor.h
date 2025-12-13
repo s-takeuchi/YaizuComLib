@@ -20,6 +20,10 @@ protected:
 	static const int MAXNUM_TABLES = 300;
 	static const int MAXNUM_COLUMNS = 50;
 
+	static const int TYPE_KEY = 0;
+	static const int TYPE_VALUE = 1;
+	static const int TYPE_LIKE_VALUE = 2;
+
 protected:
 	int OpenDatabase(wchar_t[10], wchar_t[1024]);
 	int CloseDatabase(wchar_t[10], wchar_t[1024]);
@@ -32,6 +36,7 @@ protected:
 	int GetNumOfRecordsCommon(wchar_t*, bool, wchar_t[5][COLUMNNAME_LENGTH * 4 + 2],
 		int[5], wchar_t[5][COLUMNVAL_LENGTH * 4 + 2], wchar_t[10], wchar_t[1024]);
 	int CreateTableCommon(StkObject*, wchar_t[10], wchar_t[1024]);
+	int DropTableCommon(wchar_t*, wchar_t[10], wchar_t[1024]);
 
 	void ConvertMessage(wchar_t[10], wchar_t[1024], const char16_t[10], const char16_t[1024]);
 
@@ -49,4 +54,5 @@ public:
 	virtual int GetColumnInfoByTableName(wchar_t*,	StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int GetRecordsByTableName(wchar_t*, FilteringCondition*, int, StkObject*, wchar_t*, wchar_t*, int, int, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int CreateTable(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
+	virtual int DropTable(wchar_t*, wchar_t[10], wchar_t[1024]) = 0;
 };

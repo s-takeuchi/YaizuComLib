@@ -306,7 +306,12 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 	wchar_t TableName[TABLENAME_LENGTH] = L"";
 	if (TableInfo) {
 		StkPlWcsCpy(TableName, TABLENAME_LENGTH, TableInfo->GetName());
-		StkPlSwPrintf(SqlBuf, 1024, L"CREATE TABLE %ls (", TableName);
+		size_t LenOfTableName = StkPlWcsLen(TableName);
+		wchar_t* EcdTableName = new wchar_t[LenOfTableName * 4 + 2];
+		SqlEncoding(TableName, EcdTableName, TYPE_KEY);
+
+		StkPlSwPrintf(SqlBuf, 1024, L"CREATE TABLE %ls (", EcdTableName);
+		delete [] EcdTableName;
 		StkObject* ColumnInfo = TableInfo->GetFirstChildElement();
 		while (ColumnInfo && StkPlWcsCmp(ColumnInfo->GetName(), L"ColumnInfo") == 0) {
 			StkObject* Attr = ColumnInfo->GetFirstChildElement();
@@ -330,7 +335,6 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 				StkPlWcsCat(SqlBuf, 1024, L");");
 			}
 		}
-		StkPlWPrintf(L"%ls\r\n", SqlBuf);
 
 		OpenDatabase(StateMsg, Msg);
 		SQLWCHAR CvtStateMsg[10];
@@ -352,6 +356,38 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 	CloseDatabase(StateMsg, Msg);
 	return 0;
 }
+
+int DbAccessor::DropTableCommon(wchar_t* TableName, wchar_t StateMsg[10], wchar_t Msg[1024])
+{
+	wchar_t SqlBuf[1024] = L"";
+
+	size_t LenOfTableName = StkPlWcsLen(TableName);
+	wchar_t* EcdTableName = new wchar_t[LenOfTableName * 4 + 2];
+	SqlEncoding(TableName, EcdTableName, TYPE_KEY);
+
+	StkPlSwPrintf(SqlBuf, 1024, L"DROP TABLE %ls;", EcdTableName);
+	delete[] EcdTableName;
+
+	OpenDatabase(StateMsg, Msg);
+	SQLWCHAR CvtStateMsg[10];
+	SQLWCHAR CvtMsg[1024];
+	SQLINTEGER Native; // This will not be refered from anywhere
+	SQLSMALLINT ActualMsgLen; // This will not be refered from anywhere
+	char16_t* CvtSqlBuf = StkPlCreateUtf16FromWideChar(SqlBuf);
+	SQLRETURN Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
+	delete[] CvtSqlBuf;
+	if (Ret != SQL_SUCCESS) {
+		SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
+		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
+		wchar_t DummyStateMsg[10];
+		wchar_t DummyMsg[1024];
+		CloseDatabase(DummyStateMsg, DummyMsg);
+		return -1;
+	}
+	CloseDatabase(StateMsg, Msg);
+	return 0;
+}
+
 
 // Return 0: Success, -1:Error
 int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])

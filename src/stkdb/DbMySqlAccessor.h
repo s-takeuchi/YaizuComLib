@@ -7,11 +7,6 @@
 
 class DbMySqlAccessor : public DbAccessor
 {
-private:
-	static const int TYPE_KEY = 0;
-	static const int TYPE_VALUE = 1;
-	static const int TYPE_LIKE_VALUE = 2;
-
 protected:
 	int ConvertAttrType(wchar_t[COLUMNTYPE_LENGTH], wchar_t[COLUMNTYPE_LENGTH]);
 	void SqlEncoding(wchar_t*, wchar_t*, int);
@@ -25,4 +20,5 @@ public:
 	int GetColumnInfoByTableName(wchar_t*,	StkObject*, wchar_t[10], wchar_t[1024]);
 	int GetRecordsByTableName(wchar_t*, FilteringCondition*, int, StkObject*, wchar_t*, wchar_t*, int, int, wchar_t[10], wchar_t[1024]);
 	int CreateTable(StkObject*, wchar_t[10], wchar_t[1024]);
+	int DropTable(wchar_t*, wchar_t[10], wchar_t[1024]);
 };
