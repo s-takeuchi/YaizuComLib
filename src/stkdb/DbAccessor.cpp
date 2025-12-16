@@ -325,6 +325,13 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 				}
 				Attr = Attr->GetNext();
 			}
+			size_t LenOfColumnName = StkPlWcsLen(ColumnName);
+			size_t LenOfColumnType = StkPlWcsLen(ColumnType);
+			wchar_t* EcdColumnName = new wchar_t[LenOfColumnName * 4 + 2];
+			wchar_t* EcdColumnType = new wchar_t[LenOfColumnType * 4 + 2];
+			SqlEncoding(ColumnName, EcdColumnName, TYPE_KEY);
+			SqlEncoding(ColumnType, EcdColumnType, TYPE_KEY);
+
 			wchar_t SqlBufTmp[COLUMNNAME_LENGTH + COLUMNTYPE_LENGTH + 2] = L"";
 			StkPlSwPrintf(SqlBufTmp, COLUMNNAME_LENGTH + COLUMNTYPE_LENGTH + 2, L"%ls %ls", ColumnName, ColumnType);
 			StkPlWcsCat(SqlBuf, 1024, SqlBufTmp);
@@ -388,6 +395,15 @@ int DbAccessor::DropTableCommon(wchar_t* TableName, wchar_t StateMsg[10], wchar_
 	return 0;
 }
 
+// TableInfo [in] : Object represents { "zzz" : { "RecordInfo" : [ { "ColumnName1" : "Value1", "ColumnName2" : "Value2" }, ... ] } }
+// StateMsg [out] : State code
+// Msg [out] : Error message
+// Return : 0=Success, -1=Error
+int InsertRecord(StkObject* RecordInfo, wchar_t StateMsg[10], wchar_t Msg[1024])
+{
+
+	return 0;
+}
 
 // Return 0: Success, -1:Error
 int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])

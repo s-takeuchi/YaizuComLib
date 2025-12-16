@@ -37,6 +37,7 @@ protected:
 		int[5], wchar_t[5][COLUMNVAL_LENGTH * 4 + 2], wchar_t[10], wchar_t[1024]);
 	int CreateTableCommon(StkObject*, wchar_t[10], wchar_t[1024]);
 	int DropTableCommon(wchar_t*, wchar_t[10], wchar_t[1024]);
+	int InsertRecord(StkObject*, wchar_t[10], wchar_t[1024]);
 
 	void ConvertMessage(wchar_t[10], wchar_t[1024], const char16_t[10], const char16_t[1024]);
 
