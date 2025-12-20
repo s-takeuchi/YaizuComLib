@@ -21,4 +21,5 @@ public:
 	int GetRecordsByTableName(wchar_t*, FilteringCondition*, int, StkObject*, wchar_t*, wchar_t*, int, int, wchar_t[10], wchar_t[1024]);
 	int CreateTable(StkObject*, wchar_t[10], wchar_t[1024]);
 	int DropTable(wchar_t*, wchar_t[10], wchar_t[1024]);
+	int InsertRecord(StkObject*, wchar_t[10], wchar_t[1024]);
 };

@@ -83,6 +83,11 @@ int DbMySqlAccessor::DropTable(wchar_t* TableName, wchar_t StateMsg[10], wchar_t
 	return DropTableCommon(TableName, StateMsg, Msg);
 }
 
+int DbMySqlAccessor::InsertRecord(StkObject* Record, wchar_t StateMsg[10], wchar_t Msg[1024])
+{
+	return InsertRecordCommon(Record, StateMsg, Msg);
+}
+
 int DbMySqlAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* TblObj, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
 	SQLWCHAR CvtStateMsg[10];

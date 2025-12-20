@@ -83,6 +83,11 @@ int DbMariaDbAccessor::DropTable(wchar_t* TableName, wchar_t StateMsg[10], wchar
 	return DropTableCommon(TableName, StateMsg, Msg);
 }
 
+int DbMariaDbAccessor::InsertRecord(StkObject* Record, wchar_t StateMsg[10], wchar_t Msg[1024])
+{
+	return InsertRecordCommon(Record, StateMsg, Msg);
+}
+
 int DbMariaDbAccessor::GetColumnInfoByTableName(wchar_t* TableName, StkObject* TblObj, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
 	SQLWCHAR CvtStateMsg[10];

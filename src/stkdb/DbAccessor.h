@@ -37,7 +37,7 @@ protected:
 		int[5], wchar_t[5][COLUMNVAL_LENGTH * 4 + 2], wchar_t[10], wchar_t[1024]);
 	int CreateTableCommon(StkObject*, wchar_t[10], wchar_t[1024]);
 	int DropTableCommon(wchar_t*, wchar_t[10], wchar_t[1024]);
-	int InsertRecord(StkObject*, wchar_t[10], wchar_t[1024]);
+	int InsertRecordCommon(StkObject*, wchar_t[10], wchar_t[1024]);
 
 	void ConvertMessage(wchar_t[10], wchar_t[1024], const char16_t[10], const char16_t[1024]);
 
@@ -56,4 +56,5 @@ public:
 	virtual int GetRecordsByTableName(wchar_t*, FilteringCondition*, int, StkObject*, wchar_t*, wchar_t*, int, int, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int CreateTable(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int DropTable(wchar_t*, wchar_t[10], wchar_t[1024]) = 0;
+	virtual int InsertRecord(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 };

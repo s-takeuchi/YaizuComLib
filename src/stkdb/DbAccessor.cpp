@@ -399,9 +399,23 @@ int DbAccessor::DropTableCommon(wchar_t* TableName, wchar_t StateMsg[10], wchar_
 // StateMsg [out] : State code
 // Msg [out] : Error message
 // Return : 0=Success, -1=Error
-int InsertRecord(StkObject* RecordInfo, wchar_t StateMsg[10], wchar_t Msg[1024])
+int DbAccessor::InsertRecordCommon(StkObject* Record, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
+	wchar_t SqlBuf[1024] = L"";
+	wchar_t TableName[TABLENAME_LENGTH] = L"";
+	if (Record) {
+		StkPlWcsCpy(TableName, TABLENAME_LENGTH, Record->GetName());
+		size_t LenOfTableName = StkPlWcsLen(TableName);
+		wchar_t* EcdTableName = new wchar_t[LenOfTableName * 4 + 2];
+		SqlEncoding(TableName, EcdTableName, TYPE_KEY);
 
+		StkPlSwPrintf(SqlBuf, 1024, L"INSERT INTO %ls (", EcdTableName);
+		delete[] EcdTableName;
+		StkObject* Line = Record->GetFirstChildElement();
+		while (Line && StkPlWcsCmp(Record->GetName(), L"RecordInfo") == 0) {
+			Line = Line->GetNext();
+		}
+	}
 	return 0;
 }
 
