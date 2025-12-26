@@ -296,7 +296,7 @@ int DbAccessor::GetRecordsByTableNameCommon(const wchar_t* TableName,
 	return LoopRec;
 }
 
-// TableInfo [in] : Object represents { "zzz" : { "ColumnInfo" : [ { "Name" : "xxx", "Type" : "yyy" }, ... ] } }
+// TableInfo [in] : Object represents  "zzz" : { "ColumnInfo" : [ { "Name" : "xxx", "Type" : "yyy" }, ... ]  }
 // StateMsg [out] : State code
 // Msg [out] : Error message
 // Return : 0=Success, -1=Error
@@ -326,14 +326,12 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 				Attr = Attr->GetNext();
 			}
 			size_t LenOfColumnName = StkPlWcsLen(ColumnName);
-			size_t LenOfColumnType = StkPlWcsLen(ColumnType);
 			wchar_t* EcdColumnName = new wchar_t[LenOfColumnName * 4 + 2];
-			wchar_t* EcdColumnType = new wchar_t[LenOfColumnType * 4 + 2];
 			SqlEncoding(ColumnName, EcdColumnName, TYPE_KEY);
-			SqlEncoding(ColumnType, EcdColumnType, TYPE_KEY);
 
 			wchar_t SqlBufTmp[COLUMNNAME_LENGTH + COLUMNTYPE_LENGTH + 2] = L"";
-			StkPlSwPrintf(SqlBufTmp, COLUMNNAME_LENGTH + COLUMNTYPE_LENGTH + 2, L"%ls %ls", ColumnName, ColumnType);
+			StkPlSwPrintf(SqlBufTmp, COLUMNNAME_LENGTH + COLUMNTYPE_LENGTH + 2, L"%ls %ls", EcdColumnName, ColumnType);
+			delete[] EcdColumnName;
 			StkPlWcsCat(SqlBuf, 1024, SqlBufTmp);
 			ColumnInfo = ColumnInfo->GetNext();
 			if (ColumnInfo) {
@@ -395,7 +393,7 @@ int DbAccessor::DropTableCommon(wchar_t* TableName, wchar_t StateMsg[10], wchar_
 	return 0;
 }
 
-// TableInfo [in] : Object represents { "zzz" : { "RecordInfo" : [ { "ColumnName1" : "Value1", "ColumnName2" : "Value2" }, ... ] } }
+// TableInfo [in] : Object represents  "zzz" : { "RecordInfo" : [ "Value1", "Value2", ... ] } 
 // StateMsg [out] : State code
 // Msg [out] : Error message
 // Return : 0=Success, -1=Error
@@ -403,17 +401,46 @@ int DbAccessor::InsertRecordCommon(StkObject* Record, wchar_t StateMsg[10], wcha
 {
 	wchar_t SqlBuf[1024] = L"";
 	wchar_t TableName[TABLENAME_LENGTH] = L"";
+	wchar_t Value[64] = L"";
 	if (Record) {
 		StkPlWcsCpy(TableName, TABLENAME_LENGTH, Record->GetName());
 		size_t LenOfTableName = StkPlWcsLen(TableName);
 		wchar_t* EcdTableName = new wchar_t[LenOfTableName * 4 + 2];
 		SqlEncoding(TableName, EcdTableName, TYPE_KEY);
-
 		StkPlSwPrintf(SqlBuf, 1024, L"INSERT INTO %ls (", EcdTableName);
 		delete[] EcdTableName;
-		StkObject* Line = Record->GetFirstChildElement();
-		while (Line && StkPlWcsCmp(Record->GetName(), L"RecordInfo") == 0) {
-			Line = Line->GetNext();
+		StkObject* ColumnData = Record->GetFirstChildElement();
+		while (ColumnData && StkPlWcsCmp(ColumnData->GetName(), L"RecordInfo") == 0) {
+			if (ColumnData->GetType() == StkObject::STKOBJECT_ELEM_STRING) {
+				size_t LenOfValue = StkPlWcsLen(ColumnData->GetStringValue());
+				wchar_t* EcdValue = new wchar_t[LenOfValue * 4 + 2];
+				StkPlWcsCpy(Value, 64, ColumnData->GetStringValue());
+				SqlEncoding(Value, EcdValue, TYPE_KEY);
+				StkPlWcsCat(SqlBuf, 1024, EcdValue);
+				delete[] EcdValue;
+				if (ColumnData->GetNext()) {
+					StkPlWcsCat(SqlBuf, 1024, L",");
+				} else {
+					StkPlWcsCat(SqlBuf, 1024, L");");
+				}
+			} else if (ColumnData->GetType() == StkObject::STKOBJECT_ELEM_INT) {
+				int ValueInt = ColumnData->GetIntValue();
+				if (ColumnData->GetNext()) {
+					StkPlSwPrintf(Value, 64, L"%d,", ValueInt);
+				} else {
+					StkPlSwPrintf(Value, 64, L"%d);", ValueInt);
+				}
+				StkPlWcsCat(SqlBuf, 1024, Value);
+			} else if (ColumnData->GetType() == StkObject::STKOBJECT_ELEM_FLOAT) {
+				float ValueFloat = ColumnData->GetFloatValue();
+				if (ColumnData->GetNext()) {
+					StkPlSwPrintf(Value, 64, L"%f,", ValueFloat);
+				} else {
+					StkPlSwPrintf(Value, 64, L"%f);", ValueFloat);
+				}
+				StkPlWcsCat(SqlBuf, 1024, Value);
+			}
+			ColumnData = ColumnData->GetNext();
 		}
 	}
 	return 0;
