@@ -296,7 +296,7 @@ int DbAccessor::GetRecordsByTableNameCommon(const wchar_t* TableName,
 	return LoopRec;
 }
 
-// TableInfo [in] : Object represents  "zzz" : { "ColumnInfo" : [ { "Name" : "xxx", "Type" : "yyy" }, ... ]  }
+// TableInfo [in] : Object represents  {"zzz" : { "ColumnInfo" : [ { "Name" : "xxx", "Type" : "yyy" }, ... ]  }}
 // StateMsg [out] : State code
 // Msg [out] : Error message
 // Return : 0=Success, -1=Error
@@ -304,6 +304,9 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 {
 	wchar_t SqlBuf[1024] = L"";
 	wchar_t TableName[TABLENAME_LENGTH] = L"";
+	if (TableInfo) {
+		TableInfo = TableInfo->GetFirstChildElement();
+	}
 	if (TableInfo) {
 		StkPlWcsCpy(TableName, TABLENAME_LENGTH, TableInfo->GetName());
 		size_t LenOfTableName = StkPlWcsLen(TableName);
@@ -357,8 +360,8 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 			CloseDatabase(DummyStateMsg, DummyMsg);
 			return -1;
 		}
+		CloseDatabase(StateMsg, Msg);
 	}
-	CloseDatabase(StateMsg, Msg);
 	return 0;
 }
 
@@ -393,7 +396,7 @@ int DbAccessor::DropTableCommon(wchar_t* TableName, wchar_t StateMsg[10], wchar_
 	return 0;
 }
 
-// TableInfo [in] : Object represents  "zzz" : { "RecordInfo" : [ "Value1", "Value2", ... ] } 
+// TableInfo [in] : Object represents  {"zzz" : [{ "RecordInfo" : [ "Value1", "Value2", ... ] }, ...]} 
 // StateMsg [out] : State code
 // Msg [out] : Error message
 // Return : 0=Success, -1=Error
@@ -403,11 +406,16 @@ int DbAccessor::InsertRecordCommon(StkObject* Record, wchar_t StateMsg[10], wcha
 	wchar_t TableName[TABLENAME_LENGTH] = L"";
 	wchar_t Value[64] = L"";
 	if (Record) {
+		Record = Record->GetFirstChildElement();
+	}
+	while (Record) {
 		StkPlWcsCpy(TableName, TABLENAME_LENGTH, Record->GetName());
 		size_t LenOfTableName = StkPlWcsLen(TableName);
 		wchar_t* EcdTableName = new wchar_t[LenOfTableName * 4 + 2];
 		SqlEncoding(TableName, EcdTableName, TYPE_KEY);
-		StkPlSwPrintf(SqlBuf, 1024, L"INSERT INTO %ls (", EcdTableName);
+		StkPlWcsCat(SqlBuf, 1024, L"INSERT INTO ");
+		StkPlWcsCat(SqlBuf, 1024, EcdTableName);
+		StkPlWcsCat(SqlBuf, 1024, L" VALUES (");
 		delete[] EcdTableName;
 		StkObject* ColumnData = Record->GetFirstChildElement();
 		while (ColumnData && StkPlWcsCmp(ColumnData->GetName(), L"RecordInfo") == 0) {
@@ -415,20 +423,22 @@ int DbAccessor::InsertRecordCommon(StkObject* Record, wchar_t StateMsg[10], wcha
 				size_t LenOfValue = StkPlWcsLen(ColumnData->GetStringValue());
 				wchar_t* EcdValue = new wchar_t[LenOfValue * 4 + 2];
 				StkPlWcsCpy(Value, 64, ColumnData->GetStringValue());
-				SqlEncoding(Value, EcdValue, TYPE_KEY);
+				SqlEncoding(Value, EcdValue, TYPE_VALUE);
+				StkPlWcsCat(SqlBuf, 1024, L"'");
 				StkPlWcsCat(SqlBuf, 1024, EcdValue);
+				StkPlWcsCat(SqlBuf, 1024, L"'");
 				delete[] EcdValue;
 				if (ColumnData->GetNext()) {
 					StkPlWcsCat(SqlBuf, 1024, L",");
 				} else {
-					StkPlWcsCat(SqlBuf, 1024, L");");
+					StkPlWcsCat(SqlBuf, 1024, L");\r\n");
 				}
 			} else if (ColumnData->GetType() == StkObject::STKOBJECT_ELEM_INT) {
 				int ValueInt = ColumnData->GetIntValue();
 				if (ColumnData->GetNext()) {
 					StkPlSwPrintf(Value, 64, L"%d,", ValueInt);
 				} else {
-					StkPlSwPrintf(Value, 64, L"%d);", ValueInt);
+					StkPlSwPrintf(Value, 64, L"%d);\r\n", ValueInt);
 				}
 				StkPlWcsCat(SqlBuf, 1024, Value);
 			} else if (ColumnData->GetType() == StkObject::STKOBJECT_ELEM_FLOAT) {
@@ -436,13 +446,32 @@ int DbAccessor::InsertRecordCommon(StkObject* Record, wchar_t StateMsg[10], wcha
 				if (ColumnData->GetNext()) {
 					StkPlSwPrintf(Value, 64, L"%f,", ValueFloat);
 				} else {
-					StkPlSwPrintf(Value, 64, L"%f);", ValueFloat);
+					StkPlSwPrintf(Value, 64, L"%f);\r\n", ValueFloat);
 				}
 				StkPlWcsCat(SqlBuf, 1024, Value);
 			}
 			ColumnData = ColumnData->GetNext();
 		}
+		Record = Record->GetNext();
 	}
+
+	OpenDatabase(StateMsg, Msg);
+	SQLWCHAR CvtStateMsg[10];
+	SQLWCHAR CvtMsg[1024];
+	SQLINTEGER Native; // This will not be refered from anywhere
+	SQLSMALLINT ActualMsgLen; // This will not be refered from anywhere
+	char16_t* CvtSqlBuf = StkPlCreateUtf16FromWideChar(SqlBuf);
+	SQLRETURN Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
+	delete[] CvtSqlBuf;
+	if (Ret != SQL_SUCCESS) {
+		SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
+		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
+		wchar_t DummyStateMsg[10];
+		wchar_t DummyMsg[1024];
+		CloseDatabase(DummyStateMsg, DummyMsg);
+		return -1;
+	}
+	CloseDatabase(StateMsg, Msg);
 	return 0;
 }
 
