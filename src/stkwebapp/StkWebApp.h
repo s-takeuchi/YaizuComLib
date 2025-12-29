@@ -20,6 +20,8 @@ public:
 	int DeleteReqHandler(int, const wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
 
 	void TheLoop();
+	bool IsStop();
+	int GetStatusOfApiCall(int, long long*, long long*, wchar_t[StkWebAppExec::URL_PATH_LENGTH]);
 
 	// Do not call APIs shown below. These are only for internal use.
 	static StkWebApp* GetStkWebAppByThreadId(int);

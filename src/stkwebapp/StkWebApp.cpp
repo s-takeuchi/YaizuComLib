@@ -28,6 +28,9 @@ public:
 
 	int WebThreadCount;
 	int WebThreadIds[MAX_THREAD_COUNT];
+	long long StartTm[MAX_THREAD_COUNT];
+	long long EndTm[MAX_THREAD_COUNT];
+	wchar_t ApiStr[MAX_THREAD_COUNT][StkWebAppExec::URL_PATH_LENGTH];
 
 	int HandlerCount;
 	int HandlerMethod[MAX_REQHANDLER_COUNT];
@@ -485,6 +488,27 @@ void StkWebApp::TheLoop()
 	}
 }
 
+bool StkWebApp::IsStop()
+{
+	return pImpl->StopFlag;
+}
+
+int StkWebApp::GetStatusOfApiCall(int Id, long long* StartTm, long long* EndTm, wchar_t ApiStr[StkWebAppExec::URL_PATH_LENGTH])
+{
+	int Loop = 0;
+	for (; Loop < pImpl->WebThreadCount; Loop++) {
+		if (pImpl->WebThreadIds[Loop] == Id) {
+			*StartTm = pImpl->StartTm[Loop];
+			*EndTm = pImpl->EndTm[Loop];
+			StkPlWcsCpy(ApiStr, StkWebAppExec::URL_PATH_LENGTH, pImpl->ApiStr[Loop]);
+		}
+	}
+	if (Loop == pImpl->WebThreadCount) {
+		return -1;
+	}
+	return 0;
+}
+
 int StkWebApp::ThreadLoop(int ThreadId)
 {
 	int XmlJsonType = XMLJSONTYPE_EMPTYSTR;
@@ -516,6 +540,14 @@ int StkWebApp::ThreadLoop(int ThreadId)
 		StkObjReq = pImpl->RecvRequest(ThreadId, &XmlJsonType, ContLen, HttpHeader);
 	}
 
+	// Search thread index
+	int ThIndex = -1;
+	for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
+		if (pImpl->WebThreadIds[Loop] == ThreadId) {
+			ThIndex = Loop;
+		}
+	}
+
 	// If a request is received...
 	StkObject* StkObjRes = NULL;
 	bool FndFlag = false;
@@ -530,7 +562,13 @@ int StkWebApp::ThreadLoop(int ThreadId)
 					StkObjRes = NULL;
 					ResultCode = 200;
 				} else {
-					StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode, HttpHeader);
+					if (ThIndex >= 0 && ThIndex < MAX_THREAD_COUNT) {
+						pImpl->StartTm[ThIndex] = StkPlGetTime();
+						pImpl->EndTm[ThIndex] = 0;
+						StkPlWcsCpy(pImpl->ApiStr[ThIndex], StkWebAppExec::URL_PATH_LENGTH, UrlPath);
+						StkObjRes = pImpl->Handler[Loop]->Execute(StkObjReq, Method, UrlPath, &ResultCode, HttpHeader);
+						pImpl->EndTm[ThIndex] = StkPlGetTime();
+					}
 				}
 				FndFlag = true;
 				break;
@@ -633,6 +671,8 @@ StkWebApp::StkWebApp(int* TargetIds, int Count, const wchar_t* HostName, int Tar
 	}
 	for (int Loop = 0; Loop < pImpl->WebThreadCount; Loop++) {
 		pImpl->WebThreadIds[Loop] = TargetIds[Loop];
+		pImpl->StartTm[Loop] = 0;
+		pImpl->EndTm[Loop] = 0;
 	}
 
 	// Add and open socket
