@@ -48,6 +48,8 @@ protected:
 public:
 	DbAccessor(wchar_t*);
 	virtual ~DbAccessor();
+	static int Init();
+	static int Uninit();
 
 	virtual int Test(wchar_t[10], wchar_t[1024]);
 	virtual int GetNumOfRecords(wchar_t*, FilteringCondition*, wchar_t[10], wchar_t[1024]) = 0;

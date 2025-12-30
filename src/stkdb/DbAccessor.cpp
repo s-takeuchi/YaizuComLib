@@ -8,12 +8,13 @@
 #include "../../../YaizuComLib/src/commonfunc/StkObject.h"
 #include "../../../YaizuComLib/src/stkpl/StkPl.h"
 
+static SQLHENV Henv = 0;
+
 class DbAccessor::Impl
 {
 public:
 	wchar_t* ConnectionString;
 
-	SQLHENV  Henv;
 	SQLHDBC  Hdbc;
 	SQLHSTMT Hstmt;
 };
@@ -21,7 +22,6 @@ public:
 DbAccessor::DbAccessor(wchar_t* TmpConnStr)
 {
 	pImpl = new Impl;
-	pImpl->Henv = 0;
 	pImpl->Hdbc = 0;
 	pImpl->Hstmt = 0;
 	size_t Len = StkPlWcsLen(TmpConnStr);
@@ -33,6 +33,26 @@ DbAccessor::~DbAccessor()
 {
 	delete[] pImpl->ConnectionString;
 	delete pImpl;
+}
+
+int DbAccessor::Init()
+{
+	// Alloc environment handle
+	if (SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &(Henv)) == SQL_ERROR) {
+		return -1;
+	}
+	SQLSetEnvAttr(Henv, SQL_ATTR_ODBC_VERSION, reinterpret_cast<SQLPOINTER>(SQL_OV_ODBC3), 0);
+	return 0;
+}
+
+int DbAccessor::Uninit()
+{
+	// Free environment handle
+	if (SQLFreeHandle(SQL_HANDLE_ENV, Henv) == SQL_ERROR) {
+		return -1;
+	}
+	Henv = 0;
+	return 0;
 }
 
 void DbAccessor::ConvertMessage(wchar_t StateMsg[10], wchar_t Msg[1024], const char16_t SqlStateMsg[10], const char16_t SqlMsg[1024])
@@ -489,19 +509,9 @@ int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])
 	StkPlLStrCpy(Msg, L"");
 	StkPlLStrCpy(StateMsg, L"");
 
-	// Alloc environment handle
-	if (SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &(pImpl->Henv)) == SQL_ERROR) {
-		if (pImpl->Henv != SQL_NULL_HENV) {
-			SQLGetDiagRecW(SQL_HANDLE_ENV, pImpl->Henv, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
-		}
-		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
-		return -1;
-	}
-	SQLSetEnvAttr(pImpl->Henv, SQL_ATTR_ODBC_VERSION, reinterpret_cast<SQLPOINTER>(SQL_OV_ODBC3), 0);
-
 	// Alloc DB connection handle
-	if (SQLAllocHandle(SQL_HANDLE_DBC, pImpl->Henv, &(pImpl->Hdbc)) == SQL_ERROR) {
-		SQLGetDiagRecW(SQL_HANDLE_ENV, pImpl->Henv, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
+	if (SQLAllocHandle(SQL_HANDLE_DBC, Henv, &(pImpl->Hdbc)) == SQL_ERROR) {
+		SQLGetDiagRecW(SQL_HANDLE_ENV, Henv, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
 		return -1;
 	}
@@ -554,19 +564,11 @@ int DbAccessor::CloseDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])
 
 	// Free DB connection handle
 	if (SQLFreeHandle(SQL_HANDLE_DBC, pImpl->Hdbc) == SQL_ERROR) {
-		SQLGetDiagRecW(SQL_HANDLE_ENV, pImpl->Henv, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
+		SQLGetDiagRecW(SQL_HANDLE_ENV, Henv, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
 		return -1;
 	}
 	pImpl->Hdbc = 0;
-
-	// Free environment handle
-	if (SQLFreeHandle(SQL_HANDLE_ENV, pImpl->Henv) == SQL_ERROR) {
-		SQLGetDiagRecW(SQL_HANDLE_ENV, pImpl->Henv, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
-		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
-		return -1;
-	}
-	pImpl->Henv = 0;
 
 	return 0;
 }

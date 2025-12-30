@@ -9,12 +9,13 @@
 #include "DbMySqlAccessor.h"
 #include "FilteringCondition.h"
 
+static SQLHENV Henv = 0;
+
 class DbAccessor::Impl
 {
 public:
 	wchar_t* ConnectionString;
 
-	SQLHENV  Henv;
 	SQLHDBC  Hdbc;
 	SQLHSTMT Hstmt;
 };
