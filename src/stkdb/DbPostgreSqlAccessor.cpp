@@ -79,7 +79,7 @@ int DbPostgreSqlAccessor::CreateTable(StkObject* Obj, wchar_t StateMsg[10], wcha
 	return CreateTableCommon(Obj, StateMsg, Msg);
 }
 
-int DbPostgreSqlAccessor::DropTable(wchar_t* TableName, wchar_t StateMsg[10], wchar_t Msg[1024])
+int DbPostgreSqlAccessor::DropTable(const wchar_t* TableName, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
 	return DropTableCommon(TableName, StateMsg, Msg);
 }
@@ -242,7 +242,7 @@ int DbPostgreSqlAccessor::ConvertAttrType(wchar_t InAttr[COLUMNTYPE_LENGTH], wch
 	return 0;
 }
 
-void DbPostgreSqlAccessor::SqlEncoding(wchar_t* InSql, wchar_t* OutSql, int Type)
+void DbPostgreSqlAccessor::SqlEncoding(const wchar_t* InSql, wchar_t* OutSql, int Type)
 {
 	size_t LenOfInSql = StkPlWcsLen(InSql);
 	int OutSqlIndex = 0;

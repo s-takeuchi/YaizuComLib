@@ -79,7 +79,7 @@ int DbMySqlAccessor::CreateTable(StkObject* Obj, wchar_t StateMsg[10], wchar_t M
 	return CreateTableCommon(Obj, StateMsg, Msg);
 }
 
-int DbMySqlAccessor::DropTable(wchar_t* TableName, wchar_t StateMsg[10], wchar_t Msg[1024])
+int DbMySqlAccessor::DropTable(const wchar_t* TableName, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
 	return DropTableCommon(TableName, StateMsg, Msg);
 }
@@ -233,7 +233,7 @@ int DbMySqlAccessor::ConvertAttrType(wchar_t InAttr[COLUMNTYPE_LENGTH], wchar_t 
 	return 0;
 }
 
-void DbMySqlAccessor::SqlEncoding(wchar_t* InSql, wchar_t* OutSql, int Type)
+void DbMySqlAccessor::SqlEncoding(const wchar_t* InSql, wchar_t* OutSql, int Type)
 {
 	size_t LenOfInSql = StkPlWcsLen(InSql);
 	int OutSqlIndex = 0;

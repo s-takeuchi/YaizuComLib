@@ -36,14 +36,14 @@ protected:
 	int GetNumOfRecordsCommon(wchar_t*, bool, wchar_t[5][COLUMNNAME_LENGTH * 4 + 2],
 		int[5], wchar_t[5][COLUMNVAL_LENGTH * 4 + 2], wchar_t[10], wchar_t[1024]);
 	int CreateTableCommon(StkObject*, wchar_t[10], wchar_t[1024]);
-	int DropTableCommon(wchar_t*, wchar_t[10], wchar_t[1024]);
+	int DropTableCommon(const wchar_t*, wchar_t[10], wchar_t[1024]);
 	int InsertRecordCommon(StkObject*, wchar_t[10], wchar_t[1024]);
 
 	void ConvertMessage(wchar_t[10], wchar_t[1024], const char16_t[10], const char16_t[1024]);
 
 protected:
 	virtual int ConvertAttrType(wchar_t[COLUMNTYPE_LENGTH], wchar_t[COLUMNTYPE_LENGTH]) = 0;
-	virtual void SqlEncoding(wchar_t*, wchar_t*, int) = 0;
+	virtual void SqlEncoding(const wchar_t*, wchar_t*, int) = 0;
 
 public:
 	DbAccessor(wchar_t*);
@@ -57,6 +57,6 @@ public:
 	virtual int GetColumnInfoByTableName(wchar_t*,	StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int GetRecordsByTableName(wchar_t*, FilteringCondition*, int, StkObject*, wchar_t*, wchar_t*, int, int, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int CreateTable(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
-	virtual int DropTable(wchar_t*, wchar_t[10], wchar_t[1024]) = 0;
+	virtual int DropTable(const wchar_t*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int InsertRecord(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 };

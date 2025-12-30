@@ -385,7 +385,7 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 	return 0;
 }
 
-int DbAccessor::DropTableCommon(wchar_t* TableName, wchar_t StateMsg[10], wchar_t Msg[1024])
+int DbAccessor::DropTableCommon(const wchar_t* TableName, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
 	wchar_t SqlBuf[1024] = L"";
 

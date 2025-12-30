@@ -79,7 +79,7 @@ int DbMariaDbAccessor::CreateTable(StkObject* Obj, wchar_t StateMsg[10], wchar_t
 	return CreateTableCommon(Obj, StateMsg, Msg);
 }
 
-int DbMariaDbAccessor::DropTable(wchar_t* TableName, wchar_t StateMsg[10], wchar_t Msg[1024])
+int DbMariaDbAccessor::DropTable(const wchar_t* TableName, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
 	return DropTableCommon(TableName, StateMsg, Msg);
 }
@@ -243,7 +243,7 @@ int DbMariaDbAccessor::ConvertAttrType(wchar_t InAttr[COLUMNTYPE_LENGTH], wchar_
 	return 0;
 }
 
-void DbMariaDbAccessor::SqlEncoding(wchar_t* InSql, wchar_t* OutSql, int Type)
+void DbMariaDbAccessor::SqlEncoding(const wchar_t* InSql, wchar_t* OutSql, int Type)
 {
 	size_t LenOfInSql = StkPlWcsLen(InSql);
 	int OutSqlIndex = 0;

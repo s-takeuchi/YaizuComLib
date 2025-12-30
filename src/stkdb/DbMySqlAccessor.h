@@ -9,7 +9,7 @@ class DbMySqlAccessor : public DbAccessor
 {
 protected:
 	int ConvertAttrType(wchar_t[COLUMNTYPE_LENGTH], wchar_t[COLUMNTYPE_LENGTH]);
-	void SqlEncoding(wchar_t*, wchar_t*, int);
+	void SqlEncoding(const wchar_t*, wchar_t*, int);
 
 public:
 	DbMySqlAccessor(wchar_t*);
@@ -20,6 +20,6 @@ public:
 	int GetColumnInfoByTableName(wchar_t*,	StkObject*, wchar_t[10], wchar_t[1024]);
 	int GetRecordsByTableName(wchar_t*, FilteringCondition*, int, StkObject*, wchar_t*, wchar_t*, int, int, wchar_t[10], wchar_t[1024]);
 	int CreateTable(StkObject*, wchar_t[10], wchar_t[1024]);
-	int DropTable(wchar_t*, wchar_t[10], wchar_t[1024]);
+	int DropTable(const wchar_t*, wchar_t[10], wchar_t[1024]);
 	int InsertRecord(StkObject*, wchar_t[10], wchar_t[1024]);
 };
