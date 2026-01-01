@@ -985,6 +985,17 @@ void StkWebAppSendTest1()
 	AddStkThread(TmpIds_T[0], L"StkWebAppSendTest1_T", L"", NULL, NULL, StkWebAppSendTest1_T, NULL, NULL);
 	StartSpecifiedStkThreads(TmpIds_T, 1);
 	TmpApp1->TheLoop();
+	long long StartTm = 0;
+	long long EndTm = 0;
+	wchar_t ApiStr[3][StkWebAppExec::URL_PATH_LENGTH] = { L"", L"",  L"" };
+	TmpApp1->GetStatusOfApiCall(11, &StartTm, &EndTm, ApiStr[0]);
+	TmpApp1->GetStatusOfApiCall(12, &StartTm, &EndTm, ApiStr[1]);
+	TmpApp1->GetStatusOfApiCall(13, &StartTm, &EndTm, ApiStr[2]);
+	if (StkPlWcsCmp(ApiStr[0], L"/bigdata/") != 0 || StkPlWcsCmp(ApiStr[1], L"/bigdata/") != 0 || StkPlWcsCmp(ApiStr[2], L"/bigdata/") != 0) {
+		StkPlPrintf(" NG(Inappropriate thread behavior)\n");
+		StkPlExit(-1);
+	}
+
 	StopSpecifiedStkThreads(TmpIds_T, 1);
 	DeleteStkThread(TmpIds_T[0]);
 

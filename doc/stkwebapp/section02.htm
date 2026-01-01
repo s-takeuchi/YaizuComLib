@@ -134,9 +134,9 @@ StkWebAppExecクラスの派生クラスでは，個別のAPIの処理を定義�
     <hr />
 
     <p>int GetStatusOfApiCall(int Id, long long* StartTm, long long* EndTm, wchar_t ApiStr[StkWebAppExec::URL_PATH_LENGTH])</p>
-    指定されたスレッドのAPIの呼び出し状態を返す。<br />
+    指定されたワーカースレッドのAPIの呼び出し状態を返す。<br />
     <table class="tblstyle">
-        <tr><td>Id[入力]</td><td>取得対象のスレッドID</td></tr>
+        <tr><td>Id[入力]</td><td>取得対象のワーカースレッドのID</td></tr>
         <tr><td>StartTm[出力]</td><td>直前のAPI呼び出し開始時刻(UNIX時間)<br /></td></tr>
         <tr><td>EndTm[出力]</td><td>直前のAPI呼び出し終了時点時刻(UNIX時間)。API呼び出し中の場合、0を返す</td></tr>
         <tr><td>ApiStr[出力]</td><td>直前または現在呼び出し中のAPIを特定する文字列</td></tr>
