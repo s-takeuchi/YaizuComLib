@@ -237,7 +237,7 @@ UTF-8エンコーディングした日本語メッセージまたは日本語ラ
 
 
 
-<H2 ID="2.19">2.19 int StartLogging(wchar_t* FilePath)</H2>
+<H2 ID="2.19">2.19 int StartLogging(const wchar_t* FilePath)</H2>
 <div class="topic">
 ログファイルへのログの出力を開始します。<br>
 指定したパスにファイルが存在しない場合、新規にファイルを作成します。<br>
@@ -250,7 +250,7 @@ UTF-8エンコーディングした日本語メッセージまたは日本語ラ
 
 
 
-<H2 ID="2.20">2.20 void AddLog(char* Msg, int LogType)</H2>
+<H2 ID="2.20">2.20 void AddLog(const char* Msg, int LogType)</H2>
 <div class="topic">
 ログファイルにログを出力します。<br>
 ログの出力フォーマットは以下のとおりです。<br/>
@@ -269,7 +269,7 @@ YYYY-MM-DDThh:mm:ss+HH:MM [Thread-ID] X/ Message<br/>
 
 
 
-<H2 ID="2.21">2.21 void AddLog(wchar_t* Msg, int LogType)</H2>
+<H2 ID="2.21">2.21 void AddLog(const wchar_t* Msg, int LogType)</H2>
 <div class="topic">
 ログファイルにログをUTF-8で出力します。<br>
 ログの出力フォーマットは以下のとおりです。<br/>
@@ -285,10 +285,32 @@ YYYY-MM-DDThh:mm:ss+HH:MM [Thread-ID] X/ Message<br/>
 <tr><td>LogType[入力]</td><td>ログの種別。0:FATAL, 1:ERROR, 2:WARN, 3:INFO</td></tr>
 </table>
 </div><p>
-    
-    
-    
-<H2 ID="2.22">2.22 int StopLogging()</H2>
+
+
+
+<H2 ID="2.22">2.22 void AddLogBin(const char* Head, const char* Bin, int Size, int LogType)</H2>
+<div class="topic">
+指定された値をログファイルに16進数で出力します。<br>
+ログの出力フォーマットは以下のとおりです。<br/>
+YYYY-MM-DDThh:mm:ss+HH:MM [Thread-ID] X/ Head Bin<br/>
+<ul>
+    <li>Thread-ID : スレッドIDを示す8文字の数値</li>
+    <li>X/ : FATAL=F, ERROR=E, WARN=W, INFO=I</li>
+    <li>Head : 出力するメッセージ</li>
+    <li>Bin : 16進数表記で出力するデータ
+</ul>
+
+<table class="tblstyle">
+<tr><td>Head[入力]</td><td>出力するメッセージ</td></tr>
+<tr><td>Bin[入力]</td><td>16進数表記で出力するデータ</td></tr>
+<tr><td>Size[入力]</td><td>16進数表記で出力するデータのサイズ(バイト)</td></tr>
+<tr><td>LogType[入力]</td><td>ログの種別。0:FATAL, 1:ERROR, 2:WARN, 3:INFO</td></tr>
+</table>
+</div><p>
+
+
+
+<H2 ID="2.23">2.23 int StopLogging()</H2>
 <div class="topic">
 ログファイルへのログの出力を終了します。<br>
 <table class="tblstyle">

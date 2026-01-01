@@ -127,10 +127,12 @@ void MsgProcTest1()
 	MessageProc::AddLog("hello, world!!", MessageProc::LOG_TYPE_INFO);
 	StkPlSleepMs(500);
 	MessageProc::AddLog("test!test!test!", MessageProc::LOG_TYPE_FATAL);
-	MessageProc::AddLog(L"test#test#test#", MessageProc::LOG_TYPE_FATAL);
-	MessageProc::AddLog(L"あいうえお", MessageProc::LOG_TYPE_FATAL);
+	MessageProc::AddLog(L"test#test#test#", MessageProc::LOG_TYPE_ERROR);
+	MessageProc::AddLog(L"あいうえおabc👉𠮷", MessageProc::LOG_TYPE_FATAL);
 	StkPlSleepMs(500);
 	MessageProc::AddLog("done!", MessageProc::LOG_TYPE_WARN);
+	char Dummy[10] = "abcdefghi";
+	MessageProc::AddLogBin("BinaryData:", Dummy, 10, MessageProc::LOG_TYPE_INFO);
 	MessageProc::StopLogging();
 	size_t LogSize = 0;
 	if ((LogSize = StkPlGetFileSize(L"log.txt")) < 100) {
@@ -139,12 +141,17 @@ void MsgProcTest1()
 	}
 	char FileBuf[2048] = "";
 	StkPlReadFile(L"log.txt", FileBuf, 2048);
-	if (StkPlStrStr(FileBuf, "done!") == NULL ||
-		StkPlStrStr(FileBuf, "test!test!test!") == NULL ||
-		StkPlStrStr(FileBuf, "test#test#test#") == NULL) {
+	wchar_t* WcFileBuf = StkPlCreateWideCharFromUtf8(FileBuf);
+	if (StkPlWcsStr(WcFileBuf, L"W/ done!") == NULL ||
+		StkPlWcsStr(WcFileBuf, L"F/ test!test!test!") == NULL ||
+		StkPlWcsStr(WcFileBuf, L"E/ test#test#test#") == NULL ||
+		StkPlWcsStr(WcFileBuf, L"F/ あいうえおabc👉𠮷") == NULL ||
+		StkPlWcsStr(WcFileBuf, L"I/ hello, world!!") == NULL ||
+		StkPlWcsStr(WcFileBuf, L"I/ BinaryData: 61626364656667686900") == NULL) {
 		StkPlPrintf("Logging ... NG case\n");
 		StkPlExit(-1);
 	}
+	delete[] WcFileBuf;
 	StkPlPrintf("Logging ... OK case(size=%d)\n", LogSize);
 	// Logging test end
 }
@@ -174,7 +181,7 @@ void MsgProcTest2()
 		StkStringParser::ParseInto3Params(LogDatPtr, L"$I/ [$] This is$", L'$', NULL, AcqDat, NULL);
 		int Index = StkPlWcsToL(AcqDat);
 		if (MinIndex >= Index) {
-			delete LogDatW;
+			delete[] LogDatW;
 			StkPlPrintf("LoggingTest-2 ... NG case(2)\n");
 			StkPlExit(-1);
 		}
