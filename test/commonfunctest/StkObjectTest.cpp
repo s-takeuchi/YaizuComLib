@@ -1559,6 +1559,26 @@ void JsonDecodingTest1()
 		delete RetObj;
 		StkPlPrintf("OK\n");
 	}
+	////////////////////////////////////////////////////
+	StkPlLStrCpy(Msg, L"\"Yyy\" : {\"Zzz\" : \":\", \"Xxx\" : [\"{{{\", \"}}}\", \"[\"], \"Www\":{\"Wwww\":\",,,,\"}}");
+	StkPlPrintf("JSON Decoding : %ls ...", Msg);
+	RetObj = StkObject::CreateObjectFromJson(Msg, &Offset);
+	if (RetObj == NULL ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetName(), L"Zzz") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetStringValue(), L":") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetName(), L"Xxx") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetStringValue(), L"{{{") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetStringValue(), L"}}}") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetName(), L"Xxx") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetStringValue(), L"[") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetNext()->GetFirstChildElement()->GetName(), L"Wwww") != 0 ||
+		StkPlWcsCmp(RetObj->GetFirstChildElement()->GetNext()->GetNext()->GetNext()->GetNext()->GetFirstChildElement()->GetStringValue(), L",,,,") != 0) {
+			StkPlPrintf("NG\n");
+		StkPlExit(-1);
+	}
+	delete RetObj;
+	StkPlPrintf("OK\n");
 }
 
 void JsonDecodingTest2()

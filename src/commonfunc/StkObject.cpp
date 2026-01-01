@@ -1466,6 +1466,34 @@ StkObject* StkObject::CreateObjectFromJson(const wchar_t* Json, int* Offset, Stk
 			}
 		}
 
+		// if string (name/value) appeared...
+		if (PrevStatus == ELEMNAME_START) {
+			int StrLen = 0;
+			PrevName = Impl::GetJsonString(&Json[Loop], &StrLen);
+			Loop = Loop + StrLen;
+			PrevStatus = ELEMNAME_END;
+			continue;
+		}
+		if (PrevStatus == STRVAL_START) {
+			int StrLen = 0;
+			wchar_t* Value = Impl::GetJsonString(&Json[Loop], &StrLen);
+			if (RetObj == NULL) {
+				delete Value;
+				Impl::CleanupObjectsForJson(PrevName, RetObj);
+				*Offset = ERROR_JSON_NO_ROOT_ELEMENT;
+				return NULL;
+			}
+			RetObj->AppendChildElement(new StkObject(PrevName, Value));
+			delete Value;
+			if (ArrayFlag == false) {
+				delete[] PrevName;
+				PrevName = NULL;
+			}
+			Loop = Loop + StrLen;
+			PrevStatus = ELEMOBJ_END;
+			continue;
+		}
+
 		// if : is appeared...
 		if (Json[Loop] == wchar_t(':')) {
 			if (PrevStatus == ELEMNAME_END) {
@@ -1595,33 +1623,6 @@ StkObject* StkObject::CreateObjectFromJson(const wchar_t* Json, int* Offset, Stk
 			}
 		}
 
-		// if other...
-		if (PrevStatus == ELEMNAME_START) {
-			int StrLen = 0;
-			PrevName = Impl::GetJsonString(&Json[Loop], &StrLen);
-			Loop = Loop + StrLen;
-			PrevStatus = ELEMNAME_END;
-			continue;
-		}
-		if (PrevStatus == STRVAL_START) {
-			int StrLen = 0;
-			wchar_t* Value = Impl::GetJsonString(&Json[Loop], &StrLen);
-			if (RetObj == NULL) {
-				delete Value;
-				Impl::CleanupObjectsForJson(PrevName, RetObj);
-				*Offset = ERROR_JSON_NO_ROOT_ELEMENT;
-				return NULL;
-			}
-			RetObj->AppendChildElement(new StkObject(PrevName, Value));
-			delete Value;
-			if (ArrayFlag == false) {
-				delete [] PrevName;
-				PrevName = NULL;
-			}
-			Loop = Loop + StrLen;
-			PrevStatus = ELEMOBJ_END;
-			continue;
-		}
 		Impl::CleanupObjectsForJson(PrevName, RetObj);
 		*Offset = ERROR_JSON_CANNOT_HANDLE;
 		return NULL;
