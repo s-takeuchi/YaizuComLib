@@ -429,16 +429,19 @@ int DbAccessor::InsertRecordCommon(StkObject* Record, wchar_t StateMsg[10], wcha
 	if (Record) {
 		Record = Record->GetFirstChildElement();
 	}
+
+	StkPlWcsCpy(TableName, TABLENAME_LENGTH, Record->GetName());
+	size_t LenOfTableName = StkPlWcsLen(TableName);
+	wchar_t* EcdTableName = new wchar_t[LenOfTableName * 4 + 2];
+	SqlEncoding(TableName, EcdTableName, TYPE_KEY);
+	StkPlWcsCat(SqlBuf, BUF_SIZE, L"INSERT INTO ");
+	StkPlWcsCat(SqlBuf, BUF_SIZE, EcdTableName);
+	StkPlWcsCat(SqlBuf, BUF_SIZE, L" VALUES \n");
+	delete[] EcdTableName;
+
 	while (Record) {
-		StkPlWcsCpy(TableName, TABLENAME_LENGTH, Record->GetName());
-		size_t LenOfTableName = StkPlWcsLen(TableName);
-		wchar_t* EcdTableName = new wchar_t[LenOfTableName * 4 + 2];
-		SqlEncoding(TableName, EcdTableName, TYPE_KEY);
-		StkPlWcsCat(SqlBuf, BUF_SIZE, L"INSERT INTO ");
-		StkPlWcsCat(SqlBuf, BUF_SIZE, EcdTableName);
-		StkPlWcsCat(SqlBuf, BUF_SIZE, L" VALUES (");
-		delete[] EcdTableName;
 		StkObject* ColumnData = Record->GetFirstChildElement();
+		StkPlWcsCat(SqlBuf, BUF_SIZE, L"(");
 		while (ColumnData && StkPlWcsCmp(ColumnData->GetName(), L"RecordInfo") == 0) {
 			if (ColumnData->GetType() == StkObject::STKOBJECT_ELEM_STRING) {
 				size_t LenOfValue = StkPlWcsLen(ColumnData->GetStringValue());
@@ -452,14 +455,14 @@ int DbAccessor::InsertRecordCommon(StkObject* Record, wchar_t StateMsg[10], wcha
 				if (ColumnData->GetNext()) {
 					StkPlWcsCat(SqlBuf, BUF_SIZE, L",");
 				} else {
-					StkPlWcsCat(SqlBuf, BUF_SIZE, L");\r\n");
+					StkPlWcsCat(SqlBuf, BUF_SIZE, L")");
 				}
 			} else if (ColumnData->GetType() == StkObject::STKOBJECT_ELEM_INT) {
 				int ValueInt = ColumnData->GetIntValue();
 				if (ColumnData->GetNext()) {
 					StkPlSwPrintf(Value, 64, L"%d,", ValueInt);
 				} else {
-					StkPlSwPrintf(Value, 64, L"%d);\r\n", ValueInt);
+					StkPlSwPrintf(Value, 64, L"%d)", ValueInt);
 				}
 				StkPlWcsCat(SqlBuf, BUF_SIZE, Value);
 			} else if (ColumnData->GetType() == StkObject::STKOBJECT_ELEM_FLOAT) {
@@ -467,13 +470,18 @@ int DbAccessor::InsertRecordCommon(StkObject* Record, wchar_t StateMsg[10], wcha
 				if (ColumnData->GetNext()) {
 					StkPlSwPrintf(Value, 64, L"%f,", ValueFloat);
 				} else {
-					StkPlSwPrintf(Value, 64, L"%f);\r\n", ValueFloat);
+					StkPlSwPrintf(Value, 64, L"%f)", ValueFloat);
 				}
 				StkPlWcsCat(SqlBuf, BUF_SIZE, Value);
 			}
 			ColumnData = ColumnData->GetNext();
 		}
 		Record = Record->GetNext();
+		if (Record) {
+			StkPlWcsCat(SqlBuf, BUF_SIZE, L",\n");
+		} else {
+			StkPlWcsCat(SqlBuf, BUF_SIZE, L";");
+		}
 	}
 
 	OpenDatabase(StateMsg, Msg);
