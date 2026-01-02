@@ -322,7 +322,7 @@ int DbAccessor::GetRecordsByTableNameCommon(const wchar_t* TableName,
 // Return : 0=Success, -1=Error
 int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wchar_t Msg[1024])
 {
-	wchar_t SqlBuf[1024] = L"";
+	wchar_t SqlBuf[2048] = L"";
 	wchar_t TableName[TABLENAME_LENGTH] = L"";
 	if (TableInfo) {
 		TableInfo = TableInfo->GetFirstChildElement();
@@ -333,7 +333,7 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 		wchar_t* EcdTableName = new wchar_t[LenOfTableName * 4 + 2];
 		SqlEncoding(TableName, EcdTableName, TYPE_KEY);
 
-		StkPlSwPrintf(SqlBuf, 1024, L"CREATE TABLE %ls (", EcdTableName);
+		StkPlSwPrintf(SqlBuf, 2048, L"CREATE TABLE %ls (", EcdTableName);
 		delete [] EcdTableName;
 		StkObject* ColumnInfo = TableInfo->GetFirstChildElement();
 		while (ColumnInfo && StkPlWcsCmp(ColumnInfo->GetName(), L"ColumnInfo") == 0) {
@@ -355,12 +355,12 @@ int DbAccessor::CreateTableCommon(StkObject* TableInfo, wchar_t StateMsg[10], wc
 			wchar_t SqlBufTmp[COLUMNNAME_LENGTH + COLUMNTYPE_LENGTH + 2] = L"";
 			StkPlSwPrintf(SqlBufTmp, COLUMNNAME_LENGTH + COLUMNTYPE_LENGTH + 2, L"%ls %ls", EcdColumnName, ColumnType);
 			delete[] EcdColumnName;
-			StkPlWcsCat(SqlBuf, 1024, SqlBufTmp);
+			StkPlWcsCat(SqlBuf, 2048, SqlBufTmp);
 			ColumnInfo = ColumnInfo->GetNext();
 			if (ColumnInfo) {
-				StkPlWcsCat(SqlBuf, 1024, L",");
+				StkPlWcsCat(SqlBuf, 2048, L",");
 			} else {
-				StkPlWcsCat(SqlBuf, 1024, L");");
+				StkPlWcsCat(SqlBuf, 2048, L");");
 			}
 		}
 
