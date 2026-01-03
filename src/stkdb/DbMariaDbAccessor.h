@@ -22,4 +22,5 @@ public:
 	int CreateTable(StkObject*, wchar_t[10], wchar_t[1024]);
 	int DropTable(const wchar_t*, wchar_t[10], wchar_t[1024]);
 	int InsertRecord(StkObject*, wchar_t[10], wchar_t[1024]);
+	wchar_t* GetCurrentDatabase();
 };

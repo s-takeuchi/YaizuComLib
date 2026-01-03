@@ -213,6 +213,13 @@ int DbMySqlAccessor::GetRecordsByTableName(wchar_t* TableName, FilteringConditio
 	return NumOfRecs;
 }
 
+wchar_t* DbMySqlAccessor::GetCurrentDatabase()
+{
+	wchar_t* Ret = new wchar_t[32];
+	StkPlWcsCpy(Ret, 32, L"SELECT DATABASE();");
+	return Ret;
+}
+
 int DbMySqlAccessor::ConvertAttrType(wchar_t InAttr[COLUMNTYPE_LENGTH], wchar_t OutAttr[COLUMNTYPE_LENGTH])
 {
 	if (StkPlWcsStr(InAttr, L"bigint") != NULL ||

@@ -222,6 +222,13 @@ int DbPostgreSqlAccessor::GetRecordsByTableName(wchar_t* TableName, FilteringCon
 	return NumOfRecs;
 }
 
+wchar_t* DbPostgreSqlAccessor::GetCurrentDatabase()
+{
+	wchar_t* Ret = new wchar_t[32];
+	StkPlWcsCpy(Ret, 32, L"SELECT current_database();");
+	return Ret;
+}
+
 int DbPostgreSqlAccessor::ConvertAttrType(wchar_t InAttr[COLUMNTYPE_LENGTH], wchar_t OutAttr[COLUMNTYPE_LENGTH])
 {
 	if (StkPlWcsStr((wchar_t*)InAttr, L"bigint") != NULL ||

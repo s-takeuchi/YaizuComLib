@@ -13,6 +13,7 @@ protected:
 
 protected:
 	static const int MAX_PARAM_LENGTH = 28800;
+	static const int DBNAME_LENGTH = 65;
 	static const int TABLENAME_LENGTH = 65;
 	static const int COLUMNNAME_LENGTH = 65;
 	static const int COLUMNTYPE_LENGTH = 64;
@@ -51,7 +52,9 @@ public:
 	static int Init();
 	static int Uninit();
 
-	virtual int Test(wchar_t[10], wchar_t[1024]);
+	int Test(wchar_t[10], wchar_t[1024]);
+	int GetCurrentDatabaseCommon(wchar_t[DBNAME_LENGTH], wchar_t[10], wchar_t[1024]);
+
 	virtual int GetNumOfRecords(wchar_t*, FilteringCondition*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int GetTables(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int GetColumnInfoByTableName(wchar_t*,	StkObject*, wchar_t[10], wchar_t[1024]) = 0;
@@ -59,4 +62,5 @@ public:
 	virtual int CreateTable(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int DropTable(const wchar_t*, wchar_t[10], wchar_t[1024]) = 0;
 	virtual int InsertRecord(StkObject*, wchar_t[10], wchar_t[1024]) = 0;
+	virtual wchar_t* GetCurrentDatabase() = 0;
 };

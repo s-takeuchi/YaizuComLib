@@ -504,6 +504,45 @@ int DbAccessor::InsertRecordCommon(StkObject* Record, wchar_t StateMsg[10], wcha
 	return 0;
 }
 
+int DbAccessor::GetCurrentDatabaseCommon(wchar_t DatabaseName[DBNAME_LENGTH], wchar_t StateMsg[10], wchar_t Msg[1024])
+{
+	SQLRETURN Ret = OpenDatabase(StateMsg, Msg);
+	if (Ret != 0) {
+		return Ret;
+	}
+	wchar_t* SqlBuf = GetCurrentDatabase();
+
+	SQLWCHAR CvtStateMsg[10];
+	SQLWCHAR CvtMsg[1024];
+	SQLINTEGER Native; // This will not be refered from anywhere
+	SQLSMALLINT ActualMsgLen; // This will not be refered from anywhere
+	char16_t* CvtSqlBuf = StkPlCreateUtf16FromWideChar(SqlBuf);
+	Ret = SQLExecDirect(pImpl->Hstmt, (SQLWCHAR*)CvtSqlBuf, SQL_NTS);
+	delete[] CvtSqlBuf;
+	delete[] SqlBuf;
+	if (Ret != SQL_SUCCESS) {
+		SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
+		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
+		wchar_t DummyStateMsg[10];
+		wchar_t DummyMsg[1024];
+		CloseDatabase(DummyStateMsg, DummyMsg);
+		return -1;
+	}
+	SQLWCHAR DbName[DBNAME_LENGTH] = { 0 };
+	SQLBindCol(pImpl->Hstmt, 1, SQL_C_WCHAR, DbName, DBNAME_LENGTH * sizeof(SQLWCHAR), NULL);
+	if (SQLFetch(pImpl->Hstmt) != SQL_SUCCESS) {
+		SQLGetDiagRecW(SQL_HANDLE_STMT, pImpl->Hstmt, 1, CvtStateMsg, &Native, CvtMsg, 1024, &ActualMsgLen);
+		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
+		wchar_t DummyStateMsg[10];
+		wchar_t DummyMsg[1024];
+		CloseDatabase(DummyStateMsg, DummyMsg);
+		return -1;
+	}
+	Ret = CloseDatabase(StateMsg, Msg);
+	StkPlConvUtf16ToWideChar(DatabaseName, DBNAME_LENGTH, (char16_t*)DbName);
+	return 0;
+}
+
 // Return 0: Success, -1:Error
 int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])
 {

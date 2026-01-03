@@ -223,6 +223,13 @@ int DbMariaDbAccessor::GetRecordsByTableName(wchar_t* TableName, FilteringCondit
 	return NumOfRecs;
 }
 
+wchar_t* DbMariaDbAccessor::GetCurrentDatabase()
+{
+	wchar_t* Ret = new wchar_t[32];
+	StkPlWcsCpy(Ret, 32, L"SELECT DATABASE();");
+	return Ret;
+}
+
 int DbMariaDbAccessor::ConvertAttrType(wchar_t InAttr[COLUMNTYPE_LENGTH], wchar_t OutAttr[COLUMNTYPE_LENGTH])
 {
 	if (StkPlWcsStr((wchar_t*)InAttr, L"bigint") != NULL ||
