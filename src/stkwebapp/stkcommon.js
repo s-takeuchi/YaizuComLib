@@ -97,6 +97,14 @@ var responseData = {};
             return getClientMessage('STKCOMMON_SERVER_ERROR') + '<br/>' + respDat.MsgEng;
         }
     }
+
+    function getSvrInfoMsg(respDat) {
+        if (getClientLanguage() == 1) {
+            return respDat.MsgJpn;
+        } else {
+            return respDat.MsgEng;
+        }
+    }
 }
 
 ////////////////////////////////////////
