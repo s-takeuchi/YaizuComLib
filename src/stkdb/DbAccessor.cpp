@@ -563,6 +563,7 @@ int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])
 		return -1;
 	}
 	SQLSetConnectAttr(pImpl->Hdbc, SQL_ATTR_CONNECTION_TIMEOUT, (SQLPOINTER)10, 0);
+	SQLSetConnectAttr(pImpl->Hdbc, SQL_ATTR_LOGIN_TIMEOUT, (SQLPOINTER)10, 0);
 
 	// SQLDriverConnect
 	SQLWCHAR ConnOut[255]; // This will not be refered from anywhere
