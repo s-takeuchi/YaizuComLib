@@ -562,6 +562,7 @@ int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
 		return -1;
 	}
+	SQLSetConnectAttr(pImpl->Hdbc, SQL_ATTR_CONNECTION_TIMEOUT, (SQLPOINTER)10, 0);
 
 	// SQLDriverConnect
 	SQLWCHAR ConnOut[255]; // This will not be refered from anywhere
@@ -572,7 +573,6 @@ int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
 		return -1;
 	}
-	SQLSetConnectAttr(pImpl->Hdbc, SQL_ATTR_CONNECTION_TIMEOUT, (SQLPOINTER)10, 0);
 
 	// Alloc statement handle 
 	if (SQLAllocHandle(SQL_HANDLE_STMT, pImpl->Hdbc, &(pImpl->Hstmt)) == SQL_ERROR) {
