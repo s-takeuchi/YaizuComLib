@@ -562,7 +562,10 @@ int DbAccessor::OpenDatabase(wchar_t StateMsg[10], wchar_t Msg[1024])
 		ConvertMessage(StateMsg, Msg, (char16_t*)CvtStateMsg, (char16_t*)CvtMsg);
 		return -1;
 	}
-	SQLSetConnectAttr(pImpl->Hdbc, SQL_ATTR_CONNECTION_TIMEOUT, (SQLPOINTER)10, 0);
+	// SQLSetConnectAttr(pImpl->Hdbc, SQL_ATTR_CONNECTION_TIMEOUT, (SQLPOINTER)10, 0);
+	//// Do NOT specify "SQL_ATTR_CONNECTION_TIMEOUT"
+	//// MariaDB and MySQL do not refer this specification
+	//// PostgreSQL on Windows detetec this specification as an error
 	SQLSetConnectAttr(pImpl->Hdbc, SQL_ATTR_LOGIN_TIMEOUT, (SQLPOINTER)10, 0);
 
 	// SQLDriverConnect
